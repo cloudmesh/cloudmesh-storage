@@ -5,7 +5,7 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
 from pprint import pprint
 import os
-
+from cloudmesh.storage.StorageABC import StorageABC
 
 def get_id(source, results, type):
     if not any((result.name == source and result.type == type) for result in results):
@@ -31,10 +31,12 @@ def update_dict(elements):
     d = []
     for element in _elements:
         entry = element.__dict__
-        entry["cm"] = {}
-        entry["cm"]["kind"] = "storage"
-        entry["cm"]["cloud"] = "box"
-        entry["cm"]["name"] = element.name
+        entry["cm"] = {
+            "kind": "storage",
+            "cloud": "box", # bug this is the cloud name
+            "name": element.name
+        }
+        # BUG: I suggest you keep many of the attributes. we wnat as many as possible
         del(entry['_response_object'])
         del(entry['_session'])
         del(entry['created_by'])
@@ -49,12 +51,15 @@ def update_dict(elements):
 
 
 
-class Provider(object):
+class Provider(StorageABC):
 
-    def __init__(self):
+    def __init__(self): # BUG parameters wrong
+        # no inheritance from sueperclass
         self.config = Config()
-        credentials = self.config.credentials("storage", "box")
+        credentials = self.config["credentials"]["storage"]["box"] # bug cloud name as parameter as we could have multiple box kind
+        # see superclass
         self.sdk = JWTAuth.from_settings_file(credentials['config_path'])
+        # this needs to be well defined in ~/.cloudmesh/box/ ....
         self.client = Client(self.sdk)
 
     def put(self, source, destination, recursive=False):
