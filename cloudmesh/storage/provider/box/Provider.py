@@ -1,8 +1,9 @@
 from boxsdk import JWTAuth
 from boxsdk import Client
 from cloudmesh.management.configuration.config import Config
-from cloudmesh.management.configuration.name import Name
 from cloudmesh.common.console import Console
+from cloudmesh.common.util import path_expand
+from pprint import pprint
 import os
 
 
@@ -13,6 +14,39 @@ def get_id(source, results, type):
         ind = next((index for (index, result) in enumerate(results) if (result.name == source)), None)
         id = results[ind].id
         return id
+
+def change_path(source):
+    src_path = path_expand(source)
+    if src_path[0] not in [".", "/"]:
+        src_path = os.path.join(os.getcwd(), source)
+    return src_path
+
+def update_dict(elements):
+    if elements is None:
+        return None
+    elif type(elements) is list:
+        _elements = elements
+    else:
+        _elements = [elements]
+    d = []
+    for element in _elements:
+        entry = element.__dict__
+        entry["cm"] = {}
+        entry["cm"]["kind"] = "storage"
+        entry["cm"]["cloud"] = "box"
+        entry["cm"]["name"] = element.name
+        del(entry['_response_object'])
+        del(entry['_session'])
+        del(entry['created_by'])
+        del(entry['file_version'])
+        del(entry['modified_by'])
+        del(entry['owned_by'])
+        del(entry['parent'])
+        del(entry['path_collection'])
+        d.append(entry)
+    return d
+
+
 
 
 class Provider(object):
@@ -26,6 +60,7 @@ class Provider(object):
     def put(self, source, destination, recursive=False):
         """
 
+        uploads file to Box, if source is directory and recursive is true uploads all files in source directory
         :param source: local file or directory to be uploaded
         :param destination: cloud directory to upload to
         :param recursive: if true upload all files in source directory, source must be directory not file
@@ -36,12 +71,8 @@ class Provider(object):
         try:
             destpath = destination.split('/')
             dest = destpath[len(destpath)-1]
-            sourcepath = source.strip('/').split('/')
-            if os.path.isfile(source):
-                filename = sourcepath[len(sourcepath)-1]
-                if recursive:
-                    Console.error("Invalid option recursive for source type.")
-                    return
+            sourcepath = change_path(source)
+            path_array = sourcepath.strip('/').split('/')
             uploaded = []
             if dest == '':
                 files = [item for item in self.client.folder('0').get_items()]
@@ -49,35 +80,44 @@ class Provider(object):
                 items = self.client.search().query(dest, type='folder')
                 folders = [item for item in items]
                 folder_id = get_id(dest, folders, 'folder')
-                if folder_id:
+                if folder_id != False:
                     files = [item for item in self.client.folder(folder_id).get_items()]
                 else:
                     Console.error("Destination directory not found")
                     return
             if not recursive:
+                if os.path.isfile(sourcepath):
+                    filename = path_array[len(path_array) - 1]
+                else:
+                    Console.error("Invalid source path.")
+                    return
                 file_id = get_id(filename, files, 'file')
                 if not file_id:
-                    file = self.client.folder('0').upload(source)
-                    return file.__dict__
+                    file = self.client.folder('0').upload(sourcepath)
+                    files_dict = update_dict(file)
+                    return files_dict
                 else:
-                    file = self.client.file(file_id).update_contents(source)
-                    return file.__dict__
+                    file = self.client.file(file_id).update_contents(sourcepath)
+                    files_dict = update_dict(file)
+                    return files_dict
             else:
                 for s in os.listdir(source):
                     s_id = get_id(s, files, 'file')
                     if not s_id:
-                        file = self.client.folder('0').upload(source+'/'+s)
+                        file = self.client.folder('0').upload(sourcepath+'/'+s)
                         uploaded.append(file)
                     else:
-                        file = self.client.file(s_id).update_contents(source+'/'+s)
+                        file = self.client.file(s_id).update_contents(sourcepath+'/'+s)
                         uploaded.append(file)
-                return uploaded
+                files_dict = update_dict(uploaded)
+                return files_dict
         except Exception as e:
             Console.error(e)
 
     def get(self, source, destination, recursive=False):
         """
 
+        downloads file from Box, if recursive is true and source is directory downloads all files in directory
         :param source: cloud file or directory to download
         :param destination: local directory to be downloaded into
         :param recursive: if true download all files in source directory, source must be directory
@@ -86,14 +126,16 @@ class Provider(object):
 
         """
         try:
+
             boxpath = source.split('/')
             target = boxpath[len(boxpath)-1]
+            dest = change_path(destination)
             downloads = []
             if recursive:
                 if target == '':
                     files = [item for item in self.client.folder('0').get_items()]
                 else:
-                    results = [item for item in self.client.search().query(target)]
+                    results = [item for item in self.client.search().query(target, type='folder')]
                     folder_id = get_id(target, results, 'folder')
                     if folder_id:
                         files = [item for item in self.client.folder(folder_id).get_items()]
@@ -103,10 +145,11 @@ class Provider(object):
                 for f in files:
                     if f.type == 'file':
                         file = self.client.file(f.id).get()
-                        with open(destination + "/" + file.name, 'wb') as f:
+                        with open(dest + "/" + file.name, 'wb') as f:
                             self.client.file(file.id).download_to(f)
                             downloads.append(file)
-                return downloads
+                files_dict = update_dict(downloads)
+                return files_dict
             else:
                 results = [item for item in self.client.search().query(target)]
                 if not any(result.name == target for result in results):
@@ -115,15 +158,17 @@ class Provider(object):
                     file_id = get_id(target, results, 'file')
                     if file_id:
                         file = self.client.file(file_id).get()
-                        with open(destination + "/" + file.name, 'wb') as f:
+                        with open(dest + "/" + file.name, 'wb') as f:
                             self.client.file(file.id).download_to(f)
-                            return file.__dict__
+                            files_dict = update_dict(file)
+                            return files_dict
         except Exception as e:
             Console.error(e)
 
     def search(self, directory, filename, recursive=False):
         """
 
+        searches directory for file, if recursive searches all subdirectories
         :param directory: cloud directory to search in
         :param filename: name of file to search for
         :param recursive: if true search all child directories of original directory
@@ -141,46 +186,50 @@ class Provider(object):
                 folder_id = get_id(path[len(path)-1], items, 'folder')
                 if not folder_id:
                     Console.error("Directory not found.")
-                    return
             files = [item for item in self.client.search().query(filename, type='file', ancestor_folder_ids=folder_id)]
             if not recursive:
                 for file in files:
                     if file.parent.name == path[len(path)-1]:
                         results.append(file)
                 if len(results) > 0:
-                    return results
+                    files_dict = update_dict(results)
+                    return files_dict
                 else:
                     Console.error("No files found.")
-                    return
             else:
                 if len(files) > 0:
-                    return files
+                    files_dict = update_dict(files)
+                    return files_dict
                 else:
                     Console.error("No files found.")
-                    return
         except Exception as e:
             Console.error(e)
 
     def create_dir(self, directory):
         """
 
-        :param directory: directory in which to create a new directory
+        creates a new directory
+        :param directory: path for new directory
         :return: dict of new directory
 
 
         """
         try:
-            path = directory.strip('/').split('/')
+            path = directory.split('/')
             if len(path) == 1:
-                folder = self.client.folder('0').create_subfolder(path[0])
-                return folder.__dict__
+                Console.error('Invalid path specified.')
             else:
                 parent = path[len(path) - 2]
+                if parent == '':
+                    folder = self.client.folder('0').create_subfolder(path[len(path)-1])
+                    folder_dict = update_dict(folder)
+                    return folder_dict
                 folders = [item for item in self.client.search().query(parent, type='folder')]
                 if len(folders) > 0:
                     parent = folders[0].id
                     folder = self.client.folder(parent).create_subfolder(path[len(path)-1])
-                    return folder.__dict__
+                    folder_dict = update_dict(folder)
+                    return folder_dict
                 else:
                     Console.error("Destination directory not found")
         except Exception as e:
@@ -189,6 +238,7 @@ class Provider(object):
     def list(self, directory, recursive=False):
         """
 
+        lists all contents of directory, if recursive lists contents of subdirectories as well
         :param directory: cloud directory to list all contents of
         :param recursive: if true list contents of all child directories
         :return: dict(s) of files and directories
@@ -218,42 +268,40 @@ class Provider(object):
                     else:
                         Console.error("Directory " + path[len(path) - i] + " not found.")
                 if not recursive and i == 1:
-                    return list
-            return list
+                    list_dict = update_dict(list)
+                    return list_dict
+            list_dict = update_dict(list)
+            return list_dict
         except Exception as e:
             Console.error(e)
 
     def delete(self, source):
         """
 
+        deletes file or directory
         :param source: file or directory to be deleted
-        :return: null
+        :return: None
 
 
         """
         try:
             path = source.strip('/').split('/')
             name = path[len(path)-1]
-            items = self.client.search().query(name)
-            results = [item for item in items]
+            items = self.client.search().query(name, type='file')
+            files = [item for item in items]
+            items2 = self.client.search().query(name, type='folder')
+            folders = [item2 for item2 in items2]
+            results = files+folders
             if not any(result.name == name for result in results):
-                Console.error("Source not found")
+                Console.error("Source not found.")
             else:
                 item_ind = next((index for (index, result) in enumerate(results) if (result.name == name)), None)
                 item_id = results[item_ind].id
                 item_type = results[item_ind].type
                 if item_type == 'folder':
-                    print(self.client.folder(item_id).delete())
+                    self.client.folder(item_id).delete()
                 elif item_type == 'file':
-                    print(self.client.file(item_id).delete())
+                    self.client.file(item_id).delete()
         except Exception as e:
             Console.error(e)
 
-    def entries(self, name):
-        return {
-            "name": name,
-            "cloud": "box",
-            "kind": "storage",
-            "driver": "box",
-            "collection": "box-storage"
-        }
