@@ -1,54 +1,55 @@
 import io
 import json
 
-import Authentication
+from cloudmesh.gdrive.Authentication import Authentication
 import httplib2
 from apiclient.http import MediaFileUpload
 from apiclient.http import MediaIoBaseDownload
 from cloudmesh.management.configuration.config import Config
-
+from cloudmesh.comon.util import path_expand
+from cloudmesh.storage.StorageABC import StorageABC
+import magic
 
 class Provider(StorageABC):
 
-    def __init__(self, WRONG PARAMS
+    def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
 
-    ):
+        super(Provider, self).__init__(cloud=cloud, config=config)
 
-    # SUPER NEEDED LOOK AT MY CODE IN THIS DIR FROM
-    super(Provider, self).__init__(cloud=cloud, config=config)
-
-    self.scopes = 'https://www.googleapis.com/auth/drive'
-    self.clientSecretFile = 'client_secret.json'
-    self.applicationName = 'Drive API Python Quickstart'
+        self.scopes = 'https://www.googleapis.com/auth/drive'
+        self.clientSecretFile = path_expand(
+            '~/.cloudmesh/gdrive/client_secret.json')
+        self.applicationName = 'Drive API Python Quickstart'
 
         self.config = Config()
         self.clientSecretFile = self.generateKeyJson()
-    self.authInst = Authentication.Authentication(self.scopes,
-                                                  self.clientSecretFile,
-                                                  self.applicationName)
+        self.authInst = Authentication(self.scopes,
+                                       self.clientSecretFile,
+                                       self.applicationName)
         self.credentials = self.authInst.get_credentials()
         self.http = self.credentials.authorize(httplib2.Http())
         self.driveService = self.discovery.build('drive', 'v3', http=self.http)
+        self.mime = magic.Magic(mime=True)
 
+    def generateKeyJson(self):
+        credentials = self.config.credentials("storage", "gdrive")
 
-def generateKeyJson(self):
-    credentials = self.config.credentials("storage", "gdrive")
-    data = {"installed": {
-        "client_id": credentials["client_id"]
-        data["installed"]["project_id"] = credentials["project_id"]
-    data["installed"]["auth_uri"] = credentials["auth_uri"]
-    data["installed"]["token_uri"] = credentials["token_uri"]
-    data["installed"]["client_secret"] = credentials["client_secret"]
-    data["installed"]["auth_provider_x509_cert_url"] = credentials[
-        "auth_provider_x509_cert_url"]
-    data["installed"]["redirect_uris"] = credentials["redirect_uris"]
-    }
+        data = {"installed": {
+            "client_id": credentials["client_id"],
+            "project_id": credentials["project_id"],
+            "auth_uri": credentials["auth_uri"],
+            "token_uri": credentials["token_uri"],
+            "client_secret": credentials["client_secret"],
+            "auth_provider_x509_cert_url": credentials[
+                "auth_provider_x509_cert_url"],
+            "redirect_uris": credentials["redirect_uris"]
+        }
 
-    #
-    # BUG: MUST BE IN ~/.cloudmesch/gdrive/
-    #
-    with open(self.clientSecretFile, 'w') as fp:
-        json.dump(data, fp)
+        #
+        # BUG: MUST BE IN ~/.cloudmesch/gdrive/
+        #
+        with open(self.clientSecretFile, 'w') as fp:
+            json.dump(data, fp)
 
     def put(self, filename):
         file_metadata = {'name': filename}
@@ -56,8 +57,7 @@ def generateKeyJson(self):
         # BUG: linux has a command file that finds the mimetyp, see if this is better,
         # mimetipse shoudl not just depend on filenames if possible
 
-        mimetype = "image/jpeg"
-        mimetype = Provider.fileTypetoMimeType(filename)
+        mimetype = self.mime.from_file(filename)
 
         filepath = filename
         media = MediaFileUpload(filepath,
@@ -83,6 +83,8 @@ def generateKeyJson(self):
         for i in range(len(items)):
             if items[i]['name'] == filename:
                 file_id = items[i]['id']
+
+        # bug mimetype should be found differntly not with .
 
         try:
 
@@ -149,39 +151,3 @@ def generateKeyJson(self):
         return items
 
 
-def fileTypetoMimeType(self, filename):
-
-        fimidict = {"jpg": "image/jpeg",
-                    "mp4": "video/mp4",
-                    "mp3": "audio/mp3",
-                    "json": "text/json",
-                    "png": "image/png",
-                    "txt": "text/text",
-                    "csv": "text/csv"}
-        mimetype = "image/jpeg"
-
-        filetype = filename.split(".")[-1]
-
-        #
-        # possible better method, this is quick and ok for now, but there is for example the linux function `file`
-        #
-
-        # For
-        # MIME
-        # types
-        # >> > import magic
-        # >> > mime = magic.Magic(mime=True)
-        # >> > mime.from_file("testdata/test.pdf")
-        # 'application/pdf'
-        # >> >
-
-        try:
-            mimetype = fimidict[filetype]
-        except:
-            mimetype = "image/jpeg"
-
-        return mimetype
-
-
-p = Provider()
-print(p.listFiles())
