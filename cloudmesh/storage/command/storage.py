@@ -2,11 +2,12 @@ from __future__ import print_function
 from cloudmesh.shell.command import command
 from cloudmesh.shell.command import PluginCommand
 from cloudmesh.storage.api.manager import Manager
-from cloudmesh.common.console import Console
-from cloudmesh.common.util import path_expand
+from cloudmesh.shell.variables import Variables
 from pprint import pprint
+from cloudmesh.common.console import Console
 
 
+# noinspection PyBroadException
 class StorageCommand(PluginCommand):
 
     # noinspection PyUnusedLocal
@@ -16,31 +17,53 @@ class StorageCommand(PluginCommand):
         ::
 
           Usage:
-                storage --file=FILE
-                storage list
+                storage [--storage=SERVICE] put FILENAME
+                storage [--storage=SERVICE] get FILENAME
+                storage [--storage=SERVICE] delete FILENAME
+                storage [--storage=SERVICE] size FILENAME
+                storage [--storage=SERVICE] info FILENAME
+                storage [--storage=SERVICE] create FILENAME
+                storage [--storage=SERVICE] sync SOURCEDIR DESTDIR
+
 
           This command does some useful things.
 
           Arguments:
               FILE   a file name
+              
 
           Options:
               -f      specify the file
 
-        """
-        arguments.FILE = arguments['--file'] or None
+          Example:
+            set storage=box
+            storage  put FILENAME
 
-        print(arguments)
+            is the same as 
+
+            starage  --storage=box put FILENAME
+
+
+        """
+
+        pprint(arguments)
 
         m = Manager()
 
-        if arguments.FILE:
-            print("option a")
-            m.list(path_expand(arguments.FILE))
+        service = None
 
-        elif arguments.list:
-            print("option b")
-            m.list("just calling list without parameter")
+        filename = arguments.FILENAME[0]
+        try:
+            service = arguments["--storage"][0]
+        except Exception as e:
+            try:
+                v = Variables()
+                service = v['storage']
+            except Exception as e:
+                service = None
 
-        Console.error("This is just a sample")
-        return ""
+        if service is None:
+            Console.error("storage service not defined")
+
+        if arguments.get:
+            m.get(service, filename)
