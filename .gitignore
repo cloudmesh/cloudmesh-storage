@@ -1,7 +1,15 @@
+.pye
+.DS_Store
+.swp
+build/
+vagrant_workspace
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+cm4/api/specs/
+
 
 # C extensions
 *.so
@@ -46,6 +54,7 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+.noseids
 
 # Translations
 *.mo
@@ -102,3 +111,20 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Visual Studio Code workspace settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# Test local db and storage files
+test/data/db/*
+!test/data/db/README.md
+
+test/data/storage/*
+!test/data/storage/README.md
+
+test/data/download/*
+!test/data/download/README.md
+/cm4/openstack/cloudmesh.yaml
