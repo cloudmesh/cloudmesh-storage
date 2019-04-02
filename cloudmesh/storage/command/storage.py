@@ -1,11 +1,12 @@
 from __future__ import print_function
-from cloudmesh.shell.command import command
+from cloudmesh.shell.command import command, map_parameters
 from cloudmesh.shell.command import PluginCommand
-from cloudmesh.storage.api.manager import Manager
+from cloudmesh.storage.Provider import Provider
 from cloudmesh.shell.variables import Variables
 from pprint import pprint
 from cloudmesh.common.console import Console
-
+from cloudmesh.common.parameter import Parameter
+from cloudmesh.terminal.Terminal import VERBOSE
 
 # noinspection PyBroadException
 class StorageCommand(PluginCommand):
@@ -17,53 +18,153 @@ class StorageCommand(PluginCommand):
         ::
 
           Usage:
-                storage [--storage=SERVICE] put FILENAME
-                storage [--storage=SERVICE] get FILENAME
-                storage [--storage=SERVICE] delete FILENAME
-                storage [--storage=SERVICE] size FILENAME
-                storage [--storage=SERVICE] info FILENAME
-                storage [--storage=SERVICE] create FILENAME
-                storage [--storage=SERVICE] sync SOURCEDIR DESTDIR
-
+                storage [--storage=SERVICE] create dir DIRECTORY
+                storage [--storage=SERVICE] get SOURCE DESTINATION [--recursive]
+                storage [--storage=SERVICE] put SOURCE DESTINATION [--recursive]
+                storage [--storage=SERVICE] list SOURCE [--recursive] [--output=OUTPUT]
+                storage [--storage=SERVICE] delete SOURCE
+                storage [--storage=SERVICE] search  DIRECTORY FILENAME [--recursive] [--output=OUTPUT]
+                storage [--storage=SERVICE] sync SOURCE DESTINATION [--name=NAME] [--async]
+                storage [--storage=SERVICE] sync status [--name=NAME]
+                storage config list [--output=OUTPUT]
 
           This command does some useful things.
 
           Arguments:
-              FILE   a file name
-              
+              SOURCE        SOURCE can be a directory or file
+              DESTINATION   DESTINATION can be a directory or file
+              DIRECTORY     DIRECTORY refers to a folder on the cloud service
+
 
           Options:
-              -f      specify the file
+              --storage=SERVICE  specify the cloud service name like aws or azure or box or google
+          Description:
+                commands used to upload, download, list files on different cloud storage services.
+
+                storage put [options..]
+                    Uploads the file specified in the filename to specified cloud from the SOURCEDIR.
+
+                storage get [options..]
+                    Downloads the file specified in the filename from the specified cloud to the DESTDIR.
+
+                storage delete [options..]
+                    Deletes the file specified in the filename from the specified cloud.
+
+                storage list [options..]
+                    lists all the files from the container name specified on the specified cloud.
+
+                storage create dir [options..]
+                    creates a folder with the directory name specified on the specified cloud.
+
+                storage search [options..]
+                    searches for the source in all the folders on the specified cloud.
+
+                sync SOURCE DESTINATION
+                    puts the content of source to the destination.
+                    If --recursive is specified this is done recursively from the source
+                    If --async is specified, this is done asyncronously
+                    If a name is specified, the process can also be monitored with
+                       the status command by name.
+                    If the anme is not specified all date is monitored.
+
+                sync status
+                    The status for the asynchronous sync can be seen with this command
+
+                config list
+                    Lists the configures storage services in the yaml file
 
           Example:
-            set storage=box
-            storage  put FILENAME
+            set storage=azureblob
+            storage put SOURCE DESTINATION --recursive
 
-            is the same as 
-
-            starage  --storage=box put FILENAME
-
+            is the same as
+            storage --storage=azureblob put SOURCE DESTINATION --recursive
 
         """
+        # arguments.CONTAINER = arguments["--container"]
 
-        pprint(arguments)
+        map_parameters(arguments,
+                       "recursive",
+                       "storage")
+        VERBOSE.print(arguments, verbose=9)
 
-        m = Manager()
-
-        service = None
-
-        filename = arguments.FILENAME[0]
-        try:
-            service = arguments["--storage"][0]
-        except Exception as e:
+        if arguments.storage is None:
             try:
                 v = Variables()
-                service = v['storage']
+                arguments.storage = v['storage']
             except Exception as e:
-                service = None
+                arguments.storage = None
+                raise ValueError("Storage provider is not defined")
 
-        if service is None:
-            Console.error("storage service not defined")
+        arguments.storage = Parameter.expand(arguments.storage)
+
+        #
+        # BUG: some commands could be run on more than the first provider, such as list
+        # thus the if condition needs to be reorganized
+
+
+
 
         if arguments.get:
-            m.get(service, filename)
+            provider = Provider(arguments.storage)
+
+            result = provider.get(arguments.storage,
+                                  arguments.SOURCE,
+                                  arguments.DESTINATION,
+                                  arguments.recursive)
+
+        elif arguments.put:
+            provider = Provider(arguments.storage)
+
+            result = provider.put(arguments.storage,
+                                  arguments.SOURCE,
+                                  arguments.DESTINATION,
+                                  arguments.recursive)
+
+        elif arguments.create and arguments.dir:
+            provider = Provider(arguments.storage)
+
+            result = provider.createdir(arguments.storage,
+                                        arguments.DIRECTORY)
+
+        elif arguments.list:
+
+            #
+            # BUG: this command is much more complicated
+            #
+
+            for storage in arguments.storage:
+                provider = Provider(storage)
+
+                result = provider.list(arguments.storage,
+                                       arguments.SOURCE,
+                                       arguments.recursive)
+
+
+        elif arguments.delete:
+
+            #
+            # BUG:: this command could be much more complicated
+            #
+            for storage in arguments.storage:
+                provider = Provider(storage)
+
+                provider.delete(arguments.storage,
+                                arguments.SOURCE)
+
+        elif arguments.search:
+            #
+            # BUG: this command is much more complicated
+            #
+
+            for storage in arguments.storage:
+                provider = Provider(storage)
+
+                provider.search(arguments.storage,
+                                arguments.DIRECTORY,
+                                arguments.FILENAME,
+                                arguments.recursive)
+
+        elif arguments.rsync:
+            # TODO: implement
+            raise NotImplementedError
