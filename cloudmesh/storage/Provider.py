@@ -13,12 +13,11 @@ class Provider(StorageABC):
         super(Provider, self).__init__(cloud=cloud, config=config)
         self.provider = None
         if self.kind == "gdrive":
-            provider = GdriveProvider()
+            self.provider = GdriveProvider()
         elif self.kind == "box":
-            provider = BoxProvider()
+            self.provider = BoxProvider()
         else:
             raise ValueError(f"Storage provider {cloud} not yet supported")
-        return provider
 
     def list(self, parameter):
         print("list", parameter)
