@@ -25,7 +25,7 @@ class Authentication:
         authentication 
     """
 
-    def __init__(self,scopes,clientSecretFile,applicationName):
+    def __init__(self, scopes, clientSecretFile, applicationName):
         
         self.scopes = scopes
         self.clientSecretFile = clientSecretFile
