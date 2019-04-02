@@ -28,7 +28,7 @@ def readfile(filename):
 # add minimum requirements here
 #
 requiers = """
-requests
+boxsdk
 """.split("\n")
 
 # dependency_links = ['http://github.com/nicolaiarocci/eve.git@develop']
