@@ -1,58 +1,72 @@
-from __future__ import print_function
-import httplib2
-import os, io
-import sys
-import Authentication
-from apiclient.http import MediaFileUpload, MediaIoBaseDownload
-from cloudmesh.management.configuration.config import Config
-
+import io
 import json
 
-class Provider(object):
-
-    scopes = 'https://www.googleapis.com/auth/drive'
-    clientSecretFile = 'client_secret.json'
-    applicationName = 'Drive API Python Quickstart'
-
-    def generateKeyJson(self):
-        credentials = self.config.credentials("storage", "gdrive")
-        data = {}
-        data["installed"] = {}
-        data["installed"]["client_id"] = credentials["client_id"]
-        data["installed"]["project_id"] = credentials["project_id"]
-        data["installed"]["auth_uri"] = credentials["auth_uri"]
-        data["installed"]["token_uri"] = credentials["token_uri"]
-        data["installed"]["client_secret"] = credentials["client_secret"]
-        data["installed"]["auth_provider_x509_cert_url"] = credentials["auth_provider_x509_cert_url"]
-        data["installed"]["redirect_uris"] = credentials["redirect_uris"]
-
-        with open(self.clientSecretFile, 'w') as fp:
-            json.dump(data, fp)
+import Authentication
+import httplib2
+from apiclient.http import MediaFileUpload
+from apiclient.http import MediaIoBaseDownload
+from cloudmesh.management.configuration.config import Config
 
 
-    def __init__(self):
+class Provider(StorageABC):
+
+    def __init__(self, WRONG PARAMS
+
+    ):
+
+    # SUPER NEEDED LOOK AT MY CODE IN THIS DIR FROM
+    super(Provider, self).__init__(cloud=cloud, config=config)
+
+    self.scopes = 'https://www.googleapis.com/auth/drive'
+    self.clientSecretFile = 'client_secret.json'
+    self.applicationName = 'Drive API Python Quickstart'
+
         self.config = Config()
         self.clientSecretFile = self.generateKeyJson()
-        self.authInst = Authentication.Authentication(self.scopes, self.clientSecretFile, self.applicationName)
+    self.authInst = Authentication.Authentication(self.scopes,
+                                                  self.clientSecretFile,
+                                                  self.applicationName)
         self.credentials = self.authInst.get_credentials()
         self.http = self.credentials.authorize(httplib2.Http())
         self.driveService = self.discovery.build('drive', 'v3', http=self.http)
 
+
+def generateKeyJson(self):
+    credentials = self.config.credentials("storage", "gdrive")
+    data = {"installed": {
+        "client_id": credentials["client_id"]
+        data["installed"]["project_id"] = credentials["project_id"]
+    data["installed"]["auth_uri"] = credentials["auth_uri"]
+    data["installed"]["token_uri"] = credentials["token_uri"]
+    data["installed"]["client_secret"] = credentials["client_secret"]
+    data["installed"]["auth_provider_x509_cert_url"] = credentials[
+        "auth_provider_x509_cert_url"]
+    data["installed"]["redirect_uris"] = credentials["redirect_uris"]
+    }
+
+    #
+    # BUG: MUST BE IN ~/.cloudmesch/gdrive/
+    #
+    with open(self.clientSecretFile, 'w') as fp:
+        json.dump(data, fp)
+
     def put(self, filename):
         file_metadata = {'name': filename}
 
+        # BUG: linux has a command file that finds the mimetyp, see if this is better,
+        # mimetipse shoudl not just depend on filenames if possible
+
         mimetype = "image/jpeg"
-        mimetype =  Provider.fileTypetoMimeType(filename)
+        mimetype = Provider.fileTypetoMimeType(filename)
 
         filepath = filename
         media = MediaFileUpload(filepath,
                                 mimetype=mimetype)
         file = self.driveService.files().create(body=file_metadata,
-                                           media_body=media,
-                                           fields='id').execute()
+                                                media_body=media,
+                                                fields='id').execute()
         print('File ID: %s' % file.get('id'))
         print("put", filename)
-
 
     def get(self, filename):
         """
@@ -76,8 +90,8 @@ class Provider(object):
         except:
             filetype = ".jpg"
 
-
-        filepath = "google_download" + next + filetype # file name in our local folder
+        # possible bug: filepath prefix can be determined in yaml file
+        filepath = "google_download" + next + filetype  # file name in our local folder
 
         request = self.driveService.files().get_media(fileId=file_id)
         fh = io.BytesIO()
@@ -105,20 +119,22 @@ class Provider(object):
         try:
             self.driveService.files().delete(fileId=file_id).execute()
         except:  # errors.HttpError, error:
-            print ('An error occurred:')  # %s' % error
+            print('An error occurred:')  # %s' % error
         print("delete", filename, file_id)
 
     def createFolder(self, name):
-        file_metadata = {'name': name, 'mimeType': 'application/vnd.google-apps.folder'}
+        file_metadata = {'name': name,
+                         'mimeType': 'application/vnd.google-apps.folder'}
         file = self.driveService.files().create(body=file_metadata,
-                                           fields='id').execute()
+                                                fields='id').execute()
 
         # needs to store this in a mongoDB
-        print ('Folder ID: %s' % file.get('id'))
+        print('Folder ID: %s' % file.get('id'))
 
     def listFiles(self, size=10):
         self.size = size
-        results = self.driveService.files().list(pageSize=size, fields="nextPageToken, files(id, name,mimeType)").execute()
+        results = self.driveService.files().list(pageSize=size,
+                                                 fields="nextPageToken, files(id, name,mimeType)").execute()
         items = results.get('files', [])
         # print(items)
         if not items:
@@ -127,24 +143,37 @@ class Provider(object):
             print('Files:')
             for item in items:
                 # print('{0} ({1})'.format(item['name'], item['id']))
-                print("FileId : {id}, FileName : {name}, FileType : {mimeType}  ".format(**item))
+                print(
+                    "FileId : {id}, FileName : {name}, FileType : {mimeType}  ".format(
+                        **item))
         return items
 
 
-
-
-    def fileTypetoMimeType(self,filename):
+def fileTypetoMimeType(self, filename):
 
         fimidict = {"jpg": "image/jpeg",
-                  "mp4": "video/mp4",
-                  "mp3": "audio/mp3",
-                  "json": "text/json",
-                  "png": "image/png",
-                  "txt": "text/text",
-                  "csv": "text/csv"}
+                    "mp4": "video/mp4",
+                    "mp3": "audio/mp3",
+                    "json": "text/json",
+                    "png": "image/png",
+                    "txt": "text/text",
+                    "csv": "text/csv"}
         mimetype = "image/jpeg"
 
         filetype = filename.split(".")[-1]
+
+        #
+        # possible better method, this is quick and ok for now, but there is for example the linux function `file`
+        #
+
+        # For
+        # MIME
+        # types
+        # >> > import magic
+        # >> > mime = magic.Magic(mime=True)
+        # >> > mime.from_file("testdata/test.pdf")
+        # 'application/pdf'
+        # >> >
 
         try:
             mimetype = fimidict[filetype]
@@ -156,6 +185,3 @@ class Provider(object):
 
 p = Provider()
 print(p.listFiles())
-
-
-
