@@ -1,1 +1,4 @@
 boxsdk
+httplib2
+apiclient
+python-magic

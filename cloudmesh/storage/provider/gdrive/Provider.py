@@ -3,10 +3,13 @@ import json
 
 from cloudmesh.gdrive.Authentication import Authentication
 import httplib2
+#
+# TODO: why can we not use requests?
+#
 from apiclient.http import MediaFileUpload
 from apiclient.http import MediaIoBaseDownload
 from cloudmesh.management.configuration.config import Config
-from cloudmesh.comon.util import path_expand
+from cloudmesh.common.util import path_expand
 from cloudmesh.storage.StorageABC import StorageABC
 import magic
 
@@ -27,6 +30,9 @@ class Provider(StorageABC):
                                        self.clientSecretFile,
                                        self.applicationName)
         self.credentials = self.authInst.get_credentials()
+        #
+        # TODO: is thi secure? http?
+        #
         self.http = self.credentials.authorize(httplib2.Http())
         self.driveService = self.discovery.build('drive', 'v3', http=self.http)
         self.mime = magic.Magic(mime=True)
