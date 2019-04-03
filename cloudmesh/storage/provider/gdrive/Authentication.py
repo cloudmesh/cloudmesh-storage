@@ -43,6 +43,9 @@ class Authentication:
 
         """
         cwDir = os.getcwd()
+        #
+        # BUG: this is highly insecure and the file must be placed in ~/.cloudmesh as credentials coudl be forgotten
+        #
         credentialsDir = os.path.join(cwDir, '.credentials')
         if not os.path.exists(credentialsDir):
             os.makedirs(credentialsDir)
