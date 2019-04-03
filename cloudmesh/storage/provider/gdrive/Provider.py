@@ -6,6 +6,9 @@ import httplib2
 #
 # TODO: why can we not use requests?
 #
+# missing in requirements.txt and setup.py
+# for some reson this gives an error
+#
 from apiclient.http import MediaFileUpload
 from apiclient.http import MediaIoBaseDownload
 from cloudmesh.management.configuration.config import Config

@@ -3,10 +3,12 @@
 # https://developers.google.com/drive/api/v3/manage-uploads
 
 from __future__ import print_function
-import httplib2
+
 import os
 
-from apiclient import discovery
+#
+# missing in requirements.txt and setup.py
+#
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
@@ -50,6 +52,7 @@ class Authentication:
         #
         # BUG: this is highly insecure and the file must be placed in ~/.cloudmesh/gdrive as credentials coudl be forgotten
         # permissions must be set properly for the dir before a file is placed in it
+        # This is even discussed in the getting started bage in google.
         #
         credentials_dir = os.path.join(cwd, '.credentials')
         if not os.path.exists(credentials_dir):
