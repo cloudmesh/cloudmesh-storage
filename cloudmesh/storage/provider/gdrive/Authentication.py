@@ -11,6 +11,10 @@ from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 
+#
+# BUG: WE DO NOT USE argparse but docopts
+#
+
 try:
     import argparse
     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
@@ -44,7 +48,8 @@ class Authentication:
         """
         cwDir = os.getcwd()
         #
-        # BUG: this is highly insecure and the file must be placed in ~/.cloudmesh as credentials coudl be forgotten
+        # BUG: this is highly insecure and the file must be placed in ~/.cloudmesh/gdrive as credentials coudl be forgotten
+        # permissions must be set properly for the dir before a file is placed in it
         #
         credentialsDir = os.path.join(cwDir, '.credentials')
         if not os.path.exists(credentialsDir):
