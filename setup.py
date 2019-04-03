@@ -18,12 +18,13 @@
 from setuptools import find_packages, setup
 import io
 
+
 def readfile(filename):
     with io.open(filename, encoding="utf-8") as stream:
         return stream.read().split()
 
 
-#requiers = readfile ('requirements.txt')
+# requiers = readfile ('requirements.txt')
 #
 # add minimum requirements here
 #
@@ -41,14 +42,11 @@ version = readfile("VERSION")[0].strip()
 with open('README.md') as f:
     long_description = f.read()
 
-
-
 NAME = "cloudmesh.storage"
 DESCRIPTION = "A command called storage and foo for the cloudmesh shell"
 AUTHOR = "Gregor von Laszewski"
 AUTHOR_EMAIL = "laszewski@gmail.com"
 URL = "https://github.com/cloudmesh/cloudmesh.storage"
-
 
 setup(
     name=NAME,

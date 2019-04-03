@@ -53,7 +53,9 @@ def update_dict(elements):
         d.append(entry)
     return d
 
-
+#
+# bug does not follow named arguments in abc class
+#
 class Provider(StorageABC):
 
     def __init__(self):  # BUG parameters wrong

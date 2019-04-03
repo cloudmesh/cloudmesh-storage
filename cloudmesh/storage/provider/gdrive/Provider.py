@@ -16,7 +16,9 @@ from cloudmesh.common.util import path_expand
 from cloudmesh.storage.StorageABC import StorageABC
 import magic
 
-
+#
+# BUG: des not follow named arguments in abc class
+#
 class Provider(StorageABC):
 
     def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
