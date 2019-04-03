@@ -8,6 +8,7 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.terminal.Terminal import VERBOSE
 
+
 # noinspection PyBroadException
 class StorageCommand(PluginCommand):
 
@@ -102,9 +103,6 @@ class StorageCommand(PluginCommand):
         # BUG: some commands could be run on more than the first provider, such as list
         # thus the if condition needs to be reorganized
 
-
-
-
         if arguments.get:
             provider = Provider(arguments.storage)
 
@@ -139,7 +137,6 @@ class StorageCommand(PluginCommand):
                 result = provider.list(arguments.storage,
                                        arguments.SOURCE,
                                        arguments.recursive)
-
 
         elif arguments.delete:
 

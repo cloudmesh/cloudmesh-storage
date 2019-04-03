@@ -1,7 +1,7 @@
 import io
 import json
 
-from cloudmesh.gdrive.Authentication import Authentication
+from cloudmesh.storage.provider.gdrive.Authentication import Authentication
 import httplib2
 #
 # TODO: why can we not use requests?
@@ -12,6 +12,7 @@ from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.util import path_expand
 from cloudmesh.storage.StorageABC import StorageABC
 import magic
+
 
 class Provider(StorageABC):
 
@@ -49,6 +50,7 @@ class Provider(StorageABC):
             "auth_provider_x509_cert_url": credentials[
                 "auth_provider_x509_cert_url"],
             "redirect_uris": credentials["redirect_uris"]
+            }
         }
 
         #
@@ -155,5 +157,3 @@ class Provider(StorageABC):
                     "FileId : {id}, FileName : {name}, FileType : {mimeType}  ".format(
                         **item))
         return items
-
-

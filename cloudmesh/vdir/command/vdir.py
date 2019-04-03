@@ -2,7 +2,7 @@ from __future__ import print_function
 from cloudmesh.shell.command import command
 from cloudmesh.shell.command import PluginCommand
 from cloudmesh.vdir.api.manager import Vdir
-from cloudmesh.common.console import  Console
+from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
 from pprint import pprint
 
@@ -65,9 +65,7 @@ class VdirCommand(PluginCommand):
 
         print(arguments)
 
-        m = Manager()
-
-
+        d = Vdir()
 
         Console.error("This is just a sample")
         return ""

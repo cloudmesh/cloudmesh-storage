@@ -3,6 +3,7 @@
 
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 
+
 class Vdir(object):
 
     def __init__(self):

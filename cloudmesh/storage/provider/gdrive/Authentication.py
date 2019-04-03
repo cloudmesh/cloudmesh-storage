@@ -1,6 +1,6 @@
 # all this code has been taken and modified from 
-#https://github.com/samlopezf/google-drive-api-tutorial
-#https://developers.google.com/drive/api/v3/manage-uploads
+# https://github.com/samlopezf/google-drive-api-tutorial
+# https://developers.google.com/drive/api/v3/manage-uploads
 
 from __future__ import print_function
 import httplib2
@@ -17,23 +17,23 @@ from oauth2client.file import Storage
 
 try:
     import argparse
+
     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
 except ImportError:
     flags = None
 
 
 class Authentication:
-
     """
         Keeping a separate python file or class just for 
         authentication 
     """
 
-    def __init__(self, scopes, clientSecretFile, applicationName):
-        
+    def __init__(self, scopes, client_secret_file, application_name):
+
         self.scopes = scopes
-        self.clientSecretFile = clientSecretFile
-        self.applicationName = applicationName
+        self.client_secret_file = client_secret_file
+        self.application_name = application_name
 
     def get_credentials(self):
         """
@@ -46,22 +46,23 @@ class Authentication:
             Here the authentication type is OAuth2
 
         """
-        cwDir = os.getcwd()
+        cwd = os.getcwd()
         #
         # BUG: this is highly insecure and the file must be placed in ~/.cloudmesh/gdrive as credentials coudl be forgotten
         # permissions must be set properly for the dir before a file is placed in it
         #
-        credentialsDir = os.path.join(cwDir, '.credentials')
-        if not os.path.exists(credentialsDir):
-            os.makedirs(credentialsDir)
-        credentialsPath = os.path.join(credentialsDir,'google-drive-credentials.json')
-                                       
+        credentials_dir = os.path.join(cwd, '.credentials')
+        if not os.path.exists(credentials_dir):
+            os.makedirs(credentials_dir)
+        credentials_path = os.path.join(credentials_dir,
+                                       'google-drive-credentials.json')
 
-        store = Storage(credentialsPath)
+        store = Storage(credentials_path)
         credentials = store.get()
         if not credentials or credentials.invalid:
-            flow = client.flow_from_clientsecrets(self.clientSecretFile, self.scopes)
-            flow.user_agent = self.applicationName
+            flow = client.flow_from_clientsecrets(self.client_secret_file,
+                                                  self.scopes)
+            flow.user_agent = self.application_name
             if flags:
                 credentials = tools.run_flow(flow, store, flags)
 
