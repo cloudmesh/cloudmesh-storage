@@ -25,7 +25,7 @@ class Provider(object):
         self.container = credentials['container']
         self.name = name
 
-    def dict(self, elements, kind=None):
+    def update_dict(self, elements, kind=None):
         # this is an internal function for building dict object
         d = []
         for element in elements:
@@ -151,7 +151,7 @@ class Provider(object):
                             return Console.error("File does not exist: {file}".format(file=destination[1:]))
                     else:
                         return Console.error("Invalid arguments, recursive not applicable")
-        dict_obj = self.dict(obj_list)
+        dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
         return dict_obj
 
@@ -271,7 +271,7 @@ class Provider(object):
             blob_name = directory[1:] + '/dummy.txt'
             self.block_blob_service.create_blob_from_bytes(self.container, blob_name, data)
             blob_cre.append(self.block_blob_service.get_blob_to_bytes(self.container, blob_name))
-            dict_obj = self.dict(blob_cre)
+            dict_obj = self.update_dict(blob_cre)
         return dict_obj
 
     def search(self, directory, filename, recursive):
@@ -308,7 +308,7 @@ class Provider(object):
                             #break
             if not file_found:
                 return Console.error("File does not exist: {file}".format(file=filename))
-        dict_obj = self.dict(obj_list)
+        dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
         return dict_obj
 
@@ -385,7 +385,7 @@ class Provider(object):
                         return Console.error("File does not exist: {file}".format(file=source[1:]))
                 else:
                     return Console.error("Invalid arguments, recursive not applicable")
-        dict_obj = self.dict(obj_list)
+        dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
         return dict_obj
 
