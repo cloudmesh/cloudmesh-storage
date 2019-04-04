@@ -258,6 +258,8 @@ class Provider(object):
                 else:
                     return Console.error("File does not exist: {file}".format(file=blob_file))
 
+        # BUG does not return a dict
+
     def create_dir(self, directory):
         '''
         Creates a directory in the cloud service
