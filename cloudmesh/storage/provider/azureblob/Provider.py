@@ -11,16 +11,12 @@ from cloudmesh.management.configuration.config import Config
 
 class Provider(object):
 
-    def __init__(self, name=None):
-        if name is None:
-            raise ValueError("service name not specified")
-        config = Config()
-        credentials = config['cloudmesh']['storage'][name]['credentials']
+    def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+        super().__init__(cloud=cloud, config=config)
         self.service = BlockBlobService(
-            account_name=credentials['account_name'],
-            account_key=credentials['account_key'])
-        self.container = credentials['container']
-        self.name = name
+            account_name=self.credentials['account_name'],
+            account_key=self.credentials['account_key'])
+        self.container = self.credentials['container']
 
     def update_dict(self, elements, kind=None):
         # this is an internal function for building dict object
@@ -29,12 +25,14 @@ class Provider(object):
             entry = element.__dict__
             entry["cm"] = {
                 "kind": "storage",
-                "cloud": self.name,
+                "cloud": self.cloud,
                 "name": element.name
             }
             element.properties = element.properties.__dict__
-            entry["cm"]["created"] = element.properties["creation_time"].isoformat()[0]
-            entry["cm"]["updated"] = element.properties["last_modified"].isoformat()[0]
+            entry["cm"]["created"] = \
+            element.properties["creation_time"].isoformat()[0]
+            entry["cm"]["updated"] = \
+            element.properties["last_modified"].isoformat()[0]
             entry["cm"]["size"] = element.properties["content_length"]
             del element.properties["copy"]
             del element.properties["lease"]
@@ -42,7 +40,8 @@ class Provider(object):
             del element.properties["creation_time"]
             del element.properties["last_modified"]
             if element.properties["deleted_time"] is not None:
-                entry["cm"]["deleted"] = element.properties["deleted_time"].isoformat()
+                entry["cm"]["deleted"] = element.properties[
+                    "deleted_time"].isoformat()
                 del element.properties["deleted_time"]
             d.append(entry)
         return d
@@ -85,7 +84,7 @@ class Provider(object):
         """
 
         HEADING()
-        #Determine service path - file or folder
+        # Determine service path - file or folder
         blob_file, blob_folder = self.cloud_path(destination)
         print("File  : ", blob_file)
         print("Folder: ", blob_folder)
@@ -94,67 +93,95 @@ class Provider(object):
         src_path = self.local_path(source)
 
         if not os.path.isdir(src_path):
-            return Console.error("Directory not found: {directory}".format(directory=src_path))
+            return Console.error(
+                "Directory not found: {directory}".format(directory=src_path))
         else:
             obj_list = []
             if blob_folder is None:
-                #file only specified
+                # file only specified
                 if not recursive:
                     if self.service.exists(self.container, blob_file):
                         download_path = os.path.join(src_path, blob_file)
-                        obj_list.append(self.service.get_blob_to_path(self.container, blob_file, download_path))
+                        obj_list.append(
+                            self.service.get_blob_to_path(self.container,
+                                                          blob_file,
+                                                          download_path))
                     else:
-                        return Console.error("File does not exist: {file}".format(file=blob_file))
+                        return Console.error(
+                            "File does not exist: {file}".format(
+                                file=blob_file))
                 else:
                     file_found = False
                     get_gen = self.service.list_blobs(self.container)
                     for blob in get_gen:
                         if os.path.basename(blob.name) == blob_file:
                             download_path = os.path.join(src_path, blob_file)
-                            obj_list.append(self.service.get_blob_to_path(self.container, blob.name, download_path))
+                            obj_list.append(
+                                self.service.get_blob_to_path(self.container,
+                                                              blob.name,
+                                                              download_path))
                             file_found = True
                     if not file_found:
-                        return Console.error("File does not exist: {file}".format(file=blob_file))
+                        return Console.error(
+                            "File does not exist: {file}".format(
+                                file=blob_file))
             else:
                 if blob_file is None:
-                    #Folder only specified
+                    # Folder only specified
                     if not recursive:
                         file_found = False
                         get_gen = self.service.list_blobs(self.container)
                         for blob in get_gen:
                             if os.path.dirname(blob.name) == blob_folder:
-                                download_path = os.path.join(src_path, os.path.basename(blob.name))
-                                obj_list.append(self.service.get_blob_to_path(self.container, blob.name, download_path))
+                                download_path = os.path.join(src_path,
+                                                             os.path.basename(
+                                                                 blob.name))
+                                obj_list.append(self.service.get_blob_to_path(
+                                    self.container, blob.name, download_path))
                                 file_found = True
                         if not file_found:
-                            return Console.error("Directory does not exist: {directory}".format(directory=blob_folder))
+                            return Console.error(
+                                "Directory does not exist: {directory}".format(
+                                    directory=blob_folder))
                     else:
                         file_found = False
                         srch_gen = self.service.list_blobs(self.container)
                         for blob in srch_gen:
                             if (os.path.dirname(blob.name) == blob_folder) or \
-                                (os.path.commonpath([blob.name, blob_folder]) == blob_folder):
-                                download_path = os.path.join(src_path, os.path.basename(blob.name))
-                                obj_list.append(self.service.get_blob_to_path(self.container, blob.name, download_path))
+                                    (os.path.commonpath([blob.name,
+                                                         blob_folder]) == blob_folder):
+                                download_path = os.path.join(src_path,
+                                                             os.path.basename(
+                                                                 blob.name))
+                                obj_list.append(self.service.get_blob_to_path(
+                                    self.container, blob.name, download_path))
                                 file_found = True
                         if not file_found:
-                            return Console.error("Directory does not exist: {directory}".format(directory=blob_folder))
+                            return Console.error(
+                                "Directory does not exist: {directory}".format(
+                                    directory=blob_folder))
                 else:
                     # SOURCE is specified with Directory and file
                     if not recursive:
                         if self.service.exists(self.container, destination[1:]):
                             download_path = os.path.join(src_path, blob_file)
-                            obj_list.append(self.service.get_blob_to_path(self.container, destination[1:], download_path))
+                            obj_list.append(
+                                self.service.get_blob_to_path(self.container,
+                                                              destination[1:],
+                                                              download_path))
                         else:
-                            return Console.error("File does not exist: {file}".format(file=destination[1:]))
+                            return Console.error(
+                                "File does not exist: {file}".format(
+                                    file=destination[1:]))
                     else:
-                        return Console.error("Invalid arguments, recursive not applicable")
+                        return Console.error(
+                            "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
         return dict_obj
 
     def put(self, source, destination, recursive):
-        '''
+        """
         Uploads file from Source(local) to Destination(Service)
 
         :param source: the source can be a directory or file
@@ -163,12 +190,13 @@ class Provider(object):
                           subdirectories in the specified source
         :return: dict
 
-        '''
+        """
 
         HEADING()
-        #Determine service path - file or folder
+        # Determine service path - file or folder
         if self.service.exists(self.container, destination[1:]):
-            return Console.error("Directory does not exist: {directory}".format(directory=destination))
+            return Console.error("Directory does not exist: {directory}".format(
+                directory=destination))
         else:
             blob_folder = destination[1:]
             blob_file = None
@@ -180,10 +208,11 @@ class Provider(object):
             dict_obj = []
             if os.path.isfile(src_path):
                 print("PUT test", src_path)
-                #File only specified
+                # File only specified
                 upl_path = src_path
                 upl_file = blob_folder + '/' + os.path.basename(src_path)
-                obj = self.service.create_blob_from_path(self.container, upl_file, upl_path)
+                obj = self.service.create_blob_from_path(self.container,
+                                                         upl_file, upl_path)
                 # BUG duplicated code
                 entry = obj.__dict__
                 entry["cm"] = {}
@@ -196,28 +225,34 @@ class Provider(object):
                 del obj.last_modified
                 dict_obj.append(entry)
             else:
-                #Folder only specified - Upload all files from folder
+                # Folder only specified - Upload all files from folder
                 if recursive:
                     for file in os.listdir(src_path):
                         if os.path.isfile(os.path.join(src_path, file)):
                             upl_path = os.path.join(src_path, file)
                             upl_file = blob_folder + '/' + file
-                            obj = self.service.create_blob_from_path(self.container, upl_file, upl_path)
+                            obj = self.service.create_blob_from_path(
+                                self.container, upl_file, upl_path)
                             # BUG duplicated code
                             entry = obj.__dict__
                             entry["cm"] = {}
                             entry["cm"]["kind"] = "storage"
                             entry["cm"]["cloud"] = "azure"
                             entry["cm"]["name"] = upl_file
-                            entry["cm"]["created"] = obj.last_modified.isoformat()
-                            entry["cm"]["updated"] = obj.last_modified.isoformat()
+                            entry["cm"][
+                                "created"] = obj.last_modified.isoformat()
+                            entry["cm"][
+                                "updated"] = obj.last_modified.isoformat()
                             entry["cm"]["size"] = os.stat(upl_path).st_size
                             del obj.last_modified
                             dict_obj.append(entry)
                 else:
-                    return Console.error("Source is a folder, recursive expected in arguments")
+                    return Console.error(
+                        "Source is a folder, recursive expected in arguments")
         else:
-            return Console.error("Directory or File does not exist: {directory}".format(directory=src_path))
+            return Console.error(
+                "Directory or File does not exist: {directory}".format(
+                    directory=src_path))
         pprint(dict_obj)
         return dict_obj
 
@@ -240,20 +275,23 @@ class Provider(object):
             if self.service.exists(self.container, blob_file):
                 self.service.delete_blob(self.container, blob_file)
             else:
-                return Console.error("File does not exist: {file}".format(file=blob_file))
+                return Console.error(
+                    "File does not exist: {file}".format(file=blob_file))
         else:
             if blob_file is None:
-                #SOURCE specified is Folder only
+                # SOURCE specified is Folder only
                 del_gen = self.service.list_blobs(self.container)
                 for blob in del_gen:
-                    if os.path.commonpath([blob.name, blob_folder]) == blob_folder:
+                    if os.path.commonpath(
+                            [blob.name, blob_folder]) == blob_folder:
                         self.service.delete_blob(self.container, blob.name)
             else:
-                #Source specified is both file and directory
+                # Source specified is both file and directory
                 if self.service.exists(self.container, blob_file):
                     self.service.delete_blob(self.container, blob_file)
                 else:
-                    return Console.error("File does not exist: {file}".format(file=blob_file))
+                    return Console.error(
+                        "File does not exist: {file}".format(file=blob_file))
 
         # BUG does not return a dict
 
@@ -268,11 +306,12 @@ class Provider(object):
 
         HEADING()
         if self.service.exists(self.container):
-            blob_cre =[]
+            blob_cre = []
             data = b' '
             blob_name = directory[1:] + '/dummy.txt'
             self.service.create_blob_from_bytes(self.container, blob_name, data)
-            blob_cre.append(self.service.get_blob_to_bytes(self.container, blob_name))
+            blob_cre.append(
+                self.service.get_blob_to_bytes(self.container, blob_name))
             dict_obj = self.update_dict(blob_cre)
         return dict_obj
 
@@ -298,18 +337,21 @@ class Provider(object):
                 if blob.name == srch_file:
                     obj_list.append(blob)
             if not file_found:
-                return Console.error("File does not exist: {file}".format(file=filename))
+                return Console.error(
+                    "File does not exist: {file}".format(file=filename))
         else:
             file_found = False
             for blob in srch_gen:
                 if re.search('/', blob.name) is not None:
                     if os.path.basename(blob.name) == filename:
-                        if os.path.commonpath([blob.name, directory[1:]]) == directory[1:]:
+                        if os.path.commonpath(
+                                [blob.name, directory[1:]]) == directory[1:]:
                             obj_list.append(blob)
                             file_found = True
-                            #break
+                            # break
             if not file_found:
-                return Console.error("File does not exist: {file}".format(file=filename))
+                return Console.error(
+                    "File does not exist: {file}".format(file=filename))
         dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
         return dict_obj
@@ -332,17 +374,19 @@ class Provider(object):
         print("File  : ", blob_file)
         print("Folder: ", blob_folder)
 
-        obj_list =[]
+        obj_list = []
         if blob_folder is None:
             # SOURCE specified is File only
             if not recursive:
                 if self.service.exists(self.container, blob_file):
-                    blob_prop = self.service.get_blob_properties(self.container, blob_file)
+                    blob_prop = self.service.get_blob_properties(self.container,
+                                                                 blob_file)
                     blob_size = self.service.get_blob_properties(self.container,
                                                                  blob_file).properties.content_length
                     obj_list.append(blob_prop)
                 else:
-                    return Console.error("File does not exist: {file}".format(file=blob_file))
+                    return Console.error(
+                        "File does not exist: {file}".format(file=blob_file))
             else:
                 file_found = False
                 srch_gen = self.service.list_blobs(self.container)
@@ -351,12 +395,13 @@ class Provider(object):
                         obj_list.append(blob)
                         file_found = True
                 if not file_found:
-                    return Console.error("File does not exist: {file}".format(file=blob_file))
+                    return Console.error(
+                        "File does not exist: {file}".format(file=blob_file))
         else:
             if blob_file is None:
-                #SOURCE specified is Directory only
+                # SOURCE specified is Directory only
                 if not recursive:
-                    print("No recur print", self.name)
+                    print("No recur print", self.cloud)
                     file_found = False
                     srch_gen = self.service.list_blobs(self.container)
                     for blob in srch_gen:
@@ -364,30 +409,39 @@ class Provider(object):
                             obj_list.append(blob)
                             file_found = True
                     if not file_found:
-                        return Console.error("Directory does not exist: {directory}".format(directory=blob_folder))
+                        return Console.error(
+                            "Directory does not exist: {directory}".format(
+                                directory=blob_folder))
                 else:
                     file_found = False
                     srch_gen = self.service.list_blobs(self.container)
                     for blob in srch_gen:
                         if (os.path.dirname(blob.name) == blob_folder) or \
-                        (os.path.commonpath([blob.name, blob_folder]) == blob_folder):
+                                (os.path.commonpath(
+                                    [blob.name, blob_folder]) == blob_folder):
                             obj_list.append(blob)
                             file_found = True
                     if not file_found:
-                        return Console.error("Directory does not exist: {directory}".format(directory=blob_folder))
+                        return Console.error(
+                            "Directory does not exist: {directory}".format(
+                                directory=blob_folder))
             else:
-                #SOURCE is specified with Directory and file
+                # SOURCE is specified with Directory and file
                 if not recursive:
                     if self.service.exists(self.container, source[1:]):
-                        blob_prop = self.service.get_blob_properties(self.container, source[1:])
-                        blob_size = self.service.get_blob_properties(self.container,
-                                                                                source[1:]).properties.content_length
+                        blob_prop = self.service.get_blob_properties(
+                            self.container, source[1:])
+                        blob_size = self.service.get_blob_properties(
+                            self.container,
+                            source[1:]).properties.content_length
                         obj_list.append(blob_prop)
                     else:
-                        return Console.error("File does not exist: {file}".format(file=source[1:]))
+                        return Console.error(
+                            "File does not exist: {file}".format(
+                                file=source[1:]))
                 else:
-                    return Console.error("Invalid arguments, recursive not applicable")
+                    return Console.error(
+                        "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
         return dict_obj
-
