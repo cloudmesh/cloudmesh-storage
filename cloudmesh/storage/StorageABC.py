@@ -8,8 +8,7 @@ class StorageABC(metaclass=ABCMeta):
     def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         try:
             self.config = Config()
-            self.credentials = config['cloudmesh']['storage'][cloud][
-                'credentials']
+            self.credentials = config['cloudmesh']['storage'][cloud]['credentials']
             self.kind = config['cloudmesh']['storage']['kind']
         except:
             raise ValueError(f"storage service {cloud} not specified")

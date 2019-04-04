@@ -110,6 +110,7 @@ class Provider(StorageABC):
                     files_dict = update_dict(file)
                     return files_dict
                 else:
+                    # possible BUG file id type miss match bool, str?
                     file = self.client.file(file_id).update_contents(sourcepath)
                     files_dict = update_dict(file)
                     return files_dict
@@ -121,6 +122,7 @@ class Provider(StorageABC):
                             sourcepath + '/' + s)
                         uploaded.append(file)
                     else:
+                        #  possible BUG file id type miss match bool, str?
                         file = self.client.file(s_id).update_contents(
                             sourcepath + '/' + s)
                         uploaded.append(file)
@@ -157,6 +159,7 @@ class Provider(StorageABC):
                     folder_id = get_id(target, results, 'folder')
                     if folder_id:
                         files = [item for item in
+                                 #  possible BUG file id type miss match bool, str?
                                  self.client.folder(folder_id).get_items()]
                     else:
                         Console.error("Source directory not found.")
@@ -179,6 +182,7 @@ class Provider(StorageABC):
                 else:
                     file_id = get_id(target, results, 'file')
                     if file_id:
+                        #  possible BUG file id type miss match bool, str?
                         file = self.client.file(file_id).get()
                         with open(dest + "/" + file.name, 'wb') as f:
                             self.client.file(file.id).download_to(f)
@@ -291,6 +295,7 @@ class Provider(StorageABC):
                                                           type='folder')]
                     folder_id = get_id(path[len(path) - i], folders, 'folder')
                     if folder_id:
+                        #  possible BUG file id type miss match bool, str?
                         results = self.client.folder(folder_id).get_items()
                         contents = [result for result in results]
                         for c in contents:
