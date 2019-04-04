@@ -389,19 +389,3 @@ class Provider(object):
         pprint(dict_obj)
         return dict_obj
 
-    def service_path(self, src_path):
-        if re.search('.', os.path.basename(src_path)) is None:
-            print('test')
-            self.src_folder = src_path[1:]
-            self.src_file = None
-        else:
-            self.src_file = os.path.basename(src_path)
-            if re.search('/', src_path) is None:
-                self.src_folder = None
-            else:
-                src_folder = os.path.dirname(src_path)[1:]
-        return self.src_file, self.src_folder
-
-    def functest(self, source, recursive):
-        HEADING()
-        print('provider output', source, recursive)
