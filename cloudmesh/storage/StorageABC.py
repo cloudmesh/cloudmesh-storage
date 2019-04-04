@@ -42,7 +42,8 @@ class StorageABC(metaclass=ABCMeta):
 
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
-        :param destination: the destination which either can be a directory or file
+        :param destination: the destination which either can be a directory or
+                            file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
         :return: dict
@@ -55,7 +56,8 @@ class StorageABC(metaclass=ABCMeta):
 
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
-        :param destination: the destination which either can be a directory or file
+        :param destination: the destination which either can be a directory or
+                            file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
         :return: dict

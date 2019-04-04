@@ -137,7 +137,7 @@ class Provider(object):
         dirFilesList = []
         trimmedSource = self.trimFileNamePath(source)
 
-        if recursive == False:
+        if not recursive:
             # call will not be recursive and need to look only in the specified directory
             for obj in objs:
                 if obj.key.startswith(self.trimFileNamePath(trimmedSource)):

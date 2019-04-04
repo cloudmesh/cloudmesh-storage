@@ -164,6 +164,9 @@ class Provider(StorageABC):
                 for f in files:
                     if f.type == 'file':
                         file = self.client.file(f.id).get()
+                        #
+                        # BUG F IS ALREADE DEFINED
+                        #
                         with open(dest + "/" + file.name, 'wb') as f:
                             self.client.file(file.id).download_to(f)
                             downloads.append(file)

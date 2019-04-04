@@ -194,6 +194,9 @@ class Provider(StorageABC):
     def list(self, service='gdrive', source=None, recursive=False):
         size = 10
         if recursive:
+            #
+            # BUG MUST ALSO BE SET IN INIT MAYBE TO 10000000, ISSUE IS LIST SHOULD PROBBALY GIVE ALL
+            #
             self.size = size
             results = self.driveService.files().list(pageSize=size,
                                                      fields="nextPageToken, files(id, name,mimeType)").execute()
@@ -248,7 +251,7 @@ class Provider(StorageABC):
     def uploadFile(self, source, filename, parentId):
         file_metadata = {'name': filename, 'parents': [parentId]}
         self.driveService = self.driveService
-        if (source == None):
+        if (source is None):
             filepath = filename
         else:
             filepath = source + '/' + filename

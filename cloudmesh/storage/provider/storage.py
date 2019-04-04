@@ -7,7 +7,11 @@ from cloudmesh.abstractclass.StorageABC import StorageABC
 
 class Provider(StorageABC):
 
-    def __init__(self, cloud, config):
+    def __init__(self, cloud=None, config=None):
+        #
+        # BUG we should place logic for kind, name, cloud here so we can use super __init__
+        #
+
         '''
         if cloud == 'google':
             self.p = GoogleStorageProvider

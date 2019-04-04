@@ -38,38 +38,49 @@ class StorageCommand(PluginCommand):
 
 
           Options:
-              --storage=SERVICE  specify the cloud service name like aws or azure or box or google
+              --storage=SERVICE  specify the cloud service name like aws or
+                                 azure or box or google
+
           Description:
-                commands used to upload, download, list files on different cloud storage services.
+                commands used to upload, download, list files on different
+                cloud storage services.
 
                 storage put [options..]
-                    Uploads the file specified in the filename to specified cloud from the SOURCEDIR.
+                    Uploads the file specified in the filename to specified
+                    cloud from the SOURCEDIR.
 
                 storage get [options..]
-                    Downloads the file specified in the filename from the specified cloud to the DESTDIR.
+                    Downloads the file specified in the filename from the
+                    specified cloud to the DESTDIR.
 
                 storage delete [options..]
-                    Deletes the file specified in the filename from the specified cloud.
+                    Deletes the file specified in the filename from the
+                    specified cloud.
 
                 storage list [options..]
-                    lists all the files from the container name specified on the specified cloud.
+                    lists all the files from the container name specified on
+                    the specified cloud.
 
                 storage create dir [options..]
-                    creates a folder with the directory name specified on the specified cloud.
+                    creates a folder with the directory name specified on the
+                    specified cloud.
 
                 storage search [options..]
-                    searches for the source in all the folders on the specified cloud.
+                    searches for the source in all the folders on the specified
+                    cloud.
 
                 sync SOURCE DESTINATION
                     puts the content of source to the destination.
-                    If --recursive is specified this is done recursively from the source
+                    If --recursive is specified this is done recursively from
+                       the source
                     If --async is specified, this is done asyncronously
-                    If a name is specified, the process can also be monitored with
-                       the status command by name.
+                    If a name is specified, the process can also be monitored
+                       with the status command by name.
                     If the anme is not specified all date is monitored.
 
                 sync status
-                    The status for the asynchronous sync can be seen with this command
+                    The status for the asynchronous sync can be seen with this
+                    command
 
                 config list
                     Lists the configures storage services in the yaml file
@@ -100,7 +111,8 @@ class StorageCommand(PluginCommand):
         arguments.storage = Parameter.expand(arguments.storage)
 
         #
-        # BUG: some commands could be run on more than the first provider, such as list
+        # BUG: some commands could be run on more than the first provider,
+        # such as list
         # thus the if condition needs to be reorganized
 
         if arguments.get:
