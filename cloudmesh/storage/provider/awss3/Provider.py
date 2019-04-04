@@ -8,6 +8,9 @@ from cloudmesh.common.docdict import docdict
 from pathlib import Path
 from os.path import dirname, basename
 
+#
+# BUG return returns a list of dicts, see ABC class
+#
 
 class Provider(object):
 

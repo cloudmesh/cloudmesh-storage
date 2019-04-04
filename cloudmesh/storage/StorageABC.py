@@ -23,6 +23,7 @@ class StorageABC(metaclass=ABCMeta):
         :return: dict
         """
         raise NotImplementedError
+        return {}
 
     def list(self, service=None, source=None, recursive=False):
         """
@@ -35,6 +36,7 @@ class StorageABC(metaclass=ABCMeta):
         :return: dict
         """
         raise NotImplementedError
+        return []
 
     def put(self, service=None, source=None, destination=None, recusrive=False):
         """
@@ -49,6 +51,7 @@ class StorageABC(metaclass=ABCMeta):
         :return: dict
         """
         raise NotImplementedError
+        return []
 
     def get(self, service=None, source=None, destination=None, recusrive=False):
         """
@@ -63,6 +66,7 @@ class StorageABC(metaclass=ABCMeta):
         :return: dict
         """
         raise NotImplementedError
+        return []
 
     def delete(self, service=None, source=None, recusrive=False):
         """
@@ -75,6 +79,7 @@ class StorageABC(metaclass=ABCMeta):
         :return: dict
         """
         raise NotImplementedError
+        return []
 
     def search(self, service=None, directory=None, filename=None,
                recusrive=False):
@@ -88,3 +93,4 @@ class StorageABC(metaclass=ABCMeta):
         :return: dict
         """
         raise NotImplementedError
+        return []

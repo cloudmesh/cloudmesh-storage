@@ -5,6 +5,10 @@ from cloudmesh.abstractclass.StorageABC import StorageABC
 # from cloudmesh.bostorage.box.Provider import Provider as GoogleBoxProvider
 
 
+#
+# BUG return returns a list of dicts, see ABC class
+#
+
 class Provider(StorageABC):
 
     def __init__(self, cloud=None, config=None):

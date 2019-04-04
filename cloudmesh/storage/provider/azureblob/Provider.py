@@ -8,7 +8,9 @@ from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.management.configuration.config import Config
 
-
+#
+# BUG return returns a list of dicts, see ABC class
+#
 class Provider(object):
 
     def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):

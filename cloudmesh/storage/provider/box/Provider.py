@@ -7,6 +7,9 @@ from pprint import pprint
 import os
 from cloudmesh.storage.StorageABC import StorageABC
 
+#
+# BUG return returns a list of dicts, see ABC class
+#
 
 def get_id(source, results, type):
     if not any((result.name == source and result.type == type) for result in
@@ -127,6 +130,7 @@ class Provider(StorageABC):
                 return files_dict
         except Exception as e:
             Console.error(e)
+            return []
 
     def get(self, source, destination, recursive=False):
         """
@@ -187,6 +191,7 @@ class Provider(StorageABC):
                             return files_dict
         except Exception as e:
             Console.error(e)
+            return []
 
     def search(self, directory, filename, recursive=False):
         """
@@ -230,6 +235,7 @@ class Provider(StorageABC):
                     Console.error("No files found.")
         except Exception as e:
             Console.error(e)
+            return []
 
     def create_dir(self, directory):
         """
@@ -263,6 +269,7 @@ class Provider(StorageABC):
                     Console.error("Destination directory not found")
         except Exception as e:
             Console.error(e)
+            return []
 
     def list(self, directory, recursive=False):
         """
@@ -307,6 +314,7 @@ class Provider(StorageABC):
             return list_dict
         except Exception as e:
             Console.error(e)
+            return []
 
     def delete(self, source):
         """
@@ -339,3 +347,4 @@ class Provider(StorageABC):
                     self.client.file(item_id).delete()
         except Exception as e:
             Console.error(e)
+            return []
