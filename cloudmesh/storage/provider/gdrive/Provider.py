@@ -1,24 +1,16 @@
-import io
+import os, io
 import json
 
 from cloudmesh.storage.provider.gdrive.Authentication import Authentication
-import httplib2
-#
-# TODO: why can we not use requests?
-#
-# missing in requirements.txt and setup.py
-# for some reson this gives an error
-#
-from apiclient.http import MediaFileUpload
-from apiclient.http import MediaIoBaseDownload
 from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.util import path_expand
 from cloudmesh.storage.StorageABC import StorageABC
-import magic
 
-#
-# BUG: des not follow named arguments in abc class
-#
+import httplib2
+from apiclient.http import MediaFileUpload
+from apiclient.http import MediaIoBaseDownload
+import mimetypes
+
 class Provider(StorageABC):
 
     def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
@@ -31,17 +23,13 @@ class Provider(StorageABC):
         self.applicationName = 'Drive API Python Quickstart'
 
         self.config = Config()
-        self.clientSecretFile = self.generateKeyJson()
+        self.generateKeyJson()
         self.authInst = Authentication(self.scopes,
                                        self.clientSecretFile,
                                        self.applicationName)
         self.credentials = self.authInst.get_credentials()
-        #
-        # TODO: is thi secure? http?
-        #
         self.http = self.credentials.authorize(httplib2.Http())
         self.driveService = self.discovery.build('drive', 'v3', http=self.http)
-        self.mime = magic.Magic(mime=True)
 
     def generateKeyJson(self):
         credentials = self.config.credentials("storage", "gdrive")
@@ -57,57 +45,178 @@ class Provider(StorageABC):
             "redirect_uris": credentials["redirect_uris"]
             }
         }
-
-        #
-        # BUG: MUST BE IN ~/.cloudmesch/gdrive/
-        #
         with open(self.clientSecretFile, 'w') as fp:
             json.dump(data, fp)
 
-    def put(self, filename):
-        file_metadata = {'name': filename}
+    def put(self, service=None, source=None, destination=None, recursive=False):
+        if recursive:
+            pass
+        else:
+            if(os.path.isdir(source)):
+                queryParams = "name='" + destination + "' and trashed=false"
+                sourceid = self.driveService.files().list(q=queryParams,
+                                                     fields="nextPageToken, files(id, name, mimeType)").execute()
+                fileParentId = None
+                print(sourceid)
+                if(len(sourceid['files'])==0):
+                    parentFile = self.create_dir(directory=destination)
+                    fileParentId = parentFile['id']
+                else:
+                    print(sourceid['files'][0]['id'])
+                    fileParentId = sourceid['files'][0]['id']
 
-        # BUG: linux has a command file that finds the mimetyp, see if this is better,
-        # mimetipse shoudl not just depend on filenames if possible
+                for f in os.listdir(source):
+                    if os.path.isfile(os.path.join(source, f)):
+                        self.uploadFile(source=source, filename=f, parentId=fileParentId)
+            else:
+                queryParams = "name='" + destination + "' and trashed=false"
+                sourceid = self.driveService.files().list(q=queryParams,
+                                                     fields="nextPageToken, files(id, name, mimeType)").execute()
+                fileParentId = None
+                print(sourceid)
+                if (len(sourceid['files']) == 0):
+                    parentFile = self.create_dir(directory=destination)
+                    fileParentId = parentFile['id']
+                else:
+                    print(sourceid['files'][0]['id'])
+                    fileParentId = sourceid['files'][0]['id']
 
-        mimetype = self.mime.from_file(filename)
+                self.uploadFile(source=None, filename=source, parentId=fileParentId)
 
-        filepath = filename
-        media = MediaFileUpload(filepath,
-                                mimetype=mimetype)
-        file = self.driveService.files().create(body=file_metadata,
-                                                media_body=media,
-                                                fields='id').execute()
-        print('File ID: %s' % file.get('id'))
-        print("put", filename)
+    def get(self, service=None, source=None, destination=None, recursive=False):
+        if not os.path.exists(source):
+            os.makedirs(source)
 
-    def get(self, filename):
-        """
-                    Searching all the files in GDrive
-                    and then comparing the given filename with
-                    the file in cloud and then downloading it
-                """
+        if recursive:
+            queryParams = "name='" + destination + "' and trashed=false"
+            sourceid = self.driveService.files().list(q=queryParams,
+                                                 fields="nextPageToken, files(id, name, mimeType)").execute()
+            print(sourceid)
+            fileId = sourceid['files'][0]['id']
+            fileName = sourceid['files'][0]['name']
+            mimeType = sourceid['files'][0]['mimeType']
+            if mimeType == 'application/vnd.google-apps.folder':
+                items = self.list(source=destination, recursive=False)
+                for item in items:
+                    if (item['mimeType'] != 'application/vnd.google-apps.folder'):
+                        print("dbsakjdjksa")
+                        print(item['mimeType'])
+                        self.download(source, item['id'], item['name'], item['mimeType'])
+            else:
+                self.download(source, fileId, fileName, mimeType)
+        else:
+            queryParams = "name='" + destination + "' and trashed=false"
+            sourceid = self.driveService.files().list(q=queryParams, fields="nextPageToken, files(id, name, mimeType)").execute()
+            print(sourceid)
+            fileId = sourceid['files'][0]['id']
+            fileName = sourceid['files'][0]['name']
+            mimeType = sourceid['files'][0]['mimeType']
+            if mimeType=='application/vnd.google-apps.folder':
+                items = self.list(source=destination, recursive=False)
+                for item in items:
+                    if(item['mimeType']!='application/vnd.google-apps.folder'):
+                        print("dbsakjdjksa")
+                        print(item['mimeType'])
+                        self.downloadFile(source, item['id'], item['name'], item['mimeType'])
+            else:
+                self.downloadFile(source, fileId, fileName, mimeType)
 
+    def delete(self, service='gdrive', filename=None, recursive=False):  # this is working
         file_id = ""
+        if(recursive):
+            items = Provider.list(self, recursive=True)
+            for i in range(len(items)):
+                if items[i]['name'] == filename:
+                    file_id = items[i]['id']
 
-        items = Provider.listFiles(self)
-        next = str(len(items))
+            try:
+                self.driveService.files().delete(fileId=file_id).execute()
+            except:  # errors.HttpError, error:
+                return 'An error occurred:'  # %s' % error
+        else:
+            items = Provider.list(self, recursive=True)
+            for i in range(len(items)):
+                if items[i]['name'] == filename:
+                    file_id = items[i]['id']
+            try:
+                self.driveService.files().delete(fileId=file_id).execute()
+            except:  # errors.HttpError, error:
+                return 'An error occurred:'  # %s' % error
 
-        for i in range(len(items)):
-            if items[i]['name'] == filename:
-                file_id = items[i]['id']
+    def create_dir(self, service='gdrive', directory=None):
+        file_metadata = {'name': directory, 'mimeType': 'application/vnd.google-apps.folder'}
+        file = self.driveService.files().create(body=file_metadata,
+                                           fields='id').execute()
+        print('Folder ID: %s' % file.get('id'))
+        return file
 
-        # bug mimetype should be found differntly not with .
+    def list(self, service='gdrive', source=None, recursive=False):
+        size = 10
+        if recursive:
+            self.size = size
+            results = self.driveService.files().list(pageSize=size,
+                                                fields="nextPageToken, files(id, name,mimeType)").execute()
+            items = results.get('files', [])
+            if not items:
+                print('No files found.')
+            else:
+                return items
+        else:
+            queryParams = "name='" + source + "' and trashed=false"
+            sourceid = self.driveService.files().list(q=queryParams, pageSize=size,
+                                                 fields="nextPageToken, files(id)").execute()
+            fileId = sourceid['files'][0]['id']
+            queryParams = "'" + fileId + "' in parents"
+            results = self.driveService.files().list(q=queryParams, pageSize=size,
+                                                fields="nextPageToken, files(id, name, mimeType)").execute()
+            items = results.get('files', [])
+            if not items:
+                print('No files found.')
+            else:
+                return items
 
-        try:
+    def search(self, service='gdrive', directory=None, filename=None,
+               recursive=False):
+        if(recursive):
+            found = False
+            listOfFiles = self.list(recursive=True)
+            print(listOfFiles)
+            for file in listOfFiles:
+                print(file)
+                if (file['name'] == filename):
+                    found = True
+                    break
+                else:
+                    continue
+            return found
+        else:
+            found = False
+            listOfFiles = self.list(source=directory, recursive=False)
+            print(listOfFiles)
+            for file in listOfFiles:
+                print(file)
+                if(file['name']==filename):
+                    found = True
+                    break
+                else:
+                    continue
+            return found
 
-            filetype = filename.split(".")[-1]
-        except:
-            filetype = ".jpg"
+    def uploadFile(self, source, filename, parentId):
+        file_metadata = {'name': filename, 'parents':[parentId]}
+        self.driveService = self.driveService
+        if (source==None):
+            filepath = filename
+        else:
+            filepath = source + '/' + filename
+        media = MediaFileUpload(filepath,
+                                mimetype=mimetypes.guess_type(filename)[0])
+        file = self.driveService.files().create(body=file_metadata,
+                                           media_body=media,
+                                           fields='id').execute()
 
-        # possible bug: filepath prefix can be determined in yaml file
-        filepath = "google_download" + next + filetype  # file name in our local folder
-
+    def downloadFile(self, source, file_id, fileName, mimeType):
+        filepath = source + '/' + fileName + mimetypes.guess_extension(mimeType)
         request = self.driveService.files().get_media(fileId=file_id)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -115,50 +224,6 @@ class Provider(StorageABC):
         while done is False:
             status, done = downloader.next_chunk()
             print("Download %d%%." % int(status.progress() * 100))
-            # print("Download ")
         with io.open(filepath, 'wb') as f:
             fh.seek(0)
             f.write(fh.read())
-        print("gdrive provider get", filename)
-
-    def delete(self, filename):
-        file_id = ""
-
-        items = Provider.listFiles(self)
-        next = str(len(items))
-
-        for i in range(len(items)):
-            if items[i]['name'] == filename:
-                file_id = items[i]['id']
-
-        try:
-            self.driveService.files().delete(fileId=file_id).execute()
-        except:  # errors.HttpError, error:
-            print('An error occurred:')  # %s' % error
-        print("delete", filename, file_id)
-
-    def createFolder(self, name):
-        file_metadata = {'name': name,
-                         'mimeType': 'application/vnd.google-apps.folder'}
-        file = self.driveService.files().create(body=file_metadata,
-                                                fields='id').execute()
-
-        # needs to store this in a mongoDB
-        print('Folder ID: %s' % file.get('id'))
-
-    def listFiles(self, size=10):
-        self.size = size
-        results = self.driveService.files().list(pageSize=size,
-                                                 fields="nextPageToken, files(id, name,mimeType)").execute()
-        items = results.get('files', [])
-        # print(items)
-        if not items:
-            print('No files found.')
-        else:
-            print('Files:')
-            for item in items:
-                # print('{0} ({1})'.format(item['name'], item['id']))
-                print(
-                    "FileId : {id}, FileName : {name}, FileType : {mimeType}  ".format(
-                        **item))
-        return items
