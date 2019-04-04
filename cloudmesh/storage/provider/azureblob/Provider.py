@@ -1,15 +1,12 @@
-import os, sys, re
-from azure.storage.blob import BlockBlobService, PublicAccess
-
+import os
+import re
 from pprint import pprint
-from cloudmesh.common.util import HEADING
-from cloudmesh.compute.libcloud.Provider import Provider
+
+from azure.storage.blob import BlockBlobService
 from cloudmesh.common.console import Console
-from cloudmesh.management.configuration.config import Config
-from cloudmesh.common.Printer import Printer
-from cloudmesh.common.FlatDict import FlatDict, flatten
-from cloudmesh.management.configuration.SSHkey import SSHkey
+from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
+from cloudmesh.management.configuration.config import Config
 
 
 class Provider(object):

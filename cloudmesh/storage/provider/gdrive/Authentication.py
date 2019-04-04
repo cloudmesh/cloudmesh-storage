@@ -58,7 +58,7 @@ class Authentication:
         if not os.path.exists(credentials_dir):
             os.makedirs(credentials_dir)
         credentials_path = os.path.join(credentials_dir,
-                                       'google-drive-credentials.json')
+                                        'google-drive-credentials.json')
 
         store = Storage(credentials_path)
         credentials = store.get()

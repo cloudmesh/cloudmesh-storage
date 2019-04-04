@@ -3,6 +3,7 @@ from cloudmesh.storage.provider.gdrive.Provider import \
 from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
 from cloudmesh.storage.StorageABC import StorageABC
 
+
 #
 # bug does not follow the ABC class
 #
@@ -39,12 +40,12 @@ class Provider(StorageABC):
         print("put", service, filename)
         provider = self._provider(service)
         provider.put(filename)
-        
+
     def search(self, service, directory, filename):
         print("search", service, directory, filename)
         provider = self._provider(service)
         provider.search(directory, filename)
-        
+
     def create_dir(self, service, directory):
         print("create dir", service, directory)
         provider = self._provider(service)
