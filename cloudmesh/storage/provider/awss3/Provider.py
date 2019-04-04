@@ -3,34 +3,55 @@ import botocore
 from cloudmesh.management.configuration.config import Config
 import os, stat
 from cloudmesh.common.util import path_expand
-from cloudmesh.common.util import HEADING
 from pprint import pprint
+from cloudmesh.common.docdict import docdict
+from pathlib import Path
+from os.path import dirname, basename
 
 class Provider(object):
 
-    def __init__(self):
+    # BUG do not use camel case
+
+    def __init__(self, name=None):
+        if name is None:
+            raise ValueError("service name not specified")
         config = Config()
-        access_key_id = config['cloudmesh.storage.aws.credentials.access_key_id']
-        secret_access_key = config['cloudmesh.storage.aws.credentials.secret_access_key']
-        region = config['cloudmesh.storage.aws.credentials.region']
+        credentials = config['cloudmesh']['storage'][name]['credentials']
         self.container_name = config['cloudmesh.storage.aws.credentials.container']
 
-        self.s3Resource = boto3.resource('s3',
-                                    aws_access_key_id=access_key_id,
-                                    aws_secret_access_key=secret_access_key,
-                                    region_name=region
-                                    )
+        self.s3Resource = boto3.resource(
+            's3',
+            aws_access_key_id=credentials.access_key_id,
+            aws_secret_access_credentils.key=credentials.secret_access_key,
+            region_name=credentials.region
+        )
 
-        self.s3Client = boto3.client('s3',
-                                aws_access_key_id=access_key_id,
-                                aws_secret_access_key=secret_access_key,
-                                region_name=region
-                                )
+        self.s3Client = boto3.client(
+            's3',
+            aws_access_key_id=credentials.access_key_id,
+            aws_secret_access_key=credentials.secret_access_key,
+            region_name=credentials.region
+        )
 
+        # Q: what is maker.txt?
         self.directory_marker_file_name = 'marker.txt'
         self.storage_dict = {}
 
+    def update_dict(self, dictionary, name=None):
+        # BUG todo values are comming from self. as defined from init
+        d = dictionary
+        c["cm"] ={
+            "kind": self.kind,
+            "name": name,
+            "cloud": self.cloud,
+            "updated": "todo",
+            "created": "todo"
+        }
+        return d
+
     # function trim s3 filename
+
+    # BUG, use dirname, basename, Path
     def trimFileNamePath(self, fileNamePath):
         trimmedFileNamePath = ''
         if (len(fileNamePath) > 0 and fileNamePath.strip()[0] == '/'):
@@ -40,6 +61,7 @@ class Provider(object):
         return trimmedFileNamePath
 
     # Function to join file name dir to get full file path
+    # BUG use Path
     def joinFileNameDir(self, fileName, dirName):
         fullFilePath = ''
         if (len(self.trimFileNamePath(dirName)) > 0):
@@ -62,10 +84,10 @@ class Provider(object):
         :param directory: the name of the directory
         :return: dict
         """
-        HEADING()
         fileContent = ""
         filePath = self.joinFileNameDir(self.directory_marker_file_name, directory)
 
+        # BUG upadte_dir missing
         self.storage_dict['service'] = service
         self.storage_dict['action'] = 'create_dir'
         self.storage_dict['directory'] = directory
@@ -96,7 +118,8 @@ class Provider(object):
                           subdirectories in the specified source
         :return: dict
         """
-        HEADING()
+        # BUG upadte_dir missing
+
         self.storage_dict['service'] = service
         self.storage_dict['action'] = 'list'
         self.storage_dict['source'] = source
@@ -170,7 +193,8 @@ class Provider(object):
 
         :return: dict
         """
-        HEADING()
+        # BUG upadte_dir missing
+
         self.storage_dict['service'] = service
         self.storage_dict['action'] = 'delete'
         self.storage_dict['source'] = source
@@ -239,7 +263,8 @@ class Provider(object):
 
         :return: dict
         """
-        HEADING()
+        # BUG upadte_dir missing
+
         self.storage_dict['service'] = service
         self.storage_dict['action'] = 'put'
         self.storage_dict['source'] = source
@@ -310,7 +335,8 @@ class Provider(object):
 
         :return: dict
         """
-        HEADING()
+        # BUG upadte_dir missing
+
         self.storage_dict['service'] = service
         self.storage_dict['action'] = 'get'
         self.storage_dict['source'] = source
@@ -430,7 +456,8 @@ class Provider(object):
                           subdirectories in the specified source
         :return: dict
         """
-        HEADING()
+        # BUG upadte_dir missing
+
         self.storage_dict['service'] = service
         self.storage_dict['search'] = 'search'
         self.storage_dict['directory'] = directory
