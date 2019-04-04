@@ -7,9 +7,6 @@ from pprint import pprint
 import os
 from cloudmesh.storage.StorageABC import StorageABC
 
-#
-# BUG return returns a list of dicts, see ABC class
-#
 
 def get_id(source, results, type):
     if not any((result.name == source and result.type == type) for result in
@@ -56,20 +53,21 @@ def update_dict(elements):
         d.append(entry)
     return d
 
-
-#
-# bug does not follow named arguments in abc class
-#
 class Provider(StorageABC):
 
     def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
-        super().__init__(cloud=cloud, config=config)
-        self.sdk = JWTAuth.from_settings_file(self.credentials['config_path'])
-        # BUG: this needs to be well defined in ~/.cloudmesh/box/ ....
-        # bug mkdir ~/.cloudmesh/box/ if it not exists, needs a function ti fetch the info
+
+        super(Provider, self).__init__(cloud=cloud, config=config)
+
+        self.config = Config()
+        credentials = self.config["credentials"]["storage"][
+            "box"]  # bug cloud name as parameter as we could have multiple box kind
+        # see superclass
+        self.sdk = JWTAuth.from_settings_file(credentials['config_path'])
+        # this needs to be well defined in ~/.cloudmesh/box/ ....
         self.client = Client(self.sdk)
 
-    def put(self, source, destination, recursive=False):
+    def put(self, service='box', source=None, destination=None, recursive=False):
         """
 
         uploads file to Box, if source is directory and recursive is true uploads all files in source directory
@@ -82,7 +80,7 @@ class Provider(StorageABC):
         """
         try:
             destpath = destination.split('/')
-            dest = destpath[len(destpath) - 1]
+            dest = destpath[len(destpath)-1]
             sourcepath = change_path(source)
             path_array = sourcepath.strip('/').split('/')
             uploaded = []
@@ -92,9 +90,8 @@ class Provider(StorageABC):
                 items = self.client.search().query(dest, type='folder')
                 folders = [item for item in items]
                 folder_id = get_id(dest, folders, 'folder')
-                if not folder_id:
-                    files = [item for item in
-                             self.client.folder(folder_id).get_items()]
+                if folder_id != False:
+                    files = [item for item in self.client.folder(folder_id).get_items()]
                 else:
                     Console.error("Destination directory not found")
                     return
@@ -110,7 +107,6 @@ class Provider(StorageABC):
                     files_dict = update_dict(file)
                     return files_dict
                 else:
-                    # possible BUG file id type miss match bool, str?
                     file = self.client.file(file_id).update_contents(sourcepath)
                     files_dict = update_dict(file)
                     return files_dict
@@ -118,21 +114,17 @@ class Provider(StorageABC):
                 for s in os.listdir(source):
                     s_id = get_id(s, files, 'file')
                     if not s_id:
-                        file = self.client.folder('0').upload(
-                            sourcepath + '/' + s)
+                        file = self.client.folder('0').upload(sourcepath+'/'+s)
                         uploaded.append(file)
                     else:
-                        #  possible BUG file id type miss match bool, str?
-                        file = self.client.file(s_id).update_contents(
-                            sourcepath + '/' + s)
+                        file = self.client.file(s_id).update_contents(sourcepath+'/'+s)
                         uploaded.append(file)
                 files_dict = update_dict(uploaded)
                 return files_dict
         except Exception as e:
             Console.error(e)
-            return []
 
-    def get(self, source, destination, recursive=False):
+    def get(self, service='box', source=None, destination=None, recursive=False):
         """
 
         downloads file from Box, if recursive is true and source is directory downloads all files in directory
@@ -146,31 +138,23 @@ class Provider(StorageABC):
         try:
 
             boxpath = source.split('/')
-            target = boxpath[len(boxpath) - 1]
+            target = boxpath[len(boxpath)-1]
             dest = change_path(destination)
             downloads = []
             if recursive:
                 if target == '':
-                    files = [item for item in
-                             self.client.folder('0').get_items()]
+                    files = [item for item in self.client.folder('0').get_items()]
                 else:
-                    results = [item for item in
-                               self.client.search().query(target,
-                                                          type='folder')]
+                    results = [item for item in self.client.search().query(target, type='folder')]
                     folder_id = get_id(target, results, 'folder')
                     if folder_id:
-                        files = [item for item in
-                                 #  possible BUG file id type miss match bool, str?
-                                 self.client.folder(folder_id).get_items()]
+                        files = [item for item in self.client.folder(folder_id).get_items()]
                     else:
                         Console.error("Source directory not found.")
                         return
                 for f in files:
                     if f.type == 'file':
                         file = self.client.file(f.id).get()
-                        #
-                        # BUG F IS ALREADE DEFINED
-                        #
                         with open(dest + "/" + file.name, 'wb') as f:
                             self.client.file(file.id).download_to(f)
                             downloads.append(file)
@@ -183,7 +167,6 @@ class Provider(StorageABC):
                 else:
                     file_id = get_id(target, results, 'file')
                     if file_id:
-                        #  possible BUG file id type miss match bool, str?
                         file = self.client.file(file_id).get()
                         with open(dest + "/" + file.name, 'wb') as f:
                             self.client.file(file.id).download_to(f)
@@ -191,9 +174,8 @@ class Provider(StorageABC):
                             return files_dict
         except Exception as e:
             Console.error(e)
-            return []
 
-    def search(self, directory, filename, recursive=False):
+    def search(self, service='box', directory=None, filename=None, recursive=False):
         """
 
         searches directory for file, if recursive searches all subdirectories
@@ -207,20 +189,17 @@ class Provider(StorageABC):
         try:
             path = directory.split('/')
             results = []
-            if path[len(path) - 1] == '':
+            if path[len(path)-1] == '':
                 folder_id = '0'
             else:
-                items = self.client.search().query(path[len(path) - 1],
-                                                   type='folder')
-                folder_id = get_id(path[len(path) - 1], items, 'folder')
+                items = self.client.search().query(path[len(path)-1], type='folder')
+                folder_id = get_id(path[len(path)-1], items, 'folder')
                 if not folder_id:
                     Console.error("Directory not found.")
-            files = [item for item in
-                     self.client.search().query(filename, type='file',
-                                                ancestor_folder_ids=folder_id)]
+            files = [item for item in self.client.search().query(filename, type='file', ancestor_folder_ids=folder_id)]
             if not recursive:
                 for file in files:
-                    if file.parent.name == path[len(path) - 1]:
+                    if file.parent.name == path[len(path)-1]:
                         results.append(file)
                 if len(results) > 0:
                     files_dict = update_dict(results)
@@ -235,9 +214,8 @@ class Provider(StorageABC):
                     Console.error("No files found.")
         except Exception as e:
             Console.error(e)
-            return []
 
-    def create_dir(self, directory):
+    def create_dir(self, service='box', directory=None):
         """
 
         creates a new directory
@@ -253,25 +231,21 @@ class Provider(StorageABC):
             else:
                 parent = path[len(path) - 2]
                 if parent == '':
-                    folder = self.client.folder('0').create_subfolder(
-                        path[len(path) - 1])
+                    folder = self.client.folder('0').create_subfolder(path[len(path)-1])
                     folder_dict = update_dict(folder)
                     return folder_dict
-                folders = [item for item in
-                           self.client.search().query(parent, type='folder')]
+                folders = [item for item in self.client.search().query(parent, type='folder')]
                 if len(folders) > 0:
                     parent = folders[0].id
-                    folder = self.client.folder(parent).create_subfolder(
-                        path[len(path) - 1])
+                    folder = self.client.folder(parent).create_subfolder(path[len(path)-1])
                     folder_dict = update_dict(folder)
                     return folder_dict
                 else:
                     Console.error("Destination directory not found")
         except Exception as e:
             Console.error(e)
-            return []
 
-    def list(self, directory, recursive=False):
+    def list(self,service='box', source=None, recursive=False):
         """
 
         lists all contents of directory, if recursive lists contents of subdirectories as well
@@ -283,9 +257,9 @@ class Provider(StorageABC):
         """
         try:
             list = []
-            path = directory.split('/')
-            for i in range(1, len(path) + 1):
-                if path[len(path) - i] == '':
+            path = source.split('/')
+            for i in range(1, len(path)+1):
+                if path[len(path)-i] == '':
                     if len(path) - i > 1:
                         pass
                     else:
@@ -294,19 +268,15 @@ class Provider(StorageABC):
                         for c in contents:
                             list.append(c)
                 else:
-                    folders = [item for item in
-                               self.client.search().query(path[len(path) - i],
-                                                          type='folder')]
-                    folder_id = get_id(path[len(path) - i], folders, 'folder')
+                    folders = [item for item in self.client.search().query(path[len(path)-i], type='folder')]
+                    folder_id = get_id(path[len(path)-i], folders, 'folder')
                     if folder_id:
-                        #  possible BUG file id type miss match bool, str?
                         results = self.client.folder(folder_id).get_items()
                         contents = [result for result in results]
                         for c in contents:
                             list.append(c)
                     else:
-                        Console.error(
-                            "Directory " + path[len(path) - i] + " not found.")
+                        Console.error("Directory " + path[len(path) - i] + " not found.")
                 if not recursive and i == 1:
                     list_dict = update_dict(list)
                     return list_dict
@@ -314,9 +284,8 @@ class Provider(StorageABC):
             return list_dict
         except Exception as e:
             Console.error(e)
-            return []
 
-    def delete(self, source):
+    def delete(self, service='box', source=None):
         """
 
         deletes file or directory
@@ -327,18 +296,16 @@ class Provider(StorageABC):
         """
         try:
             path = source.strip('/').split('/')
-            name = path[len(path) - 1]
+            name = path[len(path)-1]
             items = self.client.search().query(name, type='file')
             files = [item for item in items]
             items2 = self.client.search().query(name, type='folder')
             folders = [item2 for item2 in items2]
-            results = files + folders
+            results = files+folders
             if not any(result.name == name for result in results):
                 Console.error("Source not found.")
             else:
-                item_ind = next(
-                    (index for (index, result) in enumerate(results) if
-                     (result.name == name)), None)
+                item_ind = next((index for (index, result) in enumerate(results) if (result.name == name)), None)
                 item_id = results[item_ind].id
                 item_type = results[item_ind].type
                 if item_type == 'folder':
@@ -347,4 +314,4 @@ class Provider(StorageABC):
                     self.client.file(item_id).delete()
         except Exception as e:
             Console.error(e)
-            return []
+
