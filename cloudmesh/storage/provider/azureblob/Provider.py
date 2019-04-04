@@ -30,10 +30,11 @@ class Provider(object):
         d = []
         for element in elements:
             entry = element.__dict__
-            entry["cm"] = {}
-            entry["cm"]["kind"] = "storage"
-            entry["cm"]["cloud"] = self.name
-            entry["cm"]["name"] = element.name
+            entry["cm"] = {
+                "kind": "storage",
+                "cloud": self.name,
+                "name": element.name
+            }
             element.properties = element.properties.__dict__
             entry["cm"]["created"] = element.properties["creation_time"].isoformat()[0]
             entry["cm"]["updated"] = element.properties["last_modified"].isoformat()[0]
