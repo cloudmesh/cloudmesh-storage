@@ -73,7 +73,7 @@ class Provider(object):
         return src_path
 
     def get(self, source, destination, recursive):
-        '''
+        """
         Downloads file from Destination(Service) to Source(local)
 
         :param source: the source can be a directory or file
@@ -82,7 +82,7 @@ class Provider(object):
                           subdirectories in the specified source
         :return: dict
 
-        '''
+        """
 
         HEADING()
         #Determine service path - file or folder

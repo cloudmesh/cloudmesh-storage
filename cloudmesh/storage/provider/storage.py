@@ -12,12 +12,12 @@ class Provider(StorageABC):
         # BUG we should place logic for kind, name, cloud here so we can use super __init__
         #
 
-        '''
+        """
         if cloud == 'google':
             self.p = GoogleStorageProvider
 
 
-        '''
+        """
         raise NotImplementedError
 
     def create_dir(self, service=None, directory=None):
