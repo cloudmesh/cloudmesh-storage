@@ -10,6 +10,7 @@ class StorageABC(metaclass=ABCMeta):
             self.config = Config()
             self.credentials = config['cloudmesh']['storage'][cloud]['credentials']
             self.kind = config['cloudmesh']['storage']['kind']
+            self.cloud = cloud
         except:
             raise ValueError(f"storage service {cloud} not specified")
 

@@ -59,14 +59,11 @@ def update_dict(elements):
 #
 class Provider(StorageABC):
 
-    def __init__(self):  # BUG parameters wrong
-        # no inheritance from sueperclass
-        self.config = Config()
-        credentials = self.config["credentials"]["storage"][
-            "box"]  # bug cloud name as parameter as we could have multiple box kind
-        # see superclass
-        self.sdk = JWTAuth.from_settings_file(credentials['config_path'])
-        # this needs to be well defined in ~/.cloudmesh/box/ ....
+    def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+        super().__init__(cloud=cloud, config=config)
+        self.sdk = JWTAuth.from_settings_file(self.credentials['config_path'])
+        # BUG: this needs to be well defined in ~/.cloudmesh/box/ ....
+        # bug mkdir ~/.cloudmesh/box/ if it not exists, needs a function ti fetch the info
         self.client = Client(self.sdk)
 
     def put(self, source, destination, recursive=False):

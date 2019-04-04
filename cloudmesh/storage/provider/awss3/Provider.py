@@ -13,26 +13,24 @@ class Provider(object):
 
     # BUG do not use camel case
 
-    def __init__(self, name=None):
-        if name is None:
-            raise ValueError("service name not specified")
-        config = Config()
-        credentials = config['cloudmesh']['storage'][name]['credentials']
+    def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+        super().__init__(cloud=cloud, config=config)
         self.container_name = config[
             'cloudmesh.storage.aws.credentials.container']
 
+        # BUG: please check this
         self.s3Resource = boto3.resource(
             's3',
-            aws_access_key_id=credentials.access_key_id,
-            aws_secret_access_credentils.key = credentials.secret_access_key,
-                                               region_name = credentials.region
+            aws_access_key_id=self.credentials.access_key_id,
+            aws_secret_access_credentils.key=self.credentials.secret_access_key,
+            region_name=self.credentials.region
         )
 
         self.s3Client = boto3.client(
             's3',
-            aws_access_key_id=credentials.access_key_id,
-            aws_secret_access_key=credentials.secret_access_key,
-            region_name=credentials.region
+            aws_access_key_id=self.credentials.access_key_id,
+            aws_secret_access_key=self.credentials.secret_access_key,
+            region_name=self.credentials.region
         )
 
         # Q: what is maker.txt?
