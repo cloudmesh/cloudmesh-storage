@@ -50,7 +50,36 @@ class Provider(StorageABC):
 
     def put(self, service=None, source=None, destination=None, recursive=False):
         if recursive:
-            pass
+            if (os.path.isdir(source)):
+                queryParams = "name='" + destination + "' and trashed=false"
+                sourceid = self.driveService.files().list(q=queryParams,
+                                                          fields="nextPageToken, files(id, name, mimeType)").execute()
+                fileParentId = None
+                print(sourceid)
+                if (len(sourceid['files']) == 0):
+                    parentFile = self.create_dir(directory=destination)
+                    fileParentId = parentFile['id']
+                else:
+                    print(sourceid['files'][0]['id'])
+                    fileParentId = sourceid['files'][0]['id']
+
+                for f in os.listdir(source):
+                    if os.path.isfile(os.path.join(source, f)):
+                        self.uploadFile(source=source, filename=f, parentId=fileParentId)
+            else:
+                queryParams = "name='" + destination + "' and trashed=false"
+                sourceid = self.driveService.files().list(q=queryParams,
+                                                          fields="nextPageToken, files(id, name, mimeType)").execute()
+                fileParentId = None
+                print(sourceid)
+                if (len(sourceid['files']) == 0):
+                    parentFile = self.create_dir(directory=destination)
+                    fileParentId = parentFile['id']
+                else:
+                    print(sourceid['files'][0]['id'])
+                    fileParentId = sourceid['files'][0]['id']
+
+                self.uploadFile(source=None, filename=source, parentId=fileParentId)
         else:
             if(os.path.isdir(source)):
                 queryParams = "name='" + destination + "' and trashed=false"
