@@ -1,6 +1,6 @@
 ##################################################
 #
-# nosetests -v --nocapture tests/test_config.py
+# nosetests -v --nocapture tests/test_gdrive.py
 ##################################################
 from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.util import HEADING

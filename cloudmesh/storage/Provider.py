@@ -2,6 +2,8 @@ from cloudmesh.storage.provider.gdrive.Provider import \
     Provider as GdriveProvider
 from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
 from cloudmesh.storage.provider.azureblob.Provider import Provider as AzureblobProvider
+from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
+
 from cloudmesh.storage.StorageABC import StorageABC
 
 
@@ -23,6 +25,8 @@ class Provider(StorageABC):
             self.provider = BoxProvider()
         elif self.kind == "azureblob":
             self.provider = AzureblobProvider()
+        elif self.kind == "awss3":
+            self.provider = AwsProvider()
         else:
             raise ValueError(f"Storage provider {cloud} not yet supported")
 

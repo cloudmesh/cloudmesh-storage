@@ -135,6 +135,9 @@ class Provider(object):
 
         objs = list(self.s3Resource.Bucket(self.container_name).objects.all())
 
+        # for entry in objs:
+        #    print(entry.__dict__)
+
         dirFilesList = []
         trimmedSource = self.trimFileNamePath(source)
 
