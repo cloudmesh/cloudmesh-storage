@@ -273,9 +273,12 @@ class Provider(StorageABC):
         print("File  : ", blob_file)
         print("Folder: ", blob_folder)
 
+        obj_list = []
         if blob_folder is None:
             # SOURCE specified is File only
             if self.service.exists(self.container, blob_file):
+                blob_prop = self.service.get_blob_properties(self.container, blob_file)
+                obj_list.append(blob_prop)
                 self.service.delete_blob(self.container, blob_file)
             else:
                 return Console.error(
@@ -287,16 +290,20 @@ class Provider(StorageABC):
                 for blob in del_gen:
                     if os.path.commonpath(
                             [blob.name, blob_folder]) == blob_folder:
+                        obj_list.append(blob)
                         self.service.delete_blob(self.container, blob.name)
             else:
                 # Source specified is both file and directory
-                if self.service.exists(self.container, blob_file):
-                    self.service.delete_blob(self.container, blob_file)
+                if self.service.exists(self.container, source[1:]):
+                    blob_prop = self.service.get_blob_properties(self.container, source[1:])
+                    obj_list.append(blob_prop)
+                    self.service.delete_blob(self.container, source[1:])
                 else:
                     return Console.error(
                         "File does not exist: {file}".format(file=blob_file))
-
-        # BUG does not return a dict
+        dict_obj = self.update_dict(obj_list)
+        pprint(dict_obj)
+        return dict_obj
 
     def create_dir(self, service=None, directory=None):
         '''
