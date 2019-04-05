@@ -7,11 +7,12 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.management.configuration.config import Config
+from cloudmesh.storage.StorageABC import StorageABC
 
 #
 # BUG return returns a list of dicts, see ABC class
 #
-class Provider(object):
+class Provider(StorageABC):
 
     def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         super().__init__(cloud=cloud, config=config)
@@ -73,7 +74,7 @@ class Provider(object):
             src_path = os.path.join(os.getcwd(), source_path)
         return src_path
 
-    def get(self, source, destination, recursive):
+    def get(self, service=None, source=None, destination=None, recursive=False):
         """
         Downloads file from Destination(Service) to Source(local)
 
@@ -182,7 +183,7 @@ class Provider(object):
         pprint(dict_obj)
         return dict_obj
 
-    def put(self, source, destination, recursive):
+    def put(self, service=None, source=None, destination=None, recursive=False):
         """
         Uploads file from Source(local) to Destination(Service)
 
@@ -219,7 +220,7 @@ class Provider(object):
                 entry = obj.__dict__
                 entry["cm"] = {}
                 entry["cm"]["kind"] = "storage"
-                entry["cm"]["cloud"] = "azure"
+                entry["cm"]["cloud"] = self.cloud
                 entry["cm"]["name"] = upl_file
                 entry["cm"]["created"] = obj.last_modified.isoformat()
                 entry["cm"]["updated"] = obj.last_modified.isoformat()
@@ -239,7 +240,7 @@ class Provider(object):
                             entry = obj.__dict__
                             entry["cm"] = {}
                             entry["cm"]["kind"] = "storage"
-                            entry["cm"]["cloud"] = "azure"
+                            entry["cm"]["cloud"] = self.cloud
                             entry["cm"]["name"] = upl_file
                             entry["cm"][
                                 "created"] = obj.last_modified.isoformat()
@@ -258,7 +259,7 @@ class Provider(object):
         pprint(dict_obj)
         return dict_obj
 
-    def delete(self, source):
+    def delete(self, service=None, source=None, recursive=False):
         '''
         Deletes the source from cloud service
 
@@ -272,9 +273,12 @@ class Provider(object):
         print("File  : ", blob_file)
         print("Folder: ", blob_folder)
 
+        obj_list = []
         if blob_folder is None:
             # SOURCE specified is File only
             if self.service.exists(self.container, blob_file):
+                blob_prop = self.service.get_blob_properties(self.container, blob_file)
+                obj_list.append(blob_prop)
                 self.service.delete_blob(self.container, blob_file)
             else:
                 return Console.error(
@@ -286,18 +290,22 @@ class Provider(object):
                 for blob in del_gen:
                     if os.path.commonpath(
                             [blob.name, blob_folder]) == blob_folder:
+                        obj_list.append(blob)
                         self.service.delete_blob(self.container, blob.name)
             else:
                 # Source specified is both file and directory
-                if self.service.exists(self.container, blob_file):
-                    self.service.delete_blob(self.container, blob_file)
+                if self.service.exists(self.container, source[1:]):
+                    blob_prop = self.service.get_blob_properties(self.container, source[1:])
+                    obj_list.append(blob_prop)
+                    self.service.delete_blob(self.container, source[1:])
                 else:
                     return Console.error(
                         "File does not exist: {file}".format(file=blob_file))
+        dict_obj = self.update_dict(obj_list)
+        pprint(dict_obj)
+        return dict_obj
 
-        # BUG does not return a dict
-
-    def create_dir(self, directory):
+    def create_dir(self, service=None, directory=None):
         '''
         Creates a directory in the cloud service
 
@@ -317,7 +325,7 @@ class Provider(object):
             dict_obj = self.update_dict(blob_cre)
         return dict_obj
 
-    def search(self, directory, filename, recursive):
+    def search(self, service=None, directory=None, filename=None, recursive=False):
         '''
         searches the filename in the directory
 
@@ -358,7 +366,7 @@ class Provider(object):
         pprint(dict_obj)
         return dict_obj
 
-    def list(self, source, recursive):
+    def list(self, service=None, source=None, recursive=False):
         '''
         lists all files specified in the source
 

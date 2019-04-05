@@ -42,11 +42,11 @@ version = readfile("VERSION")[0].strip()
 with open('README.md') as f:
     long_description = f.read()
 
-NAME = "cloudmesh.storage"
+NAME = "cloudmesh-storage"
 DESCRIPTION = "A command called storage and foo for the cloudmesh shell"
 AUTHOR = "Gregor von Laszewski"
 AUTHOR_EMAIL = "laszewski@gmail.com"
-URL = "https://github.com/cloudmesh/cloudmesh.storage"
+URL = "https://github.com/cloudmesh/cloudmesh-storage"
 
 setup(
     name=NAME,
