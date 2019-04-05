@@ -18,6 +18,8 @@ class Manager(object):
             provider = cloudmesh.storage.provider.box.Provider.Provider()
         elif service == "aws":
             provider = cloudmesh.storage.provider.awss3.Provider.Provider()
+        elif service == "azureblob":
+            provider = cloudmesh.storage.provider.azureblob.Provider.Provider(service)
 
         return provider
 
