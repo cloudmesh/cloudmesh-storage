@@ -14,7 +14,9 @@ class StorageABC(metaclass=ABCMeta):
         except:
             raise ValueError(f"storage service {cloud} not specified")
 
-    def create_dir(self, service=None, directory=None):
+    def create_dir(self,
+                   service=None,
+                   directory=None):
         """
         creates a directory
 

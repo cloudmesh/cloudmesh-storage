@@ -33,10 +33,7 @@ boxsdk
 httplib2
 apiclient
 python-magic
-cloudmesh-common
-cloudmesh-cmd5
-cloudmesh-sys
-cloudmesh-openapi
+oauth2client
 """.split("\n")
 
 # dependency_links = ['http://github.com/nicolaiarocci/eve.git@develop']

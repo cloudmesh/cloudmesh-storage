@@ -2,7 +2,4 @@ boxsdk
 httplib2
 apiclient
 python-magic
-cloudmesh-common
-cloudmesh-cmd5
-cloudmesh-sys
-cloudmesh-openapi
+oauth2client
