@@ -1,7 +1,13 @@
-import cloudmesh.storage.provider.gdrive.Provider
-import cloudmesh.storage.provider.box.Provider
-import cloudmesh.storage.provider.awss3.Provider
-import cloudmesh.storage.provider.azureblob.Provider
+#
+# TODO: BUG you must use explicit imports not just general once
+#
+
+from cloudmesh.storage.provider.gdrive.Provider import \
+    Provider as GdriveProvider
+from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
+from cloudmesh.storage.provider.azureblob.Provider import Provider as AzureblobProvider
+from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
+
 from cloudmesh.common.console import Console
 
 
@@ -14,13 +20,13 @@ class Manager(object):
     def _provider(self, service):
         provider = None
         if service == "gdrive":
-            provider = cloudmesh.storage.provider.gdrive.Provider.Provider()
+            provider = GdriveProvider()
         elif service == "box":
-            provider = cloudmesh.storage.provider.box.Provider.Provider()
+            provider = BoxProvider()
         elif service == "aws":
-            provider = cloudmesh.storage.provider.awss3.Provider.Provider()
+            provider = AwsProvider()
         elif service == "azureblob":
-            provider = cloudmesh.storage.provider.azureblob.Provider.Provider(service)
+            provider = AzureblobProvider(service)
 
         return provider
 
