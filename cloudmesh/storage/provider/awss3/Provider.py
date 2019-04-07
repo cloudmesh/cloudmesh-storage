@@ -3,81 +3,66 @@ import botocore
 from cloudmesh.management.configuration.config import Config
 import os, stat
 from cloudmesh.common.util import path_expand
+from cloudmesh.common.util import HEADING
 from pprint import pprint
-from cloudmesh.common.docdict import docdict
-from pathlib import Path
-from os.path import dirname, basename
+from cloudmesh.abstractclass.StorageABC import StorageABC
 
-#
-# BUG return returns a list of dicts, see ABC class
-#
 
-class Provider(object):
-
-    # BUG do not use camel case
+class Provider(StorageABC):
 
     def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         super().__init__(cloud=cloud, config=config)
-        self.container_name = config[
-            'cloudmesh.storage.aws.credentials.container']
-
-        # BUG: please check this
-        self.s3Resource = boto3.resource(
-            's3',
-            aws_access_key_id=self.credentials.access_key_id,
-            aws_secret_access_credentils.key=self.credentials.secret_access_key,
-            region_name=self.credentials.region
-        )
-
-        self.s3Client = boto3.client(
-            's3',
-            aws_access_key_id=self.credentials.access_key_id,
-            aws_secret_access_key=self.credentials.secret_access_key,
-            region_name=self.credentials.region
-        )
-
-        # Q: what is maker.txt?
+        self.container_name = self.credentials['container']
+        self.s3_resource = boto3.resource('s3',
+                                    aws_access_key_id=self.credentials['access_key_id'],
+                                    aws_secret_access_key=self.credentials['secret_access_key'],
+                                    region_name=self.credentials['region']
+                                    )
+        self.s3_client = boto3.client('s3',
+                                    aws_access_key_id=self.credentials['access_key_id'],
+                                    aws_secret_access_key=self.credentials['secret_access_key'],
+                                    region_name=self.credentials['region']
+                                )
         self.directory_marker_file_name = 'marker.txt'
         self.storage_dict = {}
 
-    def update_dict(self, dictionary, name=None):
-        # BUG todo values are comming from self. as defined from init
-        d = dictionary
-        c["cm"] = {
-            "kind": self.kind,
-            "name": name,
-            "cloud": self.cloud,
-            "updated": "todo",
-            "created": "todo"
-        }
-        return d
+    # function to massage file path and do some transformations
+    # for different scenarios of file inputs
+    def massage_path(self, fileNamePath):
+        massaged_path = fileNamePath
 
-    # function trim s3 filename
+        # remove leading slash symbol in path
+        if (len(massaged_path) > 0 and massaged_path[0] == '/'):
+            massaged_path = massaged_path[1:]
 
-    # BUG, use dirname, basename, Path
-    def trimFileNamePath(self, fileNamePath):
-        trimmedFileNamePath = ''
-        if (len(fileNamePath) > 0 and fileNamePath.strip()[0] == '/'):
-            trimmedFileNamePath = fileNamePath.strip()[1:].replace('\\', '/')
-        else:
-            trimmedFileNamePath = fileNamePath.strip().replace('\\', '/')
-        return trimmedFileNamePath
+        # expand home directory in path
+        massaged_path = massaged_path.replace('~', os.path.expanduser('~'))
+
+        # expand possible current directory reference in path
+        if massaged_path[0:2] == '.\\' or massaged_path[0:2] == './':
+            massaged_path = os.path.abspath(massaged_path)
+
+        # convert possible windows style path to unix path
+        massaged_path = massaged_path.replace('\\', '/')
+
+        return massaged_path
 
     # Function to join file name dir to get full file path
-    # BUG use Path
     def joinFileNameDir(self, fileName, dirName):
         fullFilePath = ''
-        if (len(self.trimFileNamePath(dirName)) > 0):
-            fullFilePath = self.trimFileNamePath(
-                dirName) + '/' + self.trimFileNamePath(fileName)
+        if (len(self.massage_path(dirName)) > 0):
+            #fullFilePath = self.massage_path(dirName) + '/' + self.massage_path(fileName)
+            fullFilePath = self.massage_path(dirName) + '/' + self.massage_path(fileName)
         else:
-            fullFilePath = self.trimFileNamePath(fileName)
+            fullFilePath = self.massage_path(fileName)
         return fullFilePath
 
+    '''
     # Function to split string to list based on delimiter
     def splitToList(self, string):
         delimter = '/'
         return string.split(delimter)
+    '''
 
     # function to create a directory
     def create_dir(self, service=None, directory=None):
@@ -88,27 +73,29 @@ class Provider(object):
         :param directory: the name of the directory
         :return: dict
         """
+        HEADING()
         fileContent = ""
-        filePath = self.joinFileNameDir(self.directory_marker_file_name,
-                                        directory)
+        #filePath = self.joinFileNameDir(self.directory_marker_file_name, directory)
+        #filePath = self.massage_path(directory) + '/' + self.directory_marker_file_name
+        filePath = self.massage_path(directory)
 
-        # BUG upadte_dir missing
         self.storage_dict['service'] = service
         self.storage_dict['action'] = 'create_dir'
         self.storage_dict['directory'] = directory
 
-        obj = list(self.s3Resource.Bucket(self.container_name).objects.filter(
-            Prefix=filePath))
+        #obj = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=filePath))
+        obj = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=filePath+'/'))
 
         if len(obj) == 0:
-            markerObject = self.s3Resource.Object(self.container_name,
-                                                  filePath).put(
-                Body=fileContent)
-            # print('Directory created')
-            # print(markerObject)
+            #markerObject = self.s3_resource.Object(self.container_name, filePath).put(Body=fileContent)
+            markerObject = self.s3_resource.Object(
+                self.container_name, self.massage_path(directory) + '/' + self.directory_marker_file_name
+            ).put(Body=fileContent)
+            #print('Directory created')
+            #print(markerObject)
             self.storage_dict['message'] = 'Directory created'
         else:
-            # print('Directory already present')
+            #print('Directory already present')
             self.storage_dict['message'] = 'Directory already present'
 
         print(self.storage_dict['message'])
@@ -126,28 +113,23 @@ class Provider(object):
                           subdirectories in the specified source
         :return: dict
         """
-        # BUG upadte_dir missing
-
+        HEADING()
         self.storage_dict['service'] = service
         self.storage_dict['action'] = 'list'
         self.storage_dict['source'] = source
         self.storage_dict['recursive'] = recursive
 
-        objs = list(self.s3Resource.Bucket(self.container_name).objects.all())
-
-        # for entry in objs:
-        #    print(entry.__dict__)
+        objs = list(self.s3_resource.Bucket(self.container_name).objects.all())
 
         dirFilesList = []
-        trimmedSource = self.trimFileNamePath(source)
+        trimmedSource = self.massage_path(source)
 
-        if not recursive:
+        if recursive == False:
             # call will not be recursive and need to look only in the specified directory
             for obj in objs:
-                if obj.key.startswith(self.trimFileNamePath(trimmedSource)):
+                if obj.key.startswith(self.massage_path(trimmedSource)):
                     # print(obj.key)
-                    fileName = obj.key.replace(self.directory_marker_file_name,
-                                               '')
+                    fileName = obj.key.replace(self.directory_marker_file_name, '')
                     if (fileName[-1] == '/'):
                         # Its a directory
                         '''
@@ -157,24 +139,21 @@ class Provider(object):
                         x = 1
                     else:
                         # Its a file
-                        if (fileName.replace(trimmedSource, '')[
-                            0] == '/' and fileName.replace(trimmedSource,
-                                                           '').count(
+                        if len(fileName.replace(trimmedSource, '')) == 0:
+                            dirFilesList.append(fileName)
+                        elif (fileName.replace(trimmedSource, '')[0] == '/' and fileName.replace(trimmedSource, '').count(
                                 '/') == 1):
                             dirFilesList.append(fileName)
-                        elif (fileName.replace(trimmedSource, '')[
-                                  0] != '/' and fileName.replace(trimmedSource,
-                                                                 '').count(
-                            '/') == 0):
+                        elif (fileName.replace(trimmedSource, '')[0] != '/' and fileName.replace(trimmedSource,
+                                                                                                 '').count('/') == 0):
                             dirFilesList.append(fileName)
                     # print(fileName)
         else:
             # call will be recursive and need to look recursively in the specified directory as well
             for obj in objs:
-                if obj.key.startswith(self.trimFileNamePath(trimmedSource)):
+                if obj.key.startswith(self.massage_path(trimmedSource)):
                     # print(obj.key)
-                    fileName = obj.key.replace(self.directory_marker_file_name,
-                                               '')
+                    fileName = obj.key.replace(self.directory_marker_file_name, '')
                     if (fileName[-1] == '/'):
                         # Its a directory
                         '''
@@ -210,36 +189,32 @@ class Provider(object):
 
         :return: dict
         """
-        # BUG upadte_dir missing
-
+        HEADING()
         self.storage_dict['service'] = service
         self.storage_dict['action'] = 'delete'
         self.storage_dict['source'] = source
         self.storage_dict['recursive'] = recursive
 
-        trimmedSource = self.trimFileNamePath(source)
+        trimmedSource = self.massage_path(source)
 
         dirFilesList = []
         fileObj = ''
 
         try:
-            fileObj = self.s3Client.get_object(Bucket=self.container_name,
-                                               Key=trimmedSource)
+            fileObj = self.s3_client.get_object(Bucket=self.container_name, Key=trimmedSource)
         except botocore.exceptions.ClientError as e:
             # object not found
-            x = 1
+            x=1
 
         if fileObj:
             # Its a file and can be deleted
-            self.s3Resource.Object(self.container_name, trimmedSource).delete()
-            # print('File deleted')
+            self.s3_resource.Object(self.container_name, trimmedSource).delete()
+            #print('File deleted')
             self.storage_dict['message'] = 'Source Deleted'
 
         else:
             # Search for a directory
-            allObjs = list(
-                self.s3Resource.Bucket(self.container_name).objects.filter(
-                    Prefix=trimmedSource))
+            allObjs = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=trimmedSource))
 
             total_allObjs = len(allObjs)
 
@@ -248,31 +223,27 @@ class Provider(object):
 
             elif total_allObjs > 0 and recursive is True:
                 for obj in allObjs:
-                    # if obj.key.startswith(self.trimFileNamePath(trimmedSource)):
-                    self.s3Resource.Object(self.container_name,
-                                           obj.key).delete()
+                    #if obj.key.startswith(self.massage_path(trimmedSource)):
+                    self.s3_resource.Object(self.container_name, obj.key).delete()
                     dirFilesList.append(obj.key)
 
                 self.storage_dict['message'] = 'Source Deleted'
 
             elif total_allObjs > 0 and recursive is False:
                 # check if marker file exits in this directory
-                marker_obj_list = list(
-                    self.s3Resource.Bucket(self.container_name).objects.filter(
-                        Prefix=trimmedSource + '/' + self.directory_marker_file_name))
+                marker_obj_list = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=trimmedSource+'/'+self.directory_marker_file_name))
                 marker_exits = False
                 if len(marker_obj_list) == 1:
                     marker_exits = True
 
                 if marker_exits is True and total_allObjs == 1:
-                    self.s3Resource.Object(self.container_name,
-                                           trimmedSource + '/' + self.directory_marker_file_name).delete()
+                    self.s3_resource.Object(self.container_name, trimmedSource+'/'+self.directory_marker_file_name).delete()
                     self.storage_dict['message'] = 'Source Deleted'
                 else:
-                    self.storage_dict[
-                        'message'] = 'Source has child objects. Use recursive option'
+                    self.storage_dict['message'] = 'Source has child objects. Use recursive option'
         print(self.storage_dict['message'])
         return self.storage_dict
+
 
     # function to upload file or directory
     def put(self, service=None, source=None, destination=None, recursive=False):
@@ -287,57 +258,53 @@ class Provider(object):
 
         :return: dict
         """
-        # BUG upadte_dir missing
-
+        HEADING()
         self.storage_dict['service'] = service
         self.storage_dict['action'] = 'put'
         self.storage_dict['source'] = source
         self.storage_dict['destination'] = destination
         self.storage_dict['recursive'] = recursive
 
-        trimmedSource = self.trimFileNamePath(source)
-        trimmedDestination = self.trimFileNamePath(destination)
+        trimmedSource = self.massage_path(source)
+        trimmedDestination = self.massage_path(destination)
 
         isSourceFile = os.path.isfile(trimmedSource)
         isSourceDir = os.path.isdir(trimmedSource)
 
         if isSourceFile is True:
-            # print('file flow')
+            #print('file flow')
             # Its a file and need to be uploaded to the destination
-            self.s3Client.upload_file(trimmedSource, self.container_name,
-                                      trimmedDestination)
+            self.s3_client.upload_file(trimmedSource, self.container_name, trimmedDestination)
             self.storage_dict['message'] = 'Source uploaded'
         elif isSourceDir is True:
             # Look if its a directory
-            # print('dir flow')
+            #print('dir flow')
             filesUploaded = []
             if recursive is False:
                 # get files in the directory and upload to destination dir
                 dirfiles = next(os.walk(trimmedSource))[2]
 
                 for file in dirfiles:
-                    self.s3Client.upload_file(trimmedSource + '/' + file,
+                    self.s3_client.upload_file(trimmedSource+'/'+file,
                                               self.container_name,
-                                              trimmedDestination + '/' + file)
-                    filesUploaded.append(trimmedDestination + '/' + file)
+                                              trimmedDestination+'/'+file)
+                    filesUploaded.append(trimmedDestination+'/'+file)
             else:
                 # get the directories with in the folder as well and upload
                 filesToUpload = []
                 for (dirpath, dirnames, filenames) in os.walk(trimmedSource):
                     for fileName in filenames:
-                        # print(self.trimFileNamePath(dirpath)+'/'+fileName)
-                        filesToUpload.append(
-                            self.trimFileNamePath(dirpath) + '/' + fileName)
+                        #print(self.massage_path(dirpath)+'/'+fileName)
+                        filesToUpload.append(self.massage_path(dirpath)+'/'+fileName)
+
 
                 for file in filesToUpload:
-                    self.s3Client.upload_file(file,
+                    self.s3_client.upload_file(file,
                                               self.container_name,
-                                              trimmedDestination + '/' + self.trimFileNamePath(
-                                                  file.replace(trimmedSource,
-                                                               '')))
-                    filesUploaded.append(
-                        trimmedDestination + '/' + self.trimFileNamePath(
-                            file.replace(trimmedSource, '')))
+                                              trimmedDestination+'/'+self.massage_path(file.replace(trimmedSource,'')))
+                    filesUploaded.append(trimmedDestination+'/'+self.massage_path(file.replace(trimmedSource,'')))
+
+
 
             self.storage_dict['filesUploaded'] = filesUploaded
             self.storage_dict['message'] = 'Source uploaded'
@@ -362,22 +329,20 @@ class Provider(object):
 
         :return: dict
         """
-        # BUG upadte_dir missing
-
+        HEADING()
         self.storage_dict['service'] = service
         self.storage_dict['action'] = 'get'
         self.storage_dict['source'] = source
         self.storage_dict['destination'] = destination
         self.storage_dict['recursive'] = recursive
 
-        trimmedSource = self.trimFileNamePath(source)
-        trimmedDestination = self.trimFileNamePath(destination)
+        trimmedSource = self.massage_path(source)
+        trimmedDestination = self.massage_path(destination)
 
         fileObj = ''
 
         try:
-            fileObj = self.s3Client.get_object(Bucket=self.container_name,
-                                               Key=trimmedSource)
+            fileObj = self.s3_client.get_object(Bucket=self.container_name, Key=trimmedSource)
             print(fileObj)
         except botocore.exceptions.ClientError as e:
             # object not found
@@ -388,8 +353,7 @@ class Provider(object):
             # print('downloading file..')
             # print(os.path.basename(trimmedSource))
             try:
-                blob = self.s3Resource.Bucket(
-                    self.container_name).download_file(
+                blob = self.s3_resource.Bucket(self.container_name).download_file(
                     trimmedSource, trimmedDestination)
                 # trimmedSource, trimmedDestination + '/' + os.path.basename(trimmedSource))
                 # print('File downloaded')
@@ -399,9 +363,7 @@ class Provider(object):
 
         else:
             # Search for a directory
-            allObjs = list(
-                self.s3Resource.Bucket(self.container_name).objects.filter(
-                    Prefix=trimmedSource))
+            allObjs = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=trimmedSource))
 
             total_allObjs = len(allObjs)
 
@@ -414,25 +376,17 @@ class Provider(object):
                 # print('directory found and recursive is false')
                 filesDownloaded = []
                 for obj in allObjs:
-                    if os.path.basename(
-                            obj.key) != self.directory_marker_file_name:
-                        if self.trimFileNamePath(
-                                obj.key.replace(trimmedSource, '')).count(
-                                '/') == 0:
+                    if os.path.basename(obj.key) != self.directory_marker_file_name:
+                        if self.massage_path(obj.key.replace(trimmedSource, '')).count('/') == 0:
                             try:
-                                blob = self.s3Resource.Bucket(
-                                    self.container_name).download_file(
-                                    obj.key,
-                                    trimmedDestination + '/' + os.path.basename(
-                                        obj.key))
+                                blob = self.s3_resource.Bucket(self.container_name).download_file(
+                                    obj.key, trimmedDestination + '/' + os.path.basename(obj.key))
                                 # trimmedSource, trimmedDestination + '/' + os.path.basename(trimmedSource))
                                 # print('File downloaded')
-                                self.storage_dict[
-                                    'message'] = 'Source downloaded'
+                                self.storage_dict['message'] = 'Source downloaded'
                                 filesDownloaded.append(obj.key)
                             except FileNotFoundError as e:
-                                self.storage_dict[
-                                    'message'] = 'Destination not found'
+                                self.storage_dict['message'] = 'Destination not found'
 
                 self.storage_dict['filesDownloaded'] = filesDownloaded
 
@@ -440,61 +394,43 @@ class Provider(object):
                 # print('directory found and recursive is True')
                 filesDownloaded = []
                 for obj in allObjs:
-                    # print(obj.key)
-                    if os.path.basename(
-                            obj.key) != self.directory_marker_file_name and \
-                            obj.key[-1] != '/':
-                        if self.trimFileNamePath(
-                                obj.key.replace(trimmedSource, '')).count(
-                                '/') == 0:
+                    #print(obj.key)
+                    if os.path.basename(obj.key) != self.directory_marker_file_name and obj.key[-1] != '/':
+                        if self.massage_path(obj.key.replace(trimmedSource, '')).count('/') == 0:
                             try:
-                                blob = self.s3Resource.Bucket(
-                                    self.container_name).download_file(
-                                    obj.key,
-                                    trimmedDestination + '/' + os.path.basename(
-                                        obj.key))
+                                blob = self.s3_resource.Bucket(self.container_name).download_file(
+                                    obj.key, trimmedDestination + '/' + os.path.basename(obj.key))
                                 # trimmedSource, trimmedDestination + '/' + os.path.basename(trimmedSource))
                                 # print('File downloaded')
-                                self.storage_dict[
-                                    'message'] = 'Source downloaded'
+                                self.storage_dict['message'] = 'Source downloaded'
                                 filesDownloaded.append(obj.key)
                             except FileNotFoundError as e:
-                                self.storage_dict[
-                                    'message'] = 'Destination not found'
+                                self.storage_dict['message'] = 'Destination not found'
                         else:
 
-                            folderPath = self.trimFileNamePath(
-                                obj.key.replace(trimmedSource, '').replace(
-                                    os.path.basename(obj.key), '')
+                            folderPath = self.massage_path(
+                                obj.key.replace(trimmedSource, '').replace(os.path.basename(obj.key), '')
                             )
                             # print('folderPath  : '+folderPath)
                             try:
-                                os.makedirs(
-                                    trimmedDestination + '/' + folderPath,
-                                    0o777)
+                                os.makedirs(trimmedDestination + '/' + folderPath, 0o777)
                                 # os.chmod(trimmedDestination+'/'+folderPath, stat.S_IRWXO)
                                 x = 1
                             except FileExistsError as e:
                                 # print('Error :')
                                 # print(e)
-                                os.chmod(trimmedDestination + '/' + folderPath,
-                                         stat.S_IRWXO)
+                                os.chmod(trimmedDestination + '/' + folderPath, stat.S_IRWXO)
                                 x = 1
 
                             try:
-                                blob = self.s3Resource.Bucket(
-                                    self.container_name).download_file(
+                                blob = self.s3_resource.Bucket(self.container_name).download_file(
                                     # obj.key, trimmedDestination + '/' + os.path.basename(obj.key))
-                                    obj.key,
-                                    trimmedDestination + '/' + folderPath + os.path.basename(
-                                        obj.key))
+                                    obj.key, trimmedDestination + '/' + folderPath + os.path.basename(obj.key))
                                 # print('File downloaded')
-                                self.storage_dict[
-                                    'message'] = 'Source downloaded'
+                                self.storage_dict['message'] = 'Source downloaded'
                                 filesDownloaded.append(obj.key)
                             except FileNotFoundError as e:
-                                self.storage_dict[
-                                    'message'] = 'Destination not found'
+                                self.storage_dict['message'] = 'Destination not found'
 
                 self.storage_dict['filesDownloaded'] = filesDownloaded
 
@@ -502,8 +438,7 @@ class Provider(object):
         return self.storage_dict
 
     # function to search a file or directory and list its attributes
-    def search(self, service=None, directory=None, filename=None,
-               recursive=False):
+    def search(self, service=None, directory=None, filename=None, recursive=False):
         """
         gets the destination and copies it in source
 
@@ -514,61 +449,55 @@ class Provider(object):
                           subdirectories in the specified source
         :return: dict
         """
-        # BUG upadte_dir missing
-
+        HEADING()
         self.storage_dict['service'] = service
         self.storage_dict['search'] = 'search'
         self.storage_dict['directory'] = directory
         self.storage_dict['filename'] = filename
         self.storage_dict['recursive'] = recursive
 
-        filePath = self.joinFileNameDir(filename, directory)
+        #filePath = self.joinFileNameDir(filename, directory)
+        filePath = self.massage_path(directory) + '/' + filename
 
         obj = []
-        print(filePath)
+        #print(filePath)
         infoList = []
 
-        if (len(directory) > 0) and recursive is False:
-            objs = list(
-                self.s3Resource.Bucket(self.container_name).objects.filter(
-                    Prefix=filePath))
-        elif (len(directory) == 0) and recursive is False:
-            objs = list(
-                self.s3Resource.Bucket(self.container_name).objects.filter(
-                    Prefix=filePath))
-            # objs = list(self.s3Resource.Bucket(self.container_name).objects.all())
-        elif (len(directory) > 0) and recursive is True:
-            objs = list(
-                self.s3Resource.Bucket(self.container_name).objects.filter(
-                    Prefix=self.trimFileNamePath(directory)))
-        elif (len(directory) == 0) and recursive is True:
-            objs = list(
-                self.s3Resource.Bucket(self.container_name).objects.all())
+        if(len(directory) > 0) and recursive is False:
+            objs = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=filePath))
+        elif(len(directory) == 0) and recursive is False:
+            objs = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=filePath))
+            #objs = list(self.s3_resource.Bucket(self.container_name).objects.all())
+        elif(len(directory) > 0) and recursive is True:
+            objs = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=self.massage_path(directory)))
+        elif(len(directory) == 0) and recursive is True:
+            objs = list(self.s3_resource.Bucket(self.container_name).objects.all())
+
 
         if len(objs) > 0:
             for obj in objs:
-                if self.splitToList(obj.key)[-1] == filename:
-                    # print(obj.key)
-                    metadata = self.s3Client.head_object(
-                        Bucket=self.container_name, Key=obj.key)
+                #if self.splitToList(obj.key)[-1] == filename:
+                if os.path.basename(obj.key) == filename:
+                    #print(obj.key)
+                    metadata = self.s3_client.head_object(Bucket=self.container_name, Key=obj.key)
                     # print(metadata)
                     info = {
                         "fileName": obj.key,
                         # "creationDate" : metadata['ResponseMetadata']['HTTPHeaders']['date'],
-                        "lastModificationDate":
-                            metadata['ResponseMetadata']['HTTPHeaders'][
-                                'last-modified'],
-                        "contentLength":
-                            metadata['ResponseMetadata']['HTTPHeaders'][
-                                'content-length']
+                        "lastModificationDate": metadata['ResponseMetadata']['HTTPHeaders']['last-modified'],
+                        "contentLength": metadata['ResponseMetadata']['HTTPHeaders']['content-length']
                     }
-                    # pprint(info)
+                    #pprint(info)
                     infoList.append(info)
+
 
         self.storage_dict['infoList'] = infoList
 
         if len(infoList) == 0:
             self.storage_dict['message'] = 'File not found'
+        else:
+            self.storage_dict['message'] = 'File found'
 
-        # print(self.storage_dict['message'])
+        print(self.storage_dict['infoList'])
         return self.storage_dict
+
