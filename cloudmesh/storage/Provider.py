@@ -4,69 +4,61 @@ from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
 from cloudmesh.storage.provider.azureblob.Provider import Provider as AzureblobProvider
 from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
 
-from cloudmesh.storage.StorageABC import StorageABC
+from cloudmesh.common.console import Console
 
 
-#
-# bug does not follow the ABC class
-#
-class Provider(StorageABC):
+class Provider(object):
 
-    #
-    # TODO: use what we implemented in the StorageABC
-    #
-    def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
-        super(Provider, self).__init__(cloud=cloud, config=config)
-        self.provider = None
+    def __init__(self):
+        print("init {name}".format(name=self.__class__.__name__))
 
-        if self.kind == "gdrive":
-            self.provider = GdriveProvider()
-        elif self.kind == "box":
-            self.provider = BoxProvider()
-        elif self.kind == "azureblob":
-            self.provider = AzureblobProvider()
-        elif self.kind == "awss3":
-            self.provider = AwsProvider()
-        else:
-            raise ValueError(f"Storage provider {cloud} not yet supported")
 
-    def list(self, parameter):
-        print("list", parameter)
-        provider = self._provider(self.service)
-        raise ValueError("dict missing")
-        return {}
+    def _provider(self, service):
+        provider = None
+        if service == "gdrive":
+            provider = GdriveProvider()
+        elif service == "box":
+            provider = BoxProvider()
+        elif service == "aws":
+            provider = AwsProvider()
+        elif service == "azureblob":
+            provider = AzureblobProvider(service)
 
-    def delete(self, filename):
-        print("delete filename")
-        provider = self._provider(self.service)
-        provider.delete(filename)
-        raise ValueError("dict missing")
-        return {}
+        return provider
 
-    def get(self, service, filename):
-        print("get", service, filename)
+    def get(self, service, source, destination, recursive):
+        Console.ok(f"get {service} {source} {destination} {recursive}")
         provider = self._provider(service)
-        provider.get(filename)
-        raise ValueError("dict missing")
-        return {}
+        d = provider.get(service, source, destination, recursive)
+        return d
 
-    def put(self, service, filename):
-        print("put", service, filename)
+    def put(self, service, source, destination, recursive):
+        Console.ok(f"put {service} {source}")
         provider = self._provider(service)
-        provider.put(filename)
-        raise ValueError("dict missing")
-        return {}
+        d = provider.put(service, source, destination, recursive)
+        return d
 
-    def search(self, service, directory, filename):
-        print("search", service, directory, filename)
+    def createdir(self, service, directory):
+        Console.ok(f"create_dir {directory}")
         provider = self._provider(service)
-        provider.search(directory, filename)
-        raise ValueError("dict missing")
-        return {}
+        print(directory)
+        d = provider.create_dir(service, directory)
+        return d
 
-    def create_dir(self, service, directory):
-        print("create dir", service, directory)
+    def delete(self, service, source):
+        Console.ok(f"delete filename {service} {source}")
         provider = self._provider(service)
-        provider.create_dir(directory)
-        raise ValueError("dict missing")
-        return {}
+        provider.delete(service, source)
+
+    def search(self, service, directory, filename, recursive):
+        Console.ok(f"search {directory}")
+        provider = self._provider(service)
+        d = provider.search(service,directory, filename, recursive)
+        return d
+
+    def list(self, service, source, recursive):
+        Console.ok(f"list {source}")
+        provider = self._provider(service)
+        d = provider.list(service, source, recursive)
+        return d
+
