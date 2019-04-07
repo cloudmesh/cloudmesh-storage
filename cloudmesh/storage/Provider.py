@@ -9,22 +9,20 @@ from cloudmesh.common.console import Console
 
 class Provider(object):
 
-    def __init__(self):
-        print("init {name}".format(name=self.__class__.__name__))
+    def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+        super(Provider, self).__init__(cloud=cloud, config=config)
+        self.provider = None
 
-
-    def _provider(self, service):
-        provider = None
-        if service == "gdrive":
-            provider = GdriveProvider()
-        elif service == "box":
-            provider = BoxProvider()
-        elif service == "aws":
-            provider = AwsProvider()
-        elif service == "azureblob":
-            provider = AzureblobProvider(service)
-
-        return provider
+        if self.kind == "gdrive":
+            self.provider = GdriveProvider()
+        elif self.kind == "box":
+            self.provider = BoxProvider()
+        elif self.kind == "azureblob":
+            self.provider = AzureblobProvider()
+        elif self.kind == "awss3":
+            self.provider = AwsProvider()
+        else:
+            raise ValueError(f"Storage provider {cloud} not yet supported")
 
     def get(self, service, source, destination, recursive):
         Console.ok(f"get {service} {source} {destination} {recursive}")
