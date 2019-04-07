@@ -1,56 +1,65 @@
-from cloudmesh.abstractclass.StorageABC import StorageABC
+from cloudmesh.storage.provider.gdrive import Provider as  GdriveStorageProvider
+from cloudmesh.storage.provider.box import Provider as BoxStorageProvider
+from cloudmesh.storage.provider.awss3 import Provider as AwsStorageProvider
+from cloudmesh.storage.provider.azureblob import Provider as AzureblobStorageProvider
+from cloudmesh.management.configuration.config import Config
+from cloudmesh.common.console import Console
+from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
+from cloudmesh.terminal.Terminal import VERBOSE
 
 
-# from cloudmesh.storag.google.Provider import Provider as GoogleStorageProvider
-# from cloudmesh.bostorage.box.Provider import Provider as GoogleBoxProvider
+class Provider(object):
 
+    def __init__(self, cloud=None, config="~/.cloudmesh/.cloudmesh4.yaml"):
 
-#
-# BUG return returns a list of dicts, see ABC class
-#
+        super(Provider, self).__init__(cloud=cloud, config=config)
 
-class Provider(StorageABC):
+        self.config = Config()
+        self.kind = config["cloudmesh"]["storage"][cloud]["cm"]["kind"]
+        self.cloud = cloud
 
-    def __init__(self, cloud=None, config=None):
-        #
-        # BUG we should place logic for kind, name, cloud here so we can use super __init__
-        #
+        Console.msg("FOUND Kind", self.kind)
 
-        """
-        if cloud == 'google':
-            self.p = GoogleStorageProvider
+        if self.kind in ["awsS3"]:
+            self.p = AwsStorageProvider(cloud=cloud,
+                                            config=config)
+        elif self.kind in ["box"]:
+            self.p = BoxStorageProvider(cloud=cloud,
+                                                config=config)
+        elif self.kind in ["gdrive"]:
+            self.p = GdriveStorageProvider(cloud=cloud,
+                                                config=config)
+        elif self.kind in ["azureblob"]:
+            self.p = AzureblobStorageProvider(cloud=cloud,
+                                                config=config)
+        else:
+            raise NotImplementedError
 
-
-        """
-        raise NotImplementedError
 
     def create_dir(self, service=None, directory=None):
         """
         creates a directory
-
         :param service: the name of the service in the yaml file
         :param directory: the name of the directory
         :return: dict
         """
-        raise NotImplementedError
+        return self.p.create_dir()
 
     # @DatabaseUpdate
     def list(self, service=None, source=None, recursive=False):
         """
         lists the information as dict
-
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
         :return: dict
         """
-        raise NotImplementedError
+        return self.p.list()
 
     def put(self, service=None, source=None, destination=None, recusrive=False):
         """
         puts the source on the service
-
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or file
@@ -58,12 +67,11 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-        raise NotImplementedError
+        return self.p.put()
 
     def get(self, service=None, source=None, destination=None, recusrive=False):
         """
         gets the destination and copies it in source
-
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or file
@@ -71,29 +79,27 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-        raise NotImplementedError
+        return self.p.get()
 
     def delete(self, service=None, source=None, recusrive=False):
         """
         deletes the source
-
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
         :return: dict
         """
-        raise NotImplementedError
+        return self.p.delete()
 
     def search(self, service=None, directory=None, filename=None,
                recusrive=False):
         """
         gets the destination and copies it in source
-
         :param service: the name of the service in the yaml file
         :param directory: the directory which either can be a directory or file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
         :return: dict
         """
-        raise NotImplementedError
+        return self.p.search()
