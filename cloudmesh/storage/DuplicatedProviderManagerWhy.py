@@ -11,7 +11,7 @@ from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
 from cloudmesh.common.console import Console
 
 
-class Manager(object):
+class Provider(object):
 
     def __init__(self):
         print("init {name}".format(name=self.__class__.__name__))
