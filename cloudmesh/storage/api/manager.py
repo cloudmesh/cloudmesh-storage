@@ -1,6 +1,7 @@
 import cloudmesh.storage.provider.gdrive.Provider
 import cloudmesh.storage.provider.box.Provider
 import cloudmesh.storage.provider.awss3.Provider
+import cloudmesh.storage.provider.azureblob.Provider
 from cloudmesh.common.console import Console
 
 
