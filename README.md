@@ -42,7 +42,7 @@ $ pip install -e .
 
 For users (NOT YET WORKING:
 
-```python
+```bash
 $ pip install cloudmesh.storage
 ```
 
