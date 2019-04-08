@@ -1,9 +1,6 @@
 # all this code has been taken and modified from 
 # https://github.com/samlopezf/google-drive-api-tutorial
 # https://developers.google.com/drive/api/v3/manage-uploads
-
-from __future__ import print_function
-
 import os
 
 #
@@ -31,7 +28,9 @@ class Authentication:
         authentication 
     """
 
-    def __init__(self, scopes, client_secret_file, application_name):
+    def __init__(self, scopes, client_secret_file
+
+                 , application_name):
 
         self.scopes = scopes
         self.client_secret_file = client_secret_file
@@ -48,14 +47,7 @@ class Authentication:
             Here the authentication type is OAuth2
 
         """
-        cwd = os.getcwd()
-        #
-        # BUG: this is highly insecure and the file must be placed
-        # in ~/.cloudmesh/gdrive as credentials coudl be forgotten
-        # permissions must be set properly for the dir before a file
-        # is placed in it
-        # This is even discussed in the getting started page in google.
-        #
+        cwd = '~/.cloudmesh/gdrive'
         credentials_dir = os.path.join(cwd, '.credentials')
         if not os.path.exists(credentials_dir):
             os.makedirs(credentials_dir)
