@@ -8,15 +8,19 @@ from cloudmesh.storage.StorageABC import StorageABC
 #from cloudmesh.storage.provider.gdrive.Provider import \
 
 from cloudmesh.DEBUG import VERBOSE
-
+from cloudmesh.common.console import Console
+import warnings
 
 
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
 
-
         super(Provider, self).__init__(service=service, config=config)
+
+        Console.error("PLEASE USE cloudmesh.storage.Provider")
+
+        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
 
         if self.kind == "local":
             self.provider = LocalProvider(service=service, config=config)
@@ -32,14 +36,20 @@ class Provider(StorageABC):
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
 
     def get(self, source=None, destination=None, recursive=False):
+
+        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
+
         # BUG DOES NOT FOLLOW SPEC
-        VERBOSE(f"get {service} {source} {destination} {recursive}")
+        VERBOSE(f"get {source} {destination} {recursive}")
         d = self.provider.get(source=source,
                               destination=destination,
                               recursive=recursive)
         return d
 
     def put(self, service=None, source=None, destination=None, recursive=False):
+
+        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
+
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"put {service} {source}")
         d = self.provider.put(source=source,
@@ -48,6 +58,9 @@ class Provider(StorageABC):
         return d
 
     def createdir(self, service=None, directory=None):
+
+        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
+
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"create_dir {directory}")
         VERBOSE(directory)
@@ -55,11 +68,17 @@ class Provider(StorageABC):
         return d
 
     def delete(self, service=None, source=None):
+
+        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
+
         VERBOSE(f"delete filename {service} {source}")
         self.provider.delete(service=service, source=source)
         raise ValueError("must return a value")
 
     def search(self, service=None, directory=None, filename=None, recursive=False):
+
+        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
+
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"search {directory}")
         d = self.provider.search(directory=directory,
@@ -68,6 +87,9 @@ class Provider(StorageABC):
         return d
 
     def list(self, service=None, source=None, recursive=None):
+
+        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
+
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"list {source}")
         VERBOSE(locals())

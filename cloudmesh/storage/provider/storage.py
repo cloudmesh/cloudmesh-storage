@@ -21,16 +21,16 @@ class Provider(object):
         Console.msg("FOUND Kind", self.kind)
 
         if self.kind in ["awsS3"]:
-            self.p = AwsStorageProvider(cloud=cloud,
+            self.p = AwsStorageProvider(service=service,
                                         config=config)
         elif self.kind in ["box"]:
-            self.p = BoxStorageProvider(cloud=cloud,
+            self.p = BoxStorageProvider(service=service,
                                         config=config)
         elif self.kind in ["gdrive"]:
-            self.p = GdriveStorageProvider(cloud=cloud,
+            self.p = GdriveStorageProvider(service=service,
                                            config=config)
         elif self.kind in ["azureblob"]:
-            self.p = AzureblobStorageProvider(cloud=cloud,
+            self.p = AzureblobStorageProvider(service=service,
                                               config=config)
         else:
             raise NotImplementedError
