@@ -4,7 +4,7 @@ from cloudmesh.storage.provider.azureblob.Provider import \
 from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
 from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
 from cloudmesh.storage.StorageABC import StorageABC
-# from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
+from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
 
 from cloudmesh.DEBUG import VERBOSE
 from cloudmesh.common.console import Console
@@ -25,8 +25,8 @@ class Provider(StorageABC):
             self.provider = LocalProvider(service=service, config=config)
         elif self.kind == "box":
             self.provider = BoxProvider(service=service, config=config)
-        #elif self.kind == "gdrive":
-        #    provider = GdriveProvider(service=service, config=config)
+        elif self.kind == "gdrive":
+            self.provider = GdriveProvider(service=service, config=config)
         elif self.kind == "azureblob":
             self.provider = AzureblobProvider(service=service, config=config)
         elif self.kind == "awss3":
