@@ -99,7 +99,7 @@ class Provider(StorageABC):
         VERBOSE(files, label="f")
         result = []
         for file in files:
-            VERBOSE(file)
+            VERBOSE(file, label="entry")
             what = self.identifier(source, str(file))
             VERBOSE(what, label="file")
             result.append(what)
