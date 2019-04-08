@@ -19,7 +19,7 @@ class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         super().__init__(service=service, config=config)
-        self.service = BlockBlobService(
+        self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
         self.container = self.credentials['container']
@@ -62,7 +62,7 @@ class Provider(StorageABC):
         src_file = srv_path
         if srv_path.startswith('/'):
             src_file = srv_path[1:]
-        if self.service.exists(self.container, src_file):
+        if self.storage_service.exists(self.container, src_file):
             b_file = os.path.basename(srv_path)
             if srv_path.startswith('/'):
                 b_folder = os.path.dirname(src_file)
@@ -108,10 +108,10 @@ class Provider(StorageABC):
             if blob_folder is None:
                 # file only specified
                 if not recursive:
-                    if self.service.exists(self.container, blob_file):
+                    if self.storage_service.exists(self.container, blob_file):
                         download_path = os.path.join(src_path, blob_file)
                         obj_list.append(
-                            self.service.get_blob_to_path(self.container,
+                            self.storage_service.get_blob_to_path(self.container,
                                                           blob_file,
                                                           download_path))
                     else:
@@ -120,12 +120,12 @@ class Provider(StorageABC):
                                 file=blob_file))
                 else:
                     file_found = False
-                    get_gen = self.service.list_blobs(self.container)
+                    get_gen = self.storage_service.list_blobs(self.container)
                     for blob in get_gen:
                         if os.path.basename(blob.name) == blob_file:
                             download_path = os.path.join(src_path, blob_file)
                             obj_list.append(
-                                self.service.get_blob_to_path(self.container,
+                                self.storage_service.get_blob_to_path(self.container,
                                                               blob.name,
                                                               download_path))
                             file_found = True
@@ -138,13 +138,13 @@ class Provider(StorageABC):
                     # Folder only specified
                     if not recursive:
                         file_found = False
-                        get_gen = self.service.list_blobs(self.container)
+                        get_gen = self.storage_service.list_blobs(self.container)
                         for blob in get_gen:
                             if os.path.dirname(blob.name) == blob_folder:
                                 download_path = os.path.join(src_path,
                                                              os.path.basename(
                                                                  blob.name))
-                                obj_list.append(self.service.get_blob_to_path(
+                                obj_list.append(self.storage_service.get_blob_to_path(
                                     self.container, blob.name, download_path))
                                 file_found = True
                         if not file_found:
@@ -153,7 +153,7 @@ class Provider(StorageABC):
                                     directory=blob_folder))
                     else:
                         file_found = False
-                        srch_gen = self.service.list_blobs(self.container)
+                        srch_gen = self.storage_service.list_blobs(self.container)
                         for blob in srch_gen:
                             if (os.path.dirname(blob.name) == blob_folder) or \
                                 (os.path.commonpath([blob.name,
@@ -161,7 +161,7 @@ class Provider(StorageABC):
                                 download_path = os.path.join(src_path,
                                                              os.path.basename(
                                                                  blob.name))
-                                obj_list.append(self.service.get_blob_to_path(
+                                obj_list.append(self.storage_service.get_blob_to_path(
                                     self.container, blob.name, download_path))
                                 file_found = True
                         if not file_found:
@@ -171,10 +171,10 @@ class Provider(StorageABC):
                 else:
                     # SOURCE is specified with Directory and file
                     if not recursive:
-                        if self.service.exists(self.container, destination[1:]):
+                        if self.storage_service.exists(self.container, destination[1:]):
                             download_path = os.path.join(src_path, blob_file)
                             obj_list.append(
-                                self.service.get_blob_to_path(self.container,
+                                self.storage_service.get_blob_to_path(self.container,
                                                               destination[1:],
                                                               download_path))
                         else:
@@ -202,7 +202,7 @@ class Provider(StorageABC):
 
         HEADING()
         # Determine service path - file or folder
-        if self.service.exists(self.container, destination[1:]):
+        if self.storage_service.exists(self.container, destination[1:]):
             return Console.error("Directory does not exist: {directory}".format(
                 directory=destination))
         else:
@@ -219,7 +219,7 @@ class Provider(StorageABC):
                 # File only specified
                 upl_path = src_path
                 upl_file = blob_folder + '/' + os.path.basename(src_path)
-                obj = self.service.create_blob_from_path(self.container,
+                obj = self.storage_service.create_blob_from_path(self.container,
                                                          upl_file, upl_path)
                 # BUG duplicated code
                 entry = obj.__dict__
@@ -239,7 +239,7 @@ class Provider(StorageABC):
                         if os.path.isfile(os.path.join(src_path, file)):
                             upl_path = os.path.join(src_path, file)
                             upl_file = blob_folder + '/' + file
-                            obj = self.service.create_blob_from_path(
+                            obj = self.storage_service.create_blob_from_path(
                                 self.container, upl_file, upl_path)
                             # BUG duplicated code
                             entry = obj.__dict__
@@ -281,29 +281,29 @@ class Provider(StorageABC):
         obj_list = []
         if blob_folder is None:
             # SOURCE specified is File only
-            if self.service.exists(self.container, blob_file):
-                blob_prop = self.service.get_blob_properties(self.container,
+            if self.storage_service.exists(self.container, blob_file):
+                blob_prop = self.storage_service.get_blob_properties(self.container,
                                                              blob_file)
                 obj_list.append(blob_prop)
-                self.service.delete_blob(self.container, blob_file)
+                self.storage_service.delete_blob(self.container, blob_file)
             else:
                 return Console.error(
                     "File does not exist: {file}".format(file=blob_file))
         else:
             if blob_file is None:
                 # SOURCE specified is Folder only
-                del_gen = self.service.list_blobs(self.container)
+                del_gen = self.storage_service.list_blobs(self.container)
                 for blob in del_gen:
                     if os.path.commonpath([blob.name, blob_folder]) == blob_folder:
                         obj_list.append(blob)
-                        self.service.delete_blob(self.container, blob.name)
+                        self.storage_service.delete_blob(self.container, blob.name)
             else:
                 # Source specified is both file and directory
-                if self.service.exists(self.container, source[1:]):
-                    blob_prop = self.service.get_blob_properties(self.container,
+                if self.storage_service.exists(self.container, source[1:]):
+                    blob_prop = self.storage_service.get_blob_properties(self.container,
                                                                  source[1:])
                     obj_list.append(blob_prop)
-                    self.service.delete_blob(self.container, source[1:])
+                    self.storage_service.delete_blob(self.container, source[1:])
                 else:
                     return Console.error(
                         "File does not exist: {file}".format(file=blob_file))
@@ -321,13 +321,13 @@ class Provider(StorageABC):
         """
 
         HEADING()
-        if self.service.exists(self.container):
+        if self.storage_service.exists(self.container):
             blob_cre = []
             data = b' '
             blob_name = directory[1:] + '/dummy.txt'
-            self.service.create_blob_from_bytes(self.container, blob_name, data)
+            self.storage_service.create_blob_from_bytes(self.container, blob_name, data)
             blob_cre.append(
-                self.service.get_blob_to_bytes(self.container, blob_name))
+                self.storage_service.get_blob_to_bytes(self.container, blob_name))
             dict_obj = self.update_dict(blob_cre)
         return dict_obj
 
@@ -345,7 +345,7 @@ class Provider(StorageABC):
         """
 
         HEADING()
-        srch_gen = self.service.list_blobs(self.container)
+        srch_gen = self.storage_service.list_blobs(self.container)
         obj_list = []
         if not recursive:
             srch_file = os.path.join(directory[1:], filename)
@@ -394,10 +394,10 @@ class Provider(StorageABC):
         if blob_folder is None:
             # SOURCE specified is File only
             if not recursive:
-                if self.service.exists(self.container, blob_file):
-                    blob_prop = self.service.get_blob_properties(self.container,
+                if self.storage_service.exists(self.container, blob_file):
+                    blob_prop = self.storage_service.get_blob_properties(self.container,
                                                                  blob_file)
-                    blob_size = self.service.get_blob_properties(self.container,
+                    blob_size = self.storage_service.get_blob_properties(self.container,
                                                                  blob_file).properties.content_length
                     obj_list.append(blob_prop)
                 else:
@@ -405,7 +405,7 @@ class Provider(StorageABC):
                         "File does not exist: {file}".format(file=blob_file))
             else:
                 file_found = False
-                srch_gen = self.service.list_blobs(self.container)
+                srch_gen = self.storage_service.list_blobs(self.container)
                 for blob in srch_gen:
                     if os.path.basename(blob.name) == blob_file:
                         obj_list.append(blob)
@@ -419,7 +419,7 @@ class Provider(StorageABC):
                 if not recursive:
                     print("No recur print", self.cloud)
                     file_found = False
-                    srch_gen = self.service.list_blobs(self.container)
+                    srch_gen = self.storage_service.list_blobs(self.container)
                     for blob in srch_gen:
                         if os.path.dirname(blob.name) == blob_folder:
                             obj_list.append(blob)
@@ -430,7 +430,7 @@ class Provider(StorageABC):
                                 directory=blob_folder))
                 else:
                     file_found = False
-                    srch_gen = self.service.list_blobs(self.container)
+                    srch_gen = self.storage_service.list_blobs(self.container)
                     for blob in srch_gen:
                         if (os.path.dirname(blob.name) == blob_folder) or \
                             (os.path.commonpath(
@@ -444,10 +444,10 @@ class Provider(StorageABC):
             else:
                 # SOURCE is specified with Directory and file
                 if not recursive:
-                    if self.service.exists(self.container, source[1:]):
-                        blob_prop = self.service.get_blob_properties(
+                    if self.storage_service.exists(self.container, source[1:]):
+                        blob_prop = self.storage_service.get_blob_properties(
                             self.container, source[1:])
-                        blob_size = self.service.get_blob_properties(
+                        blob_size = self.storage_service.get_blob_properties(
                             self.container,
                             source[1:]).properties.content_length
                         obj_list.append(blob_prop)
