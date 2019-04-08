@@ -131,13 +131,13 @@ class Provider(StorageABC):
         dir_files_list = []
         trimmed_source = self.massage_path(source)
 
-        if recursive == False:
+        if not recursive:
             # call will not be recursive and need to look only in the specified directory
             for obj in objs:
                 if obj.key.startswith(self.massage_path(trimmed_source)):
                     # print(obj.key)
                     file_name = obj.key.replace(self.directory_marker_file_name,
-                                               '')
+                                                '')
                     if file_name[-1] == '/':
                         # Its a directory
                         '''
@@ -151,13 +151,11 @@ class Provider(StorageABC):
                             dir_files_list.append(file_name)
                         elif (file_name.replace(trimmed_source, '')[
                                   0] == '/' and file_name.replace(trimmed_source,
-                                                                 '').count(
-                            '/') == 1):
+                                                                  '').count('/') == 1):
                             dir_files_list.append(file_name)
                         elif (file_name.replace(trimmed_source, '')[
                                   0] != '/' and file_name.replace(trimmed_source,
-                                                                 '').count(
-                            '/') == 0):
+                                                                  '').count('/') == 0):
                             dir_files_list.append(file_name)
                     # print(fileName)
         else:
@@ -166,8 +164,8 @@ class Provider(StorageABC):
                 if obj.key.startswith(self.massage_path(trimmed_source)):
                     # print(obj.key)
                     file_name = obj.key.replace(self.directory_marker_file_name,
-                                               '')
-                    if (file_name[-1] == '/'):
+                                                '')
+                    if file_name[-1] == '/':
                         # Its a directory
                         '''
                         if (fileName.replace(trimmedSource,'').count('/') == 1):
@@ -215,7 +213,7 @@ class Provider(StorageABC):
 
         try:
             file_obj = self.s3_client.get_object(Bucket=self.container_name,
-                                                Key=trimmed_source)
+                                                 Key=trimmed_source)
         except botocore.exceptions.ClientError as e:
             # object not found
             x = 1
@@ -366,7 +364,7 @@ class Provider(StorageABC):
 
         try:
             file_obj = self.s3_client.get_object(Bucket=self.container_name,
-                                                Key=trimmed_source)
+                                                 Key=trimmed_source)
             print(file_obj)
         except botocore.exceptions.ClientError as e:
             # object not found
@@ -403,8 +401,7 @@ class Provider(StorageABC):
                 # print('directory found and recursive is false')
                 files_downloaded = []
                 for obj in all_objs:
-                    if os.path.basename(
-                        obj.key) != self.directory_marker_file_name:
+                    if os.path.basename(obj.key) != self.directory_marker_file_name:
                         if self.massage_path(
                             obj.key.replace(trimmed_source, '')).count('/') == 0:
                             try:
@@ -430,10 +427,8 @@ class Provider(StorageABC):
                 for obj in all_objs:
                     # print(obj.key)
                     if os.path.basename(
-                        obj.key) != self.directory_marker_file_name and obj.key[
-                        -1] != '/':
-                        if self.massage_path(
-                            obj.key.replace(trimmed_source, '')).count('/') == 0:
+                        obj.key) != self.directory_marker_file_name and obj.key[-1] != '/':
+                        if self.massage_path(obj.key.replace(trimmed_source, '')).count('/') == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
                                     self.container_name).download_file(

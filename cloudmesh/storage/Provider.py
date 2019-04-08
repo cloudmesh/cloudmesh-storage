@@ -27,14 +27,21 @@ class Provider(object):
 
     def get(self, service=None, source=None, destination=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
-        VERBOSE.print(f"get {service} {source} {destination} {recursive}", verbose=9)
-        d = self.provider.get(service=service, source=source, destination=destination, recursive=recursive)
+        VERBOSE.print(f"get {service} {source} {destination} {recursive}",
+                      verbose=9)
+        d = self.provider.get(service=service,
+                              source=source,
+                              destination=destination,
+                              recursive=recursive)
         return d
 
     def put(self, service=None, source=None, destination=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE.print(f"put {service} {source}", verbose=9)
-        d = self.provider.put(service=service, source=source, destination=destination, recursive=recursive)
+        d = self.provider.put(service=service,
+                              source=source,
+                              destination=destination,
+                              recursive=recursive)
         return d
 
     def createdir(self, service=None, directory=None):
@@ -52,12 +59,17 @@ class Provider(object):
     def search(self, service=None, directory=None, filename=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE.print(f"search {directory}", verbose=9)
-        d = self.provider.search(service=service, directory=directory, filename=filename, recursive=recursive)
+        d = self.provider.search(service=service,
+                                 directory=directory,
+                                 filename=filename,
+                                 recursive=recursive)
         return d
 
     def list(self, service=None, source=None, recursive=None):
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE.print(f"list {source}", verbose=9)
-        d = self.provider.list(service=service, source=source, recursive=recursive)
+        d = self.provider.list(service=service,
+                               source=source,
+                               recursive=recursive)
         return d
 

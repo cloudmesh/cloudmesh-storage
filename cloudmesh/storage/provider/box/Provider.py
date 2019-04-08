@@ -7,7 +7,9 @@ from pprint import pprint
 import os
 from cloudmesh.storage.StorageABC import StorageABC
 
-
+#
+# TODO: BIG BUG variables can not be named type
+#
 def get_id(source, results, type):
     if not any((result.name == source and result.type == type) for result in
                results):
@@ -15,6 +17,9 @@ def get_id(source, results, type):
     else:
         ind = next((index for (index, result) in enumerate(results) if
                     (result.name == source)), None)
+        #
+        # BIG BUG youmust not use id as variable name
+        #
         id = results[ind].id
         return id
 
@@ -72,10 +77,13 @@ class Provider(StorageABC):
             recursive=False):
         """
 
-        uploads file to Box, if source is directory and recursive is true uploads all files in source directory
+        uploads file to Box, if source is directory and recursive is true
+        uploads all files in source directory
+
         :param source: local file or directory to be uploaded
         :param destination: cloud directory to upload to
-        :param recursive: if true upload all files in source directory, source must be directory not file
+        :param recursive: if true upload all files in source directory,
+                          source must be directory not file
         :return: file dict(s) that have been uploaded
 
 
@@ -92,7 +100,7 @@ class Provider(StorageABC):
                 items = self.client.search().query(dest, type='folder')
                 folders = [item for item in items]
                 folder_id = get_id(dest, folders, 'folder')
-                if folder_id != False:
+                if folder_id:
                     files = [item for item in
                              self.client.folder(folder_id).get_items()]
                 else:
@@ -273,6 +281,9 @@ class Provider(StorageABC):
 
         """
         try:
+            #
+            # big bug variables can not be named list
+            #
             list = []
             path = source.split('/')
             for i in range(1, len(path) + 1):

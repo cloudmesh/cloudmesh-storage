@@ -50,8 +50,10 @@ class Authentication:
         """
         cwd = os.getcwd()
         #
-        # BUG: this is highly insecure and the file must be placed in ~/.cloudmesh/gdrive as credentials coudl be forgotten
-        # permissions must be set properly for the dir before a file is placed in it
+        # BUG: this is highly insecure and the file must be placed
+        # in ~/.cloudmesh/gdrive as credentials coudl be forgotten
+        # permissions must be set properly for the dir before a file
+        # is placed in it
         # This is even discussed in the getting started page in google.
         #
         credentials_dir = os.path.join(cwd, '.credentials')

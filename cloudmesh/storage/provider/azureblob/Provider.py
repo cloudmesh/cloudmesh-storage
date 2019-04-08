@@ -290,8 +290,7 @@ class Provider(StorageABC):
                 # SOURCE specified is Folder only
                 del_gen = self.service.list_blobs(self.container)
                 for blob in del_gen:
-                    if os.path.commonpath(
-                        [blob.name, blob_folder]) == blob_folder:
+                    if os.path.commonpath([blob.name, blob_folder]) == blob_folder:
                         obj_list.append(blob)
                         self.service.delete_blob(self.container, blob.name)
             else:
@@ -358,8 +357,7 @@ class Provider(StorageABC):
             for blob in srch_gen:
                 if re.search('/', blob.name) is not None:
                     if os.path.basename(blob.name) == filename:
-                        if os.path.commonpath(
-                            [blob.name, directory[1:]]) == directory[1:]:
+                        if os.path.commonpath([blob.name, directory[1:]]) == directory[1:]:
                             obj_list.append(blob)
                             file_found = True
                             # break
