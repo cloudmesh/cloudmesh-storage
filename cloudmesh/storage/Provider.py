@@ -25,7 +25,7 @@ class Provider(object):
             provider = AwsProvider()
         else:
             raise ValueError(f"Storage provider {kind} not yet supported")
-        return self.provider
+        return provider
 
     def get(self, service=None, source=None, destination=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
