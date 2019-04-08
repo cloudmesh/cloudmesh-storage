@@ -31,11 +31,10 @@ class Provider(StorageABC):
         else:
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
 
-    def get(self, service=None, source=None, destination=None, recursive=False):
+    def get(self, source=None, destination=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"get {service} {source} {destination} {recursive}")
-        d = self.provider.get(service=service,
-                              source=source,
+        d = self.provider.get(source=source,
                               destination=destination,
                               recursive=recursive)
         return d
@@ -43,8 +42,7 @@ class Provider(StorageABC):
     def put(self, service=None, source=None, destination=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"put {service} {source}")
-        d = self.provider.put(service=service,
-                              source=source,
+        d = self.provider.put(source=source,
                               destination=destination,
                               recursive=recursive)
         return d
@@ -64,8 +62,7 @@ class Provider(StorageABC):
     def search(self, service=None, directory=None, filename=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"search {directory}")
-        d = self.provider.search(service=service,
-                                 directory=directory,
+        d = self.provider.search(directory=directory,
                                  filename=filename,
                                  recursive=recursive)
         return d
@@ -74,8 +71,7 @@ class Provider(StorageABC):
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"list {source}")
         VERBOSE(locals())
-        d = self.provider.list(service=service,
-                               source=source,
+        d = self.provider.list(source=source,
                                recursive=recursive)
         return d
 

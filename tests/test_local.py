@@ -62,10 +62,22 @@ class TestBox:
         src = '/'
         contents = self.p.list(source=src)
 
-        VERBOSE(contents)
+        VERBOSE(contents,label="c")
 
         for c in contents:
             VERBOSE(c)
+
+    def test_05_search(self):
+        HEADING()
+        src = '/'
+        filename = 'a.txt'
+        #
+        # bug use named arguments
+        #
+        files = self.p.search(directory=src, filename=filename, recursive=True)
+        pprint(files)
+
+        assert len(files) > 0
 
 
 class a:
@@ -91,17 +103,6 @@ class a:
 
         assert len(contents) > 0
 
-    def test_05_search(self):
-        HEADING()
-        src = '/'
-        filename = 'test.txt'
-        #
-        # bug use named arguments
-        #
-        search_files = self.p.search(src, filename, True)
-        pprint(search_files)
-
-        assert len(search_files) > 0
 
     def test_06_create_dir(self):
         HEADING()

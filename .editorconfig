@@ -31,3 +31,8 @@ indent_size = 2
 [{package.json,.travis.yml}]
 indent_style = space
 indent_size = 2
+
+#
+# line leght
+#
+max_line_length=128

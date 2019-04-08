@@ -5,7 +5,11 @@ from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.storage.StorageABC import StorageABC
 from cloudmesh.DEBUG import VERBOSE
+import shutil
+from os import stat
+from pwd import getpwuid
 
+from grp import getgrgid
 
 class Provider(StorageABC):
     """
@@ -32,32 +36,37 @@ class Provider(StorageABC):
 
         self.credentials["directory"] = path_expand(self.credentials["directory"])
 
-
     def _filename(self, filename):
         return Path(self.credentials["directory"]) / filename
 
     def _dirname(self, dirname):
-        VERBOSE(locals())
-
-        VERBOSE(self.credentials["directory"])
         if dirname == "/":
             dirname = ""
         location = Path(self.credentials["directory"]) / dirname
-        VERBOSE(location, label="TTTT")
         return location
 
     def identifier(self, dirname, filename):
+        stat_info = os.stat(filename)
+        uid = stat_info.st_uid
+        gid = stat_info.st_gid
+
         identity = {
             "cm":
                 {"modified": "today",
                  "created": "today",
-                 "name": Path(dirname) / filename,
+                 "location": str(Path(dirname) / filename),
                  "directory": dirname,
                  "filename": filename,
+                 "isfile": os.path.isfile(filename),
+                 "isdir": os.path.isdir(filename),
+                 "name": os.path.basename(filename),
                  "size": "TBD",
                  "service": self.service
                  },
-            "name": filename
+            "size": os.path.getsize(filename),
+            "name": filename,
+            "ownwer": getpwuid(uid)[0],
+            "group": getgrgid(gid)[0]
         }
         return identity
 
@@ -81,31 +90,28 @@ class Provider(StorageABC):
         identity = self.identifier(directory, None)
         return identity
 
-    def list(self, service=None, source=None, recursive=False):
+    def list(self, source=None, recursive=False):
         """
         lists the information as dict
 
-        :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
         :return: dict
         """
-        VERBOSE(self.credentials, label="CRED")
-        VERBOSE(source)
         location = self._dirname(source)
-        VERBOSE(location, label="aaa")
-        files = location.glob("*")
-        VERBOSE(files, label="f")
+        VERBOSE(location)
+        if recursive:
+            files = location.glob("**/*")
+        else:
+            files = location.glob("*")
         result = []
         for file in files:
-            VERBOSE(file, label="entry")
-            what = self.identifier(source, str(file))
-            VERBOSE(what, label="file")
-            result.append(what)
+            entry = self.identifier(source, str(file))
+            result.append(entry)
         return result
 
-    def put(self, service=None, source=None, destination=None, recusrive=False):
+    def put(self, source=None, service=None, destination=None, recusrive=False):
         """
         puts the source on the service
 
@@ -117,10 +123,18 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-        raise NotImplementedError
+
+        files = self.list()
+        if recusrive:
+            raise NotImplementedError
+
+        src = path_expand(source)
+        dest = path_expand(destination)
+        shutil.copy2(src, dest)
+
         return []
 
-    def get(self, service=None, source=None, destination=None, recusrive=False):
+    def get(self, source=None, service=None, destination=None, recusrive=False):
         """
         gets the destination and copies it in source
 
@@ -135,7 +149,7 @@ class Provider(StorageABC):
         raise NotImplementedError
         return []
 
-    def delete(self, service=None, source=None, recusrive=False):
+    def delete(self, source=None, recusrive=False):
         """
         deletes the source
 
@@ -148,8 +162,10 @@ class Provider(StorageABC):
         raise NotImplementedError
         return []
 
-    def search(self, service=None, directory=None, filename=None,
-               recusrive=False):
+    def search(self,
+               directory=None,
+               filename=None,
+               recursive=False):
         """
         gets the destination and copies it in source
 
@@ -159,5 +175,13 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-        raise NotImplementedError
-        return []
+
+
+        VERBOSE(locals())
+        files = self.list(source=directory, recursive=recursive)
+        VERBOSE(files)
+        result = []
+        for entry in files:
+            if entry["cm"]["name"] == filename:
+                result.append(entry)
+        return result
