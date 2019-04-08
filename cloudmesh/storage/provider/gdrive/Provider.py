@@ -28,7 +28,10 @@ class Provider(StorageABC):
         self.authInst = Authentication(self.scopes,
                                        self.clientSecretFile,
                                        self.applicationName)
-        self.credentials = self.authInst.get_credentials()
+        #
+        # WHAT ARE THESE FLAGS
+        #
+        self.credentials = self.authInst.get_credentials(flags=None)
         self.http = self.credentials.authorize(httplib2.Http())
         self.driveService = self.discovery.build('drive', 'v3', http=self.http)
         self.size = None

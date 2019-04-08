@@ -1,6 +1,7 @@
 # all this code has been taken and modified from 
 # https://github.com/samlopezf/google-drive-api-tutorial
 # https://developers.google.com/drive/api/v3/manage-uploads
+
 import os
 
 #
@@ -10,43 +11,44 @@ from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 
-#
-# BUG: WE DO NOT USE argparse but docopts
-#
-
-try:
-    import argparse
-
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
-
-
 class Authentication:
     """
         Keeping a separate python file or class just for 
         authentication 
     """
 
-    def __init__(self, scopes, client_secret_file
+    def __init__(self, scopes, client_secret_file, application_name, flags=None):
+        """
+        what are these flags?
 
-                 , application_name):
+        :param scopes:
+        :type scopes:
+        :param client_secret_file:
+        :type client_secret_file:
+        :param application_name:
+        :type application_name:
+        :param flags:
+        :type flags:
+        """
 
         self.scopes = scopes
         self.client_secret_file = client_secret_file
         self.application_name = application_name
 
-    def get_credentials(self):
+    def get_credentials(self, flags):
         """
             We have stored the credentials in ".credentials"
             folder and there is a file named 'google-drive-credentials.json'
             that has all the credentials required for our authentication
 
-            If there is nothing stored in it this program creates credentials 
+            If there is nothing stored in it this program creates credentials
             json file for future authentication
             Here the authentication type is OAuth2
 
+        :return:
+        :rtype:
         """
+
         cwd = '~/.cloudmesh/gdrive'
         credentials_dir = os.path.join(cwd, '.credentials')
         if not os.path.exists(credentials_dir):
