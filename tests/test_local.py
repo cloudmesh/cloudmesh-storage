@@ -5,10 +5,10 @@
 import os
 from pprint import pprint
 
-from  cloudmesh.storage.Provider import Provider
+from cloudmesh.storage.Provider import Provider
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
-from  pathlib import Path
+from pathlib import Path
 from cloudmesh.common.util import writefile
 from cloudmesh.shell.variables import Variables
 from cloudmesh.common.util import banner
@@ -27,8 +27,10 @@ class TestBox:
         writefile(path_expand(location), content)
 
     def setup(self):
-        variables = Variables()
-        service = Parameter.expand(variables['storage'])[0]
+        #variables = Variables()
+        #service = Parameter.expand(variables['storage'])[0]
+
+        service = "local"
 
         self.p = Provider(service=service)
 
