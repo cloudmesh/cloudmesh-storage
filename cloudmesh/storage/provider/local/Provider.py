@@ -12,15 +12,20 @@ class Provider(StorageABC):
     """
 
     cloudmesh:
-      storage:
-        a:
-          credentials:
-            directory: ~/.cloudmesh/storage/b
-        b:
-          credentials:
-            directory: ~/.cloudmesh/storage/b
+      a:
+        cm:
+          active: False
+          heading: Local A
+          host: localhost
+          label: local_a
+          kind: local
+          version: 1.0
+        default:
+          directory: .
+        credentials:
+          directory: ~/.cloudmesh/storage/a
 
-
+    default location is credentials.directory / default.directory
     """
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):

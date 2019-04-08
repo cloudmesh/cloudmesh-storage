@@ -2,12 +2,15 @@ from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
 from cloudmesh.storage.provider.azureblob.Provider import \
     Provider as AzureblobProvider
 from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
+from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
+from cloudmesh.storage.StorageABC import StorageABC
+
 #from cloudmesh.storage.provider.gdrive.Provider import \
 #    Provider as GdriveProvider
 from cloudmesh.terminal.Terminal import VERBOSE
 
 
-class Provider(object):
+class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         super(Provider, self).__init__(service=service, config=config)
@@ -15,6 +18,8 @@ class Provider(object):
 
     def get_provider(self, kind):
         provider = None
+        if kind == "local":
+            provider = LocalProvider()
         if kind == "box":
             provider = BoxProvider()
         # elif kind == "gdrive":
