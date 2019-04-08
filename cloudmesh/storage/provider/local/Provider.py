@@ -41,16 +41,17 @@ class Provider(StorageABC):
         return Path(self.credentials["directory"]) / dirname
 
     def identifier(self, dirname, filename):
-        identity = {"cm":
-                        {"modified": "today",
-                         "created": "today",
-                         "name": Path(dirname) / filename,
-                         "directory": dirname,
-                         "filename": filename,
-                         "size": "TBD",
-                         "service": self.service
-                         }
-                    }
+        identity = {
+            "cm":
+                {"modified": "today",
+                 "created": "today",
+                 "name": Path(dirname) / filename,
+                 "directory": dirname,
+                 "filename": filename,
+                 "size": "TBD",
+                 "service": self.service
+                 }
+        }
         return identity
 
     def create_dir(self,
