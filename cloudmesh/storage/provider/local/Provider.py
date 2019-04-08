@@ -31,13 +31,7 @@ class Provider(StorageABC):
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         super(Provider, self).__init__(service=service, config=config)
 
-    def _create_dir(self, location):
-        d = Path(os.path.dirname(path_expand(location)))
-        d.mkdir(parents=True, exist_ok=True)
 
-    def _create_file(self, location, content):
-        self._create_dir(location)
-        writefile(location, content)
 
     def _filename(self, filename):
         return Path(self.credentials["directory"]) / filename
@@ -59,6 +53,10 @@ class Provider(StorageABC):
         }
         return identity
 
+    def create_file(self, location, content):
+        self.create_dir(location)
+        writefile(location, content)
+
     def create_dir(self,
                    service=None,
                    directory=None):
@@ -69,7 +67,8 @@ class Provider(StorageABC):
         :param directory: the name of the directory
         :return: dict
         """
-        self.create_dir(directory)
+        d = Path(os.path.dirname(path_expand(directory)))
+        d.mkdir(parents=True, exist_ok=True)
         identity = self.identifier(directory, None)
         return identity
 

@@ -39,11 +39,10 @@ class TestBox:
 
     def test_00__config(self):
 
+        VERBOSE(self.p)
+        VERBOSE(self.p.kind)
+        assert self.p.kind == self.service
 
-        pprint(self.p)
-
-
-class a:
     def test_01_create_source(self):
         HEADING()
 
@@ -54,6 +53,8 @@ class a:
 
         # test if the files are ok
         assert True
+
+class a:
 
     def test_02_put(self):
         HEADING()
