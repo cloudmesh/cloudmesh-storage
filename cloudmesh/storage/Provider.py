@@ -11,18 +11,21 @@ class Provider(object):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         super(Provider, self).__init__(service=service, config=config)
-        self.provider = None
+        self.provider = self.get_provider(self.kind)
 
-        if self.kind == "gdrive":
-            self.provider = GdriveProvider()
-        elif self.kind == "box":
-            self.provider = BoxProvider()
-        elif self.kind == "azureblob":
-            self.provider = AzureblobProvider()
-        elif self.kind == "awss3":
-            self.provider = AwsProvider()
+    def get_provider(self, kind):
+        provider = None
+        if kind == "gdrive":
+            provider = GdriveProvider()
+        elif kind == "box":
+            provider = BoxProvider()
+        elif kind == "azureblob":
+            provider = AzureblobProvider()
+        elif kind == "awss3":
+            provider = AwsProvider()
         else:
             raise ValueError(f"Storage provider {service} not yet supported")
+        return self.provider
 
     def get(self, service=None, source=None, destination=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
