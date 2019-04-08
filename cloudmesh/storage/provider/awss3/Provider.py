@@ -1,11 +1,10 @@
+import os
+import stat
+
 import boto3
 import botocore
-from cloudmesh.management.configuration.config import Config
-import os, stat
-from cloudmesh.common.util import path_expand
-from cloudmesh.common.util import HEADING
-from pprint import pprint
 from cloudmesh.abstractclass.StorageABC import StorageABC
+from cloudmesh.common.util import HEADING
 
 
 class Provider(StorageABC):

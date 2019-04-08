@@ -1,10 +1,9 @@
 from __future__ import print_function
-from cloudmesh.shell.command import command
-from cloudmesh.shell.command import PluginCommand
-from cloudmesh.vdir.api.manager import Vdir
+
 from cloudmesh.common.console import Console
-from cloudmesh.common.util import path_expand
-from pprint import pprint
+from cloudmesh.shell.command import PluginCommand
+from cloudmesh.shell.command import command
+from cloudmesh.vdir.api.manager import Vdir
 
 
 class VdirCommand(PluginCommand):

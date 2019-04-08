@@ -1,11 +1,10 @@
+from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
+from cloudmesh.storage.provider.azureblob.Provider import \
+    Provider as AzureblobProvider
+from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
 from cloudmesh.storage.provider.gdrive.Provider import \
     Provider as GdriveProvider
-from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
-from cloudmesh.storage.provider.azureblob.Provider import Provider as AzureblobProvider
-from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
-
 from cloudmesh.terminal.Terminal import VERBOSE
-from cloudmesh.common.console import Console
 
 
 class Provider(object):

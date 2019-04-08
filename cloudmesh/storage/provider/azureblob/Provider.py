@@ -6,7 +6,6 @@ from azure.storage.blob import BlockBlobService
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
-from cloudmesh.management.configuration.config import Config
 from cloudmesh.storage.StorageABC import StorageABC
 
 

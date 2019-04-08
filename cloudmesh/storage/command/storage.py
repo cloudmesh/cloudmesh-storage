@@ -1,11 +1,10 @@
 from __future__ import print_function
-from cloudmesh.shell.command import command, map_parameters
-from cloudmesh.shell.command import PluginCommand
-from cloudmesh.storage.Provider import Provider
-from cloudmesh.shell.variables import Variables
-from pprint import pprint
-from cloudmesh.common.console import Console
+
 from cloudmesh.common.parameter import Parameter
+from cloudmesh.shell.command import PluginCommand
+from cloudmesh.shell.command import command, map_parameters
+from cloudmesh.shell.variables import Variables
+from cloudmesh.storage.Provider import Provider
 from cloudmesh.terminal.Terminal import VERBOSE
 
 

@@ -1,12 +1,10 @@
-from cloudmesh.storage.provider.gdrive import Provider as GdriveStorageProvider
-from cloudmesh.storage.provider.box import Provider as BoxStorageProvider
+from cloudmesh.common.console import Console
+from cloudmesh.management.configuration.config import Config
 from cloudmesh.storage.provider.awss3 import Provider as AwsStorageProvider
 from cloudmesh.storage.provider.azureblob import \
     Provider as AzureblobStorageProvider
-from cloudmesh.management.configuration.config import Config
-from cloudmesh.common.console import Console
-from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-from cloudmesh.terminal.Terminal import VERBOSE
+from cloudmesh.storage.provider.box import Provider as BoxStorageProvider
+from cloudmesh.storage.provider.gdrive import Provider as GdriveStorageProvider
 
 
 class Provider(object):

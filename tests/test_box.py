@@ -1,9 +1,11 @@
-import cloudmesh.storage.provider.box.Provider
-from pprint import pprint
-from cloudmesh.common.util import path_expand
 import os
+from pprint import pprint
+
+import cloudmesh.storage.provider.box.Provider
 from cloudmesh.common.util import HEADING
-from pathlib import Path
+from cloudmesh.common.util import path_expand
+
+
 # nosetest -v --nopature
 # nosetests -v --nocapture tests/test_box.py
 
