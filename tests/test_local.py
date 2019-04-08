@@ -16,7 +16,8 @@ from cloudmesh.common.parameter import Parameter
 from cloudmesh.DEBUG import VERBOSE
 
 
-def create_file(self, location, content):
+
+def create_file(location, content):
     d = Path(os.path.dirname(path_expand(location)))
     print()
     print("TESTDIR:", d)
