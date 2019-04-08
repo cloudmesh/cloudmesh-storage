@@ -5,14 +5,15 @@ from cloudmesh.management.configuration.config import Config
 # noinspection PyUnusedLocal
 class StorageABC(metaclass=ABCMeta):
 
-    def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         try:
             self.config = Config()
-            self.credentials = self.config['cloudmesh']['storage'][cloud]['credentials']
-            self.kind = self.config['cloudmesh']['storage'][cloud]['cm']['kind']
-            self.cloud = cloud
+            self.credentials = self.config['cloudmesh']['storage'][service]['credentials']
+            self.kind = self.config['cloudmesh']['storage'][service]['cm']['kind']
+            self.cloud = service
+            self.service = service
         except:
-            raise ValueError(f"storage service {cloud} not specified")
+            raise ValueError(f"storage service {service} not specified")
 
     def create_dir(self,
                    service=None,
