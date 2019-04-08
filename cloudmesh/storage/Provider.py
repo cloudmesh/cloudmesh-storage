@@ -2,8 +2,8 @@ from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
 from cloudmesh.storage.provider.azureblob.Provider import \
     Provider as AzureblobProvider
 from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
-from cloudmesh.storage.provider.gdrive.Provider import \
-    Provider as GdriveProvider
+#from cloudmesh.storage.provider.gdrive.Provider import \
+#    Provider as GdriveProvider
 from cloudmesh.terminal.Terminal import VERBOSE
 
 
@@ -15,10 +15,10 @@ class Provider(object):
 
     def get_provider(self, kind):
         provider = None
-        if kind == "gdrive":
-            provider = GdriveProvider()
-        elif kind == "box":
+        if kind == "box":
             provider = BoxProvider()
+        # elif kind == "gdrive":
+        #    provider = GdriveProvider()
         elif kind == "azureblob":
             provider = AzureblobProvider()
         elif kind == "awss3":
