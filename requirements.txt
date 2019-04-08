@@ -3,3 +3,5 @@ httplib2
 apiclient
 python-magic
 oauth2client
+boto3
+botocore

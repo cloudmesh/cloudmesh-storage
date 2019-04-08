@@ -1,4 +1,6 @@
-
+#
+# BUG
+#
 
 def get(storage, source, destinatiion, recursive):
   '''Returns all users
@@ -8,9 +10,9 @@ def get(storage, source, destinatiion, recursive):
 
   provider = Provider(storage)
 
-            result = provider.get(storage,
-                                  SOURCE,
-                                  DESTINATION,
-                                  recursive)
+  result = provider.get(storage,
+                      SOURCE,
+                      DESTINATION,
+                      recursive)
 
   return josonify(result)

@@ -34,6 +34,8 @@ httplib2
 apiclient
 python-magic
 oauth2client
+boto3
+botocore
 """.split("\n")
 
 # dependency_links = ['http://github.com/nicolaiarocci/eve.git@develop']

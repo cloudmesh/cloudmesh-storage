@@ -28,8 +28,8 @@ class Provider(StorageABC):
 
     # function to massage file path and do some transformations
     # for different scenarios of file inputs
-    def massage_path(self, fileNamePath):
-        massaged_path = fileNamePath
+    def massage_path(self, file_name_path):
+        massaged_path = file_name_path
 
         # remove leading slash symbol in path
         if (len(massaged_path) > 0 and massaged_path[0] == '/'):
@@ -48,7 +48,7 @@ class Provider(StorageABC):
         return massaged_path
 
     # Function to join file name dir to get full file path
-    def joinFileNameDir(self, fileName, dirName):
+    def join_file_name_dir(self, fileName, dirName):
         fullFilePath = ''
         if (len(self.massage_path(dirName)) > 0):
             #fullFilePath = self.massage_path(dirName) + '/' + self.massage_path(fileName)
