@@ -57,7 +57,7 @@ class Provider(StorageABC):
                                                           fields="nextPageToken, files(id, name, mimeType)").execute()
                 file_parent_id = None
                 print(sourceid)
-                if (len(sourceid['files']) == 0):
+                if len(sourceid['files']) == 0:
                     parent_file = self.create_dir(directory=destination)
                     file_parent_id = parent_file['id']
                 else:
@@ -74,7 +74,7 @@ class Provider(StorageABC):
                                                           fields="nextPageToken, files(id, name, mimeType)").execute()
                 file_parent_id = None
                 print(sourceid)
-                if (len(sourceid['files']) == 0):
+                if len(sourceid['files']) == 0:
                     parent_file = self.create_dir(directory=destination)
                     file_parent_id = parent_file['id']
                 else:
@@ -84,13 +84,13 @@ class Provider(StorageABC):
                 self.upload_file(source=None, filename=source,
                                  parent_it=file_parent_id)
         else:
-            if (os.path.isdir(source)):
+            if os.path.isdir(source):
                 query_params = "name='" + destination + "' and trashed=false"
                 sourceid = self.driveService.files().list(q=query_params,
                                                           fields="nextPageToken, files(id, name, mimeType)").execute()
                 file_parent_id = None
                 print(sourceid)
-                if (len(sourceid['files']) == 0):
+                if len(sourceid['files']) == 0:
                     parent_file = self.create_dir(directory=destination)
                     file_parent_id = parent_file['id']
                 else:
@@ -107,7 +107,7 @@ class Provider(StorageABC):
                                                           fields="nextPageToken, files(id, name, mimeType)").execute()
                 file_parent_id = None
                 print(sourceid)
-                if (len(sourceid['files']) == 0):
+                if len(sourceid['files']) == 0:
                     parent_file = self.create_dir(directory=destination)
                     file_parent_id = parent_file['id']
                 else:
@@ -163,7 +163,7 @@ class Provider(StorageABC):
     def delete(self, service='gdrive', filename=None,
                recursive=False):  # this is working
         file_id = ""
-        if (recursive):
+        if recursive:
             items = Provider.list(self, recursive=True)
             for i in range(len(items)):
                 if items[i]['name'] == filename:
@@ -223,13 +223,13 @@ class Provider(StorageABC):
 
     def search(self, service='gdrive', directory=None, filename=None,
                recursive=False):
-        if (recursive):
+        if recursive:
             found = False
             list_of_files = self.list(recursive=True)
             print(list_of_files)
             for file in list_of_files:
                 print(file)
-                if (file['name'] == filename):
+                if file['name'] == filename:
                     found = True
                     break
                 else:
@@ -241,7 +241,7 @@ class Provider(StorageABC):
             print(list_of_files)
             for file in list_of_files:
                 print(file)
-                if (file['name'] == filename):
+                if file['name'] == filename:
                     found = True
                     break
                 else:
@@ -251,7 +251,7 @@ class Provider(StorageABC):
     def upload_file(self, source, filename, parent_it):
         file_metadata = {'name': filename, 'parents': [parent_it]}
         self.driveService = self.driveService
-        if (source is None):
+        if source is None:
             filepath = filename
         else:
             filepath = source + '/' + filename

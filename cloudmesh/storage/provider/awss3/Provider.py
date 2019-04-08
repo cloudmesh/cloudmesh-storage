@@ -54,7 +54,7 @@ class Provider(StorageABC):
     # Function to join file name dir to get full file path
     def join_file_name_dir(self, filename, dirname):
         full_file_path = ''
-        if (len(self.massage_path(dirname)) > 0):
+        if len(self.massage_path(dirname)) > 0:
             # fullFilePath = self.massage_path(dirName) + '/' + self.massage_path(fileName)
             full_file_path = self.massage_path(dirname) + '/' + self.massage_path(
                 filename)
@@ -138,7 +138,7 @@ class Provider(StorageABC):
                     # print(obj.key)
                     file_name = obj.key.replace(self.directory_marker_file_name,
                                                '')
-                    if (file_name[-1] == '/'):
+                    if file_name[-1] == '/':
                         # Its a directory
                         '''
                         if (fileName.replace(trimmedSource,'').count('/') == 1):

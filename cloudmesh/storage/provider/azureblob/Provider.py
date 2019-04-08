@@ -309,13 +309,13 @@ class Provider(StorageABC):
         return dict_obj
 
     def create_dir(self, service=None, directory=None):
-        '''
+        """
         Creates a directory in the cloud service
 
         :param directory: directory is a folder
         :return: dict
 
-        '''
+        """
 
         HEADING()
         if self.service.exists(self.container):
@@ -330,7 +330,7 @@ class Provider(StorageABC):
 
     def search(self, service=None, directory=None, filename=None,
                recursive=False):
-        '''
+        """
         searches the filename in the directory
 
         :param directory: directory on cloud service
@@ -339,7 +339,7 @@ class Provider(StorageABC):
                           subdirectories in the specified directory
         :return: dict
 
-        '''
+        """
 
         HEADING()
         srch_gen = self.service.list_blobs(self.container)
@@ -371,7 +371,7 @@ class Provider(StorageABC):
         return dict_obj
 
     def list(self, service=None, source=None, recursive=False):
-        '''
+        """
         lists all files specified in the source
 
         :param source: this can be a file or directory
@@ -379,7 +379,7 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
 
-        '''
+        """
 
         HEADING()
 
