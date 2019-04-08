@@ -1,5 +1,4 @@
 import os
-from glob import glob
 from pathlib import Path
 
 from cloudmesh.common.util import path_expand
@@ -31,13 +30,21 @@ class Provider(StorageABC):
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         super(Provider, self).__init__(service=service, config=config)
 
+        self.credentials["directory"] = path_expand(self.credentials["directory"])
 
 
     def _filename(self, filename):
         return Path(self.credentials["directory"]) / filename
 
     def _dirname(self, dirname):
-        return Path(self.credentials["directory"]) / dirname
+        VERBOSE(locals())
+
+        VERBOSE(self.credentials["directory"])
+        if dirname == "/":
+            dirname = ""
+        location = Path(self.credentials["directory"]) / dirname
+        VERBOSE(location, label="TTTT")
+        return location
 
     def identifier(self, dirname, filename):
         identity = {
@@ -49,7 +56,8 @@ class Provider(StorageABC):
                  "filename": filename,
                  "size": "TBD",
                  "service": self.service
-                 }
+                 },
+            "name": filename
         }
         return identity
 
@@ -67,6 +75,7 @@ class Provider(StorageABC):
         :param directory: the name of the directory
         :return: dict
         """
+
         d = Path(os.path.dirname(path_expand(directory)))
         d.mkdir(parents=True, exist_ok=True)
         identity = self.identifier(directory, None)
@@ -82,13 +91,18 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-
-        location = self._dirname(source) / "*"
-        files = glob(location)
-        VERBOSE(files)
+        VERBOSE(self.credentials, label="CRED")
+        VERBOSE(source)
+        location = self._dirname(source)
+        VERBOSE(location, label="aaa")
+        files = location.glob("*")
+        VERBOSE(files, label="f")
         result = []
         for file in files:
-            result.append(self.identifier(source, file))
+            VERBOSE(file)
+            what = self.identifier(source, str(file))
+            VERBOSE(what, label="file")
+            result.append(what)
         return result
 
     def put(self, service=None, source=None, destination=None, recusrive=False):

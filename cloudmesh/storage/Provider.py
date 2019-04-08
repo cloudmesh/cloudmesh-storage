@@ -19,15 +19,15 @@ class Provider(StorageABC):
         super(Provider, self).__init__(service=service, config=config)
 
         if self.kind == "local":
-            provider = LocalProvider(service=service, config=config)
+            self.provider = LocalProvider(service=service, config=config)
         elif self.kind == "box":
-            provider = BoxProvider(service=service, config=config)
+            self.provider = BoxProvider(service=service, config=config)
         # elif self.kind == "gdrive":
         #    provider = GdriveProvider(service=service, config=config)
         elif self.kind == "azureblob":
-            provider = AzureblobProvider(service=service, config=config)
+            self.provider = AzureblobProvider(service=service, config=config)
         elif self.kind == "awss3":
-            provider = AwsProvider(service=service, config=config)
+            self.provider = AwsProvider(service=service, config=config)
         else:
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
 
@@ -73,6 +73,7 @@ class Provider(StorageABC):
     def list(self, service=None, source=None, recursive=None):
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"list {source}")
+        VERBOSE(locals())
         d = self.provider.list(service=service,
                                source=source,
                                recursive=recursive)

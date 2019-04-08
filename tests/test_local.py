@@ -47,13 +47,26 @@ class TestBox:
     def test_01_create_source(self):
         HEADING()
 
+
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
+        create_file("~/.cloudmesh/storage/README.md", "content of a")
         create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
         create_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
         create_file("~/.cloudmesh/storage/test/a/b/c/c.txt", "content of c")
 
         # test if the files are ok
         assert True
+
+    def test_02_list(self):
+        HEADING()
+        src = '/'
+        contents = self.p.list(source=src)
+
+        VERBOSE(contents)
+
+        for c in contents:
+            VERBOSE(c)
+
 
 class a:
 
@@ -75,12 +88,6 @@ class a:
 
         assert file is not None
 
-    def test_04_list(self):
-        HEADING()
-        src = '/'
-        contents = self.p.list(src)
-        for c in contents:
-            pprint(c)
 
         assert len(contents) > 0
 
