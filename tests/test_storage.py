@@ -5,7 +5,7 @@
 import os
 from pprint import pprint
 
-import cloudmesh.storage.provider.azureblob.Provider
+import cloudmesh.storage.provider.Provider as Provider
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from  pathlib import Path
@@ -30,7 +30,7 @@ class TestBox:
         variables = Variables()
         service = Parameter.expand(variables['storage'])[0]
 
-        self.p = cloudmesh.storage.provider.azureblob.Provider.Provider(service=service)
+        self.p = Provider(service=service)
 
     def test_01_create_source(self):
         HEADING()
