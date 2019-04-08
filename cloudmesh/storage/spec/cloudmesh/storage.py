@@ -3,16 +3,16 @@
 #
 
 def get(storage, source, destinatiion, recursive):
-  '''Returns all users
+    '''Returns all users
   '''
 
-  from cloudmesh.storage.Provider import Provider
+    from cloudmesh.storage.Provider import Provider
 
-  provider = Provider(storage)
+    provider = Provider(storage)
 
-  result = provider.get(storage,
-                      SOURCE,
-                      DESTINATION,
-                      recursive)
+    result = provider.get(storage,
+                          SOURCE,
+                          DESTINATION,
+                          recursive)
 
-  return josonify(result)
+    return josonify(result)

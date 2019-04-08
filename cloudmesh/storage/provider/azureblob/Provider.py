@@ -9,6 +9,7 @@ from cloudmesh.common.util import path_expand
 from cloudmesh.management.configuration.config import Config
 from cloudmesh.storage.StorageABC import StorageABC
 
+
 #
 # BUG return returns a list of dicts, see ABC class
 #
@@ -33,9 +34,9 @@ class Provider(StorageABC):
             }
             element.properties = element.properties.__dict__
             entry["cm"]["created"] = \
-            element.properties["creation_time"].isoformat()[0]
+                element.properties["creation_time"].isoformat()[0]
             entry["cm"]["updated"] = \
-            element.properties["last_modified"].isoformat()[0]
+                element.properties["last_modified"].isoformat()[0]
             entry["cm"]["size"] = element.properties["content_length"]
             del element.properties["copy"]
             del element.properties["lease"]
@@ -151,8 +152,8 @@ class Provider(StorageABC):
                         srch_gen = self.service.list_blobs(self.container)
                         for blob in srch_gen:
                             if (os.path.dirname(blob.name) == blob_folder) or \
-                                    (os.path.commonpath([blob.name,
-                                                         blob_folder]) == blob_folder):
+                                (os.path.commonpath([blob.name,
+                                                     blob_folder]) == blob_folder):
                                 download_path = os.path.join(src_path,
                                                              os.path.basename(
                                                                  blob.name))
@@ -277,7 +278,8 @@ class Provider(StorageABC):
         if blob_folder is None:
             # SOURCE specified is File only
             if self.service.exists(self.container, blob_file):
-                blob_prop = self.service.get_blob_properties(self.container, blob_file)
+                blob_prop = self.service.get_blob_properties(self.container,
+                                                             blob_file)
                 obj_list.append(blob_prop)
                 self.service.delete_blob(self.container, blob_file)
             else:
@@ -289,13 +291,14 @@ class Provider(StorageABC):
                 del_gen = self.service.list_blobs(self.container)
                 for blob in del_gen:
                     if os.path.commonpath(
-                            [blob.name, blob_folder]) == blob_folder:
+                        [blob.name, blob_folder]) == blob_folder:
                         obj_list.append(blob)
                         self.service.delete_blob(self.container, blob.name)
             else:
                 # Source specified is both file and directory
                 if self.service.exists(self.container, source[1:]):
-                    blob_prop = self.service.get_blob_properties(self.container, source[1:])
+                    blob_prop = self.service.get_blob_properties(self.container,
+                                                                 source[1:])
                     obj_list.append(blob_prop)
                     self.service.delete_blob(self.container, source[1:])
                 else:
@@ -325,7 +328,8 @@ class Provider(StorageABC):
             dict_obj = self.update_dict(blob_cre)
         return dict_obj
 
-    def search(self, service=None, directory=None, filename=None, recursive=False):
+    def search(self, service=None, directory=None, filename=None,
+               recursive=False):
         '''
         searches the filename in the directory
 
@@ -355,7 +359,7 @@ class Provider(StorageABC):
                 if re.search('/', blob.name) is not None:
                     if os.path.basename(blob.name) == filename:
                         if os.path.commonpath(
-                                [blob.name, directory[1:]]) == directory[1:]:
+                            [blob.name, directory[1:]]) == directory[1:]:
                             obj_list.append(blob)
                             file_found = True
                             # break
@@ -427,8 +431,8 @@ class Provider(StorageABC):
                     srch_gen = self.service.list_blobs(self.container)
                     for blob in srch_gen:
                         if (os.path.dirname(blob.name) == blob_folder) or \
-                                (os.path.commonpath(
-                                    [blob.name, blob_folder]) == blob_folder):
+                            (os.path.commonpath(
+                                [blob.name, blob_folder]) == blob_folder):
                             obj_list.append(blob)
                             file_found = True
                     if not file_found:

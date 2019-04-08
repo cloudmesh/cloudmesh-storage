@@ -1,7 +1,8 @@
 from cloudmesh.storage.provider.gdrive import Provider as  GdriveStorageProvider
 from cloudmesh.storage.provider.box import Provider as BoxStorageProvider
 from cloudmesh.storage.provider.awss3 import Provider as AwsStorageProvider
-from cloudmesh.storage.provider.azureblob import Provider as AzureblobStorageProvider
+from cloudmesh.storage.provider.azureblob import \
+    Provider as AzureblobStorageProvider
 from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.console import Console
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
@@ -22,19 +23,18 @@ class Provider(object):
 
         if self.kind in ["awsS3"]:
             self.p = AwsStorageProvider(cloud=cloud,
-                                            config=config)
+                                        config=config)
         elif self.kind in ["box"]:
             self.p = BoxStorageProvider(cloud=cloud,
-                                                config=config)
+                                        config=config)
         elif self.kind in ["gdrive"]:
             self.p = GdriveStorageProvider(cloud=cloud,
-                                                config=config)
+                                           config=config)
         elif self.kind in ["azureblob"]:
             self.p = AzureblobStorageProvider(cloud=cloud,
-                                                config=config)
+                                              config=config)
         else:
             raise NotImplementedError
-
 
     def create_dir(self, service=None, directory=None):
         """
