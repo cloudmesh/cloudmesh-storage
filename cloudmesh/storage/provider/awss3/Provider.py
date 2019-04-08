@@ -505,10 +505,11 @@ class Provider(StorageABC):
         # filePath = self.joinFileNameDir(filename, directory)
         file_path = self.massage_path(directory) + '/' + filename
 
-        obj = []
+        obj = [] # BUG? is this a typo
         # print(filePath)
         info_list = []
 
+        objs = []
         if (len(directory) > 0) and recursive is False:
             objs = list(
                 self.s3_resource.Bucket(self.container_name).objects.filter(

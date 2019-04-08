@@ -173,6 +173,9 @@ class Provider(StorageABC):
                 for f in files:
                     if f.type == 'file':
                         file = self.client.file(f.id).get()
+                        #
+                        # BUG f already used can not be used in with statement
+                        #
                         with open(dest + "/" + file.name, 'wb') as f:
                             self.client.file(file.id).download_to(f)
                             downloads.append(file)

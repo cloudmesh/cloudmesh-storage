@@ -151,7 +151,7 @@ class Provider(StorageABC):
             if mime_type == 'application/vnd.google-apps.folder':
                 items = self.list(source=destination, recursive=False)
                 for item in items:
-                    if (item['mimeType'] != 'application/vnd.google-apps.folder'):
+                    if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
                         print(item['mimeType'])
                         self.download_file(source, item['id'], item['name'],
