@@ -26,33 +26,38 @@ class Provider(object):
             raise ValueError(f"Storage provider {service} not yet supported")
 
     def get(self, service=None, source=None, destination=None, recursive=False):
+        # BUG DOES NOT FOLLOW SPEC
         VERBOSE.print(f"get {service} {source} {destination} {recursive}", verbose=9)
-        d = self.provider.get(service, source, destination, recursive)
+        d = self.provider.get(service=service, source=source, destination=destination, recursive=recursive)
         return d
 
     def put(self, service=None, source=None, destination=None, recursive=False):
+        # BUG DOES NOT FOLLOW SPEC
         VERBOSE.print(f"put {service} {source}", verbose=9)
-        d = self.provider.put(service, source, destination, recursive)
+        d = self.provider.put(service=service, source=source, destination=destination, recursive=recursive)
         return d
 
     def createdir(self, service=None, directory=None):
+        # BUG DOES NOT FOLLOW SPEC
         VERBOSE.print(f"create_dir {directory}", verbose=9)
         print(directory)
-        d = self.provider.create_dir(service, directory)
+        d = self.provider.create_dir(service=service, directory=directory)
         return d
 
     def delete(self, service=None, source=None):
         VERBOSE.print(f"delete filename {service} {source}", verbose=9)
-        self.provider.delete(service, source)
+        self.provider.delete(service=service, source=source)
         raise ValueError("must return a value")
 
     def search(self, service=None, directory=None, filename=None, recursive=False):
+        # BUG DOES NOT FOLLOW SPEC
         VERBOSE.print(f"search {directory}", verbose=9)
-        d = self.provider.search(service,directory, filename, recursive)
+        d = self.provider.search(service=service, directory=directory, filename=filename, recursive=recursive)
         return d
 
     def list(self, service=None, source=None, recursive=None):
+        # BUG DOES NOT FOLLOW SPEC
         VERBOSE.print(f"list {source}", verbose=9)
-        d = self.provider.list(service, source, recursive)
+        d = self.provider.list(service=service, source=source, recursive=recursive)
         return d
 
