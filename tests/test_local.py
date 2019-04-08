@@ -13,6 +13,7 @@ from cloudmesh.common.util import writefile
 from cloudmesh.shell.variables import Variables
 from cloudmesh.common.util import banner
 from cloudmesh.common.parameter import Parameter
+from cloudmesh.DEBUG import VERBOSE
 
 
 def create_file(self, location, content):

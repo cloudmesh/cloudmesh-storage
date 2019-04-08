@@ -10,11 +10,9 @@ class StorageABC(metaclass=ABCMeta):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         try:
-            self.config = Config(config=config)
+            self.config = Config(config_path=config)
 
             spec = self.config["cloudmesh.storage"]
-            VERBOSE(spec)
-
             self.credentials = spec[service]['credentials']
             self.kind = spec[service]['cm']['kind']
             self.cloud = service

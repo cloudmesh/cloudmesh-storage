@@ -14,11 +14,13 @@ from cloudmesh.DEBUG import VERBOSE
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+
+
         super(Provider, self).__init__(service=service, config=config)
 
         if self.kind == "local":
             provider = LocalProvider(service=service, config=config)
-        if self.kind == "box":
+        elif self.kind == "box":
             provider = BoxProvider(service=service, config=config)
         # elif self.kind == "gdrive":
         #    provider = GdriveProvider(service=service, config=config)
@@ -28,7 +30,6 @@ class Provider(StorageABC):
             provider = AwsProvider(service=service, config=config)
         else:
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
-        return provider
 
     def get(self, service=None, source=None, destination=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
