@@ -5,7 +5,7 @@ from cloudmesh.shell.command import PluginCommand
 from cloudmesh.shell.command import command, map_parameters
 from cloudmesh.shell.variables import Variables
 from cloudmesh.storage.Provider import Provider
-from cloudmesh.terminal.Terminal import VERBOSE
+from cloudmesh.DEBUG import VERBOSE
 
 
 # noinspection PyBroadException
@@ -97,7 +97,7 @@ class StorageCommand(PluginCommand):
         map_parameters(arguments,
                        "recursive",
                        "storage")
-        VERBOSE.print(arguments, verbose=9)
+        VERBOSE(arguments)
 
         if arguments.storage is None:
             try:

@@ -1,14 +1,15 @@
 from abc import ABCMeta
 
 from cloudmesh.management.configuration.config import Config
-
-
+# from cloudmesh.DEBUG import VERBOSE
+from pprint import pprint
 # noinspection PyUnusedLocal
 class StorageABC(metaclass=ABCMeta):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         try:
             self.config = Config()
+            pprint(self.config)
             self.credentials = self.config['cloudmesh']['storage'][service]['credentials']
             self.kind = self.config['cloudmesh']['storage'][service]['cm']['kind']
             self.cloud = service

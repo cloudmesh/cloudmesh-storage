@@ -5,7 +5,7 @@ from pathlib import Path
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.storage.StorageABC import StorageABC
-from cloudmesh.terminal.Terminal import VERBOSE
+from cloudmesh.DEBUG import VERBOSE
 
 
 class Provider(StorageABC):
@@ -86,7 +86,7 @@ class Provider(StorageABC):
 
         location = self._dirname(source) / "*"
         files = glob(location)
-        VERBOSE.print(files)
+        VERBOSE(files)
         result = []
         for file in files:
             result.append(self.identifier(source, file))

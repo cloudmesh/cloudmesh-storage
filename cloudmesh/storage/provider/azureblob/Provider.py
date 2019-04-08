@@ -13,8 +13,6 @@ from cloudmesh.storage.StorageABC import StorageABC
 # BUG return returns a list of dicts, see ABC class
 #
 
-# BUG replave HEADING with VERBOSE.print
-
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
