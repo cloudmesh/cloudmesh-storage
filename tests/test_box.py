@@ -12,7 +12,7 @@ from cloudmesh.common.util import path_expand
 class TestBox:
 
     def setup(self):
-        self.p = cloudmesh.storage.provider.box.Provider.Provider()
+        self.p = cloudmesh.storage.provider.box.Provider.Provider(service="box")
 
         self.source = "set the source location here and use in tests"
         self.destination = "set the destination location here and use in tests"
