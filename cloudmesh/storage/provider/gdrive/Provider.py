@@ -14,9 +14,9 @@ from cloudmesh.storage.provider.gdrive.Authentication import Authentication
 
 class Provider(StorageABC):
 
-    def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
 
-        super(Provider, self).__init__(cloud=cloud, config=config)
+        super(Provider, self).__init__(service=service, config=config)
 
         self.scopes = 'https://www.googleapis.com/auth/drive'
         self.clientSecretFile = path_expand(
@@ -32,6 +32,8 @@ class Provider(StorageABC):
         self.http = self.credentials.authorize(httplib2.Http())
         self.driveService = self.discovery.build('drive', 'v3', http=self.http)
         self.size = None
+        self.cloud = service
+        self.service = service
 
     def generate_key_json(self):
         credentials = self.config.credentials("storage", "gdrive")

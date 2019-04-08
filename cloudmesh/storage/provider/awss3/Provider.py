@@ -9,8 +9,8 @@ from cloudmesh.common.util import HEADING
 
 class Provider(StorageABC):
 
-    def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
-        super().__init__(cloud=cloud, config=config)
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+        super().__init__(service=service, config=config)
         self.container_name = self.credentials['container']
         self.s3_resource = boto3.resource('s3',
                                           aws_access_key_id=self.credentials[

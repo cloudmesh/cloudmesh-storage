@@ -17,12 +17,14 @@ from cloudmesh.storage.StorageABC import StorageABC
 
 class Provider(StorageABC):
 
-    def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
-        super().__init__(cloud=cloud, config=config)
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+        super().__init__(service=service, config=config)
         self.service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
         self.container = self.credentials['container']
+        self.cloud = service
+        self.service = service
 
     def update_dict(self, elements, kind=None):
         # this is an internal function for building dict object

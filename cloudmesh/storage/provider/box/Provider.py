@@ -31,32 +31,6 @@ def change_path(source):
     return src_path
 
 
-def update_dict(elements):
-    if elements is None:
-        return None
-    elif type(elements) is list:
-        _elements = elements
-    else:
-        _elements = [elements]
-    d = []
-    for element in _elements:
-        entry = element.__dict__
-        entry["cm"] = {
-            "kind": "storage",
-            "cloud": "box",  # bug this is the cloud name
-            "name": element.name
-        }
-        # BUG: I suggest you keep many of the attributes. we wnat as many as possible
-        del (entry['_response_object'])
-        del (entry['_session'])
-        del (entry['created_by'])
-        del (entry['file_version'])
-        del (entry['modified_by'])
-        del (entry['owned_by'])
-        del (entry['parent'])
-        del (entry['path_collection'])
-        d.append(entry)
-    return d
 
 
 class Provider(StorageABC):
@@ -72,6 +46,33 @@ class Provider(StorageABC):
         self.sdk = JWTAuth.from_settings_file(credentials['config_path'])
         # this needs to be well defined in ~/.cloudmesh/box/ ....
         self.client = Client(self.sdk)
+
+    def update_dict(self, elements, service):
+        if elements is None:
+            return None
+        elif type(elements) is list:
+            _elements = elements
+        else:
+            _elements = [elements]
+        d = []
+        for element in _elements:
+            entry = element.__dict__
+            entry["cm"] = {
+                "kind": "storage",
+                "cloud": self.service,
+                "name": element.name
+            }
+            # BUG: I suggest you keep many of the attributes. we wnat as many as possible
+            del (entry['_response_object'])
+            del (entry['_session'])
+            del (entry['created_by'])
+            del (entry['file_version'])
+            del (entry['modified_by'])
+            del (entry['owned_by'])
+            del (entry['parent'])
+            del (entry['path_collection'])
+            d.append(entry)
+        return d
 
     def put(self, service='box', source=None, destination=None,
             recursive=False):
@@ -115,11 +116,11 @@ class Provider(StorageABC):
                 file_id = get_id(filename, files, 'file')
                 if not file_id:
                     file = self.client.folder('0').upload(sourcepath)
-                    files_dict = update_dict(file)
+                    files_dict = self.update_dict(file)
                     return files_dict
                 else:
                     file = self.client.file(file_id).update_contents(sourcepath)
-                    files_dict = update_dict(file)
+                    files_dict = self.update_dict(file)
                     return files_dict
             else:
                 for s in os.listdir(source):
@@ -132,7 +133,7 @@ class Provider(StorageABC):
                         file = self.client.file(s_id).update_contents(
                             sourcepath + '/' + s)
                         uploaded.append(file)
-                files_dict = update_dict(uploaded)
+                files_dict = self.update_dict(uploaded)
                 return files_dict
         except Exception as e:
             Console.error(e)
@@ -179,7 +180,7 @@ class Provider(StorageABC):
                         with open(dest + "/" + file.name, 'wb') as f:
                             self.client.file(file.id).download_to(f)
                             downloads.append(file)
-                files_dict = update_dict(downloads)
+                files_dict = self.update_dict(downloads)
                 return files_dict
             else:
                 results = [item for item in self.client.search().query(target)]
@@ -191,7 +192,7 @@ class Provider(StorageABC):
                         file = self.client.file(file_id).get()
                         with open(dest + "/" + file.name, 'wb') as f:
                             self.client.file(file.id).download_to(f)
-                            files_dict = update_dict(file)
+                            files_dict = self.update_dict(file)
                             return files_dict
         except Exception as e:
             Console.error(e)
@@ -227,13 +228,13 @@ class Provider(StorageABC):
                     if file.parent.name == path[len(path) - 1]:
                         results.append(file)
                 if len(results) > 0:
-                    files_dict = update_dict(results)
+                    files_dict = self.update_dict(results)
                     return files_dict
                 else:
                     Console.error("No files found.")
             else:
                 if len(files) > 0:
-                    files_dict = update_dict(files)
+                    files_dict = self.update_dict(files)
                     return files_dict
                 else:
                     Console.error("No files found.")
@@ -258,7 +259,7 @@ class Provider(StorageABC):
                 if parent == '':
                     folder = self.client.folder('0').create_subfolder(
                         path[len(path) - 1])
-                    folder_dict = update_dict(folder)
+                    folder_dict = self.update_dict(folder)
                     return folder_dict
                 folders = [item for item in
                            self.client.search().query(parent, type='folder')]
@@ -266,7 +267,7 @@ class Provider(StorageABC):
                     parent = folders[0].id
                     folder = self.client.folder(parent).create_subfolder(
                         path[len(path) - 1])
-                    folder_dict = update_dict(folder)
+                    folder_dict = self.update_dict(folder)
                     return folder_dict
                 else:
                     Console.error("Destination directory not found")
@@ -312,9 +313,9 @@ class Provider(StorageABC):
                         Console.error(
                             "Directory " + path[len(path) - i] + " not found.")
                 if not recursive and i == 1:
-                    list_dict = update_dict(list)
+                    list_dict = self.update_dict(list)
                     return list_dict
-            list_dict = update_dict(list)
+            list_dict = self.update_dict(list)
             return list_dict
         except Exception as e:
             Console.error(e)
