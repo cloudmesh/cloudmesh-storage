@@ -24,7 +24,7 @@ class Provider(object):
         elif kind == "awss3":
             provider = AwsProvider()
         else:
-            raise ValueError(f"Storage provider {service} not yet supported")
+            raise ValueError(f"Storage provider {kind} not yet supported")
         return self.provider
 
     def get(self, service=None, source=None, destination=None, recursive=False):
