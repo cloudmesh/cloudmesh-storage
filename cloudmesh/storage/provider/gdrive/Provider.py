@@ -51,7 +51,7 @@ class Provider(StorageABC):
 
     def put(self, service=None, source=None, destination=None, recursive=False):
         if recursive:
-            if (os.path.isdir(source)):
+            if os.path.isdir(source):
                 query_params = "name='" + destination + "' and trashed=false"
                 sourceid = self.driveService.files().list(q=query_params,
                                                           fields="nextPageToken, files(id, name, mimeType)").execute()

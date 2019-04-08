@@ -36,7 +36,7 @@ class Provider(StorageABC):
         massaged_path = file_name_path
 
         # remove leading slash symbol in path
-        if (len(massaged_path) > 0 and massaged_path[0] == '/'):
+        if len(massaged_path) > 0 and massaged_path[0] == '/':
             massaged_path = massaged_path[1:]
 
         # expand home directory in path
