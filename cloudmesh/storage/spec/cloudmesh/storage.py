@@ -3,8 +3,8 @@
 #
 
 def get(storage, source, destinatiion, recursive):
-    '''Returns all users
-  '''
+    """Returns all users
+  """
 
     from cloudmesh.storage.Provider import Provider
 

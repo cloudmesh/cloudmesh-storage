@@ -261,13 +261,13 @@ class Provider(StorageABC):
         return dict_obj
 
     def delete(self, service=None, source=None, recursive=False):
-        '''
+        """
         Deletes the source from cloud service
 
         :param source: the source can be a directory or file
         :return: None
 
-        '''
+        """
         HEADING()
 
         blob_file, blob_folder = self.cloud_path(source)
