@@ -10,11 +10,47 @@
 [![Travis](https://travis-ci.com/cloudmesh/cloudmesh-storage.svg?branch=master)](https://travis-ci.com/cloudmesh/cloudmesh-storage)
 
 
+## Requirements
+
+Please note that several packages are available which are pointed to in the
+instalation documentation.
+
+|  | Links |
+|---------------|-------|
+| Documentation | <https://cloudmesh.github.io/cloudmesh-cloud> |
+| Code | <https://github.com/cloudmesh/cloudmesh-cloud> |
+| Instalation Instructions | <https://github.com/cloudmesh/get> |
+
+An dynamically extensible CMD based command shell. For en extensive
+documentation please see
+
+* <https://github.com/cloudmesh-community/book/blob/master/vonLaszewski-cloud.epub?raw=true>
+
+where we also document how to use pyenv virtualenv.
+
+
+## Instalation and Documentation
+
+For developers:
+
+To install the storage module, you need to do an additional step. Please got to the directory
+`cloudmesh.storage` and execute in it the command
+
+```bash
+$ pip install -e .
+```
+
+For users (NOT YET WORKING:
+
+```python
+$ pip install cloudmesh.storage
+```
+
 ## Nosetests
 
 We have developed a number of simple nosetests tha can be called. To see the list of nosetests go to our directory
 
-* <>
+* <https://github.com/cloudmesh/cloudmesh-storage/tree/master/tests>
 
 We also developed a general nosetest that works accross providers and can be invoked as follows
 
