@@ -1,21 +1,28 @@
 from abc import ABCMeta
+import yaml
 
 from cloudmesh.management.configuration.config import Config
-# from cloudmesh.DEBUG import VERBOSE
-from pprint import pprint
+from cloudmesh.DEBUG import VERBOSE
+
+
 # noinspection PyUnusedLocal
 class StorageABC(metaclass=ABCMeta):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         try:
-            self.config = Config()
-            pprint(self.config)
-            self.credentials = self.config['cloudmesh']['storage'][service]['credentials']
-            self.kind = self.config['cloudmesh']['storage'][service]['cm']['kind']
+            self.config = Config(config=config)
+
+            spec = self.config["cloudmesh.storage"]
+            VERBOSE(spec)
+
+            self.credentials = spec[service]['credentials']
+            self.kind = spec[service]['cm']['kind']
             self.cloud = service
             self.service = service
-        except:
+        except Exception  as e:
             raise ValueError(f"storage service {service} not specified")
+            print (e)
+
 
     def create_dir(self,
                    service=None,

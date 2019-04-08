@@ -6,10 +6,8 @@ from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
 from cloudmesh.storage.StorageABC import StorageABC
 
 #from cloudmesh.storage.provider.gdrive.Provider import \
-#    Provider as GdriveProvider
-# from cloudmesh.DEBUG import VERBOSE
 
-from pprint import pprint
+from cloudmesh.DEBUG import VERBOSE
 
 
 
@@ -17,27 +15,24 @@ class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         super(Provider, self).__init__(service=service, config=config)
-        self.provider = self.get_provider(self.kind)
 
-    def get_provider(self, kind):
-        provider = None
-        if kind == "local":
-            provider = LocalProvider()
-        if kind == "box":
-            provider = BoxProvider()
-        # elif kind == "gdrive":
-        #    provider = GdriveProvider()
-        elif kind == "azureblob":
-            provider = AzureblobProvider()
-        elif kind == "awss3":
-            provider = AwsProvider()
+        if self.kind == "local":
+            provider = LocalProvider(service=service, config=config)
+        if self.kind == "box":
+            provider = BoxProvider(service=service, config=config)
+        # elif self.kind == "gdrive":
+        #    provider = GdriveProvider(service=service, config=config)
+        elif self.kind == "azureblob":
+            provider = AzureblobProvider(service=service, config=config)
+        elif self.kind == "awss3":
+            provider = AwsProvider(service=service, config=config)
         else:
-            raise ValueError(f"Storage provider {kind} not yet supported")
+            raise ValueError(f"Storage provider '{self.kind}' not yet supported")
         return provider
 
     def get(self, service=None, source=None, destination=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
-        pprint(f"get {service} {source} {destination} {recursive}")
+        VERBOSE(f"get {service} {source} {destination} {recursive}")
         d = self.provider.get(service=service,
                               source=source,
                               destination=destination,
@@ -46,7 +41,7 @@ class Provider(StorageABC):
 
     def put(self, service=None, source=None, destination=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
-        pprint(f"put {service} {source}")
+        VERBOSE(f"put {service} {source}")
         d = self.provider.put(service=service,
                               source=source,
                               destination=destination,
@@ -55,19 +50,19 @@ class Provider(StorageABC):
 
     def createdir(self, service=None, directory=None):
         # BUG DOES NOT FOLLOW SPEC
-        pprint(f"create_dir {directory}")
-        print(directory)
+        VERBOSE(f"create_dir {directory}")
+        VERBOSE(directory)
         d = self.provider.create_dir(service=service, directory=directory)
         return d
 
     def delete(self, service=None, source=None):
-        pprint(f"delete filename {service} {source}")
+        VERBOSE(f"delete filename {service} {source}")
         self.provider.delete(service=service, source=source)
         raise ValueError("must return a value")
 
     def search(self, service=None, directory=None, filename=None, recursive=False):
         # BUG DOES NOT FOLLOW SPEC
-        print(f"search {directory}")
+        VERBOSE(f"search {directory}")
         d = self.provider.search(service=service,
                                  directory=directory,
                                  filename=filename,
@@ -76,7 +71,7 @@ class Provider(StorageABC):
 
     def list(self, service=None, source=None, recursive=None):
         # BUG DOES NOT FOLLOW SPEC
-        pprint(f"list {source}")
+        VERBOSE(f"list {source}")
         d = self.provider.list(service=service,
                                source=source,
                                recursive=recursive)

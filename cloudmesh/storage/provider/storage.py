@@ -9,13 +9,14 @@ from cloudmesh.storage.provider.gdrive import Provider as GdriveStorageProvider
 
 class Provider(object):
 
-    def __init__(self, cloud=None, config="~/.cloudmesh/.cloudmesh4.yaml"):
+    def __init__(self, service=None, config="~/.cloudmesh/.cloudmesh4.yaml"):
 
-        super(Provider, self).__init__(cloud=cloud, config=config)
+        super(Provider, self).__init__(service=service, config=config)
 
         self.config = Config()
-        self.kind = config["cloudmesh"]["storage"][cloud]["cm"]["kind"]
-        self.cloud = cloud
+        self.kind = config["cloudmesh"]["storage"][service]["cm"]["kind"]
+        self.cloud = service
+        self.service = service
 
         Console.msg("FOUND Kind", self.kind)
 
