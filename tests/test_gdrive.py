@@ -6,10 +6,11 @@ from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.util import HEADING
 from pprint import pprint
 from cloudmesh.storage.provider.gdrive.Provider import Provider
-from  pathlib import Path
+from pathlib import Path
 import os
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
+
 
 class TestConfig:
 

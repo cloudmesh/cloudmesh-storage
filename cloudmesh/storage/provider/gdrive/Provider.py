@@ -18,7 +18,7 @@ class Provider(StorageABC):
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
 
         super(Provider, self).__init__(service=service, config=config)
-
+        self.limitFiles = 10000000
         self.scopes = 'https://www.googleapis.com/auth/drive'
         self.clientSecretFile = path_expand(
             '~/.cloudmesh/gdrive/client_secret.json')
@@ -39,8 +39,9 @@ class Provider(StorageABC):
 
     def generate_flags_json(self):
         credentials = self.config.credentials("storage", "gdrive")
-        args = argparse.Namespace(auth_host_name=credentials["auth_host_name"], auth_host_port=credentials["auth_host_port"], logging_level='ERROR',
-                           noauth_local_webserver=False)
+        args = argparse.Namespace(auth_host_name=credentials["auth_host_name"],
+                                  auth_host_port=credentials["auth_host_port"],
+                                  logging_level='ERROR', noauth_local_webserver=False)
         return args
 
     def generate_key_json(self):
@@ -91,8 +92,7 @@ class Provider(StorageABC):
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
 
-                return self.upload_file(source=None, filename=source,
-                                 parent_it=file_parent_id)
+                return self.upload_file(source=None, filename=source, parent_it=file_parent_id)
         else:
             if os.path.isdir(source):
                 query_params = "name='" + destination + "' and trashed=false"
@@ -124,8 +124,7 @@ class Provider(StorageABC):
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
 
-                return self.upload_file(source=None, filename=source,
-                                 parent_it=file_parent_id)
+                return self.upload_file(source=None, filename=source, parent_it=file_parent_id)
 
     def get(self, service=None, source=None, destination=None, recursive=False):
         if not os.path.exists(source):
@@ -145,8 +144,7 @@ class Provider(StorageABC):
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
                         print(item['mimeType'])
-                        return self.download(source, item['id'], item['name'],
-                                      item['mimeType'])
+                        return self.download(source, item['id'], item['name'], item['mimeType'])
             else:
                 return self.download(source, file_id, file_name, mime_type)
         else:
@@ -163,8 +161,7 @@ class Provider(StorageABC):
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
                         print(item['mimeType'])
-                        return self.download_file(source, item['id'], item['name'],
-                                           item['mimeType'])
+                        return self.download_file(source, item['id'], item['name'], item['mimeType'])
             else:
                 return self.download_file(source, file_id, file_name, mime_type)
 
@@ -200,13 +197,8 @@ class Provider(StorageABC):
         return file
 
     def list(self, service='gdrive', source=None, recursive=False):
-        size = 10
         if recursive:
-            #
-            # BUG MUST ALSO BE SET IN INIT MAYBE TO 10000000, ISSUE IS LIST SHOULD PROBBALY GIVE ALL
-            #
-            self.size = size
-            results = self.driveService.files().list(pageSize=size,
+            results = self.driveService.files().list(pageSize=self.limitFiles,
                                                      fields="nextPageToken, files(id, name,mimeType)").execute()
             items = results.get('files', [])
             if not items:
@@ -216,12 +208,12 @@ class Provider(StorageABC):
         else:
             query_params = "name='" + source + "' and trashed=false"
             sourceid = self.driveService.files().list(q=query_params,
-                                                      pageSize=size,
+                                                      pageSize=self.limitFiles,
                                                       fields="nextPageToken, files(id)").execute()
             file_id = sourceid['files'][0]['id']
             query_params = "'" + file_id + "' in parents"
             results = self.driveService.files().list(q=query_params,
-                                                     pageSize=size,
+                                                     pageSize=self.limitFiles,
                                                      fields="nextPageToken, files(id, name, mimeType)").execute()
             items = results.get('files', [])
             if not items:
@@ -268,6 +260,7 @@ class Provider(StorageABC):
         file = self.driveService.files().create(body=file_metadata,
                                                 media_body=media,
                                                 fields='id').execute()
+        return file
 
     def download_file(self, source, file_id, file_name, mime_type):
         filepath = source + '/' + file_name + mimetypes.guess_extension(mime_type)
