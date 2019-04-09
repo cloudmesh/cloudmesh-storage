@@ -91,7 +91,7 @@ class Provider(StorageABC):
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
 
-                self.upload_file(source=None, filename=source,
+                return self.upload_file(source=None, filename=source,
                                  parent_it=file_parent_id)
         else:
             if os.path.isdir(source):
@@ -124,7 +124,7 @@ class Provider(StorageABC):
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
 
-                self.upload_file(source=None, filename=source,
+                return self.upload_file(source=None, filename=source,
                                  parent_it=file_parent_id)
 
     def get(self, service=None, source=None, destination=None, recursive=False):
@@ -145,10 +145,10 @@ class Provider(StorageABC):
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
                         print(item['mimeType'])
-                        self.download(source, item['id'], item['name'],
+                        return self.download(source, item['id'], item['name'],
                                       item['mimeType'])
             else:
-                self.download(source, file_id, file_name, mime_type)
+                return self.download(source, file_id, file_name, mime_type)
         else:
             query_params = "name='" + destination + "' and trashed=false"
             sourceid = self.driveService.files().list(q=query_params,
@@ -163,10 +163,10 @@ class Provider(StorageABC):
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
                         print(item['mimeType'])
-                        self.download_file(source, item['id'], item['name'],
+                        return self.download_file(source, item['id'], item['name'],
                                            item['mimeType'])
             else:
-                self.download_file(source, file_id, file_name, mime_type)
+                return self.download_file(source, file_id, file_name, mime_type)
 
     def delete(self, service='gdrive', filename=None,
                recursive=False):  # this is working
