@@ -59,11 +59,6 @@ class Provider(StorageABC):
     def __init__(self, cloud=None, config="~/.cloudmesh/cloudmesh4.yaml"):
 
         super(Provider, self).__init__(cloud=cloud, config=config)
-
-        self.config = Config()
-        credentials = self.config["credentials"]["storage"][
-            "box"]  # bug cloud name as parameter as we could have multiple box kind
-        # see superclass
         self.sdk = JWTAuth.from_settings_file(credentials['config_path'])
         # this needs to be well defined in ~/.cloudmesh/box/ ....
         self.client = Client(self.sdk)
