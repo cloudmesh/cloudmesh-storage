@@ -6,24 +6,62 @@ from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.util import HEADING
 from pprint import pprint
 from cloudmesh.storage.provider.gdrive.Provider import Provider
-
+from  pathlib import Path
+import os
+from cloudmesh.common.util import path_expand
+from cloudmesh.common.util import writefile
 
 class TestConfig:
 
+    def create_file(self, location, content):
+        d = Path(os.path.dirname(path_expand(location)))
+        d.mkdir(parents=True, exist_ok=True)
+        writefile(path_expand(location), content)
+
     def setup(self):
-        self.config = Config()
+        self.p = cloudmesh.storage.provider.gdrive.Provider.Provider(service="gdrive")
+        self.destination = path_expand("/")
+        self.source = path_expand("~/.cloudmesh/storage/test/source/")
+        self.create_file("~/.cloudmesh/storage/test/source/test/source/sample_source.txt", "This is sample test file")
+        assert True
 
-    def test_00_config(self):
+    def test_01_put(self):
         HEADING()
+        src = path_expand("~/.cloudmesh/storage/test/source/test/source/sample_source.txt")
+        dst = "/"
+        # Put files from src into google drive home directory
+        test_file = self.p.put(source=src, destination=dst, recursive=False)
+        assert test_file is not None
 
-        pprint(self.config.dict())
-
-        assert self.config is not None
-
-    def test_01_list(self):
+    def test_02_get(self):
         HEADING()
-        p = Provider()
-        print(p.listFiles())
+        self.test_01_put()
+        src = path_expand("~/.cloudmesh/storage/test/source/test/source/sample_source.txt")
+        dst = self.destination
+        # fetching files from dst to src
+        file = self.p.get(source=src, destination=dst, recursive=False)
+        assert file is not None
 
-        # data = self.config["cloudmesh"]["data"]["mongo"]
-        # assert data is not None
+    def test_03_list(self):
+        HEADING()
+        # Listing files google drive home directory
+        contents = self.p.list(source='/', recursive=False)
+        assert len(contents) > 0
+
+    def test_04_search(self):
+        HEADING()
+        # Searching sample_source.txt which is created earlier in home directory
+        search_files = self.p.search(directory='/', filename='sample_source.txt', recursive=False)
+        pprint(search_files)
+        assert search_files
+
+    def test_05_create_dir(self):
+        HEADING()
+        # Creating testdir in home directory of google drive
+        dir = self.p.create_dir(directory='/testdir')
+        assert dir is not None
+
+    def test_06_delete(self):
+        HEADING()
+        # Deleting in google drive home sample_source.txt
+        self.p.delete(filname='/sample_source.txt')
