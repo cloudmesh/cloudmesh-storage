@@ -34,6 +34,7 @@ class Authentication:
         self.scopes = scopes
         self.client_secret_file = client_secret_file
         self.application_name = application_name
+        self.flags = flags
 
     def get_credentials(self, flags):
         """
@@ -62,7 +63,7 @@ class Authentication:
             flow = client.flow_from_clientsecrets(self.client_secret_file,
                                                   self.scopes)
             flow.user_agent = self.application_name
-            if flags:
-                credentials = tools.run_flow(flow, store, flags)
+            if self.flags:
+                credentials = tools.run_flow(flow, store, self.flags)
 
         return credentials

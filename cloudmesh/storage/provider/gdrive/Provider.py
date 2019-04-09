@@ -3,6 +3,7 @@ import json
 import mimetypes
 import os
 
+import argparse
 import httplib2
 from apiclient.http import MediaFileUpload
 from apiclient.http import MediaIoBaseDownload
@@ -25,22 +26,25 @@ class Provider(StorageABC):
 
         self.config = Config()
         self.generate_key_json()
+        self.flags = self.generate_flags_json()
         self.authInst = Authentication(self.scopes,
                                        self.clientSecretFile,
-                                       self.applicationName)
-        #
-        # WHAT ARE THESE FLAGS
-        #
-        self.credentials = self.authInst.get_credentials(flags=None)
+                                       self.applicationName, flags=self.flags)
+        self.credentials = self.authInst.get_credentials()
         self.http = self.credentials.authorize(httplib2.Http())
         self.driveService = self.discovery.build('drive', 'v3', http=self.http)
         self.size = None
         self.cloud = service
         self.service = service
 
+    def generate_flags_json(self):
+        credentials = self.config.credentials("storage", "gdrive")
+        args = argparse.Namespace(auth_host_name=credentials["client_id"], auth_host_port=credentials["auth_host_port"], logging_level='ERROR',
+                           noauth_local_webserver=False)
+        return args
+
     def generate_key_json(self):
         credentials = self.config.credentials("storage", "gdrive")
-
         data = {"installed": {
             "client_id": credentials["client_id"],
             "project_id": credentials["project_id"],
