@@ -1,7 +1,7 @@
 import os
 from pprint import pprint
-
-import cloudmesh.storage.provider.box.Provider
+from cloudmesh.management.configuration.config import Config
+from cloudmesh.storage.provider.box.Provider import Provider
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 
@@ -12,11 +12,18 @@ from cloudmesh.common.util import path_expand
 class TestBox:
 
     def setup(self):
-        self.p = cloudmesh.storage.provider.box.Provider.Provider(service="box")
+        pass
+
+    def test_00_config(self):
+        config = Config()
+        storage = config['cloudmesh.storage']
+        print(storage)
+
+    def test_01_provider(self):
+        self.p = Provider(service="box")
 
         self.source = "set the source location here and use in tests"
         self.destination = "set the destination location here and use in tests"
-
 
     def test_01_put(self):
         HEADING()
@@ -27,7 +34,7 @@ class TestBox:
         src_path = path_expand('~/test_folder')
         if not os.path.exists(src_path):
             os.makedirs(src_path)
-        f = open(src_path+'/test.txt', 'w')
+        f = open(src_path + '/test.txt', 'w')
         # TODO use named arguments
         test_file = self.p.put('~/test_folder/test.txt', '/')
         pprint(test_file)
@@ -55,7 +62,7 @@ class TestBox:
     def test_04_search(self):
         HEADING()
         # TODO use named arguments
-        search_files = self.p.search('/', 'test.txt', True)
+        search_files = self.p.search(servic=self.service, directory = '/', filename = 'test.txt', recursive = True)
         pprint(search_files)
 
         assert len(search_files) > 0
@@ -72,22 +79,3 @@ class TestBox:
         HEADING()
         # TODO use named arguments
         self.p.delete('testdir')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
