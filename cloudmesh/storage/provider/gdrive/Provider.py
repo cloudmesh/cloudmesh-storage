@@ -39,7 +39,7 @@ class Provider(StorageABC):
 
     def generate_flags_json(self):
         credentials = self.config.credentials("storage", "gdrive")
-        args = argparse.Namespace(auth_host_name=credentials["client_id"], auth_host_port=credentials["auth_host_port"], logging_level='ERROR',
+        args = argparse.Namespace(auth_host_name=credentials["auth_host_name"], auth_host_port=credentials["auth_host_port"], logging_level='ERROR',
                            noauth_local_webserver=False)
         return args
 
