@@ -4,6 +4,9 @@ from cloudmesh.management.configuration.config import Config
 from cloudmesh.storage.provider.box.Provider import Provider
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
+from cloudmesh.common.util import writefile
+from pathlib import Path
+import os
 
 
 # nosetest -v --nopature
@@ -12,7 +15,14 @@ from cloudmesh.common.util import path_expand
 class TestBox:
 
     def setup(self):
-        pass
+        self.p = Provider(service="box")
+        os.makedirs(os.path.join(path_expand('~/.cloudmesh'), 'storage', 'test', 'box'), exist_ok=True)
+        writefile(os.path.join(path_expand('~/.cloudmesh/storage/test/box'), 'test.txt'), 'Test content')
+        self.destination = "/"
+        self.destination_file = '/test.txt'
+        self.source = path_expand('~/.cloudmesh/storage/test/box')
+        self.source_file = path_expand('~/.cloudmesh/storage/test/box/test.txt')
+        self.filename = 'test.txt'
 
     def test_00_config(self):
         config = Config()
@@ -21,39 +31,31 @@ class TestBox:
 
     def test_01_provider(self):
         self.p = Provider(service="box")
+        os.makedirs(os.path.join(path_expand('~/.cloudmesh'), 'storage', 'test', 'box'), exist_ok=True)
+        writefile(os.path.join(path_expand('~/.cloudmesh/storage/test/box'), 'test.txt'), 'Test content')
+        self.destination = "/"
+        self.source = path_expand('~/.cloudmesh/storage/test/box/test.txt')
+        file = open(self.source)
 
-        self.source = "set the source location here and use in tests"
-        self.destination = "set the destination location here and use in tests"
+        assert file.read() == 'Test content'
 
-    def test_01_put(self):
+    def test_02_put(self):
         HEADING()
-
-        # TODO: test must be done in ~/.cloudmesh not ~
-        # use Path(filename) so this also works on windows
-
-        src_path = path_expand('~/test_folder')
-        if not os.path.exists(src_path):
-            os.makedirs(src_path)
-        f = open(src_path + '/test.txt', 'w')
-        # TODO use named arguments
-        test_file = self.p.put('~/test_folder/test.txt', '/')
+        test_file = self.p.put(service=self.p.service, source=self.source_file, destination=self.destination, recursive=False)
         pprint(test_file)
 
         assert test_file is not None
 
-    def test_02_get(self):
+    def test_03_get(self):
         HEADING()
-        self.test_01_put()
-        # TODO use named arguments
-        file = self.p.get('/test.txt', '~/test_folder')
+        file = self.p.get(service=self.p.service, source=self.destination_file, destination=self.source, recursive=False)
         pprint(file)
 
         assert file is not None
 
-    def test_03_list(self):
+    def test_04_list(self):
         HEADING()
-        # TODO use named arguments
-        contents = self.p.list('/')
+        contents = self.p.list(service=self.p.service, source=self.destination, recursive=False)
         for c in contents:
             pprint(c)
 
@@ -61,11 +63,12 @@ class TestBox:
 
     def test_04_search(self):
         HEADING()
-        # TODO use named arguments
-        search_files = self.p.search(servic=self.service, directory = '/', filename = 'test.txt', recursive = True)
+        search_files = self.p.search(service=self.p.service, directory=self.destination, filename=self.filename, recursive=False)
         pprint(search_files)
 
         assert len(search_files) > 0
+
+class Junk:
 
     def test_05_create_dir(self):
         HEADING()

@@ -42,14 +42,10 @@ def update_dict(elements):
             "cloud": "box",  # bug this is the cloud name
             "name": element.name
         }
-        del (entry['_response_object'])
-        del (entry['_session'])
-        del (entry['created_by'])
-        del (entry['file_version'])
-        del (entry['modified_by'])
-        del (entry['owned_by'])
-        del (entry['parent'])
-        del (entry['path_collection'])
+        for p in ['_response_object', '_session', 'session', 'response_object', 'created_by',
+                  'file_version', 'modified_by', 'owned_by', 'parent', 'path_collection']:
+            if p in entry.keys():
+                del (entry[p])
         d.append(entry)
     return d
 
@@ -58,12 +54,12 @@ class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
 
-        super(Provider, self).__init__(service=service, config=config)
-        self.sdk = JWTAuth.from_settings_file(credentials['config_path'])
+        super().__init__(service=service, config=config)
+        self.sdk = JWTAuth.from_settings_file(self.credentials['config_path'])
         # this needs to be well defined in ~/.cloudmesh/box/ ....
         self.client = Client(self.sdk)
 
-    def put(self, service='box', source=None, destination=None, recursive=False):
+    def put(self, service=None, source=None, destination=None, recursive=False):
         """
 
         uploads file to Box, if source is directory and recursive is true uploads all files in source directory
@@ -119,7 +115,7 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def get(self, service='box', source=None, destination=None, recursive=False):
+    def get(self, service=None, source=None, destination=None, recursive=False):
         """
 
         downloads file from Box, if recursive is true and source is directory downloads all files in directory
@@ -171,7 +167,7 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def search(self, service='box', directory=None, filename=None, recursive=False):
+    def search(self, service=None, directory=None, filename=None, recursive=False):
         """
 
         searches directory for file, if recursive searches all subdirectories
@@ -187,31 +183,40 @@ class Provider(StorageABC):
             results = []
             if cloud_dir == '':
                 folder_id = '0'
+                files = [item for item in self.client.folder('0').get_items() if item.type=='file']
             else:
                 items = self.client.search().query(cloud_dir, type='folder')
                 folder_id = get_id(cloud_dir, items, 'folder')
                 if not folder_id:
                     Console.error("Directory not found.")
-            files = [item for item in self.client.search().query(filename, type='file', ancestor_folder_ids=folder_id)]
+                files = [item for item in self.client.folder(folder_id).get_items() if item.type=='file']
+                folders = [item for item in self.client.folder(folder_id).get_items() if item.type=='folder']
             if not recursive:
                 for file in files:
-                    if file.parent.name == cloud_dir:
-                        results.append(file)
+                    results.append(file)
                 if len(results) > 0:
                     files_dict = update_dict(results)
                     return files_dict
                 else:
                     Console.error("No files found.")
             else:
+                while len(folders) > 0:
+                    for folder in folders:
+                        files = [item for item in self.client.folder(folder.id).get_items() if item.type == 'file']
+                        for file in files:
+                            results.append(file)
+                        for item in self.client.folder(folder.id).get_items():
+                            if item.type == 'folder':
+                                folders.append(item)
                 if len(files) > 0:
-                    files_dict = update_dict(files)
+                    files_dict = update_dict(results)
                     return files_dict
                 else:
                     Console.error("No files found.")
         except Exception as e:
             Console.error(e)
 
-    def create_dir(self, service='box', directory=None):
+    def create_dir(self, service=None, directory=None):
         """
 
         creates a new directory
@@ -242,7 +247,7 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def list(self, service='box', source=None, recursive=False):
+    def list(self, service=None, source=None, recursive=False):
         """
 
         lists all contents of directory, if recursive lists contents of subdirectories as well
@@ -282,7 +287,7 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def delete(self, service='box', source=None):
+    def delete(self, service=None, source=None):
         """
 
         deletes file or directory
