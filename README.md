@@ -61,6 +61,8 @@ $ cms set storage=azure
 $ pytest -v --capture=no tests/test_storage.py
 $ cms set storage=gdrive
 $ pytest -v --capture=no tests/test_storage.py
+$ cms set storage=awss3
+$ pytest -v --capture=no tests/test_storage.py
 ```
 
 TODO: add other storage providers as they become ready 
