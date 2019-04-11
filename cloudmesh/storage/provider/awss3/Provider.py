@@ -285,6 +285,8 @@ class Provider(StorageABC):
         dir_files_list = []
         file_obj = ''
 
+        #recursive = True
+
         try:
             file_obj = self.s3_client.get_object(Bucket=self.container_name,
                                                  Key=trimmed_source)
@@ -330,7 +332,7 @@ class Provider(StorageABC):
                     else:
                         metadata = self.s3_client.head_object(
                             Bucket=self.container_name, Key=obj.key)
-                        dir_files_list.append(self.extract_file_dict(obj.key.replace(os.path.basename(obj.key)),
+                        dir_files_list.append(self.extract_file_dict(obj.key.replace(os.path.basename(obj.key),''),
                                                                      metadata))
 
                     self.s3_resource.Object(self.container_name,
@@ -340,7 +342,7 @@ class Provider(StorageABC):
                 self.storage_dict['message'] = 'Source Deleted'
 
             elif total_all_objs > 0 and recursive is False:
-                # check if marker file exits in this directory
+                # check if marker file exists in this directory
                 marker_obj_list = list(
                     self.s3_resource.Bucket(self.container_name).objects.filter(
                         Prefix=trimmed_source + '/' + self.directory_marker_file_name))
@@ -360,7 +362,7 @@ class Provider(StorageABC):
                     self.storage_dict['message'] = 'Source Deleted'
                 else:
                     self.storage_dict[
-                        'message'] = 'Source has child objects. Use recursive option'
+                        'message'] = 'Source has child objects. Please delete child objects first or use recursive option'
 
 
         self.storage_dict['objlist'] = dir_files_list
