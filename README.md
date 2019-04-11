@@ -110,9 +110,17 @@ pprint(result)
 
 ## Box
 
-TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
+### Configuration
 
-TODO: Describe how to use your specific nosetests
+In the `cloudmesh4.yaml` file, find the 'box' section under 'storage'. Under credentials, set `config_path` to the path of the configuration file you created as described in the Box chapter. 
+
+### Pytests
+
+Open a terminal and navigate to the cloudmesh-storage directory. Enter the following command to run pytests:
+
+```bash
+$ pytest tests/test_box.py
+```
 
 ## Azure
 
