@@ -52,6 +52,9 @@ class Provider(StorageABC):
     def massage_path(self, file_name_path):
         massaged_path = file_name_path
 
+        # convert possible windows style path to unix path
+        massaged_path = massaged_path.replace('\\', '/')
+
         # remove leading slash symbol in path
         if len(massaged_path) > 0 and massaged_path[0] == '/':
             massaged_path = massaged_path[1:]
@@ -63,8 +66,6 @@ class Provider(StorageABC):
         if massaged_path[0:2] == '.\\' or massaged_path[0:2] == './':
             massaged_path = os.path.abspath(massaged_path)
 
-        # convert possible windows style path to unix path
-        massaged_path = massaged_path.replace('\\', '/')
 
         return massaged_path
 
@@ -676,26 +677,32 @@ class Provider(StorageABC):
         self.storage_dict['recursive'] = recursive
 
         # filePath = self.joinFileNameDir(filename, directory)
-        file_path = self.massage_path(directory) + '/' + filename
+        file_path = ''
+        len_dir = len(self.massage_path(directory))
+        if len_dir > 0:
+            file_path = self.massage_path(directory) + '/' + filename
+        else:
+            file_path = filename
 
-        # print(filePath)
+        #print('file_path : ' +file_path )
+
         info_list = []
         objs = []
 
-        if (len(directory) > 0) and recursive is False:
+        if (len_dir > 0) and recursive is False:
             objs = list(
                 self.s3_resource.Bucket(self.container_name).objects.filter(
                     Prefix=file_path))
-        elif (len(directory) == 0) and recursive is False:
+        elif (len_dir == 0) and recursive is False:
             objs = list(
                 self.s3_resource.Bucket(self.container_name).objects.filter(
                     Prefix=file_path))
             # objs = list(self.s3_resource.Bucket(self.container_name).objects.all())
-        elif (len(directory) > 0) and recursive is True:
+        elif (len_dir > 0) and recursive is True:
             objs = list(
                 self.s3_resource.Bucket(self.container_name).objects.filter(
                     Prefix=self.massage_path(directory)))
-        elif (len(directory) == 0) and recursive is True:
+        elif (len_dir == 0) and recursive is True:
             objs = list(
                 self.s3_resource.Bucket(self.container_name).objects.all())
 
