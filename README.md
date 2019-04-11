@@ -46,13 +46,13 @@ For users (NOT YET WORKING:
 $ pip install cloudmesh.storage
 ```
 
-## Nosetests
+## Pytests
 
-We have developed a number of simple nosetests tha can be called. To see the list of nosetests go to our directory
+We have developed a number of simple pytests that can be called. To see the list of Pytests go to our directory
 
 * <https://github.com/cloudmesh/cloudmesh-storage/tree/master/tests>
 
-We also developed a general nosetest that works accross providers and can be invoked as follows
+We also developed a general pytest that works accross providers and can be invoked as follows
 
 ```bash
 $ cms set storage=box
