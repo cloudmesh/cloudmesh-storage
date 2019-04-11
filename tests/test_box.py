@@ -7,6 +7,7 @@ from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from pathlib import Path
 import os
+import pytest
 
 
 # nosetest -v --nopature
@@ -23,6 +24,13 @@ class TestBox:
         self.source = path_expand('~/.cloudmesh/storage/test/box')
         self.source_file = path_expand('~/.cloudmesh/storage/test/box/test.txt')
         self.filename = 'test.txt'
+
+    @pytest.fixture(scope='class')
+    def test_dir(self):
+        self.p = Provider(service="box")
+        self.destination = "/"
+        test_dir = self.p.create_dir(service=self.p.service, directory=os.path.join(self.destination, 'testdir'))
+        return test_dir
 
     def test_00_config(self):
         config = Config()
@@ -61,24 +69,19 @@ class TestBox:
 
         assert len(contents) > 0
 
-    def test_04_search(self):
+    def test_05_search(self):
         HEADING()
         search_files = self.p.search(service=self.p.service, directory=self.destination, filename=self.filename, recursive=False)
         pprint(search_files)
 
         assert len(search_files) > 0
 
-class Junk:
-
-    def test_05_create_dir(self):
+    def test_06_create_dir(self, test_dir):
         HEADING()
-        # TODO use named arguments
-        dir = self.p.create_dir('/testdir')
-        pprint(dir)
 
-        assert dir is not None
+        assert len(test_dir) > 0
 
-    def test_06_delete(self):
+    def test_07_delete(self, test_dir):
         HEADING()
-        # TODO use named arguments
-        self.p.delete('testdir')
+        self.p.client.folder(test_dir[0]['id']).delete()
+
