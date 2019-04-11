@@ -1,6 +1,6 @@
 ###############################################################
-# pip install .; pytest -v --capture=no -v --nocapture tests/test_installer.py:Test_installer.test_001
-# pytest -v --capture=no tests/test_installerr.py
+# pip install .; pytest -v --capture=no -v --nocapture tests/test_storage_installer.py:Test_storage_installer.test_001
+# pytest -v --capture=no tests/test_storage_installerr.py
 # pytest -v  tests/test_installer.py
 ###############################################################
 
@@ -13,7 +13,7 @@ from cloudmesh_installer.install.test import readfile, run
 
 
 @pytest.mark.incremental
-class Test_configdict:
+class Test_storage_installer:
 
     def test_create_dir(self):
         path = "tmp"
