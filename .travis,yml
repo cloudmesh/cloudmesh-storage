@@ -19,4 +19,4 @@ install:
   - pwd
   - python --version
 
-script: pytest -v --capture=no tests/test_installer.py
+script: pytest -v --capture=no tests/test_storage_installer.py
