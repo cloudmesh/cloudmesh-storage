@@ -402,14 +402,45 @@ class Provider(StorageABC):
         if is_source_file is True:
             # print('file flow')
             # Its a file and need to be uploaded to the destination
-            blob_obj = self.s3_client.upload_file(trimmed_source, self.container_name,
+
+            #check if trimmed_destination is file or a directory
+            is_trimmed_destination_file = False
+            dot_operator = '.'
+            # print('destination base : '+ os.path.basename(trimmed_destination))
+            if dot_operator in os.path.basename(trimmed_destination):
+                is_trimmed_destination_file = True
+                #print('dot_operator found')
+
+            #print('is_trimmed_destination_file  :')
+            #print(is_trimmed_destination_file)
+
+            if is_trimmed_destination_file:
+                blob_obj = self.s3_client.upload_file(trimmed_source, self.container_name,
                                                   trimmed_destination)
 
-            # make head call since file upload does not return
-            # obj dict to extract meta data
-            metadata = self.s3_client.head_object(
-                Bucket=self.container_name, Key=trimmed_destination)
-            files_uploaded.append(self.extract_file_dict(trimmed_destination, metadata))
+
+                # make head call since file upload does not return
+                # obj dict to extract meta data
+                metadata = self.s3_client.head_object(
+                    Bucket=self.container_name, Key=trimmed_destination)
+                files_uploaded.append(self.extract_file_dict(trimmed_destination, metadata))
+
+            else:
+
+                destination_key = ''
+                if len(trimmed_destination) == 0:
+                    destination_key = os.path.basename(trimmed_source)
+                else:
+                    destination_key = trimmed_destination + '/' + os.path.basename(trimmed_source)
+
+                blob_obj = self.s3_client.upload_file(trimmed_source, self.container_name,
+                                                      destination_key)
+
+                # make head call since file upload does not return
+                # obj dict to extract meta data
+                metadata = self.s3_client.head_object(
+                    Bucket=self.container_name, Key=destination_key)
+                files_uploaded.append(self.extract_file_dict(destination_key,metadata))
 
             self.storage_dict['message'] = 'Source uploaded'
         elif is_source_dir is True:
