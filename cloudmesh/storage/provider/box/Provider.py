@@ -37,9 +37,14 @@ def update_dict(elements):
         entry = element.__dict__
         entry["cm"] = {
             "kind": "storage",
-            "cloud": "box",  # bug this is the cloud name
-            "name": element.name
+            "cloud": 'box',
+            "name": element.name,
         }
+        for c in ['modified_at', 'created_at', 'size']:
+            if c in entry.keys():
+                entry['cm'][c]: entry[c]
+            else:
+                entry['cm'][c]: None
         for p in ['_response_object', '_session', 'session', 'response_object', 'created_by',
                   'file_version', 'modified_by', 'owned_by', 'parent', 'path_collection']:
             if p in entry.keys():

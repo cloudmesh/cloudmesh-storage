@@ -12,7 +12,6 @@ import pytest
 # nosetests -v --nocapture tests/test_box.py
 # pytest tests/test_box.py
 
-@pytest.mark.incremental
 class TestBox:
 
     def setup(self):
@@ -82,4 +81,7 @@ class TestBox:
     def test_07_delete(self, test_dir):
         HEADING()
         self.p.client.folder(test_dir[0]['id']).delete()
+
+
+
 
