@@ -1,9 +1,7 @@
 from boxsdk import JWTAuth
 from boxsdk import Client
-from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
-from pprint import pprint
 from os.path import basename, join
 import os
 from cloudmesh.storage.StorageABC import StorageABC
@@ -105,10 +103,10 @@ class Provider(StorageABC):
                 for s in os.listdir(source):
                     s_id = get_id(s, files, 'file')
                     if s_id is None:
-                        file = self.client.folder('0').upload(sourcepath+'/'+s)
+                        file = self.client.folder('0').upload(sourcepath + '/' + s)
                         uploaded.append(file)
                     else:
-                        file = self.client.file(s_id).update_contents(sourcepath+'/'+s)
+                        file = self.client.file(s_id).update_contents(sourcepath + '/' + s)
                         uploaded.append(file)
                 files_dict = update_dict(uploaded)
                 return files_dict
@@ -182,18 +180,19 @@ class Provider(StorageABC):
             cloud_dir = basename(directory)
             results = []
             if cloud_dir == '':
-                folder_id = '0'
-                files = [item for item in self.client.folder('0').get_items() if item.type=='file']
+                files = [item for item in self.client.folder('0').get_items() if item.type == 'file']
+                folders = [item for item in self.client.folder('0').get_items() if item.type == 'folder']
             else:
                 items = self.client.search().query(cloud_dir, type='folder')
                 folder_id = get_id(cloud_dir, items, 'folder')
                 if not folder_id:
                     Console.error("Directory not found.")
-                files = [item for item in self.client.folder(folder_id).get_items() if item.type=='file']
-                folders = [item for item in self.client.folder(folder_id).get_items() if item.type=='folder']
+                files = [item for item in self.client.folder(folder_id).get_items() if item.type == 'file']
+                folders = [item for item in self.client.folder(folder_id).get_items() if item.type == 'folder']
             if not recursive:
                 for file in files:
-                    results.append(file)
+                    if filename in file.name:
+                        results.append(file)
                 if len(results) > 0:
                     files_dict = update_dict(results)
                     return files_dict
@@ -204,7 +203,8 @@ class Provider(StorageABC):
                     for folder in folders:
                         files = [item for item in self.client.folder(folder.id).get_items() if item.type == 'file']
                         for file in files:
-                            results.append(file)
+                            if filename in file.name:
+                                results.append(file)
                         for item in self.client.folder(folder.id).get_items():
                             if item.type == 'folder':
                                 folders.append(item)
@@ -260,8 +260,8 @@ class Provider(StorageABC):
         try:
             result_list = []
             path = source.split('/')
-            for i in range(1, len(path)+1):
-                if path[len(path)-i] == '':
+            for i in range(1, len(path) + 1):
+                if path[len(path) - i] == '':
                     if len(path) - i > 1:
                         pass
                     else:
@@ -270,8 +270,8 @@ class Provider(StorageABC):
                         for c in contents:
                             result_list.append(c)
                 else:
-                    folders = [item for item in self.client.search().query(path[len(path)-i], type='folder')]
-                    folder_id = get_id(path[len(path)-i], folders, 'folder')
+                    folders = [item for item in self.client.search().query(path[len(path) - i], type='folder')]
+                    folder_id = get_id(path[len(path) - i], folders, 'folder')
                     if folder_id:
                         results = self.client.folder(folder_id).get_items()
                         contents = [result for result in results]
@@ -287,7 +287,7 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def delete(self, service=None, source=None):
+    def delete(self, service=None, source=None, recursive=False):
         """
 
         deletes file or directory
@@ -298,12 +298,12 @@ class Provider(StorageABC):
         """
         try:
             path = source.strip('/').split('/')
-            name = path[len(path)-1]
+            name = path[len(path) - 1]
             items = self.client.search().query(name, type='file')
             files = [item for item in items]
             items2 = self.client.search().query(name, type='folder')
             folders = [item2 for item2 in items2]
-            results = files+folders
+            results = files + folders
             if not any(result.name == name for result in results):
                 Console.error("Source not found.")
             else:
@@ -316,4 +316,3 @@ class Provider(StorageABC):
                     self.client.file(item_id).delete()
         except Exception as e:
             Console.error(e)
-

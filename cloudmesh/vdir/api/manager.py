@@ -15,3 +15,10 @@ class Vdir(object):
 
     def list(self, parameter):
         print("list", parameter)
+
+
+    def add(self, endpoint, address):
+        print("add", endpoint, address)
+        file_dict = {}
+        file_dict['cm'] = {}
+        file_dict['cm']['name'] = endpoint

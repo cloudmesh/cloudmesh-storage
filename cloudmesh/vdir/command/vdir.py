@@ -66,6 +66,14 @@ class VdirCommand(PluginCommand):
 
         d = Vdir()
 
+        if arguments.add:
+            Vdir.add(arguments.FILEENDPOINT, arguments.DIR_AND_NAME)
+        elif arguments.get:
+            Vdir.get(arguments.NAME)
+        elif arguments.ls:
+            Vdir.ls(arguments.DIR)
+
+
         Console.error("This is just a sample")
         return ""
 
