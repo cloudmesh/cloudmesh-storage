@@ -29,7 +29,6 @@ class Vdir(object):
         cm['directory'] = os.path.dirname(address).split(':')[1]
         cm['filename'] = os.path.basename(address)
         cm['provider'] = os.path.dirname(address).split(':')[0]
-        cm['created'] =
 
 
 
