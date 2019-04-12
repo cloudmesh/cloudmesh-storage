@@ -46,13 +46,13 @@ For users (NOT YET WORKING:
 $ pip install cloudmesh.storage
 ```
 
-## Nosetests
+## Pytests
 
-We have developed a number of simple nosetests tha can be called. To see the list of nosetests go to our directory
+We have developed a number of simple pytests that can be called. To see the list of Pytests go to our directory
 
 * <https://github.com/cloudmesh/cloudmesh-storage/tree/master/tests>
 
-We also developed a general nosetest that works accross providers and can be invoked as follows
+We also developed a general pytest that works accross providers and can be invoked as follows
 
 ```bash
 $ cms set storage=box
@@ -110,9 +110,17 @@ pprint(result)
 
 ## Box
 
-TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
+### Configuration
 
-TODO: Describe how to use your specific nosetests
+In the `cloudmesh4.yaml` file, find the 'box' section under 'storage'. Under credentials, set `config_path` to the path of the configuration file you created as described in the Box chapter. 
+
+### Pytests
+
+Open a terminal and navigate to the cloudmesh-storage directory. Enter the following command to run pytests:
+
+```bash
+$ pytest tests/test_box.py
+```
 
 ## Azure
 
