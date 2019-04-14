@@ -96,13 +96,6 @@ class Provider(StorageABC):
 
         return info
 
-    '''
-    # Function to split string to list based on delimiter
-    def splitToList(self, string):
-        delimter = '/'
-        return string.split(delimter)
-    '''
-
     # function to create a directory
     def create_dir(self, service=None, directory=None):
         """
