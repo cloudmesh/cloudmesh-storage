@@ -18,7 +18,7 @@
 ## Requirements
 
 Please note that several packages are available which are pointed to in the
-instalation documentation.
+installation documentation.
 
 |  | Links |
 |---------------|-------|
@@ -34,7 +34,7 @@ documentation please see
 where we also document how to use pyenv virtualenv.
 
 
-## Instalation and Documentation
+## Installation and Documentation
 
 For developers:
 
@@ -92,7 +92,7 @@ $ cms storage list
 
 TBD
 
-Cloudmehs Storage provides a simple programming API interface that you can use.
+Cloudmesh Storage provides a simple programming API interface that you can use.
 We highlight a simple exampple for storing and retrieving a file form a storage
 provider.
 
