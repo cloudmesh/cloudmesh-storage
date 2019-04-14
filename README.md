@@ -9,6 +9,12 @@
 [![Format](https://img.shields.io/pypi/status/cloudmesh-storage.svg)](https://pypi.python.org/pypi/cloudmesh-storage)
 [![Travis](https://travis-ci.com/cloudmesh/cloudmesh-storage.svg?branch=master)](https://travis-ci.com/cloudmesh/cloudmesh-storage)
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 515dcd1553b49eeff942ac43f124218af92ea3b4
 ## Requirements
 
 Please note that several packages are available which are pointed to in the
