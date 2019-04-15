@@ -141,6 +141,7 @@ TODO: Describe how to use your specific nosetests
 In the `cloudmesh4.yaml` file, refer the 'awss3' section under 'storage. In the credentials section under awss3, specify the access key id and secret access key which will be available under AWS IAM service -> Users -> Security Credentials. Also specify the default region where you would like your files to be stored. 
 Users would like to be contained within a container for easy maintenence. Default container(Bucket) can be specified in the credentails section. Here is a sample.
 
+```bash
 storage:
     aws:
       cm:
@@ -156,6 +157,7 @@ storage:
         secret_access_key: *******
         container: name of bucket that you want user to be contained in.
         region: Specfiy the default region eg us-east-1
+```
 
 ### Pytests
 
