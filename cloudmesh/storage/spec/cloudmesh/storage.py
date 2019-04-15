@@ -1,18 +1,57 @@
-#
-# BUG
-#
+from flask import jsonify
+from cloudmesh.storage.provider.azureblob.Provider import \
+    Provider as AzureblobProvider
+from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
+from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
+from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
+from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
 
-def get(storage, source, destinatiion, recursive):
-    """Returns all users
-  """
+def setup(kind):
+    config = "~/.cloudmesh/cloudmesh4.yaml"
+    if kind == "local":
+        provider = LocalProvider(service=kind, config=config)
+    elif kind == "box":
+        provider = BoxProvider(service=kind, config=config)
+    elif kind == "gdrive":
+        provider = GdriveProvider(service=kind, config=config)
+    elif kind == "azureblob":
+        provider = AzureblobProvider(service=kind, config=config)
+    elif kind == "awss3":
+        provider = AwsProvider(service=kind, config=config)
+    return provider
 
-    from cloudmesh.storage.Provider import Provider
+def create_dir(service, directory):
+    provider = setup(service)
+    d = provider.create_dir(service, directory)
+    return jsonify(d)
 
-    provider = Provider(storage)
+def put_blob(params=None):
+    service = params['service']
+    source = params['source']
+    destination = params['destination']
+    recursive = params['recursive']
 
-    result = provider.get(storage,
-                          SOURCE,
-                          DESTINATION,
-                          recursive)
+    provider = setup(service)
+    d = provider.put(service, source, destination, recursive)
+    return jsonify(d)
 
-    return josonify(result)
+def get_blob(service, source, destination, recursive=False):
+    provider = setup(service)
+    d = provider.get(service, source, destination, recursive)
+    return jsonify(d)
+
+def list_blob(service, directory, recursive=False):
+    provider = setup(service)
+    d = provider.list(service, directory, recursive)
+    return jsonify(d)
+
+def search_blob(service, directory, filename, recursive=False):
+    provider = setup(service)
+    d = provider.search(service, directory, filename, recursive)
+    return jsonify(d)
+
+def delete_blob(service, source, recursive=False):
+    provider = setup(service)
+    d = provider.delete(service, source, recursive)
+    return jsonify(d)
+

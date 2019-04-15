@@ -129,9 +129,40 @@ $ pytest tests/test_box.py
 
 ## Azure
 
-TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
+### Configuration
 
-TODO: Describe how to use your specific nosetests
+The `cloudmesh4.yaml` needs to be set as follows for the 'azure-blob' section under 'storage'.
+
+```bash
+  storage:
+    azure-blob:
+      cm:
+        heading: Azure
+        host: azure.com
+        label: Azure
+        kind: azureblob
+        version: TBD
+      default:
+        directory: TBD
+      credentials:
+        account_name: 'XXXXXXXXXXXXXXXXX'
+        account_key: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        container: 'Test container name'
+```
+
+Credentials settings can be obtained from Azure portal.
+
+* `account_name` - This is the name of the Azure blob storage account.
+* `account_key` - This can be found under 'Access Keys' after navigating to the storage account on the Azure portal.
+* `container` - This can be set to a default container created under the Azure blob storage account.
+
+### Pytests
+
+Execute the following command for Azure Blob storage service pytest after navigating to the cloudmesh-storage directory.
+
+```bash
+$ pytest -v --capture=no tests/test_azure.py
+```
 
 
 ## AWS S3
