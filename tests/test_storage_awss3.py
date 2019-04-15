@@ -11,7 +11,7 @@ from  pathlib import Path
 from cloudmesh.common.util import writefile
 import pytest
 
-class Testaws:
+class TestAws:
 
     def create_file(self, location, content):
 

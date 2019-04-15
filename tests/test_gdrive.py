@@ -10,7 +10,7 @@ from pathlib import Path
 import os
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
-
+from cloudmesh.storage.provider.gdrive.Provider import Provider
 
 class TestConfig:
 
@@ -20,10 +20,11 @@ class TestConfig:
         writefile(path_expand(location), content)
 
     def setup(self):
-        self.p = cloudmesh.storage.provider.gdrive.Provider.Provider(service="gdrive")
+        self.p = Provider(service="gdrive")
         self.destination = path_expand("/")
         self.source = path_expand("~/.cloudmesh/storage/test/source/")
-        self.create_file("~/.cloudmesh/storage/test/source/test/source/sample_source.txt", "This is sample test file")
+        self.create_file("~/.cloudmesh/storage/test/source/test/source/sample_source.txt",
+                         "This is sample test file")
         assert True
 
     def test_01_put(self):

@@ -14,7 +14,7 @@ from cloudmesh.variables import Variables
 from cloudmesh.common.util import banner
 from cloudmesh.common.parameter import Parameter
 
-class TestBox:
+class TestStorage:
 
     def create_file(self, location, content):
 
