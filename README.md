@@ -136,9 +136,34 @@ TODO: Describe how to use your specific nosetests
 
 ## AWS
 
-TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
+### Configuration
 
-TODO: Describe how to use your specific nosetests
+In the `cloudmesh4.yaml` file, find the 'awss3' section under 'storage. In the credentials section under awss3, specify the access key id and secret access key which will be available under AWS IAM service -> Users -> Security Credentials. Also specify the default region where you would like your files to be stored. 
+Users would like to be contained within a container for easy maintenence. Default container(Bucket) can be specified in the credentails section. Here is a sample.
+
+storage:
+    aws:
+      cm:
+        heading: aws
+        host: amazon.aws.com
+        label: aws
+        kind: awsS3
+        version: TBD
+      default:
+        directory: TBD
+      credentials:
+        access_key_id: *********
+        secret_access_key: *******
+        container: name of bucket that you want user to be contained in.
+        region: Specfiy the default region eg us-east-1
+
+### Pytests
+
+Script to test the AWS S3 service can be accessed under tests folder using the following pytest command.
+
+```bash
+$ pytest -v --capture=no tests/test_storage_aws.py
+```
 
 
 ## Google drive
