@@ -131,6 +131,7 @@ In the `cloudmesh4.yaml` file, find the 'box' section under 'storage'. Under cre
         directory: /
       credentials:
         config_path: ******************************
+```
 
 ### Pytests
 
