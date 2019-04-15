@@ -18,7 +18,7 @@
 ## Requirements
 
 Please note that several packages are available which are pointed to in the
-instalation documentation.
+installation documentation.
 
 |  | Links |
 |---------------|-------|
@@ -34,7 +34,7 @@ documentation please see
 where we also document how to use pyenv virtualenv.
 
 
-## Instalation and Documentation
+## Installation and Documentation
 
 For developers:
 
@@ -92,7 +92,7 @@ $ cms storage list
 
 TBD
 
-Cloudmehs Storage provides a simple programming API interface that you can use.
+Cloudmesh Storage provides a simple programming API interface that you can use.
 We highlight a simple exampple for storing and retrieving a file form a storage
 provider.
 
@@ -129,16 +129,74 @@ $ pytest tests/test_box.py
 
 ## Azure
 
-TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
+### Configuration
 
-TODO: Describe how to use your specific nosetests
+The `cloudmesh4.yaml` needs to be set as follows for the 'azure-blob' section under 'storage'.
+
+```bash
+  storage:
+    azure-blob:
+      cm:
+        heading: Azure
+        host: azure.com
+        label: Azure
+        kind: azureblob
+        version: TBD
+      default:
+        directory: TBD
+      credentials:
+        account_name: 'XXXXXXXXXXXXXXXXX'
+        account_key: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        container: 'Test container name'
+```
+
+Credentials settings can be obtained from Azure portal.
+
+* `account_name` - This is the name of the Azure blob storage account.
+* `account_key` - This can be found under 'Access Keys' after navigating to the storage account on the Azure portal.
+* `container` - This can be set to a default container created under the Azure blob storage account.
+
+### Pytests
+
+Execute the following command for Azure Blob storage service pytest after navigating to the cloudmesh-storage directory.
+
+```bash
+$ pytest -v --capture=no tests/test_azure.py
+```
 
 
-## AWS
+## AWS S3
 
-TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
+### Configuration
 
-TODO: Describe how to use your specific nosetests
+In the `cloudmesh4.yaml` file, refer the 'awss3' section under 'storage. In the credentials section under awss3, specify the access key id and secret access key which will be available under AWS IAM service -> Users -> Security Credentials. Also specify the default region where you would like your files to be stored. 
+Users would like to be contained within a container for easy maintenence. Default container(Bucket) can be specified in the credentails section. Here is a sample.
+
+```bash
+storage:
+    aws:
+      cm:
+        heading: aws
+        host: amazon.aws.com
+        label: aws
+        kind: awsS3
+        version: TBD
+      default:
+        directory: TBD
+      credentials:
+        access_key_id: *********
+        secret_access_key: *******
+        container: name of bucket that you want user to be contained in.
+        region: Specfiy the default region eg us-east-1
+```
+
+### Pytests
+
+Script to test the AWS S3 service can be accessed under tests folder using the following pytest command.
+
+```bash
+$ pytest -v --capture=no tests/test_storage_aws.py
+```
 
 
 ## Google drive
