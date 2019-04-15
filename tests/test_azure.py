@@ -1,7 +1,8 @@
-# pytest -v --capture=no tests/test_azure.py
-# nosetest -v --nopature
-# nosetests -v --nocapture tests/test_azure.py
-
+###############################################################
+# pip install .; pytest -v --capture=no -v --nocapture tests/test_box.py:Test_box.test_001
+# pytest -v --capture=no tests/test_boxr.py
+# pytest -v  tests/test_installer.py
+###############################################################
 import os
 from pprint import pprint
 
@@ -10,11 +11,12 @@ from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from  pathlib import Path
 from cloudmesh.common.util import writefile
+import pytest
 
+@pytest.mark.incremental
 class TestAzure:
 
     def create_file(self, location, content):
-
         d = Path(os.path.dirname(path_expand(location)))
         print()
         print ("TESTDIR:",  d)
@@ -27,6 +29,7 @@ class TestAzure:
         self.p = cloudmesh.storage.provider.azureblob.Provider.Provider(service="azureblob")
 
     def test_01_create_source(self):
+        HEADING()
         # create source dir
 
         self.destination = '/azstor_test'
