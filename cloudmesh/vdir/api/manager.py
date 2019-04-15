@@ -3,7 +3,6 @@
 
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.mongo.CmDatabase import CmDatabase
-from cloudmesh.storage.provider.storage import Provider
 from cloudmesh.common.console import Console
 from pprint import pprint
 import os
@@ -16,19 +15,20 @@ class Vdir(object):
         print("init {name}".format(name=self.__class__.__name__))
         self.cm = CmDatabase()
         self.col = self.cm.db['local-vdir']
-        self.storage = Provider()
-
 
     @DatabaseUpdate()
     def mkdir(self):
         pass
 
     def ls(self, directory):
-        print("list", directory)
+        dash = '-' * 40
         cloudmesh = self.col.find({})
         count = self.col.count_documents({})
+        locations="{:<20} {:>}".format("Name", "Location")+"\n"+dash+"\n"
         for i in range(0, count):
-            print(cloudmesh[i]['cm']['name'])
+            entry = cloudmesh[i]['cm']
+            locations+="{:<20} {:>}".format(entry['name'], (entry['directory']+"/"+entry['filename']))+"\n"
+        return locations
 
     @DatabaseUpdate()
     def add(self, endpoint, dir_and_name):
@@ -49,7 +49,7 @@ class Vdir(object):
             print(e)
 
     def get(self, name):
-        doc = self.col.find_one({'cm.name':name})
+        doc = self.col.find_one({'cm.name': name})
         if doc is not None:
             cm = doc['cm']
             service = cm['provider']
