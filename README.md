@@ -134,7 +134,7 @@ TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
 TODO: Describe how to use your specific nosetests
 
 
-## AWS
+## AWS S3
 
 ### Configuration
 
