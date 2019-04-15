@@ -150,11 +150,11 @@ The `cloudmesh4.yaml` needs to be set as follows for the 'azure-blob' section un
         container: 'Test container name'
 ```
 
-Credentials configuration can be obtained from Azure portal.
+Credentials settings can be obtained from Azure portal.
 
 * `account_name` - This is the name of the Azure blob storage account.
 * `account_key` - This can be found under 'Access Keys' after navigating to the storage account on the Azure portal.
-* `container` - This can be set to a default container created under the Axure blob storage account.
+* `container` - This can be set to a default container created under the Azure blob storage account.
 
 ### Pytests
 
