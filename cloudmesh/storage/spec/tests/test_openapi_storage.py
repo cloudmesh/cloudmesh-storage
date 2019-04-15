@@ -9,16 +9,19 @@ from __future__ import print_function
 import os
 import time
 import requests
-import subprocess
 
 import pytest
 from cloudmesh.common.run.background import run
 from cloudmesh.common.util import banner
 from cloudmesh.shell.variables import Variables
 from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.util import path_expand
+from  pathlib import Path
+from cloudmesh.common.util import writefile
 
 pytest.storage = None
 pytest.openapi = None
+
 
 # noinspection PyPep8
 @pytest.mark.incremental
@@ -42,6 +45,15 @@ class Test_cloud_storage:
     endif
     """
 
+    def create_file(self, location, content):
+        d = Path(os.path.dirname(path_expand(location)))
+        print()
+        print("TESTDIR:", d)
+
+        d.mkdir(parents=True, exist_ok=True)
+
+        writefile(path_expand(location), content)
+
     def test_setup(self):
         self.variables = Variables()
         self.storages = Parameter.expand(self.variables['storage'])
@@ -51,40 +63,65 @@ class Test_cloud_storage:
         pytest.openapi.execute()
         print(pytest.openapi.pid)
         time.sleep(5)
-        
-    def test_create_dir(self):
-        path = "tmp"
-        try:
-            os.mkdir(path)
-        except OSError:
-            print(f"Creation of the directory {path} failed")
-        else:
-            print(f"Successfully created the directory {path}")
-
-        assert True
 
     def test_install(self):
-        # $(call terminal, python server.py)
-        #self.pytest_setup()
-        #print(self.openapi.pid)
         time.sleep(3)
 
-    def test_openapi_azure_storage_search(self):
-        banner('search the blobs')
+    def test_01_create_source(self):
+        # create source dir
+        self.create_file("~/openapi/a.txt", "content of a")
+        assert True
+
+    def test_openapi_storage_create(self):
+        banner('create the directory')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/search_blob?service={storage}&directory=%2ftest&filename=mp1%2ejpg&recursive=True")
+            f"http://localhost:8080/cloudmesh/create_dir?service={storage}&directory=%2fapitest")
         print(response)
         print()
 
-    def test_openapi_azure_storage_list(self):
-        banner('List the blobs')
-        stor = pytest.storage
+    def test_openapi_storage_put(self):
+        banner('Put/Upload the blobs')
+        storage = pytest.storage
+        headers = {
+            'Content-Type': 'application/json',
+        }
+        data = '{"service": "azureblob", "source": "~/openapi/a.txt", "destination": "/apitest", "recursive": "False"}'
+        response = requests.post('http://localhost:8080/cloudmesh/put_blob', headers=headers, data=data)
+        print(response)
+        print()
+
+    def test_openapi_storage_get(self):
+        banner('get the blobs')
+        storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/list_blob?service={storage}&directory=%2ftest&recursive=True")
+            f"http://localhost:8080/cloudmesh/get_blob?service={storage}&source=%7e%2fopenapi&destination=%2fapitest%2fa%2etxt")
+        print(response)
+        print()
+
+    def test_openapi_storage_list(self):
+        banner('List the blobs')
+        storage = pytest.storage
+        response = requests.get(
+            f"http://localhost:8080/cloudmesh/list_blob?service={storage}&directory=%2fapitest&recursive=True")
+        print(response)
+        print()
+
+    def test_openapi_storage_search(self):
+        banner('search the blobs')
+        storage = pytest.storage
+        response = requests.get(
+            f"http://localhost:8080/cloudmesh/search_blob?service={storage}&directory=%2fapitest&filename=a%2etxt")
+        print(response)
+        print()
+
+    def test_openapi_storage_del(self):
+        banner('delete the blobs')
+        storage = pytest.storage
+        response = requests.get(
+            f"http://localhost:8080/cloudmesh/delete_blob?service={storage}&source=%2fapitest%2fa%2etxt")
         print(response)
         print()
 
     def test_kill_pid(self):
         pytest.openapi.kill()
-
