@@ -117,14 +117,27 @@ pprint(result)
 
 ### Configuration
 
-In the `cloudmesh4.yaml` file, find the 'box' section under 'storage'. Under credentials, set `config_path` to the path of the configuration file you created as described in the Box chapter. 
+In the `cloudmesh4.yaml` file, find the 'box' section under 'storage'. Under credentials, set `config_path` to the path of the configuration file you created as described in the Box chapter:
+
+```bash
+   box:
+      cm:
+        heading: Box
+        host: box.com
+        label: Box
+        kind: box
+        version: TBD
+      default:
+        directory: /
+      credentials:
+        config_path: ******************************
 
 ### Pytests
 
 Open a terminal and navigate to the cloudmesh-storage directory. Enter the following command to run pytests:
 
 ```bash
-$ pytest tests/test_box.py
+$ pytest -v --capture=no tests/test_box.py
 ```
 
 ## Azure
