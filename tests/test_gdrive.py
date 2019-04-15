@@ -1,18 +1,21 @@
-##################################################
-#
-# nosetests -v --nocapture tests/test_gdrive.py
-##################################################
-from cloudmesh.management.configuration.config import Config
+###############################################################
+# pytest -v --capture=no tests/test_gdrive.py
+# pytest -v  tests/test_gdrive.py
+# pytest -v --capture=no -v --nocapture tests/test_gdrive.py:Test_gdrive.<METHIDNAME>
+###############################################################from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.util import HEADING
 from pprint import pprint
 from cloudmesh.storage.provider.gdrive.Provider import Provider
+
 from pathlib import Path
 import os
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.storage.provider.gdrive.Provider import Provider
+import pytest
 
-class TestConfig:
+@pytest.mark.incremental
+class Test_gdrive:
 
     def create_file(self, location, content):
         d = Path(os.path.dirname(path_expand(location)))

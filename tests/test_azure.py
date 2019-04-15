@@ -1,6 +1,8 @@
+###############################################################
 # pytest -v --capture=no tests/test_azure.py
-# nosetest -v --nopature
-# nosetests -v --nocapture tests/test_azure.py
+# pytest -v  tests/test_azure.py
+# pytest -v --capture=no -v --nocapture tests/test_azure.py:Test_azure.<METHIDNAME>
+###############################################################
 
 import os
 from pprint import pprint
@@ -10,8 +12,10 @@ from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from  pathlib import Path
 from cloudmesh.common.util import writefile
+import pytest
 
-class TestBox:
+@pytest.mark.incremental
+class Test_azure:
 
     def create_file(self, location, content):
 

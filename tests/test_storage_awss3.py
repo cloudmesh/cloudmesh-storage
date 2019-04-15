@@ -1,6 +1,8 @@
-# pytest -v --capture=no tests/test_storage_aws.py
-# nosetests -v --nocapture tests/test_storage_aws.py
-
+###############################################################
+# pytest -v --capture=no tests/test_storage_awss3.py
+# pytest -v  tests/test_storage_awss3.py
+# pytest -v --capture=no -v --nocapture tests/test_storage_awss3.py:Test_storage_awss3.<METHIDNAME>
+###############################################################
 import os
 from pprint import pprint
 
@@ -11,7 +13,8 @@ from  pathlib import Path
 from cloudmesh.common.util import writefile
 import pytest
 
-class TestAws:
+@pytest.mark.incremental
+class Test_storage_awss3:
 
     def create_file(self, location, content):
 

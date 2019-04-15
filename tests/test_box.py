@@ -1,6 +1,6 @@
 ###############################################################
-# pip install .; pytest -v --capture=no -v --nocapture tests/test_storage_installer.py:Test_storage_installer.test_001
-# pytest -v --capture=no tests/test_storage_installerr.py
+# pip install .; pytest -v --capture=no -v --nocapture tests/test_box.py:Test_box.test_001
+# pytest -v --capture=no tests/test_boxr.py
 # pytest -v  tests/test_installer.py
 ###############################################################
 from pprint import pprint
@@ -14,7 +14,7 @@ import pytest
 from pathlib import Path
 
 @pytest.mark.incremental
-class TestBox:
+class Test_box:
 
     def setup(self):
         self.p = Provider(service="box")

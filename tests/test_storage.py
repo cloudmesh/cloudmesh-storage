@@ -1,7 +1,8 @@
+###############################################################
 # pytest -v --capture=no tests/test_storage.py
-# nosetests -v --nocapture tests/test_storage.py
-# nosetests -v tests/test_storage.py
-
+# pytest -v  tests/test_storage.py
+# pytest -v --capture=no -v --nocapture tests/test_storage.py:Test_storage.<METHIDNAME>
+###############################################################
 import os
 from pprint import pprint
 
@@ -13,8 +14,10 @@ from cloudmesh.common.util import writefile
 from cloudmesh.variables import Variables
 from cloudmesh.common.util import banner
 from cloudmesh.common.parameter import Parameter
+import pytest
 
-class TestStorage:
+@pytest.mark.incremental
+class Test_storage:
 
     def create_file(self, location, content):
 
