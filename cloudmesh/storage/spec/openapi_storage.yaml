@@ -1,0 +1,211 @@
+swagger: "2.0"
+info: 
+  version: "0.0.1"
+  title: "storage"
+  description: "A service for cloudmesh storage using swagger-2.0 specification and codegen"
+  termsOfService: "http://swagger.io/terms/"
+  contact: 
+    name: "cloudmesh storage REST Service"
+  license: 
+    name: "Apache"
+host: "localhost:8080"
+basePath: "/cloudmesh"
+schemes: 
+  - "http"
+consumes: 
+  - "application/json"
+produces: 
+  - "application/json"
+paths: 
+  /put_blob:
+    post:
+      tags:
+        - AZS
+      operationId: storage.put_blob
+      description: "Returns list of blobs in the specified directory"
+      parameters:
+        - in: body
+          name: params 
+          description: "Provide the directory name in body of the request"
+          schema: 
+            $ref: "#/definitions/PUT"
+      produces: 
+        - "application/json"
+      responses: 
+        "200":
+          description: "Upload blobs"
+  /get_blob:
+    get:
+      tags:
+        - AZS
+      operationId: storage.get_blob
+      description: "Returns list of blobs in the specified directory"
+      parameters:
+        - in: query
+          name: service 
+          description: "Provide the service name in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: source 
+          description: "Provide the source path in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: destination 
+          description: "Provide the destination path in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: recursive 
+          description: "Provide the recursive option in body of the request"
+          type: string
+          required: false
+      produces: 
+        - "application/json"
+      responses: 
+        "200":
+          description: "get blobs"
+          schema: 
+            $ref: "#/definitions/LIST"
+  /list_blob:
+    get:
+      tags:
+        - AZS
+      operationId: storage.list_blob
+      description: "Returns list of blobs in the specified directory"
+      parameters:
+        - in: query
+          name: service 
+          description: "Provide the service name in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: directory 
+          description: "Provide the directory name in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: recursive 
+          description: "Provide the recursive option in body of the request"
+          type: string
+          required: false
+      produces: 
+        - "application/json"
+      responses: 
+        "200":
+          description: "list blobs"
+          schema: 
+            $ref: "#/definitions/LIST"
+  /search_blob:
+    get:
+      tags:
+        - AZS
+      operationId: storage.search_blob
+      description: "Returns list of blobs in the specified directory"
+      parameters:
+        - in: query
+          name: service 
+          description: "Provide the service name in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: directory 
+          description: "Provide the directory name in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: filename 
+          description: "Provide the directory name in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: recursive 
+          description: "Provide the recursive option in body of the request"
+          type: string
+          required: false
+      produces: 
+        - "application/json"
+      responses: 
+        "200":
+          description: "search blobs"
+          schema: 
+            $ref: "#/definitions/LIST"
+  /delete_blob:
+    get:
+      tags:
+        - AZS
+      operationId: storage.delete_blob
+      description: "Returns list of blobs in the specified directory"
+      parameters:
+        - in: query
+          name: service 
+          description: "Provide the service name in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: source 
+          description: "Provide the source name in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: recursive 
+          description: "Provide the recursive option in body of the request"
+          type: string
+          required: false
+      produces: 
+        - "application/json"
+      responses: 
+        "200":
+          description: "delete blobs"
+          schema: 
+            $ref: "#/definitions/LIST"
+  /create_dir:
+    get:
+      tags:
+        - AZS
+      operationId: storage.create_dir
+      description: "Returns list of blobs in the specified directory"
+      parameters:
+        - in: query
+          name: service 
+          description: "Provide the service name in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: directory 
+          description: "Provide the directory name in body of the request"
+          type: string
+          required: true
+      produces: 
+        - "application/json"
+      responses: 
+        "200":
+          description: "create directory"
+          schema: 
+            $ref: "#/definitions/LIST"
+
+definitions:
+  PUT:
+    type: "object"
+    required: 
+      - "service"
+      - "source"
+      - "destination"
+      - "recursive"
+    properties: 
+      service:
+        type: "string"
+      source:
+        type: "string"
+      destination:
+        type: "string"
+      recursive:
+        type: "string"
+  LIST:
+    type: "object"
+    required: 
+      - "d"
+    properties: 
+      d:
+        type: "string"
