@@ -4,6 +4,7 @@
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.common.console import Console
+from cloudmesh.storage.Provider import Provider
 from pprint import pprint
 import os
 from datetime import datetime
@@ -21,14 +22,17 @@ class Vdir(object):
         pass
 
     def ls(self, directory):
-        dash = '-' * 40
-        cloudmesh = self.col.find({})
-        count = self.col.count_documents({})
-        locations="{:<20} {:>}".format("Name", "Location")+"\n"+dash+"\n"
-        for i in range(0, count):
-            entry = cloudmesh[i]['cm']
-            locations+="{:<20} {:>}".format(entry['name'], (entry['directory']+"/"+entry['filename']))+"\n"
-        return locations
+        try:
+            dash = '-' * 40
+            cloudmesh = self.col.find({})
+            count = self.col.count_documents({})
+            locations="{:<20} {:>}".format("Name", "Location")+"\n"+dash+"\n"
+            for i in range(0, count):
+                entry = cloudmesh[i]['cm']
+                locations+="{:<20} {:>}".format(entry['name'], (entry['directory']+"/"+entry['filename']))+"\n"
+            return locations
+        except Exception as e:
+            print(e)
 
     @DatabaseUpdate()
     def add(self, endpoint, dir_and_name):
@@ -49,8 +53,17 @@ class Vdir(object):
             print(e)
 
     def get(self, name):
-        doc = self.col.find_one({'cm.name': name})
-        if doc is not None:
-            cm = doc['cm']
-            service = cm['provider']
-            path = os.path.join(cm['directory'], cm['filename'])
+        try:
+            doc = self.col.find_one({'cm.name': name})
+            if doc is not None:
+                cm = doc['cm']
+                service = cm['provider']
+                source = os.path.join(cm['directory'], cm['filename'])
+                destination = '~/.cloudmesh'
+                p = Provider(service)
+                file = p.get(source, destination, False)
+                return file
+            else:
+                Console.error("File not found.")
+        except Exception as e:
+            print(e)
