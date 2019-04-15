@@ -131,7 +131,7 @@ $ pytest tests/test_box.py
 
 ### Configuration
 
-Set the 'azure-blob' section under 'storage' in `cloudmesh4.yaml` as follows. 
+The `cloudmesh4.yaml` needs to be set as follows for the 'azure-blob' section under 'storage'.
 
 ```bash
   storage:
@@ -146,7 +146,7 @@ Set the 'azure-blob' section under 'storage' in `cloudmesh4.yaml` as follows.
         directory: TBD
       credentials:
         account_name: 'XXXXXXXXXXXXXXXXX'
-        account_key: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        account_key: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
         container: 'Test container name'
 ```
 
