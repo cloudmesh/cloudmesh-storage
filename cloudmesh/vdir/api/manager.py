@@ -16,12 +16,12 @@ class Vdir(object):
         print("init {name}".format(name=self.__class__.__name__))
         self.cm = CmDatabase()
         self.col = self.cm.db['local-vdir']
-        self.directory = ''
+        self.directory = 'vdir'
 
     def cd(self, dirname=None):
         try:
             if dirname is None:
-                if self.directory == '':
+                if self.directory == 'vdir':
                     Console.error("Root directory reached.")
                 else:
                     cwd = self.col.find_one({'type':'directory', 'cm.name':self.directory})
@@ -34,7 +34,6 @@ class Vdir(object):
                     self.directory = dirname
                 else:
                     Console.error('Directory does not exist at this location.')
-            print(self.directory)
         except Exception as e:
             print(e)
 
@@ -42,18 +41,21 @@ class Vdir(object):
     @DatabaseUpdate()
     def mkdir(self, dirname):
         try:
-            dir_dict = dict()
-            dir_dict['cm'] = {}
-            cm = dir_dict['cm']
-            cm['name'] = dirname
-            cm['kind'] = 'vdir'
-            cm['cloud'] = 'local'
-            dir_dict['type'] = 'directory'
-            dir_dict['parent'] = self.directory
-            cm['created'] = datetime.utcnow()
-            cm['modified'] = datetime.utcnow()
-            print(dir_dict)
-            return dir_dict
+            directory = self.col.find_one({"cm.name": dirname, 'type': 'directory'})
+            if directory is None:
+                dir_dict = dict()
+                dir_dict['cm'] = {}
+                cm = dir_dict['cm']
+                cm['name'] = dirname
+                cm['kind'] = 'vdir'
+                cm['cloud'] = 'local'
+                dir_dict['type'] = 'directory'
+                dir_dict['parent'] = self.directory
+                cm['created'] = datetime.utcnow()
+                cm['modified'] = datetime.utcnow()
+                return dir_dict
+            else:
+                Console.error("Directory with that name exists.")
         except Exception as e:
             print(e)
 
@@ -86,8 +88,11 @@ class Vdir(object):
     def add(self, endpoint, dir_and_name):
         try:
             dirname = os.path.dirname(dir_and_name).split('/')[-1]
+            if dirname == '':
+                directory = 'vdir'
+            else:
+                directory = self.col.find_one({"cm.name": dirname, 'type': 'directory'})
             filename = os.path.basename(dir_and_name)
-            directory = self.col.find_one({"cm.name": dirname, 'type': 'directory'})
             file = self.col.find_one({"cm.name": filename, 'type':'fileendpoint'})
             if directory is not None and file is None:
                 file_dict = dict()
@@ -97,16 +102,15 @@ class Vdir(object):
                 cm['kind'] = 'vdir'
                 cm['cloud'] = 'local'
                 file_dict['type'] = 'fileendpoint'
-                file_dict['vdirectory'] = dirname
+                file_dict['vdirectory'] = directory
                 file_dict['cloud_directory'] = os.path.dirname(endpoint).split(':')[1]
                 file_dict['filename'] = os.path.basename(endpoint)
                 file_dict['provider'] = os.path.dirname(endpoint).split(':')[0]
                 cm['created'] = datetime.utcnow()
                 cm['modified'] = datetime.utcnow()
-                print(file_dict)
                 return file_dict
             elif directory is None:
-                Console.error("Virtual directory",dirname," not found.")
+                Console.error("Virtual directory not found.")
             elif file is not None:
                 Console.error("File with that name already exists.")
         except Exception as e:
@@ -114,11 +118,11 @@ class Vdir(object):
 
     def get(self, name):
         try:
-            doc = self.col.find_one({'cm.name': name, 'cm.type': 'fileendpoint'})
+            doc = self.col.find_one({'cm.name': name, 'type': 'fileendpoint'})
             if doc is not None:
-                cm = doc['cm']
-                service = cm['provider']
-                source = os.path.join(cm['cloud_directory'], cm['filename'])
+                self.col.update_one({'cm.name': name, 'type': 'fileendpoint'}, {'$set': {'modified': datetime.utcnow()}})
+                service = doc['provider']
+                source = os.path.join(doc['cloud_directory'], doc['filename'])
                 destination = '~/.cloudmesh'
                 p = Provider(service)
                 file = p.get(source, destination, False)
@@ -129,4 +133,14 @@ class Vdir(object):
             print(e)
 
     def delete(self, dir_or_name):
-        pass
+        try:
+            self.col.delete_one({'cm.name': dir_or_name})
+        except Exception as e:
+            print(e)
+
+    def status(self, dir_or_name):
+        try:
+            result = self.col.find_one({'cm.name':dir_or_name})
+            return result
+        except Exception as e:
+            print(e)

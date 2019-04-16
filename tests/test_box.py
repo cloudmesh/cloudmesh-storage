@@ -34,7 +34,7 @@ class Test_box:
         test_dir = self.p.create_dir(service=self.p.service,
                                      directory=f"destination/testdir")
         return test_dir
-        # bug assertion missing
+
 
     def test_config(self):
         config = Config()
@@ -91,9 +91,9 @@ class Test_box:
 
         assert len(test_dir) > 0
 
-    def test_delete(self, test_dir):
+    def test_delete(self, dummy_dir):
         HEADING()
-        self.p.client.folder(test_dir[0]['id']).delete()
+        self.p.client.folder(dummy_dir[0]['id']).delete()
 
 
 
