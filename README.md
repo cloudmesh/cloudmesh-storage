@@ -183,8 +183,11 @@ $ pytest -v --capture=no tests/test_azure.py
 
 ### Configuration
 
-In the `cloudmesh4.yaml` file, refer the 'awss3' section under 'storage. In the credentials section under awss3, specify the access key id and secret access key which will be available under AWS IAM service -> Users -> Security Credentials. Also specify the default region where you would like your files to be stored. 
-Users would like to be contained within a container for easy maintenence. Default container(Bucket) can be specified in the credentails section. Here is a sample.
+In the `cloudmesh4.yaml` file, the 'aws' section under 'storage' describes the parameters used to store files in AWS S3. 
+In the credentials section under aws, specify the access key id and secret access key which will be available in the AWS console under AWS IAM service -> Users -> Security Credentials. 
+Container is the default Bucket which will be used to store the files in AWS S3. 
+Region is the geographic area like us-east-1 which contains the bucket. Region is required to get a connection handle on the S3 Client or resource for that geographic area.
+Here is a sample.
 
 ```bash
 storage:
