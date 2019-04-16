@@ -220,3 +220,18 @@ TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
 
 TODO: Describe how to use your specific nosetests
 
+## Virtual Directory
+
+The virtual directory has been developed to mirror the linux directory commands. File links in the virtual directory point to files on storage providers, which can be retrieved using the virtual directory. 
+
+### Configuration
+
+The credentials for the virtual directory are the same as for the admin mongo command. See the Mongo section for details. 
+
+### Pytests
+
+The vdir command can be tested as follows:
+
+```bash
+$ pytest -v --capture=no tests/test_vdir.py
+```
