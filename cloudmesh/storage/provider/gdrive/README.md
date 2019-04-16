@@ -6,7 +6,7 @@ The Google Drive API needs the following two 2 credentials files.
 
 If we run the Google Drive `Provider.py` for the **First time** then the required keys, tokens are taken from the `cloudmesh4.yaml` file and creates a `client_secret.json` file in the follwing path `~/.cloudmesh/gdrive/`
 
-The `Authentication.py` creates a `.credentials` folder under the following path `~/.cloudmesh/gdrive/` if it doesn't exist and creates a 'google-drive-credentials.json' file under the following folder `~/.cloudmesh/gdrive/.credentials/`
+The `Authentication.py` creates a `.credentials` folder under the following path `~/.cloudmesh/gdrive/` if it doesn't exist and creates a `google-drive-credentials.json` file under the following folder `~/.cloudmesh/gdrive/.credentials/`
 
 `client_secret.json` credentials will be taken from `cloudmesh4.yaml` and it will
 create a `client_secret.json` file saves it in the `~/.cloud,esh/gdrive/.credentials` folder.
