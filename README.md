@@ -145,7 +145,7 @@ $ pytest -v --capture=no tests/test_box.py
 
 ### Configuration
 
-The `cloudmesh4.yaml` needs to be set as follows for the 'azure-blob' section under 'storage'.
+The `cloudmesh4.yaml` file needs to be set up as follows for the 'azure-blob' section under 'storage'.
 
 ```bash
   storage:
@@ -164,7 +164,7 @@ The `cloudmesh4.yaml` needs to be set as follows for the 'azure-blob' section un
         container: 'Test container name'
 ```
 
-Credentials settings can be obtained from Azure portal.
+Configuration settings for credentials in the yaml file can be obtained from Azure portal.
 
 * `account_name` - This is the name of the Azure blob storage account.
 * `account_key` - This can be found under 'Access Keys' after navigating to the storage account on the Azure portal.
