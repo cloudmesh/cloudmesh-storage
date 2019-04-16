@@ -70,8 +70,14 @@ class VdirCommand(PluginCommand):
         if arguments.add:
             d.add(arguments.FILEENDPOINT, arguments.DIR_AND_NAME)
         elif arguments.ls:
-            d.ls(arguments.NAME)
-        elif arguments.get:
+            d.ls(arguments.DIR)
+        elif arguments['get']:
             d.get(arguments.NAME)
+        elif arguments['mkdir']:
+            d.mkdir(arguments.DIR)
+        elif arguments['cd']:
+            d.cd(arguments.DIR)
+        elif arguments['delete']:
+            d.delete(arguments.DIR_OR_NAME)
 
 

@@ -28,7 +28,7 @@ class Test_box:
         self.filename = 'test.txt'
 
     @pytest.fixture(scope='class')
-    def test_dir(self):
+    def dummy_dir(self):
         self.p = Provider(service="box")
         destination = self.destination = "/"
         test_dir = self.p.create_dir(service=self.p.service,
