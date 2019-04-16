@@ -216,9 +216,42 @@ Due to bugs in the requirements of the google driver code,
 we have not yet included it in the Provider code. This needs to be fixed 
 before we can do this.
 
-TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
+The `cloudmesh4.yaml` file needs to be set up as follows for the 'gdrive' section under 'storage'.
 
-TODO: Describe how to use your specific nosetests
+```bash
+storge:
+    gdrive:
+        cm:
+            heading: GDrive
+            host: dgrive.google.com
+            label: GDrive
+            kind: gdrive
+            version: TBD
+        default:
+            directory: TBD
+        credentials:
+            client_id: ***************
+            project_id: ***************
+            auth_uri: "https://accounts.google.com/o/oauth2/auth"
+            token_uri: "https://oauth2.googleapis.com/token"
+            client_secret: ***************
+            auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
+            auth_host_name: "localhost"
+            auth_host_port:
+            - "****"
+            - "****"
+            redirect_uris:
+            - "urn:ietf:wg:oauth:2.0:oob"
+            - "http://localhost"
+```
+
+### Pytests
+
+Script to test the GDrive service can be accessed under tests folder using the following pytest command.
+
+```bash
+$ pytest -v --capture=no tests/test_gdrive.py
+```
 
 ## Virtual Directory
 
