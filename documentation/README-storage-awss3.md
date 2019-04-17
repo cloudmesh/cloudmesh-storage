@@ -72,3 +72,35 @@ To download a file from awss3 with  Cloudmesh, you must specify the cloud folder
 ```bash
 $ storage --storage=awss3 get /base_container/targetdir/stest.txt ~/.cloudmesh/storage/stest/testget.txt --recursive
 ```
+
+### Search
+
+To search for a file through Cloudmesh, you must specify a directory in which to search and the file or folder name you are searching for. If recursive is specified, Cloudmesh will search all child directories of the original directory. 
+
+```bash
+$ storage --storage=awss3 search /base_container/targetdir testget.txt --recursive
+```
+
+### List
+
+The list command lists all the contents of a cloud directory. If recursive is specified, it will list the contents of all child directories as well. 
+
+```bash
+$ storage --storage=awss3 list /base_container/targetdir --recursive
+```
+
+### Create a directory
+
+To create a new directory, you must specify the path of the new directory you would like to create, including its parent directory. 
+
+```bash
+$ storage --storage=awss3 create dir /base_container/targetdir
+```
+
+### Delete
+
+The delete command can delete files or folders from your cloud file storage. Deleting a folder will delete its contents as well. 
+
+```bash
+$ storage --storage=awss3 delete /base_container/targetdir
+```
