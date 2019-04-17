@@ -34,16 +34,31 @@ storage:
 The Cloudmesh command line library offers six functions under storage command: get, put, search, list, create directory, and delete. 
 Once you have installed Cloudmesh, type `cms` into the command line to start the shell. 
 
+```bash
+$ cms
++-------------------------------------------------------+
+|   ____ _                 _                     _      |
+|  / ___| | ___  _   _  __| |_ __ ___   ___  ___| |__   |
+| | |   | |/ _ \| | | |/ _` | '_ ` _ \ / _ \/ __| '_ \  |
+| | |___| | (_) | |_| | (_| | | | | | |  __/\__ \ | | | |
+|  \____|_|\___/ \__,_|\__,_|_| |_| |_|\___||___/_| |_| |
++-------------------------------------------------------+
+|                  Cloudmesh CMD5 Shell                 |
++-------------------------------------------------------+
+
+cms>
+```
+
 To view the docopt for storage command, type in 
 
 ```bash
-$ help storage 
+cms> help storage 
 ```
 
-Gives a detail level understanding of what each command does and how to used the command line to interact with differnt storage providers. For eg to invoke AWS S3 service, we need to pass awss3 as parameter to storage and suffix with the function call with the function parameters.
+Help command gives a detail level understanding of what each command does and how to use the command line to interact with different storage providers and different parameters / options available in a particular command. For eg to invoke AWS S3 service, we need to pass awss3 as parameter to storage and suffix with the function call with the function parameters.
 
 ```bash
-$ storage --storage=awss3 list ''
+cms> storage --storage=awss3 list ''
 ```
 
 ### Storage functions overview
