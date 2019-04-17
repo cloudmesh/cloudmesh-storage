@@ -70,12 +70,12 @@ $ cms storage --storage='aws' list ''
 ### Storage functions overview
 
 
-### Create a directory
+### Create dir
 
-To create a new directory, you must specify the path of the new directory you would like to create, including its parent directory. 
+This command helps to create a new directory on AWS S3. you must specify the full path of the new directory you would like to create. 
 
 ```bash
-$ cms storage --storage='aws' create dir /base_container/targetdir
+$ cms storage --storage='aws' create dir /base_path/target_dir
 ```
 
 ### Put
@@ -110,13 +110,6 @@ The list command lists all the contents of a cloud directory. If recursive is sp
 $ cms storage --storage='aws' list /base_container/targetdir --recursive
 ```
 
-### Create a directory
-
-To create a new directory, you must specify the path of the new directory you would like to create, including its parent directory. 
-
-```bash
-$ cms storage --storage='aws' create dir /base_container/targetdir
-```
 
 ### Delete
 
