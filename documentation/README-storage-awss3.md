@@ -58,7 +58,13 @@ cms> help storage
 Help command gives a detail level understanding of what each command does and how to use the command line to interact with different storage providers and different parameters / options available in a particular command. For eg to invoke AWS S3 service, we need to pass awss3 as parameter to storage and suffix with the function call with the function parameters.
 
 ```bash
-cms> storage --storage=awss3 list ''
+cms> storage --storage='aws' list ''
+```
+
+Alternatively, storage command can also be called directly without starting the cms shell.
+
+```bash
+$ cms storage --storage='aws' list ''
 ```
 
 ### Storage functions overview
