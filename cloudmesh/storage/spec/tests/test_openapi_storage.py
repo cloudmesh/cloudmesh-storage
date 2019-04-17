@@ -1,7 +1,7 @@
 ###############################################################
 # pip install .; pytest -v --capture=no -v --nocapture tests/test_cloud_openapi_azure_storage.py:Test_cloud_openapi_azure_storage.test_001
-# pytest -v --capture=no tests/test_openapi_azure_storage.py
-# pytest -v  tests/test_openapi_azure_storage.py
+# pytest -v --capture=no tests/test_openapi_storage.py
+# pytest -v  tests/test_openapi_storage.py
 ###############################################################
 
 from __future__ import print_function
@@ -81,45 +81,45 @@ class Test_cloud_storage:
         print()
 
     def test_openapi_storage_put(self):
-        banner('Put/Upload the blobs')
+        banner('Put/Upload the files/blobs')
         storage = pytest.storage
         headers = {
             'Content-Type': 'application/json',
         }
         data = '{"service": "azureblob", "source": "~/openapi/a.txt", "destination": "/apitest", "recursive": "False"}'
-        response = requests.post('http://localhost:8080/cloudmesh/put_blob', headers=headers, data=data)
+        response = requests.post('http://localhost:8080/cloudmesh/put', headers=headers, data=data)
         print(response)
         print()
 
     def test_openapi_storage_get(self):
-        banner('get the blobs')
+        banner('get the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/get_blob?service={storage}&source=%7e%2fopenapi&destination=%2fapitest%2fa%2etxt")
+            f"http://localhost:8080/cloudmesh/get?service={storage}&source=%7e%2fopenapi&destination=%2fapitest%2fa%2etxt")
         print(response)
         print()
 
     def test_openapi_storage_list(self):
-        banner('List the blobs')
+        banner('List the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/list_blob?service={storage}&directory=%2fapitest&recursive=True")
+            f"http://localhost:8080/cloudmesh/list?service={storage}&directory=%2fapitest&recursive=True")
         print(response)
         print()
 
     def test_openapi_storage_search(self):
-        banner('search the blobs')
+        banner('search the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/search_blob?service={storage}&directory=%2fapitest&filename=a%2etxt")
+            f"http://localhost:8080/cloudmesh/search?service={storage}&directory=%2fapitest&filename=a%2etxt")
         print(response)
         print()
 
     def test_openapi_storage_del(self):
-        banner('delete the blobs')
+        banner('delete the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/delete_blob?service={storage}&source=%2fapitest%2fa%2etxt")
+            f"http://localhost:8080/cloudmesh/delete?service={storage}&source=%2fapitest%2fa%2etxt")
         print(response)
         print()
 
