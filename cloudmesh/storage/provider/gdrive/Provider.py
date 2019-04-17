@@ -2,7 +2,7 @@ import io
 import json
 import mimetypes
 import os
-
+from pathlib import Path
 import argparse
 import httplib2
 from apiclient.http import MediaFileUpload
@@ -11,20 +11,20 @@ from cloudmesh.common.util import path_expand
 from cloudmesh.management.configuration.config import Config
 from cloudmesh.storage.StorageABC import StorageABC
 from cloudmesh.storage.provider.gdrive.Authentication import Authentication
-
+from apiclient import discovery
 
 class Provider(StorageABC):
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
-
+    def __init__(self, service='gdrive', config="~/.cloudmesh/cloudmesh4.yaml"):
+        
         super(Provider, self).__init__(service=service, config=config)
         self.limitFiles = 10000000
         self.scopes = 'https://www.googleapis.com/auth/drive'
         self.clientSecretFile = path_expand(
             '~/.cloudmesh/gdrive/client_secret.json')
         self.applicationName = 'Drive API Python Quickstart'
-
         self.config = Config()
+        print(os.path.abspath('~/.cloudmesh/cloudmesh4.yml'))
         self.generate_key_json()
         self.flags = self.generate_flags_json()
         self.authInst = Authentication(self.scopes,
@@ -32,7 +32,7 @@ class Provider(StorageABC):
                                        self.applicationName, flags=self.flags)
         self.credentials = self.authInst.get_credentials()
         self.http = self.credentials.authorize(httplib2.Http())
-        self.driveService = self.discovery.build('drive', 'v3', http=self.http)
+        self.driveService = discovery.build('drive', 'v3', http=self.http)
         self.size = None
         self.cloud = service
         self.service = service
@@ -46,6 +46,12 @@ class Provider(StorageABC):
 
     def generate_key_json(self):
         credentials = self.config.credentials("storage", "gdrive")
+        config_path = '~/.cloudmesh/gdrive/client_secret.json'
+        path = Path(path_expand(config_path)).resolve()
+        config_folder = os.path.dirname(path)
+        if not os.path.exists(config_folder):
+            os.makedirs(config_folder)
+
         data = {"installed": {
             "client_id": credentials["client_id"],
             "project_id": credentials["project_id"],
@@ -187,6 +193,7 @@ class Provider(StorageABC):
                 self.driveService.files().delete(fileId=file_id).execute()
             except:  # errors.HttpError, error:
                 return 'An error occurred:'  # %s' % error
+        return "deleted"
 
     def create_dir(self, service='gdrive', directory=None):
         file_metadata = {'name': directory,
@@ -216,6 +223,7 @@ class Provider(StorageABC):
                                                      pageSize=self.limitFiles,
                                                      fields="nextPageToken, files(id, name, mimeType)").execute()
             items = results.get('files', [])
+            print(items)
             if not items:
                 print('No files found.')
             else:
@@ -274,5 +282,6 @@ class Provider(StorageABC):
         with io.open(filepath, 'wb') as f:
             fh.seek(0)
             f.write(fh.read())
+        return filepath
 
 

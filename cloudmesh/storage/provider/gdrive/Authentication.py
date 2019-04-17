@@ -10,7 +10,8 @@ import os
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
-
+from pathlib import Path
+from cloudmesh.common.util import path_expand
 
 class Authentication:
 
@@ -37,14 +38,19 @@ class Authentication:
         :return:
         :rtype:
         """
-        cwd = '~/.cloudmesh/gdrive'
-        credentials_dir = os.path.join(cwd, '.credentials')
-        if not os.path.exists(credentials_dir):
-            os.makedirs(credentials_dir)
-        credentials_path = os.path.join(credentials_dir,
+        cwd = '~/.cloudmesh/gdrive/.credentials'
+        path = Path(path_expand(cwd)).resolve()
+        print(path)
+        if not os.path.exists(path):
+            print("creating folders")
+            os.makedirs(path)
+        print("created folders")
+        
+        credentials_path = os.path.join(path,
                                         'google-drive-credentials.json')
-
+        credentials_path = Path(path_expand(credentials_path)).resolve()
         store = Storage(credentials_path)
+        print(credentials_path)
         credentials = store.get()
         if not credentials or credentials.invalid:
             flow = client.flow_from_clientsecrets(self.client_secret_file,
