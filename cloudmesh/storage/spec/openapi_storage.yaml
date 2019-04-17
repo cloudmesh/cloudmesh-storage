@@ -17,12 +17,12 @@ consumes:
 produces: 
   - "application/json"
 paths: 
-  /put_blob:
+  /put:
     post:
       tags:
-        - AZS
-      operationId: storage.put_blob
-      description: "Returns list of blobs in the specified directory"
+        - STG
+      operationId: storage.put
+      description: "Returns list of files/blobs in the specified directory"
       parameters:
         - in: body
           name: params 
@@ -33,13 +33,13 @@ paths:
         - "application/json"
       responses: 
         "200":
-          description: "Upload blobs"
-  /get_blob:
+          description: "Upload files/blobs"
+  /get:
     get:
       tags:
-        - AZS
-      operationId: storage.get_blob
-      description: "Returns list of blobs in the specified directory"
+        - STG
+      operationId: storage.get
+      description: "Returns list of files/blobs in the specified directory"
       parameters:
         - in: query
           name: service 
@@ -65,15 +65,15 @@ paths:
         - "application/json"
       responses: 
         "200":
-          description: "get blobs"
+          description: "get files/blobs"
           schema: 
             $ref: "#/definitions/LIST"
-  /list_blob:
+  /list:
     get:
       tags:
-        - AZS
-      operationId: storage.list_blob
-      description: "Returns list of blobs in the specified directory"
+        - STG
+      operationId: storage.list
+      description: "Returns list of files/blobs in the specified directory"
       parameters:
         - in: query
           name: service 
@@ -94,15 +94,15 @@ paths:
         - "application/json"
       responses: 
         "200":
-          description: "list blobs"
+          description: "list files/blobs"
           schema: 
             $ref: "#/definitions/LIST"
-  /search_blob:
+  /search:
     get:
       tags:
-        - AZS
-      operationId: storage.search_blob
-      description: "Returns list of blobs in the specified directory"
+        - STG
+      operationId: storage.search
+      description: "Returns list of files/blobs in the specified directory"
       parameters:
         - in: query
           name: service 
@@ -128,15 +128,15 @@ paths:
         - "application/json"
       responses: 
         "200":
-          description: "search blobs"
+          description: "search files/blobs"
           schema: 
             $ref: "#/definitions/LIST"
-  /delete_blob:
+  /delete:
     get:
       tags:
-        - AZS
-      operationId: storage.delete_blob
-      description: "Returns list of blobs in the specified directory"
+        - STG
+      operationId: storage.delete
+      description: "Returns list of files/blobs in the specified directory"
       parameters:
         - in: query
           name: service 
@@ -157,15 +157,15 @@ paths:
         - "application/json"
       responses: 
         "200":
-          description: "delete blobs"
+          description: "delete files/blobs"
           schema: 
             $ref: "#/definitions/LIST"
   /create_dir:
     get:
       tags:
-        - AZS
+        - STG
       operationId: storage.create_dir
-      description: "Returns list of blobs in the specified directory"
+      description: "Returns list of files/blobs in the specified directory"
       parameters:
         - in: query
           name: service 
