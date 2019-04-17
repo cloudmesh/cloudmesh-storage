@@ -30,3 +30,12 @@ storage:
         container: name of bucket that you want user to be contained in.
         region: Specfiy the default region eg us-east-1
 ```
+
+The Cloudmesh command line library offers six functions under storage command: get, put, search, list, create directory, and delete. 
+Once you have installed Cloudmesh, type `cms` into the command line to start the shell. 
+
+To view the docopt for storage command, type in 
+
+```bash
+$ help storage 
+```
