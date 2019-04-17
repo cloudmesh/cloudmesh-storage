@@ -9,10 +9,6 @@ from cloudmesh.common.util import path_expand
 from cloudmesh.storage.StorageABC import StorageABC
 
 
-#
-# BUG return returns a list of dicts, see ABC class
-#
-
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
@@ -54,7 +50,6 @@ class Provider(StorageABC):
 
     def cloud_path(self, srv_path):
         # Internal function to determine if the cloud path specified is file or folder or mix
-        print("Cloud Function")
         b_folder = None
         b_file = None
         src_file = srv_path
@@ -213,13 +208,12 @@ class Provider(StorageABC):
         if os.path.isdir(src_path) or os.path.isfile(src_path):
             dict_obj = []
             if os.path.isfile(src_path):
-                print("PUT test", src_path)
                 # File only specified
                 upl_path = src_path
                 upl_file = blob_folder + '/' + os.path.basename(src_path)
                 obj = self.storage_service.create_blob_from_path(self.container,
                                                          upl_file, upl_path)
-                # BUG duplicated code
+                # Build dict object here with local file properties
                 entry = obj.__dict__
                 entry["cm"] = {}
                 entry["cm"]["kind"] = "storage"
@@ -239,7 +233,7 @@ class Provider(StorageABC):
                             upl_file = blob_folder + '/' + file
                             obj = self.storage_service.create_blob_from_path(
                                 self.container, upl_file, upl_path)
-                            # BUG duplicated code
+                            # Build dict object here with local file properties
                             entry = obj.__dict__
                             entry["cm"] = {}
                             entry["cm"]["kind"] = "storage"
@@ -327,7 +321,8 @@ class Provider(StorageABC):
             blob_cre.append(
                 self.storage_service.get_blob_to_bytes(self.container, blob_name))
             dict_obj = self.update_dict(blob_cre)
-        return dict_obj
+            pprint(dict_obj[0])
+        return dict_obj[0]
 
     def search(self, service=None, directory=None, filename=None,
                recursive=False):
@@ -351,9 +346,10 @@ class Provider(StorageABC):
             for blob in srch_gen:
                 if blob.name == srch_file:
                     obj_list.append(blob)
+                    file_found = True
             if not file_found:
                 return Console.error(
-                    "File does not exist: {file}".format(file=filename))
+                    "File does not exist: {file}".format(file=srch_file))
         else:
             file_found = False
             for blob in srch_gen:
@@ -415,7 +411,6 @@ class Provider(StorageABC):
             if blob_file is None:
                 # SOURCE specified is Directory only
                 if not recursive:
-                    print("No recur print", self.cloud)
                     file_found = False
                     srch_gen = self.storage_service.list_blobs(self.container)
                     for blob in srch_gen:
