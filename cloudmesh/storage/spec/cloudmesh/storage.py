@@ -25,7 +25,7 @@ def create_dir(service, directory):
     d = provider.create_dir(service, directory)
     return jsonify(d)
 
-def put_blob(params=None):
+def put(params=None):
     service = params['service']
     source = params['source']
     destination = params['destination']
@@ -35,22 +35,22 @@ def put_blob(params=None):
     d = provider.put(service, source, destination, recursive)
     return jsonify(d)
 
-def get_blob(service, source, destination, recursive=False):
+def get(service, source, destination, recursive=False):
     provider = setup(service)
     d = provider.get(service, source, destination, recursive)
     return jsonify(d)
 
-def list_blob(service, directory, recursive=False):
+def list(service, directory, recursive=False):
     provider = setup(service)
     d = provider.list(service, directory, recursive)
     return jsonify(d)
 
-def search_blob(service, directory, filename, recursive=False):
+def search(service, directory, filename, recursive=False):
     provider = setup(service)
     d = provider.search(service, directory, filename, recursive)
     return jsonify(d)
 
-def delete_blob(service, source, recursive=False):
+def delete(service, source, recursive=False):
     provider = setup(service)
     d = provider.delete(service, source, recursive)
     return jsonify(d)
