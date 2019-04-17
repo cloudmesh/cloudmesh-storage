@@ -82,7 +82,7 @@ $ cms storage --storage='aws' list ''
 
 ### Create dir
 
-This command helps to create a new directory on AWS S3. you must specify the 
+This command helps to create a new directory on AWS S3. You must specify the 
 full path of the new directory you would like to create. 
 
 ```bash
@@ -91,26 +91,45 @@ $ cms storage --storage='aws' create dir /base_path/target_dir
 
 ### Put
 
-The put command uploads files from your local host to the cloud. If you specify 
-a file as the source, the file will be uploaded if no such file exists on the 
-cloud or updated if a copy already exists on the cloud. 
-If the source is a directory and recursive is specified, Cloudmesh will upload 
-all the contents of the source directory to the cloud. 
+The put command uploads files from your local host to the S3. 
 
 ```bash
-$ cms storage --storage='aws' put ~/.cloudmesh/storage/stest /base_container/targetdir --recursive
+$ cms storage --storage='aws' put ~/.cloudmesh/storage/sourcedir /base_path/targetdir --recursive
 ```
 
-### Get
+Source for this command could be either a file or directory.
 
-To download a file from awss3 with  Cloudmesh, you must specify the cloud folder 
-or file to be downloaded and the local folder to download to. To download all 
-the contents of a folder, simply specify a folder on the cloud and use the 
-recursive option. 
+If you specify a file as the source, the file will be uploaded if no such file 
+exists on the cloud or updated if a copy already exists on the cloud. 
+
+If the source is a directory, you can choose to specify the recursive option to 
+upload the files in the sub-directories in the source as well to the target 
+directory in S3.
+If the recursive option is not specified, only the files in the source 
+directory will be uploaded to the target directory and the sub-directories will 
+be ignored.
+
+
+### Gett
+
+The gett command downloads files from S3 to your local host.
 
 ```bash
-$ cms storage --storage='aws' get /base_container/targetdir/stest.txt ~/.cloudmesh/storage/stest/testget.txt --recursive
+$ cms storage --storage='aws' get /base_container/sourcedir ~/.cloudmesh/storage/targetdir --recursive
 ```
+
+Source for this command could be either a file or directory.
+
+If you specify a file as the source, you need to speccify the full path of file
+including the file name where you want the file to be downloaded. 
+
+If the source is a directory, you can choose to specify the recursive option to 
+download files in the sub-directories in the source as well to the target 
+directory in your local host.
+If the recursive option is not specified, only the files in the source 
+directory will be downloaded to the target directory and the sub-directories 
+will be ignored.
+
 
 ### Search
 
