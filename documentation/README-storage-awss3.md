@@ -39,3 +39,36 @@ To view the docopt for storage command, type in
 ```bash
 $ help storage 
 ```
+
+Gives a detail level understanding of what each command does and how to used the command line to interact with differnt storage providers. For eg to invoke AWS S3 service, we need to pass awss3 as parameter to storage and suffix with the function call with the function parameters.
+
+```bash
+$ storage --storage=awss3 list ''
+```
+
+### Storage functions overview
+
+
+### Create a directory
+
+To create a new directory, you must specify the path of the new directory you would like to create, including its parent directory. 
+
+```bash
+$ storage --storage=awss3 create dir /base_container/targetdir
+```
+
+### Put
+
+The put command uploads files from your local host to the cloud. If you specify a file as the source, the file will be uploaded if no such file exists on the cloud or updated if a copy already exists on the cloud. If the source is a directory and recursive is specified, Cloudmesh will upload all the contents of the source directory to the cloud. 
+
+```bash
+$ storage --storage=awss3 put ~/.cloudmesh/storage/stest /base_container/targetdir --recursive
+```
+
+### Get
+
+To download a file from awss3 with  Cloudmesh, you must specify the cloud folder or file to be downloaded and the local folder to download to. To download all the contents of a folder, simply specify a folder on the cloud and use the recursive option. 
+
+```bash
+$ storage --storage=awss3 get /base_container/targetdir/stest.txt ~/.cloudmesh/storage/stest/testget.txt --recursive
+```
