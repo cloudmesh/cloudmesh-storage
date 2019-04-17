@@ -4,6 +4,7 @@ from cloudmesh.common.console import Console
 from cloudmesh.shell.command import PluginCommand
 from cloudmesh.shell.command import command
 from cloudmesh.vdir.api.manager import Vdir
+from cloudmesh.shell.variables import Variables
 
 
 class VdirCommand(PluginCommand):
@@ -66,14 +67,19 @@ class VdirCommand(PluginCommand):
 
         d = Vdir()
 
-        if arguments.add:
-            Vdir.add(arguments.FILEENDPOINT, arguments.DIR_AND_NAME)
-        elif arguments.get:
-            Vdir.get(arguments.NAME)
-        elif arguments.ls:
-            Vdir.ls(arguments.DIR)
+        if arguments['add']:
+            d.add(arguments.FILEENDPOINT, arguments.DIR_AND_NAME)
+        elif arguments['ls']:
+            d.ls(arguments.DIR)
+        elif arguments['get']:
+            d.get(arguments.NAME)
+        elif arguments['mkdir']:
+            d.mkdir(arguments.DIR)
+        elif arguments['cd']:
+            d.cd(arguments.DIR)
+        elif arguments['delete']:
+            d.delete(arguments.DIR_OR_NAME)
+        elif arguments['status']:
+            d.status(arguments.DIR_OR_NAME)
 
-
-        Console.error("This is just a sample")
-        return ""
 

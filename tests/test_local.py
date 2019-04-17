@@ -1,7 +1,8 @@
-# pytest -v --capture=no tests/test_storage.py
-
-# this does no longere work with nosetest, just use pytest
-
+###############################################################
+# pytest -v --capture=no tests/test_local.py
+# pytest -v  tests/test_local.py
+# pytest -v --capture=no -v --nocapture tests/test_local.py:Test_local.<METHIDNAME>
+###############################################################
 import os
 from pprint import pprint
 
@@ -10,11 +11,13 @@ from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from pathlib import Path
 from cloudmesh.common.util import writefile
-from cloudmesh.shell.variables import Variables
+from cloudmesh.variables import Variables
 from cloudmesh.common.util import banner
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.DEBUG import VERBOSE
 
+
+import pytest
 
 
 def create_file(location, content):
@@ -26,8 +29,8 @@ def create_file(location, content):
 
     writefile(path_expand(location), content)
 
-
-class TestBox:
+@pytest.mark.incremental
+class Test_local:
 
 
     def setup_class(self):

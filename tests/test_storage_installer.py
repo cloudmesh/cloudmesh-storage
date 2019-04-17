@@ -1,17 +1,16 @@
 ###############################################################
-# pip install .; pytest -v --capture=no -v --nocapture tests/test_storage_installer.py:Test_storage_installer.test_001
-# pytest -v --capture=no tests/test_storage_installerr.py
-# pytest -v  tests/test_installer.py
+# pytest -v --capture=no tests/test_storage_installer.py
+# pytest -v  tests/test_storage_installer.py
+# pytest -v --capture=no -v --nocapture tests/test_storage_installer.py:Test_storage_installer.<METHIDNAME>
 ###############################################################
-
 from __future__ import print_function
 import shutil
 
 import os
-import pytest
+
 from cloudmesh_installer.install.test import readfile, run
 
-
+import pytest
 
 @pytest.mark.incremental
 class Test_storage_installer:

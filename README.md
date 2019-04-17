@@ -9,11 +9,10 @@
 [![Format](https://img.shields.io/pypi/status/cloudmesh-storage.svg)](https://pypi.python.org/pypi/cloudmesh-storage)
 [![Travis](https://travis-ci.com/cloudmesh/cloudmesh-storage.svg?branch=master)](https://travis-ci.com/cloudmesh/cloudmesh-storage)
 
-
 ## Requirements
 
 Please note that several packages are available which are pointed to in the
-instalation documentation.
+installation documentation.
 
 |  | Links |
 |---------------|-------|
@@ -29,7 +28,7 @@ documentation please see
 where we also document how to use pyenv virtualenv.
 
 
-## Instalation and Documentation
+## Installation and Documentation
 
 For developers:
 
@@ -87,7 +86,7 @@ $ cms storage list
 
 TBD
 
-Cloudmehs Storage provides a simple programming API interface that you can use.
+Cloudmesh Storage provides a simple programming API interface that you can use.
 We highlight a simple exampple for storing and retrieving a file form a storage
 provider.
 
@@ -112,28 +111,103 @@ pprint(result)
 
 ### Configuration
 
-In the `cloudmesh4.yaml` file, find the 'box' section under 'storage'. Under credentials, set `config_path` to the path of the configuration file you created as described in the Box chapter. 
+In the `cloudmesh4.yaml` file, find the 'box' section under 'storage'. Under credentials, set `config_path` to the path of the configuration file you created as described in the Box chapter:
+
+```bash
+   box:
+      cm:
+        heading: Box
+        host: box.com
+        label: Box
+        kind: box
+        version: TBD
+      default:
+        directory: /
+      credentials:
+        config_path: ******************************
+```
 
 ### Pytests
 
 Open a terminal and navigate to the cloudmesh-storage directory. Enter the following command to run pytests:
 
 ```bash
-$ pytest tests/test_box.py
+$ pytest -v --capture=no tests/test_box.py
 ```
 
 ## Azure
 
-TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
+### Configuration
 
-TODO: Describe how to use your specific nosetests
+The `cloudmesh4.yaml` file needs to be set up as follows for the 'azure-blob' section under 'storage'.
+
+```bash
+  storage:
+    azure-blob:
+      cm:
+        heading: Azure
+        host: azure.com
+        label: Azure
+        kind: azureblob
+        version: TBD
+      default:
+        directory: TBD
+      credentials:
+        account_name: 'XXXXXXXXXXXXXXXXX'
+        account_key: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        container: 'Test container name'
+```
+
+Configuration settings for credentials in the yaml file can be obtained from Azure portal.
+
+* `account_name` - This is the name of the Azure blob storage account.
+* `account_key` - This can be found under 'Access Keys' after navigating to the storage account on the Azure portal.
+* `container` - This can be set to a default container created under the Azure blob storage account.
+
+### Pytests
+
+Execute the following command for Azure Blob storage service pytest after navigating to the cloudmesh-storage directory.
+
+```bash
+$ pytest -v --capture=no tests/test_azure.py
+```
 
 
-## AWS
+## AWS S3
 
-TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
+### Configuration
 
-TODO: Describe how to use your specific nosetests
+In the `cloudmesh4.yaml` file, the 'aws' section under 'storage' describes the parameters used to store files in AWS S3. 
+In the credentials section under aws, specify the access key id and secret access key which will be available in the AWS console under AWS IAM service -> Users -> Security Credentials. 
+Container is the default Bucket which will be used to store the files in AWS S3. 
+Region is the geographic area like us-east-1 which contains the bucket. Region is required to get a connection handle on the S3 Client or resource for that geographic area.
+Here is a sample.
+
+```bash
+storage:
+    aws:
+      cm:
+        heading: aws
+        host: amazon.aws.com
+        label: aws
+        kind: awsS3
+        version: TBD
+      default:
+        directory: TBD
+      credentials:
+        access_key_id: *********
+        secret_access_key: *******
+        container: name of bucket that you want user to be contained in.
+        region: Specfiy the default region eg us-east-1
+```
+
+### Pytests
+
+Script to test the AWS S3 service can be accessed under tests folder using the following pytest command.
+
+```bash
+$ pytest -v --capture=no tests/test_storage_aws.py
+```
 
 
 ## Google drive
@@ -142,7 +216,55 @@ Due to bugs in the requirements of the google driver code,
 we have not yet included it in the Provider code. This needs to be fixed 
 before we can do this.
 
-TODO: Configuration: describe what you have to set in `cloudmesh4.yaml`
+The `cloudmesh4.yaml` file needs to be set up as follows for the 'gdrive' section under 'storage'.
 
-TODO: Describe how to use your specific nosetests
+```bash
+storge:
+    gdrive:
+        cm:
+            heading: GDrive
+            host: dgrive.google.com
+            label: GDrive
+            kind: gdrive
+            version: TBD
+        default:
+            directory: TBD
+        credentials:
+            client_id: ***************
+            project_id: ***************
+            auth_uri: "https://accounts.google.com/o/oauth2/auth"
+            token_uri: "https://oauth2.googleapis.com/token"
+            client_secret: ***************
+            auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
+            auth_host_name: "localhost"
+            auth_host_port:
+            - "****"
+            - "****"
+            redirect_uris:
+            - "urn:ietf:wg:oauth:2.0:oob"
+            - "http://localhost"
+```
 
+### Pytests
+
+Script to test the GDrive service can be accessed under tests folder using the following pytest command.
+
+```bash
+$ pytest -v --capture=no tests/test_gdrive.py
+```
+
+## Virtual Directory
+
+The virtual directory has been developed to mirror the linux directory commands. File links in the virtual directory point to files on storage providers, which can be retrieved using the virtual directory. 
+
+### Configuration
+
+The credentials for the virtual directory are the same as for the admin mongo command. See the Mongo section for details. 
+
+### Pytests
+
+The vdir command can be tested as follows:
+
+```bash
+$ pytest -v --capture=no tests/test_vdir.py
+```
