@@ -220,29 +220,29 @@ The `cloudmesh4.yaml` file needs to be set up as follows for the 'gdrive' sectio
 
 ```bash
 storge:
-    gdrive:
-        cm:
-            heading: GDrive
-            host: dgrive.google.com
-            label: GDrive
-            kind: gdrive
-            version: TBD
-        default:
-            directory: TBD
-        credentials:
-            client_id: ***************
-            project_id: ***************
-            auth_uri: "https://accounts.google.com/o/oauth2/auth"
-            token_uri: "https://oauth2.googleapis.com/token"
-            client_secret: ***************
-            auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
-            auth_host_name: "localhost"
-            auth_host_port:
-            - "****"
-            - "****"
-            redirect_uris:
-            - "urn:ietf:wg:oauth:2.0:oob"
-            - "http://localhost"
+    gdrive: 
+      cm: 
+        heading: GDrive
+        host: dgrive.google.com
+        kind: gdrive
+        label: GDrive
+        version: TBD
+      credentials: 
+        auth_host_name: localhost
+        auth_host_port: 
+          - ****
+          - ****
+        auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
+        auth_uri: "https://accounts.google.com/o/oauth2/auth"
+        client_id: *******************
+        client_secret: ************
+        project_id: ************
+        redirect_uris: 
+          - "urn:ietf:wg:oauth:2.0:oob"
+          - "http://localhost"
+        token_uri: "https://oauth2.googleapis.com/token"
+      default: 
+        directory: TBD
 ```
 
 ### Pytests
