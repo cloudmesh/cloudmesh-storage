@@ -223,7 +223,7 @@ storge:
     gdrive: 
       cm: 
         heading: GDrive
-        host: dgrive.google.com
+        host: gdrive.google.com
         kind: gdrive
         label: GDrive
         version: TBD
