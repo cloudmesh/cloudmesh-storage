@@ -1,8 +1,6 @@
-###############################################################
-# pip install .; pytest -v --capture=no -v --nocapture tests/test_box.py:Test_box.test_001
-# pytest -v --capture=no tests/test_boxr.py
-# pytest -v  tests/test_installer.py
-###############################################################
+# pytest -v --capture=no tests/test_azure.py
+# pytest -v tests/test_azure.py
+
 import os
 from pprint import pprint
 
@@ -11,31 +9,29 @@ from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from  pathlib import Path
 from cloudmesh.common.util import writefile
+
 import pytest
 
 @pytest.mark.incremental
 class TestAzure:
 
     def create_file(self, location, content):
+
         d = Path(os.path.dirname(path_expand(location)))
         print()
         print ("TESTDIR:",  d)
 
         d.mkdir(parents=True, exist_ok=True)
-
         writefile(path_expand(location), content)
 
     def setup(self):
         self.p = cloudmesh.storage.provider.azureblob.Provider.Provider(service="azureblob")
 
     def test_01_create_source(self):
-        HEADING()
         # create source dir
 
         self.destination = '/azstor_test'
-
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
-
         self.create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
 
         # test if the files are ok
