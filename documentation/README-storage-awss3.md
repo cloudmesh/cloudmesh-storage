@@ -110,9 +110,9 @@ directory will be uploaded to the target directory and the sub-directories will
 be ignored.
 
 
-### Gett
+### Get
 
-The gett command downloads files from S3 to your local host.
+The get command downloads files from S3 to your local host.
 
 ```bash
 $ cms storage --storage='aws' get /base_container/sourcedir ~/.cloudmesh/storage/targetdir --recursive
