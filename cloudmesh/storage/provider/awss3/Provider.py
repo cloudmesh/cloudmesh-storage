@@ -532,14 +532,36 @@ class Provider(StorageABC):
 
         files_downloaded = []
 
+        is_target_file = os.path.isfile(trimmed_destination)
+        is_target_dir = os.path.isdir(trimmed_destination)
+
+        '''
+        print('is_target_file')
+        print(is_target_file)
+        print('is_target_dir')
+        print(is_target_dir)
+        '''
+
         if file_obj:
             # Its a file and can be downloaded
             # print('downloading file..')
             # print(os.path.basename(trimmedSource))
             try:
-                blob = self.s3_resource.Bucket(
-                    self.container_name).download_file(
-                    trimmed_source, trimmed_destination)
+                if is_target_dir:
+                    '''
+                    print('target is directory...')
+                    print('trimmed_destination : '+ trimmed_destination)
+                    print(trimmed_source)
+                    '''
+                    blob = self.s3_resource.Bucket(
+                        self.container_name).download_file(
+                        trimmed_source,
+                        trimmed_destination+'/'+os.path.basename(trimmed_source)
+                    )
+                else:
+                    blob = self.s3_resource.Bucket(
+                        self.container_name).download_file(
+                        trimmed_source, trimmed_destination)
                 # trimmedSource, trimmedDestination + '/' + os.path.basename(trimmedSource))
                 # print('File downloaded')
 
