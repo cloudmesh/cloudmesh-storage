@@ -114,8 +114,8 @@ class StorageCommand(PluginCommand):
         # such as list
         # thus the if condition needs to be reorganized
 
-        if arguments.get:
-            provider = Provider(arguments.storage)
+        if arguments["get"]:
+            provider = Provider(arguments.storage[0])
 
             result = provider.get(arguments.storage,
                                   arguments.SOURCE,
@@ -123,7 +123,7 @@ class StorageCommand(PluginCommand):
                                   arguments.recursive)
 
         elif arguments.put:
-            provider = Provider(arguments.storage)
+            provider = Provider(arguments.storage[0])
 
             result = provider.put(arguments.storage,
                                   arguments.SOURCE,
@@ -131,7 +131,7 @@ class StorageCommand(PluginCommand):
                                   arguments.recursive)
 
         elif arguments.create and arguments.dir:
-            provider = Provider(arguments.storage)
+            provider = Provider(arguments.storage[0])
 
             result = provider.createdir(arguments.storage,
                                         arguments.DIRECTORY)
