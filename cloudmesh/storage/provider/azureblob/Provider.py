@@ -210,7 +210,10 @@ class Provider(StorageABC):
             if os.path.isfile(src_path):
                 # File only specified
                 upl_path = src_path
-                upl_file = blob_folder + '/' + os.path.basename(src_path)
+                if blob_folder == '':
+                    upl_file = os.path.basename(src_path)
+                else:
+                    upl_file = blob_folder + '/' + os.path.basename(src_path)
                 obj = self.storage_service.create_blob_from_path(self.container,
                                                          upl_file, upl_path)
                 # Build dict object here with local file properties
@@ -230,7 +233,10 @@ class Provider(StorageABC):
                     for file in os.listdir(src_path):
                         if os.path.isfile(os.path.join(src_path, file)):
                             upl_path = os.path.join(src_path, file)
-                            upl_file = blob_folder + '/' + file
+                            if blob_folder == '':
+                                upl_file = file
+                            else:
+                                upl_file = blob_folder + '/' + file
                             obj = self.storage_service.create_blob_from_path(
                                 self.container, upl_file, upl_path)
                             # Build dict object here with local file properties
@@ -285,10 +291,15 @@ class Provider(StorageABC):
             if blob_file is None:
                 # SOURCE specified is Folder only
                 del_gen = self.storage_service.list_blobs(self.container)
+                file_del = False
                 for blob in del_gen:
                     if os.path.commonpath([blob.name, blob_folder]) == blob_folder:
                         obj_list.append(blob)
                         self.storage_service.delete_blob(self.container, blob.name)
+                        file_del = True
+                if not file_del:
+                    return Console.error(
+                        "File does not exist: {file}".format(file=blob_folder))
             else:
                 # Source specified is both file and directory
                 if self.storage_service.exists(self.container, source[1:]):
@@ -358,7 +369,10 @@ class Provider(StorageABC):
                         if os.path.commonpath([blob.name, directory[1:]]) == directory[1:]:
                             obj_list.append(blob)
                             file_found = True
-                            # break
+                else:
+                    if blob.name == os.path.join(directory[1:], filename):
+                        obj_list.append(blob)
+                        file_found = True
             if not file_found:
                 return Console.error(
                     "File does not exist: {file}".format(file=filename))
@@ -385,6 +399,7 @@ class Provider(StorageABC):
         print("Folder: ", blob_folder)
 
         obj_list = []
+        fold_list = []
         if blob_folder is None:
             # SOURCE specified is File only
             if not recursive:
@@ -417,6 +432,11 @@ class Provider(StorageABC):
                         if os.path.dirname(blob.name) == blob_folder:
                             obj_list.append(blob)
                             file_found = True
+                        if blob_folder == '' and re.search('/', blob.name):
+                            srch_fold = os.path.dirname(blob.name).split('/')[0]
+                            file_found = True
+                            if srch_fold not in fold_list:
+                                fold_list.append(srch_fold)
                     if not file_found:
                         return Console.error(
                             "Directory does not exist: {directory}".format(
@@ -453,4 +473,6 @@ class Provider(StorageABC):
                         "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
+        if len(fold_list) > 0:
+            pprint(fold_list)
         return dict_obj
