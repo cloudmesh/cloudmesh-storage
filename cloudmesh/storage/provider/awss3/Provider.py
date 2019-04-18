@@ -255,7 +255,7 @@ class Provider(StorageABC):
         return dictObj
 
     # function to delete file or directory
-    def delete(self, service=None, source=None, recursive=False):
+    def delete(self, service=None, source=None, recursive=True):
         """
         deletes the source
         :param service: the name of the service in the yaml file
@@ -275,7 +275,7 @@ class Provider(StorageABC):
         file_obj = ''
 
         # setting recursive as True for all delete cases
-        recursive = True
+        #recursive = True
 
         try:
             file_obj = self.s3_client.get_object(Bucket=self.container_name,
