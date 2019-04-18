@@ -86,7 +86,7 @@ This command helps to create a new directory on AWS S3. You must specify the
 full path of the new directory you would like to create. 
 
 ```bash
-$ cms storage --storage='aws' create dir /base_path/target_dir
+$ cms storage --storage='aws' create dir /base_path/targetdir
 ```
 
 ### Put
@@ -133,22 +133,24 @@ will be ignored.
 
 ### Search
 
-To search for a file through Cloudmesh, you must specify a directory in which to 
-search and the file or folder name you are searching for. If recursive is 
-specified, Cloudmesh will search all child directories of the original 
-directory. 
+The search command helps to search for a particular file within a directory.
+
+If recursive options is specified, Cloudmesh will search for the file in all 
+sub-directories of the original directory as well.
+
+To search for a file at the root, pass an empty string or / as the target dir.
 
 ```bash
-$ cms storage --storage='aws' search /base_container/targetdir testget.txt --recursive
+$ cms storage --storage='aws' search /base_path/targetdir testfile.txt --recursive
 ```
 
 ### List
 
-The list command lists all the contents of a cloud directory. If recursive is 
-specified, it will list the contents of all child directories as well. 
+The list command lists all the contents of a cloud directory. If the recursive 
+option is specified, it will list the contents of all sub-directories as well. 
 
 ```bash
-$ cms storage --storage='aws' list /base_container/targetdir --recursive
+$ cms storage --storage='aws' list /base_path/targetdir --recursive
 ```
 
 
@@ -159,5 +161,5 @@ Deleting a folder will delete its contents as well (including the
 sub-directories).
 
 ```bash
-$ cms storage --storage='aws' delete /base_path/target_dir/targetdir --recursive
+$ cms storage --storage='aws' delete /base_path/targetdir --recursive
 ```
