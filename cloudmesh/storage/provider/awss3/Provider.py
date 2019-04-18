@@ -100,7 +100,6 @@ class Provider(StorageABC):
     def create_dir(self, service=None, directory=None):
         """
         creates a directory
-
         :param service: the name of the service in the yaml file
         :param directory: the name of the directory
         :return: dict
@@ -153,7 +152,6 @@ class Provider(StorageABC):
     def list(self, service=None, source=None, recursive=False):
         """
         lists the information as dict
-
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param recursive: in case of directory the recursive refers to all
@@ -260,12 +258,10 @@ class Provider(StorageABC):
     def delete(self, service=None, source=None, recursive=False):
         """
         deletes the source
-
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
-
         :return: dict
         """
         self.storage_dict['service'] = service
@@ -278,7 +274,8 @@ class Provider(StorageABC):
         dir_files_list = []
         file_obj = ''
 
-        #recursive = True
+        # setting recursive as True for all delete cases
+        recursive = True
 
         try:
             file_obj = self.s3_client.get_object(Bucket=self.container_name,
@@ -368,13 +365,11 @@ class Provider(StorageABC):
     def put(self, service=None, source=None, destination=None, recursive=False):
         """
         puts the source on the service
-
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
-
         :return: dict
         """
 
@@ -509,13 +504,11 @@ class Provider(StorageABC):
     def get(self, service=None, source=None, destination=None, recursive=False):
         """
        gets the source from the service
-
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or file
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
-
         :return: dict
         """
         self.storage_dict['service'] = service
@@ -688,7 +681,6 @@ class Provider(StorageABC):
                recursive=False):
         """
         gets the destination and copies it in source
-
         :param service: the name of the service in the yaml file
         :param directory: the directory which either can be a directory or file
         :param filename: filename
