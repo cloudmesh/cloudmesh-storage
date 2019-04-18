@@ -155,8 +155,9 @@ $ cms storage --storage='aws' list /base_container/targetdir --recursive
 ### Delete
 
 The delete command can delete files or folders from your cloud file storage. 
-Deleting a folder will delete its contents as well. 
+Deleting a folder will delete its contents as well (including the 
+sub-directories).
 
 ```bash
-$ cms storage --storage='aws' delete /base_container/targetdir
+$ cms storage --storage='aws' delete /base_path/target_dir/targetdir --recursive
 ```
