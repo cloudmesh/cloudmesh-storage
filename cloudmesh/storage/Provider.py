@@ -34,7 +34,7 @@ class Provider(StorageABC):
         else:
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
 
-    def get(self, source=None, destination=None, recursive=False):
+    def get(self, service=None, source=None, destination=None, recursive=False):
 
         warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
 
@@ -71,8 +71,9 @@ class Provider(StorageABC):
         warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
 
         VERBOSE(f"delete filename {service} {source}")
-        self.provider.delete(service=service, source=source)
-        raise ValueError("must return a value")
+        d = self.provider.delete(service=service, source=source)
+        #raise ValueError("must return a value")
+        return d
 
     def search(self, service=None, directory=None, filename=None, recursive=False):
 
