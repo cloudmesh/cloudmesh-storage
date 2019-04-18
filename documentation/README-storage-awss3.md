@@ -121,7 +121,9 @@ $ cms storage --storage='aws' get /base_container/sourcedir ~/.cloudmesh/storage
 Source for this command could be either a file or directory.
 
 If you specify a file as the source, you need to speccify the full path of file
-including the file name where you want the file to be downloaded. 
+including the file name where you want the file to be downloaded. In case you 
+do not specify the file name and only give the target directory, then the file 
+will be downloaded with the same name as present on S3.
 
 If the source is a directory, you can choose to specify the recursive option to 
 download files in the sub-directories in the source as well to the target 
