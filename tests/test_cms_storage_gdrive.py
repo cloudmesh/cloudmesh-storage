@@ -6,6 +6,7 @@
 from cloudmesh.common.util import HEADING
 from pprint import pprint
 from cloudmesh.storage.provider.gdrive.Provider import Provider
+from cloudmesh.common.run.file import run
 
 from pathlib import Path
 import os
@@ -35,7 +36,10 @@ class Test_gdrive:
         src = path_expand("~/.cloudmesh/storage/test/source/test/source/sample_source.txt")
         dst = "/"
         # Put files from src into google drive home directory
-        test_file = self.p.put(source=src, destination=dst, recursive=False)
+
+        test_file = run(f"cms put {src} {dst}")
+        # test_file = self.p.put(source=src, destination=dst, recursive=False)
+
         print(test_file)
         assert test_file is not None
 
