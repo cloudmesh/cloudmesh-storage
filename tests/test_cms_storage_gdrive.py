@@ -48,13 +48,18 @@ class Test_gdrive:
         src = path_expand("~/.cloudmesh/storage/test/source/test/source/")
         dst = 'Useful Links.txt'
         # fetching files from dst to src
-        file = self.p.get(source=src, destination=dst, recursive=False)
+        #file = self.p.get(source=src, destination=dst, recursive=False)
+        file = run(f"cms get {src} {dst}")
+
         assert file is not None
 
     def test_03_list(self):
         HEADING()
         # Listing files google drive home directory
-        contents = self.p.list(source='/', recursive=True)
+        #contents = self.p.list(source='/', recursive=True)
+        src = '/'
+        recursive = True
+        contents = run(f"cms list {src} {recursive}")
         print("check contents")
         print(contents)
         assert len(contents) > 0
@@ -62,18 +67,27 @@ class Test_gdrive:
     def test_04_search(self):
         HEADING()
         # Searching sample_source.txt which is created earlier in home directory
-        search_files = self.p.search(directory='/', filename='Useful Links.txt', recursive=True)
+        #search_files = self.p.search(directory='/', filename='Useful Links.txt', recursive=True)
+        directory = '/'
+        filename = 'Useful Links.txt'
+        recursive = True
+        search_files = run(f"cms search {directory} {filename} {recursive}")
         pprint(search_files)
         assert search_files
 
     def test_05_create_dir(self):
         HEADING()
         # Creating testdir in home directory of google drive
-        dir = self.p.create_dir(directory='/testdir')
+        #dir = self.p.create_dir(directory='/testdir')
+        directory = '/testdir'
+        dir = run(f"cms create_dir {directory}")
         assert dir is not None
 
     def test_06_delete(self):
         HEADING()
         # Deleting in google drive home sample_source.txt
-        message = self.p.delete(filname='sample_source.txt')
+        #message = self.p.delete(filname='sample_source.txt')
+        filname = 'sample_source.txt'
+        message = run(f"cms delete {filname}")
+
         assert message is not None
