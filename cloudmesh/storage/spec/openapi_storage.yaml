@@ -9,7 +9,7 @@ info:
   license: 
     name: "Apache"
 host: "localhost:8080"
-basePath: "/cloudmesh/stroage/v1"
+basePath: "/cloudmesh/storage/v1"
 schemes: 
   - "http"
 consumes: 
