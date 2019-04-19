@@ -22,10 +22,15 @@ class VdirCommand(PluginCommand):
                 vdir add [FILEENDPOINT] [DIR_AND_NAME]
                 vdir delete [DIR_OR_NAME]
                 vdir status [DIR_OR_NAME]
-                vdir get NAME
+                vdir get NAME DESTINATION
 
           Arguments:
-              FILE   a file name
+              DIR           a directory name
+              FILEENDPOINT  location of file
+              DIR_AND_NAME  path of file link
+              DIR_OR_NAME   name of directory or link
+              DESTINATION   directory to download to
+              NAME          name of link
 
           Options:
               -f      specify the file
@@ -55,7 +60,7 @@ class VdirCommand(PluginCommand):
                     created: date
                     modified: date
 
-              vdir get NAME
+              vdir get NAME DESTINATION
 
                  locates the file with the name on a storage provider,
                  and fetches it from there.
@@ -72,7 +77,7 @@ class VdirCommand(PluginCommand):
         elif arguments['ls']:
             d.ls(arguments.DIR)
         elif arguments['get']:
-            d.get(arguments.NAME)
+            d.get(arguments.NAME, arguments.DESTINATION)
         elif arguments['mkdir']:
             d.mkdir(arguments.DIR)
         elif arguments['cd']:
