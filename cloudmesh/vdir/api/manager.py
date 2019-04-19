@@ -116,14 +116,15 @@ class Vdir(object):
         except Exception as e:
             print(e)
 
-    def get(self, name):
+    def get(self, name, destination=None):
         try:
             doc = self.col.find_one({'cm.name': name, 'type': 'fileendpoint'})
             if doc is not None:
                 self.col.update_one({'cm.name': name, 'type': 'fileendpoint'}, {'$set': {'modified': datetime.utcnow()}})
                 service = doc['provider']
                 source = os.path.join(doc['cloud_directory'], doc['filename'])
-                destination = '~/.cloudmesh'
+                if destination is None:
+                    destination = '~/.cloudmesh'
                 p = Provider(service)
                 file = p.get(source, destination, False)
                 return file
