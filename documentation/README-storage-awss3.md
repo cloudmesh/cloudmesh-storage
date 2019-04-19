@@ -17,7 +17,9 @@ that geographic area.
 Here is a sample.
 
 ```bash
-storage:
+cloudmesh:
+  ...
+  storage:
     aws:
       cm:
         heading: aws
