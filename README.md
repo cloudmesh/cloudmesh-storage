@@ -166,8 +166,8 @@ cloudmesh:
       default:
         directory: TBD
       credentials:
-        account_name: 'azuremallikresourcediag'
-        account_key: 'nzXWydNoBO7G3THjr9RrjQ6f6VkzEFRZ68uHV1sePGvNb6y7tarwC+Uq/Ak8t+p2tTt1Tsh0VktdhAAldjXdIw=='
+        account_name: '*****************'
+        account_key: '********************************************************************'
         container: 'azuretest'
 ```
 
