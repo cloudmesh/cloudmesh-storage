@@ -1,5 +1,4 @@
 ###############################################################
-# pip install .; pytest -v --capture=no -v --nocapture tests/test_openapi_storage.py:Test_cloud_storage.test_01_create_source
 # pytest -v --capture=no tests/test_openapi_storage.py
 # pytest -v  tests/test_openapi_storage.py
 ###############################################################
@@ -76,7 +75,7 @@ class Test_cloud_storage:
         banner('create the directory')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/create_dir?service={storage}&directory=%2fapitest")
+            f"http://localhost:8080/cloudmesh/storage/v1/create_dir?service={storage}&directory=%2fapitest")
         print(response)
         print()
 
@@ -87,7 +86,7 @@ class Test_cloud_storage:
             'Content-Type': 'application/json',
         }
         data = '{"service": "azureblob", "source": "~/openapi/a.txt", "destination": "/apitest", "recursive": "False"}'
-        response = requests.post('http://localhost:8080/cloudmesh/put', headers=headers, data=data)
+        response = requests.post('http://localhost:8080/cloudmesh/storage/v1/put', headers=headers, data=data)
         print(response)
         print()
 
@@ -95,7 +94,7 @@ class Test_cloud_storage:
         banner('get the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/get?service={storage}&source=%7e%2fopenapi&destination=%2fapitest%2fa%2etxt")
+            f"http://localhost:8080/cloudmesh/storage/v1/get?service={storage}&source=%7e%2fopenapi&destination=%2fapitest%2fa%2etxt")
         print(response)
         print()
 
@@ -103,7 +102,7 @@ class Test_cloud_storage:
         banner('List the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/list?service={storage}&directory=%2fapitest&recursive=True")
+            f"http://localhost:8080/cloudmesh/storage/v1/list?service={storage}&directory=%2fapitest&recursive=True")
         print(response)
         print()
 
@@ -111,7 +110,7 @@ class Test_cloud_storage:
         banner('search the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/search?service={storage}&directory=%2fapitest&filename=a%2etxt")
+            f"http://localhost:8080/cloudmesh/storage/v1/search?service={storage}&directory=%2fapitest&filename=a%2etxt")
         print(response)
         print()
 
@@ -119,7 +118,7 @@ class Test_cloud_storage:
         banner('delete the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/delete?service={storage}&source=%2fapitest%2fa%2etxt")
+            f"http://localhost:8080/cloudmesh/storage/v1/delete?service={storage}&source=%2fapitest%2fa%2etxt")
         print(response)
         print()
 
