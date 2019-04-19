@@ -29,6 +29,29 @@ define terminal
 endef
 endif
 
+all: doc
+
+manual:
+	mkdir -p docs-source/source/manual
+	cms help > /tmp/commands.rst
+	echo "Commands" > docs-source/source/manual/commands.rst
+	echo "========" >> docs-source/source/manual/commands.rst
+	echo  >> docs-source/source/manual/commands.rst
+	tail -n +4 /tmp/commands.rst >> docs-source/source/manual/commands.rst
+	cms man --kind=rst storage > docs-source/source/manual/storage.rst
+	cms man --kind=rst vdir > docs-source/source/manual/vdir.rst
+
+
+doc:
+	rm -rf docs
+	mkdir -p dest
+	cd docs-source; make html
+	cp -r docs-source/build/html/ docs
+
+view:
+	open docs/index.html
+
+
 
 setup:
 	# brew update

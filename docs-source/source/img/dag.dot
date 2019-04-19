@@ -1,0 +1,26 @@
+
+digraph G {
+
+	subgraph cluster_0 {
+		a -> b -> c -> d;
+		label = "aws0";
+	}
+
+	subgraph cluster_1 {
+		e -> f -> g -> h;
+		label = "azure0";
+	}
+
+	start -> a;
+	start -> e;
+	b -> g;
+    h -> end;
+    d -> end;
+	start [shape=Mdiamond];
+	end [shape=Msquare];
+
+	a [style=filled,color=green];
+	e [style=filled,color=green];
+	b [style=filled,color=green];
+	start [color=green]
+}
