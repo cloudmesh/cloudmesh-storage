@@ -29,4 +29,4 @@ and not in the form of a dictionary.
 
 Link for additional information:
 
-* <https://github.com/cloudmesh-community/sp19-516-130/blob/master/gdrive.md>
+* <https://github.com/cloudmesh/cloudmesh-manual/blob/master/docs-source/source/accounts/storage-gdrive.md>
