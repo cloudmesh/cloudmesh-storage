@@ -143,7 +143,7 @@ The `cloudmesh4.yaml` file needs to be set up as follows for the 'azure-blob' se
 
 ```bash
 cloudmesh:
-  ........
+  .........
   storage:
     box:
       cm:
