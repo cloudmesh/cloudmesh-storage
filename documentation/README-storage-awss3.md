@@ -7,7 +7,7 @@ the parameters used to store files in AWS S3.
 
 In the credentials section under aws, specify the access key id and secret 
 access key which will be available in the AWS console under 
-AWS IAM service -> Users -> Security Credentials. 
+`AWS IAM service` -> `Users` -> `Security Credentials`. 
 
 Container is the default bucket which will be used to store the files in AWS S3.
 Region is the geographic area like us-east-1 which contains the bucket. Region 
