@@ -10,7 +10,7 @@ access key which will be available in the AWS console under
 `AWS IAM service` -> `Users` -> `Security Credentials`. 
 
 Container is the default bucket which will be used to store the files in AWS S3.
-Region is the geographic area like us-east-1 which contains the bucket. Region 
+Region is the geographic area like `us-east-1` which contains the bucket. Region 
 is required to get a connection handle on the S3 Client or resource for 
 that geographic area.
 
