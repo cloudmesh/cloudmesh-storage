@@ -17,8 +17,8 @@ installation documentation.
 |  | Links |
 |---------------|-------|
 | Documentation | <https://cloudmesh.github.io/cloudmesh-manual> |
-| Code | <https://github.com/cloudmesh/cloudmesh-cloud> |
-| Instalation Instructions | <https://github.com/cloudmesh/get> |
+| Code | <https://github.com/cloudmesh/cloudmesh-storage> |
+| Instalation Instructions | <https://github.com/cloudmesh/cloudmesh-installer> |
 
 An dynamically extensible CMD based command shell. For en extensive
 documentation please see
