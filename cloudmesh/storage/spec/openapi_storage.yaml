@@ -20,7 +20,7 @@ paths:
   /put:
     post:
       tags:
-        - STG
+        - STORAGE
       operationId: storage.put
       description: "Returns list of files/blobs in the specified directory"
       parameters:
@@ -37,7 +37,7 @@ paths:
   /get:
     get:
       tags:
-        - STG
+        - STORAGE
       operationId: storage.get
       description: "Returns list of files/blobs in the specified directory"
       parameters:
@@ -71,7 +71,7 @@ paths:
   /list:
     get:
       tags:
-        - STG
+        - STORAGE
       operationId: storage.list
       description: "Returns list of files/blobs in the specified directory"
       parameters:
@@ -100,7 +100,7 @@ paths:
   /search:
     get:
       tags:
-        - STG
+        - STORAGE
       operationId: storage.search
       description: "Returns list of files/blobs in the specified directory"
       parameters:
@@ -134,7 +134,7 @@ paths:
   /delete:
     get:
       tags:
-        - STG
+        - STORAGE
       operationId: storage.delete
       description: "Returns list of files/blobs in the specified directory"
       parameters:
@@ -163,7 +163,7 @@ paths:
   /create_dir:
     get:
       tags:
-        - STG
+        - STORAGE
       operationId: storage.create_dir
       description: "Returns list of files/blobs in the specified directory"
       parameters:
@@ -205,7 +205,7 @@ definitions:
   LIST:
     type: "object"
     required: 
-      - "d"
+      - "results"
     properties: 
-      d:
+      results:
         type: "string"
