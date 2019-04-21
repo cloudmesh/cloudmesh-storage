@@ -52,7 +52,7 @@ class Test_vdir:
 
     def test_get(self):
         HEADING()
-        file = self.vdir.get(name=self.file)
+        file = self.vdir.get(name=self.file, destination=None)
 
         assert file is not None
 
