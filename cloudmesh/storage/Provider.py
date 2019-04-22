@@ -9,7 +9,7 @@ from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvide
 from cloudmesh.DEBUG import VERBOSE
 from cloudmesh.common.console import Console
 import warnings
-
+from pprint import pprint
 
 class Provider(StorageABC):
 
@@ -82,3 +82,19 @@ class Provider(StorageABC):
                                recursive=recursive)
         return d
 
+    def tree (self, source):
+
+        data = self.provider.list(source=source)
+
+        # def dict_to_tree(t, s):
+        #    if not isinstance(t, dict) and not isinstance(t, list):
+        #       print ("    " * s + str(t))
+        #    else:
+        #        for key in t:
+        #            print ("    " * s + str(key))
+        #            if not isinstance(t, list):
+        #                dict_to_tree(t[key], s + 1)
+        #
+        # dict_to_tree(d, 0)
+
+        pprint(data)
