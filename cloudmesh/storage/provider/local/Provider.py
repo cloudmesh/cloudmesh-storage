@@ -3,7 +3,7 @@ from pathlib import Path
 
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
-from cloudmesh.storage.StorageABC import StorageABC
+from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.DEBUG import VERBOSE
 import shutil
 from os import stat
@@ -99,13 +99,10 @@ class Provider(StorageABC):
         self.create_dir(location)
         writefile(location, content)
 
-    def create_dir(self,
-                   service=None,
-                   directory=None):
+    def create_dir(self, directory=None):
         """
         creates a directory
 
-        :param service: the name of the service in the yaml file
         :param directory: the name of the directory
         :return: dict
         """
@@ -136,11 +133,10 @@ class Provider(StorageABC):
             result.append(entry)
         return result
 
-    def put(self, source=None, service=None, destination=None, recusrive=False):
+    def put(self, source=None, destination=None, recusrive=False):
         """
         puts the source on the service
 
-        :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or
                             file
@@ -151,19 +147,20 @@ class Provider(StorageABC):
 
         files = self.list()
         if recusrive:
-            raise NotImplementedError
+            src = path_expand(source)
+            dest = path_expand(destination)
+            shutil.copytree(src, dest)
+        else:
+            src = path_expand(source)
+            dest = path_expand(destination)
+            shutil.copy2(src, dest)
 
-        src = path_expand(source)
-        dest = path_expand(destination)
-        shutil.copy2(src, dest)
+        return self.list()
 
-        return []
-
-    def get(self, source=None, service=None, destination=None, recusrive=False):
+    def get(self, source=None, destination=None, recusrive=False):
         """
-        gets the destination and copies it in source
+        gets the source and copies it in destination
 
-        :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or
                             file
@@ -171,21 +168,21 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-        raise NotImplementedError
-        return []
+        return self.put(self, source=None, destination=None, recusrive=False)
+
 
     def delete(self, source=None, recusrive=False):
         """
         deletes the source
 
-        :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
         :return: dict
         """
-        raise NotImplementedError
-        return []
+        shutil.rmtree(path_expand(source))
+        content = self.list()
+        return content
 
     def search(self,
                directory=None,

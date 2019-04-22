@@ -3,7 +3,7 @@ from cloudmesh.storage.provider.azureblob.Provider import \
     Provider as AzureblobProvider
 from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
 from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
-from cloudmesh.storage.StorageABC import StorageABC
+from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
 
 from cloudmesh.DEBUG import VERBOSE
@@ -30,40 +30,41 @@ class Provider(StorageABC):
         else:
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
 
-    def get(self, service=None, source=None, destination=None, recursive=False):
+    def get(self, source=None, destination=None, recursive=False):
 
-        # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"get {source} {destination} {recursive}")
         d = self.provider.get(source=source,
                               destination=destination,
                               recursive=recursive)
         return d
 
-    def put(self, service=None, source=None, destination=None, recursive=False):
+    def put(self, source=None, destination=None, recursive=False):
 
-        # BUG DOES NOT FOLLOW SPEC
-        VERBOSE(f"put {service} {source}")
+        service = self.service
+        VERBOSE(f"put {service} {source} {destination}")
         d = self.provider.put(source=source,
                               destination=destination,
                               recursive=recursive)
         return d
 
-    def createdir(self, service=None, directory=None):
+    def createdir(self, directory=None):
 
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"create_dir {directory}")
         VERBOSE(directory)
+        service = self.service
         d = self.provider.create_dir(service=service, directory=directory)
         return d
 
-    def delete(self, service=None, source=None):
+    def delete(self, source=None):
 
+        service = self.service
         VERBOSE(f"delete filename {service} {source}")
         d = self.provider.delete(service=service, source=source)
         #raise ValueError("must return a value")
         return d
 
-    def search(self, service=None, directory=None, filename=None, recursive=False):
+    def search(self, directory=None, filename=None, recursive=False):
 
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"search {directory}")
@@ -72,7 +73,7 @@ class Provider(StorageABC):
                                  recursive=recursive)
         return d
 
-    def list(self, service=None, source=None, recursive=None):
+    def list(self, source=None, recursive=None):
 
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"list {source}")
