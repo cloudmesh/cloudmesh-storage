@@ -8,6 +8,7 @@ from cloudmesh.DEBUG import VERBOSE
 import shutil
 from os import stat
 from pwd import getpwuid
+from cloudmesh.common.Shell import Shell
 
 from grp import getgrgid
 
@@ -106,6 +107,8 @@ class Provider(StorageABC):
         :param directory: the name of the directory
         :return: dict
         """
+        raise NotImplementedError
+        #appand path from yaml file
 
         d = Path(os.path.dirname(path_expand(directory)))
         d.mkdir(parents=True, exist_ok=True)
@@ -145,7 +148,7 @@ class Provider(StorageABC):
         :return: dict
         """
 
-        files = self.list()
+        source = self._dirname(source)
         if recusrive:
             src = path_expand(source)
             dest = path_expand(destination)
@@ -168,7 +171,17 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-        return self.put(self, source=None, destination=None, recusrive=False)
+        destination = self._dirname(source)
+        if recusrive:
+            src = path_expand(source)
+            dest = path_expand(destination)
+            shutil.copytree(src, dest)
+        else:
+            src = path_expand(source)
+            dest = path_expand(destination)
+            shutil.copy2(src, dest)
+
+        return self.list()
 
 
     def delete(self, source=None, recusrive=False):
@@ -180,6 +193,7 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
+        source = self._dirname(source)
         shutil.rmtree(path_expand(source))
         content = self.list()
         return content
@@ -207,3 +221,8 @@ class Provider(StorageABC):
             if entry["cm"]["name"] == filename:
                 result.append(entry)
         return result
+
+    def tree(self, directory=None):
+        source = self._dirname(directory)
+        r = Shell.execute(f"tree {source}")
+        print (r)

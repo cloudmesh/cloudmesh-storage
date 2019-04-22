@@ -98,3 +98,13 @@ class StorageABC(metaclass=ABCMeta):
         """
         raise NotImplementedError
         return []
+
+    def tree(self, directory=None):
+        """
+        Prints a fisual representation of the files and directories
+        :param directory:
+        :type directory:
+        :return:
+        :rtype:
+        """
+        return self.p.tree()
