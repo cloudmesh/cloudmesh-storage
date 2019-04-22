@@ -87,8 +87,7 @@ class StorageABC(metaclass=ABCMeta):
         raise NotImplementedError
         return []
 
-    def search(self, directory=None, filename=None,
-               recusrive=False):
+    def search(self, directory=None, filename=None, recusrive=False):
         """
         gets the destination and copies it in source
 
