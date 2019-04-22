@@ -5,6 +5,7 @@ from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
 from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
 from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
+from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 
 from cloudmesh.DEBUG import VERBOSE
 from cloudmesh.common.console import Console
@@ -30,6 +31,7 @@ class Provider(StorageABC):
         else:
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
 
+    @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):
 
         VERBOSE(f"get {source} {destination} {recursive}")
@@ -38,6 +40,7 @@ class Provider(StorageABC):
                               recursive=recursive)
         return d
 
+    @DatabaseUpdate()
     def put(self, source=None, destination=None, recursive=False):
 
         service = self.service
@@ -47,6 +50,7 @@ class Provider(StorageABC):
                               recursive=recursive)
         return d
 
+    @DatabaseUpdate()
     def createdir(self, directory=None):
 
         # BUG DOES NOT FOLLOW SPEC
@@ -56,6 +60,7 @@ class Provider(StorageABC):
         d = self.provider.create_dir(service=service, directory=directory)
         return d
 
+    @DatabaseUpdate()
     def delete(self, source=None):
 
         service = self.service
@@ -73,6 +78,7 @@ class Provider(StorageABC):
                                  recursive=recursive)
         return d
 
+    @DatabaseUpdate()
     def list(self, source=None, recursive=None):
 
         # BUG DOES NOT FOLLOW SPEC
