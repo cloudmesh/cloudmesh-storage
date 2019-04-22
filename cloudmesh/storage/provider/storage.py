@@ -5,7 +5,7 @@ from cloudmesh.storage.provider.azureblob import \
     Provider as AzureblobStorageProvider
 from cloudmesh.storage.provider.box import Provider as BoxStorageProvider
 from cloudmesh.storage.provider.gdrive import Provider as GdriveStorageProvider
-
+from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 
 class Provider(object):
 
@@ -35,6 +35,7 @@ class Provider(object):
         else:
             raise NotImplementedError
 
+    @DatabaseUpdate()
     def create_dir(self, service=None, directory=None):
         """
         creates a directory
@@ -44,7 +45,7 @@ class Provider(object):
         """
         return self.p.create_dir()
 
-    # @DatabaseUpdate
+    @DatabaseUpdate()
     def list(self, service=None, source=None, recursive=False):
         """
         lists the information as dict
@@ -56,6 +57,7 @@ class Provider(object):
         """
         return self.p.list()
 
+    @DatabaseUpdate()
     def put(self, service=None, source=None, destination=None, recusrive=False):
         """
         puts the source on the service
@@ -68,6 +70,7 @@ class Provider(object):
         """
         return self.p.put()
 
+    @DatabaseUpdate()
     def get(self, service=None, source=None, destination=None, recusrive=False):
         """
         gets the destination and copies it in source
@@ -80,6 +83,7 @@ class Provider(object):
         """
         return self.p.get()
 
+    @DatabaseUpdate()
     def delete(self, service=None, source=None, recusrive=False):
         """
         deletes the source
