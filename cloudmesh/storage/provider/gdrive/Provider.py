@@ -20,7 +20,9 @@ from cloudmesh.common.util import path_expand
 
 class Provider(StorageABC):
     """
-        gdrive:
+    cloudmesh:
+      ...
+      gdrive:
         cm:
             heading: GDrive
             host: dgrive.google.com
@@ -30,6 +32,7 @@ class Provider(StorageABC):
         default:
             directory: TBD
         credentials:
+            page_size: 1000000
             name: cloudmesh
             location: ~/.cloudmesh/gdrive/client_secret.json
             credentials: '~/.cloudmesh/gdrive/.credentials'
@@ -61,7 +64,7 @@ class Provider(StorageABC):
         :return:
         :rtype:
         """
-        path = Path(path_expand(self.credential_file)).resolve()
+        path = Path(self.credential_file).resolve()
         if not os.path.exists(path):
             os.makedirs(path)
 
@@ -85,10 +88,9 @@ class Provider(StorageABC):
     def __init__(self, service='gdrive', config="~/.cloudmesh/cloudmesh4.yaml"):
 
         super(Provider, self).__init__(service=service, config=config)
-        self.config = Config()
 
         # if needed, needs to be set in yaml file
-        self.limitFiles = 10000000
+        self.page_size = self.credentials["page_size"]
         # should be set in yaml file
         self.scopes = 'https://www.googleapis.com/auth/drive'
 
@@ -148,70 +150,60 @@ class Provider(StorageABC):
         with open(self.clientSecretFile, 'w') as fp:
             json.dump(data, fp)
 
+    def gdrive_sourceid(self, query_params):
+        sourceid = self.driveService.files().list(
+            q=query_params,
+            fields="nextPageToken, files(id, name, mimeType)").execute()
+        return sourceid
+
+    def gdrive_parentid(self, sourceid, directory):
+        file_parent_id = None
+        if len(sourceid['files']) == 0:
+            parent_file = self.create_dir(directory=directory)
+            file_parent_id = parent_file['id']
+        else:
+            print(sourceid['files'][0]['id'])
+            file_parent_id = sourceid['files'][0]['id']
+        return file_parent_id
+
     def put(self, service=None, source=None, destination=None, recursive=False):
         if recursive:
             if os.path.isdir(source):
                 query_params = "name='" + destination + "' and trashed=false"
-                sourceid = self.driveService.files().list(q=query_params,
-                                                          fields="nextPageToken, files(id, name, mimeType)").execute()
-                file_parent_id = None
+                sourceid = self.gdrive_sourceid(query_params)
                 print(sourceid)
-                if len(sourceid['files']) == 0:
-                    parent_file = self.create_dir(directory=destination)
-                    file_parent_id = parent_file['id']
-                else:
-                    print(sourceid['files'][0]['id'])
-                    file_parent_id = sourceid['files'][0]['id']
+                file_parent_id = self.gdrive_parentid(sourceid,destination)
 
                 for f in os.listdir(source):
                     if os.path.isfile(os.path.join(source, f)):
                         self.upload_file(source=source, filename=f,
                                          parent_it=file_parent_id)
             else:
-                query_params = "name='" + destination + "' and trashed=false"
-                sourceid = self.driveService.files().list(q=query_params,
-                                                          fields="nextPageToken, files(id, name, mimeType)").execute()
-                file_parent_id = None
+                query_params = f"name='{destination}' and trashed=false"
+                sourceid = self.gdrive_sourceid(query_params)
                 print(sourceid)
-                if len(sourceid['files']) == 0:
-                    parent_file = self.create_dir(directory=destination)
-                    file_parent_id = parent_file['id']
-                else:
-                    print(sourceid['files'][0]['id'])
-                    file_parent_id = sourceid['files'][0]['id']
+                file_parent_id = self.gdrive_parentid(sourceid, destination)
 
                 return self.upload_file(source=None, filename=source,
                                         parent_it=file_parent_id)
         else:
             if os.path.isdir(source):
-                query_params = "name='" + destination + "' and trashed=false"
-                sourceid = self.driveService.files().list(q=query_params,
-                                                          fields="nextPageToken, files(id, name, mimeType)").execute()
-                file_parent_id = None
+                query_params = f"name='{destination}' and trashed=false"
+                sourceid = self.gdrive_sourceid(query_params)
                 print(sourceid)
-                if len(sourceid['files']) == 0:
-                    parent_file = self.create_dir(directory=destination)
-                    file_parent_id = parent_file['id']
-                else:
-                    print(sourceid['files'][0]['id'])
-                    file_parent_id = sourceid['files'][0]['id']
+                file_parent_id = self.gdrive_parentid(sourceid, destination)
 
                 for f in os.listdir(source):
                     if os.path.isfile(os.path.join(source, f)):
                         self.upload_file(source=source, filename=f,
                                          parent_it=file_parent_id)
             else:
-                query_params = "name='" + destination + "' and trashed=false"
-                sourceid = self.driveService.files().list(q=query_params,
-                                                          fields="nextPageToken, files(id, name, mimeType)").execute()
-                file_parent_id = None
+                query_params = f"name='{destination}' and trashed=false"
+                sourceid = self.driveService.files().list(
+                    q=query_params,
+                    fields="nextPageToken, files(id, name, mimeType)").execute()
                 print(sourceid)
-                if len(sourceid['files']) == 0:
-                    parent_file = self.create_dir(directory=destination)
-                    file_parent_id = parent_file['id']
-                else:
-                    print(sourceid['files'][0]['id'])
-                    file_parent_id = sourceid['files'][0]['id']
+                file_parent_id = self.gdrive_parentid(sourceid, destination)
 
                 return self.upload_file(source=None, filename=source,
                                         parent_it=file_parent_id)
@@ -221,9 +213,10 @@ class Provider(StorageABC):
             os.makedirs(source)
 
         if recursive:
-            query_params = "name='" + destination + "' and trashed=false"
-            sourceid = self.driveService.files().list(q=query_params,
-                                                      fields="nextPageToken, files(id, name, mimeType)").execute()
+            query_params = f"name='{destination}' and trashed=false"
+            sourceid = self.driveService.files().list(
+                q=query_params,
+                fields="nextPageToken, files(id, name, mimeType)").execute()
             print(sourceid)
             file_id = sourceid['files'][0]['id']
             file_name = sourceid['files'][0]['name']
@@ -239,9 +232,10 @@ class Provider(StorageABC):
             else:
                 return self.download(source, file_id, file_name, mime_type)
         else:
-            query_params = "name='" + destination + "' and trashed=false"
-            sourceid = self.driveService.files().list(q=query_params,
-                                                      fields="nextPageToken, files(id, name, mimeType)").execute()
+            query_params = f"name='{destination}' and trashed=false"
+            sourceid = self.driveService.files().list(
+                q=query_params,
+                fields="nextPageToken, files(id, name, mimeType)").execute()
             print(sourceid)
             file_id = sourceid['files'][0]['id']
             file_name = sourceid['files'][0]['name']
@@ -258,7 +252,9 @@ class Provider(StorageABC):
             else:
                 return self.download_file(source, file_id, file_name, mime_type)
 
-    def delete(self, service='gdrive', filename=None,
+    def delete(self,
+               service='gdrive',
+               filename=None,
                recursive=False):  # this is working
         file_id = ""
         if recursive:
@@ -283,8 +279,10 @@ class Provider(StorageABC):
         return "deleted"
 
     def create_dir(self, service='gdrive', directory=None):
-        file_metadata = {'name': directory,
-                         'mimeType': 'application/vnd.google-apps.folder'}
+        file_metadata = {
+            'name': directory,
+            'mimeType': 'application/vnd.google-apps.folder'
+        }
         file = self.driveService.files().create(body=file_metadata,
                                                 fields='id').execute()
         print('Folder ID: %s' % file.get('id'))
@@ -292,23 +290,26 @@ class Provider(StorageABC):
 
     def list(self, service='gdrive', source=None, recursive=False):
         if recursive:
-            results = self.driveService.files().list(pageSize=self.limitFiles,
-                                                     fields="nextPageToken, files(id, name,mimeType)").execute()
+            results = self.driveService.files().list(
+                pageSize=self.page_size,
+                fields="nextPageToken, files(id, name,mimeType)").execute()
             items = results.get('files', [])
             if not items:
                 print('No files found.')
             else:
                 return items
         else:
-            query_params = "name='" + source + "' and trashed=false"
-            sourceid = self.driveService.files().list(q=query_params,
-                                                      pageSize=self.limitFiles,
-                                                      fields="nextPageToken, files(id)").execute()
+            query_params = f"name='{source}' and trashed=false"
+            sourceid = self.driveService.files().list(
+                q=query_params,
+                pageSize=self.page_size,
+                fields="nextPageToken, files(id)").execute()
             file_id = sourceid['files'][0]['id']
             query_params = "'" + file_id + "' in parents"
-            results = self.driveService.files().list(q=query_params,
-                                                     pageSize=self.limitFiles,
-                                                     fields="nextPageToken, files(id, name, mimeType)").execute()
+            results = self.driveService.files().list(
+                q=query_params,
+                pageSize=self.page_size,
+                fields="nextPageToken, files(id, name, mimeType)").execute()
             items = results.get('files', [])
             print(items)
             if not items:
