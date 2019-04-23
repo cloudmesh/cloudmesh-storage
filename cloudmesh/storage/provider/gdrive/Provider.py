@@ -35,7 +35,8 @@ class Provider(StorageABC):
             page_size: 1000000
             name: cloudmesh
             scope: "https://www.googleapis.com/auth/drive"
-            location: ~/.cloudmesh/gdrive/client_secret.json
+            location_secret: ~/.cloudmesh/gdrive/client_secret.json
+            location_gdrive_credentials: ~/.cloudmesh/gdrive/google-drive-credentials.json
             credentials: '~/.cloudmesh/gdrive/.credentials'
             client_id: "6111111111111111111hjhkhhj.apps.googleusercontent.com"
             project_id: "whatever-it-is"
@@ -70,11 +71,8 @@ class Provider(StorageABC):
         :return:
         :rtype:
         """
-        path = Path(self.credential_file).resolve()
-        if not os.path.exists(path):
-            os.makedirs(path)
 
-        credentials_path = (path / 'google-drive-credentials.json').resolve()
+        credentials_path = Path(self.credentials["location_gdrive_credentials"]).resolve()
         print(credentials_path)
 
         store = Storage(credentials_path)
@@ -105,20 +103,23 @@ class Provider(StorageABC):
         self.page_size = self.credentials["page_size"]
         self.scopes = self.credentials["scope"]
 
+        #
+        # Create directories if they do not exists. typically they will all be in one dir
+        #
+        for path in [self.credentials["location_secret"],
+                     self.credentials["location_gdrive_credentials"],
+                     self.credentials["credentials"]]:
+            path = os.path.dirname(Path(path).resolve())
+            if not os.path.exists(path):
+                os.makedirs(path)
+
+
         self.clientSecretFile = path_expand(self.credentials["location"])
         self.credential_file = path_expand(self.credentials["credentials"])
 
         self.write_json_key(self.clientSecretFile, self.credentials)
 
-        self.flags = self.generate_flags_json()
-
-        self.authInst = self.get_credentials(
-            self.scopes,
-            self.credential_file,
-            self.clientSecretFile,
-            self.applicationName,
-            flags=self.flags)
-
+        self.authInst = self.get_credentials()
         self.gdrive_credentials = self.authInst.get_credentials()
         self.http = self.gdrive_credentials.authorize(httplib2.Http())
         self.driveService = discovery.build('drive', 'v3', http=self.http)
