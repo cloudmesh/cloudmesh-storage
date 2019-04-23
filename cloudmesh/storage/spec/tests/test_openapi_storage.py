@@ -29,7 +29,7 @@ class Test_cloud_storage:
 
     see: https://github.com/cloudmesh/cloudmesh-common/blob/master/cloudmesh/common/run/background.py
     the code in thel link has not bean tested
-    make this s function execute the server in the back ground not in a termina,
+    make this s function execute the server in the back ground not in a terminal,
     get the pid and kill it after the test is done
     UNAME := $(shell uname)
     ifeq ($(UNAME), Darwin)

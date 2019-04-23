@@ -1,9 +1,23 @@
 from cloudmesh.common.util import HEADING
 from cloudmesh.vdir.api.manager import Vdir
+from cloudmesh.storage.Provider import Provider
+from cloudmesh.common.util import path_expand
+from  pathlib import Path
+from cloudmesh.common.util import writefile
+import os
 import pytest
 
 @pytest.mark.incremental
 class Test_vdir:
+
+    def create_file(self, location, content):
+        d = Path(os.path.dirname(path_expand(location)))
+        print()
+        print("TESTDIR:", d)
+
+        d.mkdir(parents=True, exist_ok=True)
+
+        writefile(path_expand(location), content)
 
     def setup(self):
         self.vdir = Vdir()
@@ -11,6 +25,8 @@ class Test_vdir:
         self.dir_and_name = '/testdir/test'
         self.dir = 'testdir'
         self.file = 'test'
+        self.create_file('~/.cloudmesh/test.txt', 'test file')
+        Provider.put(service='box', source='~/.cloudmesh/test.txt', destination ='/', recursive=False)
 
     def test_collection(self):
         HEADING()
