@@ -19,9 +19,15 @@ class Authentication:
         Keeping a separate python file or class just for 
         authentication 
     """
-    def __init__(self, scopes, client_secret_file, application_name, flags=None):
+    def __init__(self,
+                 scopes,
+                 credential_file,
+                 client_secret_file,
+                 application_name,
+                 flags=None):
 
         self.scopes = scopes
+        self.credential_file = credential_file
         self.client_secret_file = client_secret_file
         self.application_name = application_name
         self.flags = flags
@@ -38,24 +44,24 @@ class Authentication:
         :return:
         :rtype:
         """
-        cwd = '~/.cloudmesh/gdrive/.credentials'
-        path = Path(path_expand(cwd)).resolve()
-        print(path)
+        #
+        # Why is this not read from the yaml file?
+        path = Path(path_expand(self.credential_file)).resolve()
         if not os.path.exists(path):
-            print("creating folders")
             os.makedirs(path)
-        print("created folders")
-        
-        credentials_path = os.path.join(path,
-                                        'google-drive-credentials.json')
-        credentials_path = Path(path_expand(credentials_path)).resolve()
-        store = Storage(credentials_path)
+
+        credentials_path = (path / 'google-drive-credentials.json').resolve()
         print(credentials_path)
+
+        store = Storage(credentials_path)
         credentials = store.get()
         if not credentials or credentials.invalid:
             flow = client.flow_from_clientsecrets(self.client_secret_file,
                                                   self.scopes)
             flow.user_agent = self.application_name
+            #
+            # SHOUDL THE FLAGS NOT BE SET IN THE YAML FILE OR DOCOPTS OFTHE COMMAND?
+            #
             if self.flags:
                 credentials = tools.run_flow(flow, store, self.flags)
 

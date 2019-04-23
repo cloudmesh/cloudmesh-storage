@@ -10,28 +10,105 @@ from apiclient.http import MediaIoBaseDownload
 from cloudmesh.common.util import path_expand
 from cloudmesh.management.configuration.config import Config
 from cloudmesh.storage.StorageABC import StorageABC
-from cloudmesh.storage.provider.gdrive.Authentication import Authentication
 from apiclient import discovery
+from cloudmesh.DEBUG import VERBOSE
+from oauth2client import client
+from oauth2client import tools
+from oauth2client.file import Storage
+from cloudmesh.common.util import path_expand
+
 
 class Provider(StorageABC):
+    """
+        gdrive:
+        cm:
+            heading: GDrive
+            host: dgrive.google.com
+            label: GDrive
+            kind: gdrive
+            version: TBD
+        default:
+            directory: TBD
+        credentials:
+            name: cloudmesh
+            location: ~/.cloudmesh/gdrive/client_secret.json
+            credentials: '~/.cloudmesh/gdrive/.credentials'
+            client_id: "6111111111111111111hjhkhhj.apps.googleusercontent.com"
+            project_id: "whatever-it-is"
+            auth_uri: "https://accounts.google.com/o/oauth2/auth"
+            token_uri: "https://oauth2.googleapis.com/token"
+            client_secret: "aaaaaaaaaaaaaaaaaaa"
+            auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
+            auth_host_name: "localhost"
+            auth_host_port:
+            - "8080"
+            - "8090"
+            redirect_uris:
+            - "urn:ietf:wg:oauth:2.0:oob"
+            - "http://localhost"
+
+    """
+
+    def get_credentials(self):
+
+        """
+            We have stored the credentials in ".credentials"
+            folder and there is a file named 'google-drive-credentials.json'
+            that has all the credentials required for our authentication
+            If there is nothing stored in it this program creates credentials
+            json file for future authentication
+            Here the authentication type is OAuth2
+        :return:
+        :rtype:
+        """
+        path = Path(path_expand(self.credential_file)).resolve()
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        credentials_path = (path / 'google-drive-credentials.json').resolve()
+        print(credentials_path)
+
+        store = Storage(credentials_path)
+        credentials = store.get()
+        if not credentials or credentials.invalid:
+            flow = client.flow_from_clientsecrets(self.client_secret_file,
+                                                  self.scopes)
+            flow.user_agent = self.application_name
+            #
+            # SHOUDL THE FLAGS NOT BE SET IN THE YAML FILE OR DOCOPTS OFTHE COMMAND?
+            #
+            if self.flags:
+                credentials = tools.run_flow(flow, store, self.flags)
+
+        return credentials
 
     def __init__(self, service='gdrive', config="~/.cloudmesh/cloudmesh4.yaml"):
-        
+
         super(Provider, self).__init__(service=service, config=config)
-        self.limitFiles = 10000000
-        self.scopes = 'https://www.googleapis.com/auth/drive'
-        self.clientSecretFile = path_expand(
-            '~/.cloudmesh/gdrive/client_secret.json')
-        self.applicationName = 'Drive API Python Quickstart'
         self.config = Config()
-        print(os.path.abspath('~/.cloudmesh/cloudmesh4.yml'))
+
+        # if needed, needs to be set in yaml file
+        self.limitFiles = 10000000
+        # should be set in yaml file
+        self.scopes = 'https://www.googleapis.com/auth/drive'
+
+        self.clientSecretFile = path_expand(self.credentials["location"])
+        self.credential_file = path_expand(self.credentials["credentials"])
+
+        self.applicationName = self.credentials["name"]
         self.generate_key_json()
         self.flags = self.generate_flags_json()
-        self.authInst = Authentication(self.scopes,
-                                       self.clientSecretFile,
-                                       self.applicationName, flags=self.flags)
-        self.credentials = self.authInst.get_credentials()
-        self.http = self.credentials.authorize(httplib2.Http())
+        self.authInst = self.get_credentials(
+            self.scopes,
+            self.credential_file,
+            self.clientSecretFile,
+            self.applicationName,
+            flags=self.flags)
+        #
+        # we use self.credentials for the credentials in the yaml file so you need a different name
+        #
+        self.gdrive_credentials = self.authInst.get_credentials()
+        self.http = self.gdrive_credentials.authorize(httplib2.Http())
         self.driveService = discovery.build('drive', 'v3', http=self.http)
         self.size = None
         self.cloud = service
@@ -39,16 +116,21 @@ class Provider(StorageABC):
 
     def generate_flags_json(self):
         credentials = self.config.credentials("storage", "gdrive")
-        args = argparse.Namespace(auth_host_name=credentials["auth_host_name"],
-                                  auth_host_port=credentials["auth_host_port"],
-                                  logging_level='ERROR', noauth_local_webserver=False)
+        # I do not quite get why argparse is used
+        args = argparse.Namespace(
+            auth_host_name=credentials["auth_host_name"],
+            auth_host_port=credentials["auth_host_port"],
+            logging_level='ERROR', noauth_local_webserver=False)
         return args
 
     def generate_key_json(self):
         credentials = self.config.credentials("storage", "gdrive")
-        config_path = '~/.cloudmesh/gdrive/client_secret.json'
-        path = Path(path_expand(config_path)).resolve()
-        config_folder = os.path.dirname(path)
+        #
+        # THIS MUST COME FROM THE YAML FILE
+        #
+
+        config_path = self.clientSecretFile
+        config_folder = os.path.dirname(Path(config_path).resolve())
         if not os.path.exists(config_folder):
             os.makedirs(config_folder)
 
@@ -98,7 +180,8 @@ class Provider(StorageABC):
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
 
-                return self.upload_file(source=None, filename=source, parent_it=file_parent_id)
+                return self.upload_file(source=None, filename=source,
+                                        parent_it=file_parent_id)
         else:
             if os.path.isdir(source):
                 query_params = "name='" + destination + "' and trashed=false"
@@ -130,7 +213,8 @@ class Provider(StorageABC):
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
 
-                return self.upload_file(source=None, filename=source, parent_it=file_parent_id)
+                return self.upload_file(source=None, filename=source,
+                                        parent_it=file_parent_id)
 
     def get(self, service=None, source=None, destination=None, recursive=False):
         if not os.path.exists(source):
@@ -150,7 +234,8 @@ class Provider(StorageABC):
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
                         print(item['mimeType'])
-                        return self.download(source, item['id'], item['name'], item['mimeType'])
+                        return self.download(source, item['id'], item['name'],
+                                             item['mimeType'])
             else:
                 return self.download(source, file_id, file_name, mime_type)
         else:
@@ -167,7 +252,9 @@ class Provider(StorageABC):
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
                         print(item['mimeType'])
-                        return self.download_file(source, item['id'], item['name'], item['mimeType'])
+                        return self.download_file(source, item['id'],
+                                                  item['name'],
+                                                  item['mimeType'])
             else:
                 return self.download_file(source, file_id, file_name, mime_type)
 
@@ -271,7 +358,8 @@ class Provider(StorageABC):
         return file
 
     def download_file(self, source, file_id, file_name, mime_type):
-        filepath = source + '/' + file_name + mimetypes.guess_extension(mime_type)
+        filepath = source + '/' + file_name + mimetypes.guess_extension(
+            mime_type)
         request = self.driveService.files().get_media(fileId=file_id)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -283,5 +371,3 @@ class Provider(StorageABC):
             fh.seek(0)
             f.write(fh.read())
         return filepath
-
-
