@@ -44,7 +44,6 @@ class Provider(object):
         """
         return self.p.create_dir()
 
-    # @DatabaseUpdate
     def list(self, service=None, source=None, recursive=False):
         """
         lists the information as dict
@@ -102,3 +101,13 @@ class Provider(object):
         :return: dict
         """
         return self.p.search()
+
+    def tree(self, directory=None):
+        """
+        Prints a fisual representation of the files and directories
+        :param directory:
+        :type directory:
+        :return:
+        :rtype:
+        """
+        return self.p.tree()

@@ -3,23 +3,20 @@ from cloudmesh.storage.provider.azureblob.Provider import \
     Provider as AzureblobProvider
 from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
 from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
-from cloudmesh.storage.StorageABC import StorageABC
+from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
+from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 
 from cloudmesh.DEBUG import VERBOSE
 from cloudmesh.common.console import Console
 import warnings
-
+from pprint import pprint
 
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
 
         super(Provider, self).__init__(service=service, config=config)
-
-        Console.error("PLEASE USE cloudmesh.storage.Provider")
-
-        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
 
         if self.kind == "local":
             self.provider = LocalProvider(service=service, config=config)
@@ -34,50 +31,45 @@ class Provider(StorageABC):
         else:
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
 
-    def get(self, service=None, source=None, destination=None, recursive=False):
+    @DatabaseUpdate()
+    def get(self, source=None, destination=None, recursive=False):
 
-        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
-
-        # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"get {source} {destination} {recursive}")
         d = self.provider.get(source=source,
                               destination=destination,
                               recursive=recursive)
         return d
 
-    def put(self, service=None, source=None, destination=None, recursive=False):
+    @DatabaseUpdate()
+    def put(self, source=None, destination=None, recursive=False):
 
-        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
-
-        # BUG DOES NOT FOLLOW SPEC
-        VERBOSE(f"put {service} {source}")
+        service = self.service
+        VERBOSE(f"put {service} {source} {destination}")
         d = self.provider.put(source=source,
                               destination=destination,
                               recursive=recursive)
         return d
 
-    def createdir(self, service=None, directory=None):
-
-        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
+    @DatabaseUpdate()
+    def createdir(self, directory=None):
 
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"create_dir {directory}")
         VERBOSE(directory)
+        service = self.service
         d = self.provider.create_dir(service=service, directory=directory)
         return d
 
-    def delete(self, service=None, source=None):
+    @DatabaseUpdate()
+    def delete(self, source=None):
 
-        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
-
+        service = self.service
         VERBOSE(f"delete filename {service} {source}")
         d = self.provider.delete(service=service, source=source)
         #raise ValueError("must return a value")
         return d
 
-    def search(self, service=None, directory=None, filename=None, recursive=False):
-
-        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
+    def search(self, directory=None, filename=None, recursive=False):
 
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"search {directory}")
@@ -86,9 +78,8 @@ class Provider(StorageABC):
                                  recursive=recursive)
         return d
 
-    def list(self, service=None, source=None, recursive=None):
-
-        warnings.warn("deprecated: use cloudmesh.storage.Provider instead", DeprecationWarning)
+    @DatabaseUpdate()
+    def list(self, source=None, recursive=None):
 
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"list {source}")
@@ -97,3 +88,19 @@ class Provider(StorageABC):
                                recursive=recursive)
         return d
 
+    def tree (self, source):
+
+        data = self.provider.list(source=source)
+
+        # def dict_to_tree(t, s):
+        #    if not isinstance(t, dict) and not isinstance(t, list):
+        #       print ("    " * s + str(t))
+        #    else:
+        #        for key in t:
+        #            print ("    " * s + str(key))
+        #            if not isinstance(t, list):
+        #                dict_to_tree(t[key], s + 1)
+        #
+        # dict_to_tree(d, 0)
+
+        pprint(data)

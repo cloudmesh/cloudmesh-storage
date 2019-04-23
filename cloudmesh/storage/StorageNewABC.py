@@ -35,11 +35,10 @@ class StorageABC(metaclass=ABCMeta):
         raise NotImplementedError
         return {}
 
-    def list(self, service=None, source=None, recursive=False):
+    def list(self, source=None, recursive=False):
         """
         lists the information as dict
 
-        :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
@@ -48,11 +47,10 @@ class StorageABC(metaclass=ABCMeta):
         raise NotImplementedError
         return []
 
-    def put(self, service=None, source=None, destination=None, recusrive=False):
+    def put(self, source=None, destination=None, recusrive=False):
         """
         puts the source on the service
 
-        :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or
                             file
@@ -63,11 +61,10 @@ class StorageABC(metaclass=ABCMeta):
         raise NotImplementedError
         return []
 
-    def get(self, service=None, source=None, destination=None, recusrive=False):
+    def get(self, source=None, destination=None, recusrive=False):
         """
         gets the destination and copies it in source
 
-        :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or
                             file
@@ -78,11 +75,10 @@ class StorageABC(metaclass=ABCMeta):
         raise NotImplementedError
         return []
 
-    def delete(self, service=None, source=None, recusrive=False):
+    def delete(self, source=None, recusrive=False):
         """
         deletes the source
 
-        :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
@@ -91,12 +87,10 @@ class StorageABC(metaclass=ABCMeta):
         raise NotImplementedError
         return []
 
-    def search(self, service=None, directory=None, filename=None,
-               recusrive=False):
+    def search(self, directory=None, filename=None, recusrive=False):
         """
         gets the destination and copies it in source
 
-        :param service: the name of the service in the yaml file
         :param directory: the directory which either can be a directory or file
         :param recursive: in case of directory the recursive referes to all
                           subdirectories in the specified source
@@ -113,5 +107,4 @@ class StorageABC(metaclass=ABCMeta):
         :return:
         :rtype:
         """
-        raise NotImplementedError
-        return ""
+        return self.p.tree()

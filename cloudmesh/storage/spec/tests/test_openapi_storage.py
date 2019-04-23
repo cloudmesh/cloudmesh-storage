@@ -8,6 +8,7 @@ from __future__ import print_function
 import os
 import time
 import requests
+import json
 
 import pytest
 from cloudmesh.common.run.background import run
@@ -85,8 +86,17 @@ class Test_cloud_storage:
         headers = {
             'Content-Type': 'application/json',
         }
-        data = '{"service": "azureblob", "source": "~/openapi/a.txt", "destination": "/apitest", "recursive": "False"}'
-        response = requests.post('http://localhost:8080/cloudmesh/storage/v1/put', headers=headers, data=data)
+        #data = '{"service": "azureblob", "source": "~/openapi/a.txt", "destination": "/apitest", "recursive": "False"}'
+        
+        data = {}
+        data['service'] = f"{storage}"
+        data['source'] = "~/openapi/a.txt"
+        data['destination'] = "/apitest"
+        data['recursive'] = "False"
+        
+        data_str = json.dumps(data)
+
+        response = requests.post('http://localhost:8080/cloudmesh/storage/v1/put', headers=headers, data=data_str)
         print(response)
         print()
 

@@ -105,8 +105,8 @@ class Provider(StorageABC):
                         download_path = os.path.join(src_path, blob_file)
                         obj_list.append(
                             self.storage_service.get_blob_to_path(self.container,
-                                                          blob_file,
-                                                          download_path))
+                                                                  blob_file,
+                                                                  download_path))
                     else:
                         return Console.error(
                             "File does not exist: {file}".format(
@@ -119,8 +119,8 @@ class Provider(StorageABC):
                             download_path = os.path.join(src_path, blob_file)
                             obj_list.append(
                                 self.storage_service.get_blob_to_path(self.container,
-                                                              blob.name,
-                                                              download_path))
+                                                                      blob.name,
+                                                                      download_path))
                             file_found = True
                     if not file_found:
                         return Console.error(
@@ -168,8 +168,8 @@ class Provider(StorageABC):
                             download_path = os.path.join(src_path, blob_file)
                             obj_list.append(
                                 self.storage_service.get_blob_to_path(self.container,
-                                                              destination[1:],
-                                                              download_path))
+                                                                      destination[1:],
+                                                                      download_path))
                         else:
                             return Console.error(
                                 "File does not exist: {file}".format(
@@ -207,6 +207,7 @@ class Provider(StorageABC):
 
         if os.path.isdir(src_path) or os.path.isfile(src_path):
             dict_obj = []
+            obj_list = []
             if os.path.isfile(src_path):
                 # File only specified
                 upl_path = src_path
@@ -215,18 +216,9 @@ class Provider(StorageABC):
                 else:
                     upl_file = blob_folder + '/' + os.path.basename(src_path)
                 obj = self.storage_service.create_blob_from_path(self.container,
-                                                         upl_file, upl_path)
-                # Build dict object here with local file properties
-                entry = obj.__dict__
-                entry["cm"] = {}
-                entry["cm"]["kind"] = "storage"
-                entry["cm"]["cloud"] = self.cloud
-                entry["cm"]["name"] = upl_file
-                entry["cm"]["created"] = obj.last_modified.isoformat()
-                entry["cm"]["updated"] = obj.last_modified.isoformat()
-                entry["cm"]["size"] = os.stat(upl_path).st_size
-                del obj.last_modified
-                dict_obj.append(entry)
+                                                                 upl_file, upl_path)
+                obj_list.append(self.storage_service.get_blob_properties(self.container,
+                                                                         upl_file))
             else:
                 # Folder only specified - Upload all files from folder
                 if recursive:
@@ -239,19 +231,8 @@ class Provider(StorageABC):
                                 upl_file = blob_folder + '/' + file
                             obj = self.storage_service.create_blob_from_path(
                                 self.container, upl_file, upl_path)
-                            # Build dict object here with local file properties
-                            entry = obj.__dict__
-                            entry["cm"] = {}
-                            entry["cm"]["kind"] = "storage"
-                            entry["cm"]["cloud"] = self.cloud
-                            entry["cm"]["name"] = upl_file
-                            entry["cm"][
-                                "created"] = obj.last_modified.isoformat()
-                            entry["cm"][
-                                "updated"] = obj.last_modified.isoformat()
-                            entry["cm"]["size"] = os.stat(upl_path).st_size
-                            del obj.last_modified
-                            dict_obj.append(entry)
+                            obj_list.append(self.storage_service.get_blob_properties(self.container,
+                                                                                     upl_file))
                 else:
                     return Console.error(
                         "Source is a folder, recursive expected in arguments")
@@ -259,6 +240,7 @@ class Provider(StorageABC):
             return Console.error(
                 "Directory or File does not exist: {directory}".format(
                     directory=src_path))
+        dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
         return dict_obj
 
@@ -281,7 +263,7 @@ class Provider(StorageABC):
             # SOURCE specified is File only
             if self.storage_service.exists(self.container, blob_file):
                 blob_prop = self.storage_service.get_blob_properties(self.container,
-                                                             blob_file)
+                                                                     blob_file)
                 obj_list.append(blob_prop)
                 self.storage_service.delete_blob(self.container, blob_file)
             else:
@@ -304,7 +286,7 @@ class Provider(StorageABC):
                 # Source specified is both file and directory
                 if self.storage_service.exists(self.container, source[1:]):
                     blob_prop = self.storage_service.get_blob_properties(self.container,
-                                                                 source[1:])
+                                                                         source[1:])
                     obj_list.append(blob_prop)
                     self.storage_service.delete_blob(self.container, source[1:])
                 else:
@@ -405,9 +387,9 @@ class Provider(StorageABC):
             if not recursive:
                 if self.storage_service.exists(self.container, blob_file):
                     blob_prop = self.storage_service.get_blob_properties(self.container,
-                                                                 blob_file)
+                                                                         blob_file)
                     blob_size = self.storage_service.get_blob_properties(self.container,
-                                                                 blob_file).properties.content_length
+                                                                         blob_file).properties.content_length
                     obj_list.append(blob_prop)
                 else:
                     return Console.error(
@@ -432,11 +414,24 @@ class Provider(StorageABC):
                         if os.path.dirname(blob.name) == blob_folder:
                             obj_list.append(blob)
                             file_found = True
-                        if blob_folder == '' and re.search('/', blob.name):
-                            srch_fold = os.path.dirname(blob.name).split('/')[0]
-                            file_found = True
-                            if srch_fold not in fold_list:
-                                fold_list.append(srch_fold)
+                        if blob_folder == '':
+                            if re.search('/', blob.name):
+                                srch_fold = os.path.dirname(blob.name).split('/')[0]
+                                file_found = True
+                                if srch_fold not in fold_list:
+                                    fold_list.append(srch_fold)
+                        else:
+                            if blob not in obj_list:
+                                if len(os.path.dirname(blob.name).split('/')) == len(blob_folder.split('/')) + 1:
+                                    fold_match = 'Y'
+                                    for e in os.path.dirname(blob.name).split('/')[:-1]:
+                                        if e not in blob_folder.split('/'):
+                                            fold_match = 'N'
+                                    if fold_match == 'Y':
+                                        srch_fold = os.path.dirname(blob.name).split('/')[len(blob_folder.split('/'))]
+                                        file_found = True
+                                        if srch_fold not in fold_list:
+                                            fold_list.append(srch_fold)
                     if not file_found:
                         return Console.error(
                             "Directory does not exist: {directory}".format(
@@ -474,5 +469,5 @@ class Provider(StorageABC):
         dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
         if len(fold_list) > 0:
-            pprint(fold_list)
+            print('List of Sub-folders:', fold_list)
         return dict_obj

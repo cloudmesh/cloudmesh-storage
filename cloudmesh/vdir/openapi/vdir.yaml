@@ -1,0 +1,182 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: "vdir"
+  description: "A service for cloudmesh virtual directory using swagger-2.0 specification and codegen"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    name: "cloudmesh virtual directory REST Service"
+  license:
+    name: "Apache"
+host: "localhost:8080"
+basePath: "/cloudmesh"
+schemes:
+  - "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+paths:
+  /mkdir:
+    post:
+      tags:
+        - VDIR
+      operationId: vdir_openapi.mkdir
+      description: "Returns new directory"
+      parameters:
+        - in: body
+          name: params
+          description: "Provide the directory name in body of the request"
+          schema:
+            $ref: "#/definitions/PUT"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "Makes new directory"
+  /cd:
+    get:
+      tags:
+        - VDIR
+      operationId: vdir_openapi.cd
+      description: "Returns list of endpoints in the specified directory"
+      parameters:
+        - in: query
+          name: dir
+          description: "Provide the directory name in body of the request"
+          type: string
+          required: false
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "navigate to directory"
+          schema:
+            $ref: "#/definitions/LIST"
+  /ls:
+    get:
+      tags:
+        - VDIR
+      operationId: vdir_openapi.ls
+      description: "Returns list of documents in the specified directory"
+      parameters:
+        - in: query
+          name: dir
+          description: "Specify directory to list contents of"
+          type: string
+          required: false
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "list documents"
+          schema:
+            $ref: "#/definitions/LIST"
+  /add:
+    post:
+      tags:
+        - VDIR
+      operationId: vdir_openapi.add
+      description: "Returns new document"
+      parameters:
+        - in: body
+          name: params
+          description: "Provide the location of the file and link in the body of the request"
+          schema:
+            $ref: "#/definitions/ADD"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "add file link"
+  /delete:
+    get:
+      tags:
+        - VDIR
+      operationId: vdir_openapi.delete
+      description: "Returns list of documents in the specified directory"
+      parameters:
+        - in: query
+          name: dir_or_name
+          description: "Provide the directory or link name in body of the request"
+          type: string
+          required: true
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "delete links or directories"
+          schema:
+            $ref: "#/definitions/LIST"
+  /status:
+    get:
+      tags:
+        - VDIR
+      operationId: vdir_openapi.status
+      description: "Returns specified document"
+      parameters:
+        - in: query
+          name: dir_or_name
+          description: "Provide the directory or link name in body of the request"
+          type: string
+          required: true
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "get status of link or directory"
+          schema:
+            $ref: "#/definitions/LIST"
+  /get:
+    get:
+      tags:
+        - VDIR
+      operationId: vdir_openapi.get
+      description: "Returns specified file"
+      parameters:
+        - in: query
+          name: name
+          description: "Provide the link name in body of the request"
+          type: string
+          required: true
+        - in: query
+          name: destination
+          description: "Provide the destination directory name in the body of the request"
+          type: string
+          required: true
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "download the specified file"
+          schema:
+            $ref: "#/definitions/LIST"
+definitions:
+  PUT:
+    type: "object"
+    required:
+      - "dir"
+    properties:
+      dir:
+        type: "string"
+  LIST:
+    type: "object"
+    required:
+      - "results"
+    properties:
+      results:
+        type: "string"
+  ADD:
+    type: "object"
+    required:
+      - "endpoint"
+      - "dir_and_name"
+    properties:
+      endpoint:
+        type: "string"
+      dir_and_name:
+        type: "string"
+
+
+
+
