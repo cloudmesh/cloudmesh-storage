@@ -3,19 +3,17 @@ import json
 import mimetypes
 import os
 from pathlib import Path
-import argparse
 import httplib2
 from apiclient.http import MediaFileUpload
 from apiclient.http import MediaIoBaseDownload
 from cloudmesh.common.util import path_expand
-from cloudmesh.management.configuration.config import Config
 from cloudmesh.storage.StorageABC import StorageABC
 from apiclient import discovery
 from cloudmesh.DEBUG import VERBOSE
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
-from cloudmesh.common.util import path_expand
+
 
 
 class Provider(StorageABC):
@@ -32,8 +30,11 @@ class Provider(StorageABC):
         default:
             directory: TBD
         credentials:
+            logging_level: 'ERROR'
+            noauth_local_webserver: False
             page_size: 1000000
             name: cloudmesh
+            scope: "https://www.googleapis.com/auth/drive"
             location: ~/.cloudmesh/gdrive/client_secret.json
             credentials: '~/.cloudmesh/gdrive/.credentials'
             client_id: "6111111111111111111hjhkhhj.apps.googleusercontent.com"
@@ -57,6 +58,11 @@ class Provider(StorageABC):
         """
             We have stored the credentials in ".credentials"
             folder and there is a file named 'google-drive-credentials.json'
+
+            #
+            # this contradicts your example in the yaml file
+            #
+
             that has all the credentials required for our authentication
             If there is nothing stored in it this program creates credentials
             json file for future authentication
@@ -74,80 +80,68 @@ class Provider(StorageABC):
         store = Storage(credentials_path)
         credentials = store.get()
         if not credentials or credentials.invalid:
-            flow = client.flow_from_clientsecrets(self.client_secret_file,
-                                                  self.scopes)
+            flow = client.flow_from_clientsecrets(
+                self.client_secret_file,
+                self.scopes)
             flow.user_agent = self.application_name
-            #
-            # SHOUDL THE FLAGS NOT BE SET IN THE YAML FILE OR DOCOPTS OFTHE COMMAND?
-            #
-            if self.flags:
-                credentials = tools.run_flow(flow, store, self.flags)
 
+            credentials = tools.run_flow(
+                flow,
+                store,
+                auth_host_name=self.credentials["auth_host_name"],
+                auth_host_port=self.credentials["auth_host_port"],
+                logging_level=self.credentials["logging_level"],
+                noauth_local_webserver=self.credentials["noauth_local_webserver"]
+            )
         return credentials
 
     def __init__(self, service='gdrive', config="~/.cloudmesh/cloudmesh4.yaml"):
 
         super(Provider, self).__init__(service=service, config=config)
+        self.cloud = service
+        self.service = service
 
-        # if needed, needs to be set in yaml file
+        self.applicationName = self.credentials["name"]
         self.page_size = self.credentials["page_size"]
-        # should be set in yaml file
-        self.scopes = 'https://www.googleapis.com/auth/drive'
+        self.scopes = self.credentials["scope"]
 
         self.clientSecretFile = path_expand(self.credentials["location"])
         self.credential_file = path_expand(self.credentials["credentials"])
 
-        self.applicationName = self.credentials["name"]
-        self.generate_key_json()
+        self.write_json_key(self.clientSecretFile, self.credentials)
+
         self.flags = self.generate_flags_json()
+
         self.authInst = self.get_credentials(
             self.scopes,
             self.credential_file,
             self.clientSecretFile,
             self.applicationName,
             flags=self.flags)
-        #
-        # we use self.credentials for the credentials in the yaml file so you need a different name
-        #
+
         self.gdrive_credentials = self.authInst.get_credentials()
         self.http = self.gdrive_credentials.authorize(httplib2.Http())
         self.driveService = discovery.build('drive', 'v3', http=self.http)
-        self.size = None
-        self.cloud = service
-        self.service = service
 
-    def generate_flags_json(self):
-        credentials = self.config.credentials("storage", "gdrive")
-        # I do not quite get why argparse is used
-        args = argparse.Namespace(
-            auth_host_name=credentials["auth_host_name"],
-            auth_host_port=credentials["auth_host_port"],
-            logging_level='ERROR', noauth_local_webserver=False)
-        return args
+    def write_json_key(self, path, credentials):
 
-    def generate_key_json(self):
-        credentials = self.config.credentials("storage", "gdrive")
-        #
-        # THIS MUST COME FROM THE YAML FILE
-        #
+        directory = os.path.dirname(Path(path).resolve())
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
-        config_path = self.clientSecretFile
-        config_folder = os.path.dirname(Path(config_path).resolve())
-        if not os.path.exists(config_folder):
-            os.makedirs(config_folder)
-
-        data = {"installed": {
-            "client_id": credentials["client_id"],
-            "project_id": credentials["project_id"],
-            "auth_uri": credentials["auth_uri"],
-            "token_uri": credentials["token_uri"],
-            "client_secret": credentials["client_secret"],
-            "auth_provider_x509_cert_url": credentials[
-                "auth_provider_x509_cert_url"],
-            "redirect_uris": credentials["redirect_uris"]
+        data = {
+            "installed": {
+                "client_id": credentials["client_id"],
+                "project_id": credentials["project_id"],
+                "auth_uri": credentials["auth_uri"],
+                "token_uri": credentials["token_uri"],
+                "client_secret": credentials["client_secret"],
+                "auth_provider_x509_cert_url": credentials[
+                    "auth_provider_x509_cert_url"],
+                "redirect_uris": credentials["redirect_uris"]
+            }
         }
-        }
-        with open(self.clientSecretFile, 'w') as fp:
+        with open(path, 'w') as fp:
             json.dump(data, fp)
 
     def gdrive_sourceid(self, query_params):
@@ -172,7 +166,7 @@ class Provider(StorageABC):
                 query_params = "name='" + destination + "' and trashed=false"
                 sourceid = self.gdrive_sourceid(query_params)
                 print(sourceid)
-                file_parent_id = self.gdrive_parentid(sourceid,destination)
+                file_parent_id = self.gdrive_parentid(sourceid, destination)
 
                 for f in os.listdir(source):
                     if os.path.isfile(os.path.join(source, f)):
