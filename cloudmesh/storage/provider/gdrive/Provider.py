@@ -164,7 +164,7 @@ class Provider(StorageABC):
     def put(self, service=None, source=None, destination=None, recursive=False):
         if recursive:
             if os.path.isdir(source):
-                query_params = "name='" + destination + "' and trashed=false"
+                query_params = f"name='{destination}' and trashed=false"
                 sourceid = self.gdrive_sourceid(query_params)
                 print(sourceid)
                 file_parent_id = self.gdrive_parentid(sourceid, destination)
@@ -300,7 +300,7 @@ class Provider(StorageABC):
                 pageSize=self.page_size,
                 fields="nextPageToken, files(id)").execute()
             file_id = sourceid['files'][0]['id']
-            query_params = "'" + file_id + "' in parents"
+            query_params = f"'{file_id}' in parents"
             results = self.driveService.files().list(
                 q=query_params,
                 pageSize=self.page_size,
@@ -345,7 +345,7 @@ class Provider(StorageABC):
         if source is None:
             filepath = filename
         else:
-            filepath = source + '/' + filename
+            filepath = f"{source}/{filename}"
         media = MediaFileUpload(filepath,
                                 mimetype=mimetypes.guess_type(filename)[0])
         file = self.driveService.files().create(body=file_metadata,
@@ -354,7 +354,7 @@ class Provider(StorageABC):
         return file
 
     def download_file(self, source, file_id, file_name, mime_type):
-        filepath = source + '/' + file_name + mimetypes.guess_extension(
+        filepath = f"{source}/{file_name}/" + mimetypes.guess_extension(
             mime_type)
         request = self.driveService.files().get_media(fileId=file_id)
         fh = io.BytesIO()
