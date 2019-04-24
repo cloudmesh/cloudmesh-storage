@@ -20,7 +20,7 @@ class Provider(StorageABC):
         self.cloud = service
         self.service = service
 
-    def update_dict(self, elements, kind=None):
+    def update_dict(self, elements, func=None):
         # this is an internal function for building dict object
         d = []
         for element in elements:
@@ -41,6 +41,10 @@ class Provider(StorageABC):
             del element.properties["content_settings"]
             del element.properties["creation_time"]
             del element.properties["last_modified"]
+            if func == 'delete':
+                entry["cm"]["status"] = "deleted"
+            else:
+                entry["cm"]["status"] = "exists"
             if element.properties["deleted_time"] is not None:
                 entry["cm"]["deleted"] = element.properties[
                     "deleted_time"].isoformat()
@@ -206,7 +210,6 @@ class Provider(StorageABC):
         src_path = self.local_path(source)
 
         if os.path.isdir(src_path) or os.path.isfile(src_path):
-            dict_obj = []
             obj_list = []
             if os.path.isfile(src_path):
                 # File only specified
@@ -292,7 +295,7 @@ class Provider(StorageABC):
                 else:
                     return Console.error(
                         "File does not exist: {file}".format(file=blob_file))
-        dict_obj = self.update_dict(obj_list)
+        dict_obj = self.update_dict(obj_list, func='delete')
         pprint(dict_obj)
         return dict_obj
 
@@ -382,6 +385,7 @@ class Provider(StorageABC):
 
         obj_list = []
         fold_list = []
+        file_list = []
         if blob_folder is None:
             # SOURCE specified is File only
             if not recursive:
@@ -413,6 +417,7 @@ class Provider(StorageABC):
                     for blob in srch_gen:
                         if os.path.dirname(blob.name) == blob_folder:
                             obj_list.append(blob)
+                            file_list.append(os.path.basename(blob.name))
                             file_found = True
                         if blob_folder == '':
                             if re.search('/', blob.name):
@@ -444,6 +449,7 @@ class Provider(StorageABC):
                             (os.path.commonpath(
                                 [blob.name, blob_folder]) == blob_folder):
                             obj_list.append(blob)
+                            file_list.append(blob.name)
                             file_found = True
                     if not file_found:
                         return Console.error(
@@ -468,6 +474,18 @@ class Provider(StorageABC):
                         "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
+        if len(file_list) > 0:
+            hdr = '#' * 90 + '\n' + 'List of files in the folder ' + '/' + blob_folder + ':'
+            Console.cprint("BLUE", "", hdr)
+            print(file_list)
+            if len(fold_list) == 0:
+                trl = '#' * 90
+                Console.cprint("BLUE", "", trl)
+
         if len(fold_list) > 0:
-            print('List of Sub-folders:', fold_list)
+            hdr = '#' * 90 + '\n' + 'List of Sub-folders under the folder ' + '/' + blob_folder + ':'
+            Console.cprint("BLUE", "", hdr)
+            print(fold_list)
+            trl = '#' * 90
+            Console.cprint("BLUE", "", trl)
         return dict_obj
