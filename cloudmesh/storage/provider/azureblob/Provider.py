@@ -225,7 +225,7 @@ class Provider(StorageABC):
             else:
                 # Folder only specified - Upload all files from folder
                 if recursive:
-                    for (root, dir, files) in os.walk(src_path, topdown=True):
+                    for (root, folder, files) in os.walk(src_path, topdown=True):
                         if len(files) > 0:
                             for base in files:
                                 upl_path = os.path.join(root, base)
