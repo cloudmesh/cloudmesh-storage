@@ -18,7 +18,6 @@ import pytest
 from cloudmesh.variables import Variables
 from cloudmesh.common.util import readfile
 
-
 def create_dir(self, location):
     d = Path(os.path.dirname(path_expand(location)))
     d.mkdir(parents=True, exist_ok=True)
@@ -149,16 +148,16 @@ class Test_storage:
         # full list for now is fine
         assert False
 
-    def test_serach_b1(self):
-        # serach for b1.txt
+    def test_search_b1(self):
+        # search for b1.txt
         assert False
 
-    def test_serach_b1_dir(self):
-        # serach for b/b2.txt see that this one has even the dir in the search
+    def test_search_b1_dir(self):
+        # search for b/b2.txt see that this one has even the dir in the search
         assert False
 
-    def test_serach_a1(self):
-        # serach for a1.txt which shold return 2 entries
+    def test_search_a1(self):
+        # search for a1.txt which shold return 2 entries
         assert False
 
 

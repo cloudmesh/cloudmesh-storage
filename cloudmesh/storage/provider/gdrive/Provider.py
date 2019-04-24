@@ -59,11 +59,6 @@ class Provider(StorageABC):
         """
             We have stored the credentials in ".credentials"
             folder and there is a file named 'google-drive-credentials.json'
-
-            #
-            # this contradicts your example in the yaml file
-            #
-
             that has all the credentials required for our authentication
             If there is nothing stored in it this program creates credentials
             json file for future authentication
@@ -73,7 +68,7 @@ class Provider(StorageABC):
         """
 
         credentials_path = Path(self.credentials["location_gdrive_credentials"]).resolve()
-        print(credentials_path)
+        VERBOSE(credentials_path)
 
         store = Storage(credentials_path)
         credentials = store.get()
@@ -272,6 +267,23 @@ class Provider(StorageABC):
             except:  # errors.HttpError, error:
                 return 'An error occurred:'  # %s' % error
         return "deleted"
+
+
+        # this must return the dict of the diretory
+
+    def  update_dict(self, data, name, ):
+        cm = {
+            "cm": {
+                "kind": self.kind,
+                "name": name,
+                "cloud": self.service,
+            }
+        }
+
+    def update_ditc_list(self, data):
+        for entry in data:
+            entry = self.update_dict(entry)
+        return data
 
     def create_dir(self, service='gdrive', directory=None):
         file_metadata = {

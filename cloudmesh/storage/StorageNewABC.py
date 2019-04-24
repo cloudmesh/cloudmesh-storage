@@ -23,7 +23,6 @@ class StorageABC(metaclass=ABCMeta):
 
 
     def create_dir(self,
-                   service=None,
                    directory=None):
         """
         creates a directory
