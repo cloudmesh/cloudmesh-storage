@@ -218,24 +218,25 @@ class Provider(StorageABC):
                     upl_file = os.path.basename(src_path)
                 else:
                     upl_file = blob_folder + '/' + os.path.basename(src_path)
-                obj = self.storage_service.create_blob_from_path(self.container,
+                self.storage_service.create_blob_from_path(self.container,
                                                                  upl_file, upl_path)
                 obj_list.append(self.storage_service.get_blob_properties(self.container,
                                                                          upl_file))
             else:
                 # Folder only specified - Upload all files from folder
                 if recursive:
-                    for file in os.listdir(src_path):
-                        if os.path.isfile(os.path.join(src_path, file)):
-                            upl_path = os.path.join(src_path, file)
-                            if blob_folder == '':
-                                upl_file = file
-                            else:
-                                upl_file = blob_folder + '/' + file
-                            obj = self.storage_service.create_blob_from_path(
-                                self.container, upl_file, upl_path)
-                            obj_list.append(self.storage_service.get_blob_properties(self.container,
-                                                                                     upl_file))
+                    for (root, dir, files) in os.walk(src_path, topdown=True):
+                        if len(files) > 0:
+                            for base in files:
+                                upl_path = os.path.join(root, base)
+                                if blob_folder == '':
+                                    upl_file = base
+                                else:
+                                    upl_file = blob_folder + '/' + base
+                                self.storage_service.create_blob_from_path(
+                                    self.container, upl_file, upl_path)
+                                obj_list.append(self.storage_service.get_blob_properties(self.container,
+                                                                                         upl_file))
                 else:
                     return Console.error(
                         "Source is a folder, recursive expected in arguments")
@@ -473,7 +474,7 @@ class Provider(StorageABC):
                     return Console.error(
                         "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
-        pprint(dict_obj)
+        #pprint(dict_obj)
         if len(file_list) > 0:
             hdr = '#' * 90 + '\n' + 'List of files in the folder ' + '/' + blob_folder + ':'
             Console.cprint("BLUE", "", hdr)
