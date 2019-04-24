@@ -68,7 +68,7 @@ class Provider(StorageABC):
         location = Path(self.credentials["directory"]) / dirname
         return location
 
-    def identifier(self, dirname, filename):
+    def identifier(self, dirname, filename, status="ok"):
         stat_info = os.stat(filename)
         uid = stat_info.st_uid
         gid = stat_info.st_gid
@@ -87,6 +87,7 @@ class Provider(StorageABC):
                  "size": "TBD",
                  "service": self.service
                  },
+            "status": status,
             "size": os.path.getsize(filename),
             "name": filename,
             "ownwer": getpwuid(uid)[0],
@@ -107,15 +108,36 @@ class Provider(StorageABC):
         :param directory: the name of the directory
         :return: dict
         """
-        raise NotImplementedError
-        #appand path from yaml file
 
-        d = Path(os.path.dirname(path_expand(directory)))
+        d = self._dirname(directory)
         d.mkdir(parents=True, exist_ok=True)
         identity = self.identifier(directory, None)
         return identity
 
-    def list(self, source=None, recursive=False):
+
+    def create_dir_from_filename(self, filename=None):
+        """
+        creates a directory
+
+        :param directory: the name of the directory for the filename
+        :return: dict
+        """
+        directory = os.path.dirname(filename)
+        return self.create_dir(directory)
+
+
+    def _list(self, source=None, recursive=False):
+        """
+        lists the information as dict
+
+        :param source: the source which either can be a directory or file
+        :param recursive: in case of directory the recursive referes to all
+                          subdirectories in the specified source
+        :return: dict
+        """
+        return self._list(source=source, recursive=recursive)
+
+    def _list(self, source=None, recursive=False, status="ok"):
         """
         lists the information as dict
 
@@ -125,14 +147,13 @@ class Provider(StorageABC):
         :return: dict
         """
         location = self._dirname(source)
-        VERBOSE(location)
         if recursive:
             files = location.glob("**/*")
         else:
             files = location.glob("*")
         result = []
         for file in files:
-            entry = self.identifier(source, str(file))
+            entry = self.identifier(source, str(file), status=status)
             result.append(entry)
         return result
 
@@ -158,7 +179,7 @@ class Provider(StorageABC):
             dest = path_expand(destination)
             shutil.copy2(src, dest)
 
-        return self.list()
+        return self.list(source=source, recusrive=recusrive)
 
     def get(self, source=None, destination=None, recusrive=False):
         """
@@ -181,7 +202,7 @@ class Provider(StorageABC):
             dest = path_expand(destination)
             shutil.copy2(src, dest)
 
-        return self.list()
+        return self.list(source=destination, recusrive=recusrive)
 
 
     def delete(self, source=None, recusrive=False):
@@ -193,10 +214,11 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
+        raise NotImplementedError
         source = self._dirname(source)
+        entries = self._list(source=source, recusrive=recusrive, ststus="deleted")
         shutil.rmtree(path_expand(source))
-        content = self.list()
-        return content
+        return entries
 
     def search(self,
                directory=None,
