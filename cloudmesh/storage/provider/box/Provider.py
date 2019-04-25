@@ -59,7 +59,6 @@ class Provider(StorageABC):
 
         super().__init__(service=service, config=config)
         self.sdk = JWTAuth.from_settings_file(self.credentials['config_path'])
-        # this needs to be well defined in ~/.cloudmesh/box/ ....
         self.client = Client(self.sdk)
 
     def put(self, service=None, source=None, destination=None, recursive=False):
@@ -309,15 +308,19 @@ class Provider(StorageABC):
             items2 = self.client.search().query(name, type='folder')
             folders = [item2 for item2 in items2]
             results = files + folders
+            deleted = []
             if not any(result.name == name for result in results):
                 Console.error("Source not found.")
             else:
                 item_ind = next((index for (index, result) in enumerate(results) if (result.name == name)), None)
                 item_id = results[item_ind].id
                 item_type = results[item_ind].type
+                deleted.append(results[item_ind])
                 if item_type == 'folder':
                     self.client.folder(item_id).delete()
                 elif item_type == 'file':
                     self.client.file(item_id).delete()
+                result_list = update_dict(deleted)
+                return result_list
         except Exception as e:
             Console.error(e)
