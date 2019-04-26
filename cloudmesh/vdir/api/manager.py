@@ -50,8 +50,8 @@ class Vdir(object):
                 }
                 dir_dict['type'] = 'directory'
                 dir_dict['parent'] = self.directory
-                dir_dict['cm.created'] = datetime.utcnow()
-                dir_dict['cm.modified'] = datetime.utcnow()
+                dir_dict['cm']['created'] = datetime.utcnow()
+                dir_dict['cm']['modified'] = datetime.utcnow()
                 return dir_dict
             else:
                 Console.error("Directory with that name exists.")
@@ -88,7 +88,8 @@ class Vdir(object):
         try:
             dirname = os.path.dirname(dir_and_name).split('/')[-1]
             if dirname == '':
-                directory = 'vdir'
+                dirname = 'vdir'
+                directory='vdir'
             else:
                 directory = self.col.find_one({"cm.name": dirname, 'type': 'directory'})
             filename = os.path.basename(dir_and_name)
@@ -101,7 +102,7 @@ class Vdir(object):
                     'cloud': 'local'
                 }
                 file_dict['type'] = 'fileendpoint'
-                file_dict['vdirectory'] = directory
+                file_dict['vdirectory'] = dirname
                 file_dict['cloud_directory'] = os.path.dirname(endpoint).split(':')[1]
                 file_dict['filename'] = os.path.basename(endpoint)
                 file_dict['provider'] = os.path.dirname(endpoint).split(':')[0]
@@ -111,6 +112,7 @@ class Vdir(object):
             elif directory is None:
                 Console.error("Virtual directory not found.")
             elif file is not None:
+                print(file)
                 Console.error("File with that name already exists.")
         except Exception as e:
             print(e)
@@ -123,10 +125,11 @@ class Vdir(object):
                                     {'$set': {'modified': datetime.utcnow()}})
                 service = doc['provider']
                 source = os.path.join(doc['cloud_directory'], doc['filename'])
+                print(source)
                 if destination is None:
-                    destination = '~/.cloudmesh'
+                    destination = '~/.cloudmesh/vdir'
                 p = Provider(service)
-                file = p.get(service, source, destination)
+                file = p.get(source, destination, False)
                 return file
             else:
                 Console.error("File not found.")
