@@ -78,13 +78,15 @@ class Provider(StorageABC):
             sourcebase = basename(sourcepath)
             uploaded = []
             if dest == '':
-                files = [item for item in self.client.folder('0').get_items()]
+                files = [item for item in self.client.folder('0').get_items() if item.type == 'file']
+                folders = [item for item in self.client.folder('0').get_items() if item.type == 'folder']
             else:
                 items = self.client.search().query(dest, type='folder')
                 folders = [item for item in items]
                 folder_id = get_id(dest, folders, 'folder')
                 if folder_id is not None:
-                    files = [item for item in self.client.folder(folder_id).get_items()]
+                    files = [item for item in self.client.folder(folder_id).get_items() if item.type == 'file']
+                    folders = [item for item in self.client.folder(folder_id).get_items() if item.type == 'folder']
                 else:
                     Console.error("Destination directory not found")
                     return
@@ -104,7 +106,14 @@ class Provider(StorageABC):
                     files_dict = update_dict(file)
                     return files_dict
             else:
-                for s in os.listdir(source):
+                while len(folders>0):
+                    for folder in folders:
+                        files += [item for item in self.client.folder(folder.id).get_items() if item.type == 'file']
+                        folders += [item for item in self.client.folder(folder_id).get_items() if item.type == 'folder']
+                uploads =[s for s in os.listdir(source)]
+                for s in uploads:
+                    if os.path.isdir(s):
+                        uploads+=[d for d in os.listdir(s)]
                     s_id = get_id(s, files, 'file')
                     if s_id is None:
                         file = self.client.folder('0').upload(sourcepath + '/' + s)
@@ -135,15 +144,21 @@ class Provider(StorageABC):
             downloads = []
             if recursive:
                 if target == '':
-                    files = [item for item in self.client.folder('0').get_items()]
+                    files = [item for item in self.client.folder('0').get_items() if item.type=='file']
+                    folders = [item for item in self.client.folder('0').get_items() if item.type=='folder']
                 else:
                     results = [item for item in self.client.search().query(target, type='folder')]
                     folder_id = get_id(target, results, 'folder')
                     if folder_id:
-                        files = [item for item in self.client.folder(folder_id).get_items()]
+                        files = [item for item in self.client.folder(folder_id).get_items() if item.type=='file']
+                        folders = [item for item in self.client.folder(folder_id).get_items() if item.type == 'folder']
                     else:
                         Console.error("Source directory not found.")
                         return
+                while len(folders)>0:
+                    for folder in folders:
+                        files += [item for item in self.client.folder(folder.id).get_items() if item.type == 'file']
+                        folders += [item for item in self.client.folder(folder.id).get_items() if item.type == 'folder']
                 for f in files:
                     if f.type == 'file':
                         file = self.client.file(f.id).get()
