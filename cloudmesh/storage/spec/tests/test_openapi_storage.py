@@ -104,7 +104,7 @@ class Test_cloud_storage:
         banner('get the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/storage/v1/get?service={storage}&source=%7e%2fopenapi&destination=%2fapitest%2fa%2etxt")
+            f"http://localhost:8080/cloudmesh/storage/v1/get?service={storage}&source=%2fapitest%2fa%2etxt&destination=%7e%2fopenapi")
         print(response)
         print()
 
