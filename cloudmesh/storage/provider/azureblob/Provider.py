@@ -91,12 +91,13 @@ class Provider(StorageABC):
 
         HEADING()
         # Determine service path - file or folder
-        blob_file, blob_folder = self.cloud_path(destination)
+        #blob_file, blob_folder = self.cloud_path(destination)
+        blob_file, blob_folder = self.cloud_path(source)
         print("File  : ", blob_file)
         print("Folder: ", blob_folder)
 
         # Determine local path i.e. download-to-folder
-        src_path = self.local_path(source)
+        src_path = self.local_path(destination)
 
         err_flag = 'N'
         rename = 'N'
@@ -176,9 +177,10 @@ class Provider(StorageABC):
                             if (os.path.dirname(blob.name) == blob_folder) or \
                                 (os.path.commonpath([blob.name,
                                                      blob_folder]) == blob_folder):
-                                download_path = os.path.join(src_path,
-                                                             os.path.basename(
-                                                                 blob.name))
+                                cre_path = os.path.join(src_path, os.path.dirname(blob.name))
+                                if not os.path.isdir(cre_path):
+                                    os.makedirs(cre_path, 0o777)
+                                download_path = os.path.join(src_path, blob.name)
                                 obj_list.append(self.storage_service.get_blob_to_path(
                                     self.container, blob.name, download_path))
                                 file_found = True
@@ -189,14 +191,14 @@ class Provider(StorageABC):
                 else:
                     # SOURCE is specified with Directory and file
                     if not recursive:
-                        if self.storage_service.exists(self.container, destination[1:]):
+                        if self.storage_service.exists(self.container, source[1:]):
                             if rename == 'Y':
                                 download_path = os.path.join(os.path.dirname(src_path), blob_file)
                             else:
                                 download_path = os.path.join(src_path, blob_file)
                             obj_list.append(
                                 self.storage_service.get_blob_to_path(self.container,
-                                                                      destination[1:],
+                                                                      source[1:],
                                                                       download_path))
                             if rename == 'Y':
                                 rename_path = src_path
@@ -204,12 +206,12 @@ class Provider(StorageABC):
                         else:
                             return Console.error(
                                 "File does not exist: {file}".format(
-                                    file=destination[1:]))
+                                    file=source[1:]))
                     else:
                         return Console.error(
                             "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
-        pprint(dict_obj)
+        #pprint(dict_obj)
         return dict_obj
 
     def put(self, service=None, source=None, destination=None, recursive=False):
@@ -357,16 +359,43 @@ class Provider(StorageABC):
 
         HEADING()
         banner("Please note: Directory in Azure is a virtual folder, "
-               "hence creating it with a marker file - dummy.txt")
-        if self.storage_service.exists(self.container):
-            blob_cre = []
+               "hence creating it with a uni-byte file - dummy.txt")
+
+        marker_file = 'dummy.txt'
+        blob_cre = []
+
+        if re.search('/', directory[1:]) is None:
             data = b' '
-            blob_name = directory[1:] + '/dummy.txt'
+            blob_name = directory[1:] + '/' + marker_file
             self.storage_service.create_blob_from_bytes(self.container, blob_name, data)
             blob_cre.append(
                 self.storage_service.get_blob_to_bytes(self.container, blob_name))
-            dict_obj = self.update_dict(blob_cre)
-            pprint(dict_obj[0])
+        else:
+            dir_list = directory[1:].split('/')
+            path_list = []
+            path_list.append(directory[1:])
+            old_path = directory[1:]
+            for i in range(len(dir_list) -1):
+                new_path = os.path.dirname(old_path)
+                path_list.append(new_path)
+                old_path = new_path
+
+            dir_gen = self.storage_service.list_blobs(self.container)
+            for path in path_list:
+                path_found = False
+                for blob in dir_gen:
+                    if os.path.dirname(blob.name) == path:
+                        path_found = True
+                if not path_found:
+                    data = b' '
+                    blob_name = path + '/' + marker_file
+                    self.storage_service.create_blob_from_bytes(self.container, blob_name, data)
+                    if path == directory[1:]:
+                        blob_cre.append(
+                            self.storage_service.get_blob_to_bytes(self.container, blob_name))
+
+        dict_obj = self.update_dict(blob_cre)
+        pprint(dict_obj[0])
         return dict_obj[0]
 
     def search(self, service=None, directory=None, filename=None,
