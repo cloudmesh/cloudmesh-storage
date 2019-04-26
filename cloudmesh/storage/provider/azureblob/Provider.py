@@ -252,20 +252,6 @@ class Provider(StorageABC):
             else:
                 # Folder only specified - Upload all files from folder
                 if recursive:
-                    '''
-                    for (root, folder, files) in os.walk(src_path, topdown=True):
-                        if len(files) > 0:
-                            for base in files:
-                                upl_path = os.path.join(root, base)
-                                if blob_folder == '':
-                                    upl_file = base
-                                else:
-                                    upl_file = blob_folder + '/' + base
-                                self.storage_service.create_blob_from_path(
-                                    self.container, upl_file, upl_path)
-                                obj_list.append(self.storage_service.get_blob_properties(self.container,
-                                                                                         upl_file))
-                    '''
                     ctr = 1
                     old_root = ""
                     new_dir = blob_folder
@@ -415,8 +401,14 @@ class Provider(StorageABC):
                 if re.search('/', blob.name) is not None:
                     if os.path.basename(blob.name) == os.path.basename(filename):
                         if os.path.commonpath([blob.name, directory[1:]]) == directory[1:]:
-                            obj_list.append(blob)
-                            file_found = True
+                            if filename.startswith('/'):
+                                if filename[1:] in blob.name:
+                                    obj_list.append(blob)
+                                    file_found = True
+                            else:
+                                if filename in blob.name:
+                                    obj_list.append(blob)
+                                    file_found = True
                 else:
                     if blob.name == os.path.join(directory[1:], filename):
                         obj_list.append(blob)
@@ -536,7 +528,7 @@ class Provider(StorageABC):
                     return Console.error(
                         "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
-        pprint(dict_obj)
+        #pprint(dict_obj)
         if len(file_list) > 0:
             hdr = '#' * 90 + '\n' + 'List of files in the folder ' + '/' + blob_folder + ':'
             Console.cprint("BLUE", "", hdr)
