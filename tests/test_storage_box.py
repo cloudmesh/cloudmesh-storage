@@ -118,12 +118,19 @@ class Test_box:
 
     def test_delete(self):
         HEADING()
+        StopWatch.start("box delete")
         del_dir = self.p.delete(service=self.p.service, source=self.testdir, recursive=False)
         while del_dir is None:
             time.sleep(90)
             del_dir = self.p.delete(service=self.p.service, source=self.testdir, recursive=False)
+        StopWatch.stop("box delete")
 
         assert del_dir is not None
+
+    def test_results(self):
+        HEADING()
+
+        StopWatch.benchmark()
 
 
 
