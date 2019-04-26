@@ -12,11 +12,11 @@ from cloudmesh.common.util import path_expand
 from  pathlib import Path
 from cloudmesh.common.util import writefile
 from cloudmesh.variables import Variables
-from cloudmesh.common.util import banner
 from cloudmesh.common.parameter import Parameter
 import pytest
-from cloudmesh.variables import Variables
 from cloudmesh.common.util import readfile
+from cloudmesh.common.StopWatch import StopWatch
+from cloudmesh.common.util import banner
 
 
 @pytest.mark.incremental
@@ -56,23 +56,22 @@ class Test_storage:
         d1 = Path(path_expand(f"{home}/a/empty"))
         d1.mkdir(parents=True, exist_ok=True)
 
-        #self.create_dir(f"{home}/a/empty")
-
         for f in self.files:
             assert os.path.isfile(f"{home}/{f}")
 
         assert os.path.isdir(f"{home}/a/empty")
 
-
-
-
     def test_put_and_get(self):
         HEADING()
         home = self.sourcedir
+        StopWatch.start("PUT file")
         test_file = self.p.put(self.p.service, f"{home}/a/a1.txt", "/")
+        StopWatch.stop("PUT file")
         assert test_file is not None
 
-        test_file = self.p.get(self.p.service, f"{home}/hello.txt", f"/a1.txt")
+        StopWatch.start("GET file")
+        test_file = self.p.get(self.p.service, f"/a1.txt", f"{home}/hello.txt")
+        StopWatch.stop("GET file")
         assert test_file is not None
 
         content = readfile(f"{home}/hello.txt")
@@ -80,7 +79,9 @@ class Test_storage:
 
     def test_list(self):
         HEADING()
+        StopWatch.start("LIST Directory")
         contents = self.p.list(self.p.service, "/")
+        StopWatch.stop("LIST Directory")
         for c in contents:
             pprint(c)
 
@@ -89,12 +90,14 @@ class Test_storage:
         for entry in contents:
             if entry["cm"]["name"] == "a1.txt":
                 found = True
+        assert found
 
     def test_create_dir(self):
         HEADING()
-        self.p.create_dir(self.p.service, '/a')
         src = '/a/created_dir'
+        StopWatch.start("CREATE DIR")
         directory = self.p.create_dir(self.p.service, src)
+        StopWatch.stop("CREATE DIR")
         pprint(directory)
 
         assert dir is not None
@@ -104,7 +107,9 @@ class Test_storage:
         HEADING()
         src = '/'
         filename = "a1.txt"
+        StopWatch.start("SEARCH file")
         search_files = self.p.search(self.p.service, src, filename, True)
+        StopWatch.stop("SEARCH file")
         pprint(search_files)
         assert len(search_files) > 0
         assert search_files[0]["name"] == filename
@@ -112,10 +117,11 @@ class Test_storage:
     def test_delete(self):
         HEADING()
         src = "/a/created_dir"
+        StopWatch.start("DELETE Directory")
         contents = self.p.delete(self.p.service, src)
+        StopWatch.stop("DELETE Directory")
         deleted = False
         for entry in contents:
-            #print(entry)
             if "created_dir" in entry["cm"]["name"]:
                 if entry["cm"]["status"] == "deleted":
                     deleted = True
@@ -125,7 +131,9 @@ class Test_storage:
         # must be implemented by student from ~/.cloudmesh/storage/test
         # make sure all files are in the list see self.content which contains all files
         home = self.sourcedir
+        StopWatch.start("PUT Directory --recursive")
         upl_files = self.p.put(self.p.service, f"{home}", "/a", True)
+        StopWatch.stop("PUT Directory --recursive")
         pprint(upl_files)
 
         assert upl_files is not None
@@ -136,7 +144,9 @@ class Test_storage:
         home = self.sourcedir
         d2 = Path(path_expand(f"{home}/get"))
         d2.mkdir(parents=True, exist_ok=True)
-        dnld_files = self.p.get(self.p.service, f"{home}/get", "/a", True)
+        StopWatch.start("GET Directory --recursive")
+        dnld_files = self.p.get(self.p.service, "/a", f"{home}/get", True)
+        StopWatch.stop("GET Directory --recursive")
         pprint(dnld_files)
 
         assert dnld_files is not None
@@ -145,7 +155,9 @@ class Test_storage:
         # must be implemented by student into ~/.cloudmesh/storage/test/get
         # see self.content which contains all files but you must add get/
         src = "/a/a/b/c"
+        StopWatch.start("Delete Sub-directory")
         del_files = self.p.delete(self.p.service, src)
+        StopWatch.stop("Delete Sub-directory")
 
         assert len(del_files) > 0
 
@@ -153,34 +165,55 @@ class Test_storage:
         # must be implemented by student into ~/.cloudmesh/storage/test/
         # see self.content which contains all files that you can test against
         # in the list return. all of them must be in there
+        StopWatch.start("LIST Directory --recursive")
         contents = self.p.list(self.p.service, "/a", True)
+        StopWatch.stop("LIST Directory --recursive")
+
         assert len(contents) > 0
 
-    #def test_selective_list(self):
+    def test_selective_list(self):
         # must be implemented by student into ~/.cloudmesh/storage/test/a/b
         # see self.content which contains all files that you can test against
         # in the list return. all of them must be in there but not more?
         # I am unsure if we implemented a secive list. If not let us know
         # full list for now is fine
-    #    assert False
+        StopWatch.start("LIST Sub-directory --recursive")
+        contents = self.p.list(self.p.service, "/a/a/b", True)
+        StopWatch.stop("LIST Sub-directory --recursive")
+
+        assert len(contents) > 0
 
     def test_search_b1(self):
         # search for b1.txt
         src = '/a'
         filename = 'b1.txt'
+        StopWatch.start("Search file --recursive")
         search_files = self.p.search(self.p.service, src, filename, True)
+        StopWatch.stop("Search file --recursive")
+
         assert search_files is not None
 
     def test_search_b1_dir(self):
         # search for b/b2.txt see that this one has even the dir in the search
         src = '/a'
         filename = '/b/b1.txt'
+        StopWatch.start("SEARCH file under a sub-dir --r")
         search_files = self.p.search(self.p.service, src, filename, True)
+        StopWatch.stop("SEARCH file under a sub-dir --r")
         assert search_files is not None
 
     def test_search_a1(self):
         # search for a1.txt which shold return 2 entries
         src = '/a'
         filename = 'a1.txt'
+        StopWatch.start("SEARCH file under root dir --r")
         search_files = self.p.search(self.p.service, src, filename, True)
-        assert search_files is not None
+        StopWatch.stop("SEARCH file under root dir --r")
+
+        assert len(search_files) == 2
+
+    def test_results(self):
+        HEADING()
+        #storage = self.p.service
+        banner("Benchmark results for AzureBlob Storage")
+        StopWatch.benchmark()
