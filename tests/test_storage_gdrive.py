@@ -42,7 +42,7 @@ class Test_gdrive:
     def test_02_get(self):
         HEADING()
         src = path_expand("~/.cloudmesh/storage/test/source/test/source/")
-        dst = 'Useful Links.txt'
+        dst = 'getExample.txt'
         # fetching files from dst to src
         file = self.p.get(source=src, destination=dst, recursive=False)
         assert file is not None
@@ -60,7 +60,7 @@ class Test_gdrive:
         # Searching sample_source.txt which is created earlier in home directory
         search_files = self.p.search(directory='/', filename='Useful Links.txt', recursive=True)
         pprint(search_files)
-        assert search_files
+        assert search_files is not None
 
     def test_05_create_dir(self):
         HEADING()
@@ -71,5 +71,6 @@ class Test_gdrive:
     def test_06_delete(self):
         HEADING()
         # Deleting in google drive home sample_source.txt
-        message = self.p.delete(filname='sample_source.txt')
+        message = self.p.delete(filename='sample_source.txt')
+
         assert message is not None
