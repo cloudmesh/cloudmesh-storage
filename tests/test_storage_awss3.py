@@ -29,9 +29,8 @@ class Test_storage_awss3:
         writefile(path_expand(location), content)
 
     def setup(self):
-        StopWatch.start("awss3 setup")
-        self.p = cloudmesh.storage.provider.aws.Provider_new5.Provider(service="aws")
-        #self.p = cloudmesh.storage.provider.awss3.Provider.Provider(service="awss3")
+        StopWatch.start("awss3 setup")        
+        self.p = cloudmesh.storage.provider.awss3.Provider.Provider(service="awss3")
         print('Success')
         StopWatch.stop("awss3 setup")
 
