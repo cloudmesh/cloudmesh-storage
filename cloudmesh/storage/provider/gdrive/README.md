@@ -1,5 +1,37 @@
 # Google drive
 
+## cloudmesh4.yaml file entries for gdrive storage
+```
+    gdrive: 
+      cm: 
+        heading: GDrive
+        host: dgrive.google.com
+        kind: gdrive
+        label: GDrive
+        version: TBD
+      credentials: 
+        auth_host_name: localhost
+        auth_host_port: 
+          - ****
+          - ****
+        auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
+        auth_uri: "https://accounts.google.com/o/oauth2/auth"
+        client_id: ********************************
+        client_secret: ****************************
+        project_id: *********************
+        scopes: 'https://www.googleapis.com/auth/drive'
+        application_name: '**********************'
+        location_secret: '~/.cloudmesh/gdrive/client_secret.json'
+        location_gdrive_credentials: '~/.cloudmesh/gdrive/.credentials'
+        maxfiles: 1000
+        redirect_uris: 
+          - "urn:ietf:wg:oauth:2.0:oob"
+          - "http://localhost"
+        token_uri: "https://oauth2.googleapis.com/token"
+      default: 
+        directory: TBD
+```
+
 The Google Drive API needs the following two 2 credentials files. 
 * `client_secret.json` 
 * `google-drive-credentials.json`  

@@ -39,6 +39,10 @@ google-auth
 google-auth-httplib2
 python-magic
 oauth2client
+azure
+azure-storage-common
+azure-storage-nspkg
+azure-storage-blob
 """.split("\n")
 
 # dependency_links = ['http://github.com/nicolaiarocci/eve.git@develop']
