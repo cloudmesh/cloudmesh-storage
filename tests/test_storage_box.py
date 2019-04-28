@@ -63,9 +63,9 @@ class Test_box:
         HEADING()
         StopWatch.start("box put")
         test_file = self.p.put(service=self.p.service,
-                               source=self.source_file,
+                               source=self.source,
                                destination=self.destination,
-                               recursive=False)
+                               recursive=True)
         pprint(test_file)
         StopWatch.stop("box put")
 

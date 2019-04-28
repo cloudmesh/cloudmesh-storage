@@ -2,7 +2,7 @@ from boxsdk import JWTAuth
 from boxsdk import Client
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
-from os.path import basename, join
+from os.path import basename, join, dirname
 import os
 from cloudmesh.storage.StorageABC import StorageABC
 
@@ -74,19 +74,26 @@ class Provider(StorageABC):
             sourcepath = change_path(source)
             sourcebase = basename(sourcepath)
             uploaded = []
+            files = []
             if dest == '':
-                files = [item for item in self.client.folder('0').get_items() if item.type == 'file']
-                folders = [item for item in self.client.folder('0').get_items() if item.type == 'folder']
+                files += [item for item in self.client.folder('0').get_items() if item.type == 'file']
+                folder_id = '0'
             else:
                 items = self.client.search().query(dest, type='folder')
                 folders = [item for item in items]
                 folder_id = get_id(dest, folders, 'folder')
                 if folder_id is not None:
-                    files = [item for item in self.client.folder(folder_id).get_items() if item.type == 'file']
-                    folders = [item for item in self.client.folder(folder_id).get_items() if item.type == 'folder']
+                    files += [item for item in self.client.folder(folder_id).get_items() if item.type == 'file']
                 else:
-                    Console.error("Destination directory not found")
-                    return
+                    items = self.client.search().query(basename(dirname(destination)), type='folder')
+                    folders = [item for item in items]
+                    folder_id = get_id(dest, folders, 'folder')
+                    if folder_id is not None:
+                        new_folder = self.client.folder(folder_id).create_subfolder(dest)
+                        folder_id = new_folder.id
+                    else:
+                        Console.error("Invalid destination.")
+                        return
             if not recursive:
                 if os.path.isfile(sourcepath):
                     filename = sourcebase
@@ -95,7 +102,7 @@ class Provider(StorageABC):
                     return
                 file_id = get_id(filename, files, 'file')
                 if file_id is None:
-                    file = self.client.folder('0').upload(sourcepath)
+                    file = self.client.folder(folder_id).upload(sourcepath)
                     files_dict = update_dict(file)
                     return files_dict
                 else:
@@ -103,21 +110,24 @@ class Provider(StorageABC):
                     files_dict = update_dict(file)
                     return files_dict
             else:
-                while len(folders>0):
-                    for folder in folders:
-                        files += [item for item in self.client.folder(folder.id).get_items() if item.type == 'file']
-                        folders += [item for item in self.client.folder(folder_id).get_items() if item.type == 'folder']
-                uploads =[s for s in os.listdir(source)]
-                for s in uploads:
-                    if os.path.isdir(s):
-                        uploads+=[d for d in os.listdir(s)]
-                    s_id = get_id(s, files, 'file')
-                    if s_id is None:
-                        file = self.client.folder('0').upload(sourcepath + '/' + s)
-                        uploaded.append(file)
-                    else:
-                        file = self.client.file(s_id).update_contents(sourcepath + '/' + s)
-                        uploaded.append(file)
+                folder_ids = [folder_id]
+                uploads = [[s for s in os.listdir(source)]]
+                while len(uploads)>0:
+                    for s in uploads[0]:
+                        if os.path.isdir(s):
+                            uploads += [d for d in os.listdir(s)]
+                            new = self.client.folder(folder_ids[0]).create_subfolder(s)
+                            folder_ids.append(new.id)
+                        else:
+                            s_id = get_id(s, files, 'file')
+                            if s_id is None:
+                                file = self.client.folder(folder_ids[0]).upload(sourcepath + '/' + s)
+                                uploaded.append(file)
+                            else:
+                                file = self.client.file(s_id).update_contents(sourcepath + '/' + s)
+                                uploaded.append(file)
+                    uploads.pop(0)
+                    folder_ids.pop(0)
                 files_dict = update_dict(uploaded)
                 return files_dict
         except Exception as e:
@@ -150,9 +160,9 @@ class Provider(StorageABC):
                         Console.error("Source directory not found.")
                         return
                 while len(folders)>0:
-                    for folder in folders:
-                        files += [item for item in self.client.folder(folder.id).get_items() if item.type == 'file']
-                        folders += [item for item in self.client.folder(folder.id).get_items() if item.type == 'folder']
+                    files += [item for item in self.client.folder(folders[0].id).get_items() if item.type == 'file']
+                    folders += [item for item in self.client.folder(folders[0].id).get_items() if item.type == 'folder']
+                    folders.pop(0)
                 for f in files:
                     if f.type == 'file':
                         file = self.client.file(f.id).get()
