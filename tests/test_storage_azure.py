@@ -216,7 +216,7 @@ class Test_storage:
 
     def test_results(self):
         HEADING()
-        storage = self.p.service
+        # storage = self.p.service
         service = self.service
-        banner(f"Benchmark results for '{storage}' Storage")
+        banner(f"Benchmark results for '{service}' Storage")
         StopWatch.benchmark()
