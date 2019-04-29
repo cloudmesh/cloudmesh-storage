@@ -1,12 +1,12 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_azure.py
 # pytest -v  tests/test_storage_azure.py
-# pytest -v --capture=no -v --nocapture tests/test_storage_azure.py:Test_storage.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage_azure.py:Test_storage.<METHIDNAME>
 ###############################################################
 import os
 from pprint import pprint
 
-import cloudmesh.storage.provider.azureblob.Provider
+from cloudmesh.storage.Provider import Provider
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from  pathlib import Path
@@ -18,7 +18,9 @@ from cloudmesh.common.util import readfile
 from cloudmesh.common.StopWatch import StopWatch
 from cloudmesh.common.util import banner
 
-
+#
+# cms set storage=azure
+#
 @pytest.mark.incremental
 class Test_storage:
 
@@ -33,7 +35,7 @@ class Test_storage:
     def setup(self):
         variables = Variables()
         service = Parameter.expand(variables['storage'])[0]
-        self.p = cloudmesh.storage.provider.azureblob.Provider.Provider(service=service)
+        self.p = Provider(service=service)
         self.sourcedir = path_expand("~/.cloudmesh/storage/test")
         print()
 

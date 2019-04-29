@@ -71,8 +71,6 @@ class Test_storage_installer:
         assert "cloudmesh.storage" in result
 
 
-
-
 class other:
     def test_delete_dir(self):
         path = "tmp"

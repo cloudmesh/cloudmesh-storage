@@ -47,19 +47,21 @@ class Test_vdir:
 
     @pytest.fixture(scope='class')
     def dummy_file(self):
-        StopWatch.start("vdir add")
-        self.vdir = Vdir()
         self.endpoint = 'box:/test.txt'
         self.dir_and_name = 'test'
+
+        StopWatch.start("vdir add")
+        self.vdir = Vdir()
         testfile = self.vdir.add(endpoint=self.endpoint, dir_and_name=self.dir_and_name)
         StopWatch.stop("vdir add")
         return testfile
 
     @pytest.fixture(scope='class')
     def dummy_dir(self):
+        self.dir = 'testdir'
+
         StopWatch.start("vdir mkdir")
         self.vdir = Vdir()
-        self.dir = 'testdir'
         testdir = self.vdir.mkdir(dirname=self.dir)
         StopWatch.stop("vdir mkdir")
         return testdir
@@ -87,8 +89,8 @@ class Test_vdir:
         HEADING()
         StopWatch.start("vdir get")
         file = self.vdir.get(name=self.file, destination=self.destination)
-        print(file)
         StopWatch.stop("vdir get")
+        print(file)
 
         assert file is not None
 
