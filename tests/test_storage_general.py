@@ -100,12 +100,12 @@ class Test_storage:
         HEADING()
         src = '/a/created_dir'
         StopWatch.start("CREATE DIR")
-        directory = self.p.create_dir(self.p.service, src)
+        directory = self.p.createdir(self.p.service, src)
         StopWatch.stop("CREATE DIR")
         pprint(directory)
 
         assert dir is not None
-        assert "a/created_dir" in directory["name"]
+        assert "a/created_dir" in directory[0]["name"]
 
     def test_search(self):
         HEADING()
@@ -159,9 +159,9 @@ class Test_storage:
         # must be implemented by student into ~/.cloudmesh/storage/test/get
         # see self.content which contains all files but you must add get/
         src = "/a/a/b/c"
-        StopWatch.start("Delete Sub-directory")
+        StopWatch.start("DELETE Sub-directory")
         del_files = self.p.delete(self.p.service, src)
-        StopWatch.stop("Delete Sub-directory")
+        StopWatch.stop("DELETE Sub-directory")
 
         assert len(del_files) > 0
 
@@ -191,9 +191,9 @@ class Test_storage:
         # search for b1.txt
         src = '/a'
         filename = 'b1.txt'
-        StopWatch.start("Search file --recursive")
+        StopWatch.start("SEARCH file --recursive")
         search_files = self.p.search(self.p.service, src, filename, True)
-        StopWatch.stop("Search file --recursive")
+        StopWatch.stop("SEARCH file --recursive")
 
         assert search_files is not None
 
