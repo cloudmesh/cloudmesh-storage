@@ -35,8 +35,8 @@ class Test_storage:
 
     def setup(self):
         variables = Variables()
-        service = Parameter.expand(variables['storage'])[0]
-        self.p = Provider(service=service)
+        self.service = Parameter.expand(variables['storage'])[0]
+        self.p = Provider(service=self.service)
         self.sourcedir = path_expand("~/.cloudmesh/storage/test")
         print()
 
@@ -219,5 +219,6 @@ class Test_storage:
     def test_results(self):
         HEADING()
         # storage = self.p.service
-        banner("Benchmark results for AzureBlob Storage")
+        service = self.service
+        banner(f"Benchmark results for {service} Storage")
         StopWatch.benchmark()
