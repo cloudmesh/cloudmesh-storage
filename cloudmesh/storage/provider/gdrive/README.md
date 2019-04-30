@@ -1,4 +1,5 @@
 # Google drive
+## Put and Get in recursive way is still not working as expected. Delete, List, Search, Make Directory are working fine.
 
 ## cloudmesh4.yaml file entries for gdrive storage
 ```
