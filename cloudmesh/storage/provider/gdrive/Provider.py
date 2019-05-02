@@ -18,8 +18,8 @@ from cloudmesh.common.console import Console
 
 class Provider(StorageABC):
 
-    def __init__(self, service='gdrive', config="~/.cloudmesh/cloudmesh4.yaml"):
-        super(Provider, self).__init__(service=service, config=config)
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+        super().__init__(service=service, config=config)
         self.config = Config()
         self.storage_credentials = self.config.credentials("storage", "gdrive")
         if self.storage_credentials['maxfiles'] > 1000:
@@ -216,8 +216,7 @@ class Provider(StorageABC):
                 tempres.append(sourceid['files'][0])
             return self.update_dict(tempres)
 
-    def delete(self, service='gdrive', filename=None,
-               recursive=False):  # this is working
+    def delete(self, service=None, filename=None, recursive=False):  # this is working
         file_id = ""
         file_rec = None
         if recursive:
@@ -250,15 +249,25 @@ class Provider(StorageABC):
         
         return self.update_dict(file_rec)
 
-    def create_dir(self, service='gdrive', directory=None):
-        file_metadata = {'name': directory,
-                         'mimeType': 'application/vnd.google-apps.folder'}
-        file = self.driveService.files().create(body=file_metadata,
-                                                fields='id, name, mimeType, parents,size,modifiedTime,createdTime').execute()
-        print('Folder ID: %s' % file.get('id'))
-        return self.update_dict(file)
+    def create_dir(self, service=None, directory=None):
+        folders, filename = self.cloud_path(directory)
+        id = None
+        files = []
+        for folder in folders:
+            if id is None:
+                file_metadata = {'name': folder,
+                             'mimeType': 'application/vnd.google-apps.folder'}
+            else:
+                file_metadata = {'name': folder,
+                             'mimeType': 'application/vnd.google-apps.folder', 'parents': [id] }
+            file = self.driveService.files().create(body=file_metadata,
+                                                fields='id, name, mimeType, parents, size, modifiedTime, createdTime').execute()
+            files.append(file)
+            print('Folder ID: %s' % file.get('id'))
+            id = file.get('id')
+        return self.update_dict(files)
 
-    def list(self, service='gdrive', source=None, recursive=False):
+    def list(self, service=None, source=None, recursive=False):
         if recursive:
             results = self.driveService.files().list(pageSize=self.limitFiles,
                                                      fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
@@ -286,8 +295,7 @@ class Provider(StorageABC):
             else:
                 return self.update_dict(items)
 
-    def search(self, service='gdrive', directory=None, filename=None,
-               recursive=False):
+    def search(self, service=None, directory=None, filename=None, recursive=False):
         if recursive:
             found = False
             res_file = None
@@ -343,6 +351,19 @@ class Provider(StorageABC):
             fh.seek(0)
             f.write(fh.read())
         return filepath
+    
+    def cloud_path(self, srv_path):
+        # Internal function to determine if the cloud path specified is file or folder or mix
+        b_folder = []
+        b_file = None
+        src_file = srv_path
+        if srv_path.startswith('/'):
+            src_file = srv_path[1:]
+        arr_folders = src_file.split('/')
+        if('.' in arr_folders[-1]):
+            return arr_folders[0:-1], arr_folders[-1]
+        else:
+            return arr_folders, None
     
     def update_dict(self, elements):
         if elements is None:
