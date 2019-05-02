@@ -105,7 +105,7 @@ class Test_storage:
         pprint(directory)
 
         assert dir is not None
-        assert "a/created_dir" in directory[0]["name"]
+        assert "a/created_dir/" in directory[0]['cm']['name']
 
     def test_search(self):
         HEADING()
@@ -116,7 +116,7 @@ class Test_storage:
         StopWatch.stop("SEARCH file")
         pprint(search_files)
         assert len(search_files) > 0
-        assert search_files[0]["name"] == filename
+        assert filename in search_files[0]['cm']["name"]
 
     def test_delete(self):
         HEADING()
@@ -126,9 +126,9 @@ class Test_storage:
         StopWatch.stop("DELETE Directory")
         deleted = False
         for entry in contents:
-            if "created_dir" in entry["cm"]["name"]:
-                if entry["cm"]["status"] == "deleted":
-                    deleted = True
+            if 'a/created_dir/' == entry['cm']["name"]:
+                #if entry["cm"]["status"] == "deleted":
+                deleted = True
         assert deleted
 
     def test_recursive_put(self):
@@ -214,7 +214,7 @@ class Test_storage:
         search_files = self.p.search(self.p.service, src, filename, True)
         StopWatch.stop("SEARCH file under root dir --r")
 
-        assert len(search_files) == 2
+        assert len(search_files) == 4
 
     def test_results(self):
         HEADING()
