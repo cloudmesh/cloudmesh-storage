@@ -3,3 +3,4 @@ wheel
 twine
 invoke
 pytest
+pytest-cov
