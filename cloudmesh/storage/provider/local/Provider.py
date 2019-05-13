@@ -7,12 +7,12 @@ from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.DEBUG import VERBOSE
 import shutil
 from os import stat
-from pwd import getpwuid
+
+# import pwd  # does not work in windows
+# from grp import getgrgid # does not work in windows
+# from datetime import datetimef # does not work in windows
+
 from cloudmesh.common.Shell import Shell
-
-from grp import getgrgid
-
-from datetime import datetime
 import os
 import platform
 
@@ -90,8 +90,8 @@ class Provider(StorageABC):
             "status": status,
             "size": os.path.getsize(filename),
             "name": filename,
-            "ownwer": getpwuid(uid)[0],
-            "group": getgrgid(gid)[0],
+            # "ownwer": pwd.getpwuid(uid)[0],
+            # "group": pwd.getgrgid(gid)[0],
             "creation": datetime.fromtimestamp(creation_date(filename)).strftime("%m/%d/%Y, %H:%M:%S" )
 
         }
