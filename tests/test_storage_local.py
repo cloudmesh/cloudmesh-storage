@@ -104,10 +104,10 @@ class A:
     def test_06_create_dir(self):
         HEADING()
         src = '/created_dir'
-        dir = self.p.create_dir(src)
-        pprint(dir)
+        directory = self.p.create_dir(src)
+        pprint(directory)
 
-        assert dir is not None
+        assert directory is not None
 
     def test_07_delete(self):
         HEADING()

@@ -2,9 +2,6 @@
 # pytest -v --capture=no tests/test_openapi_storage.py
 # pytest -v  tests/test_openapi_storage.py
 ###############################################################
-
-from __future__ import print_function
-
 import os
 import time
 import requests
@@ -25,7 +22,7 @@ pytest.openapi = None
 
 # noinspection PyPep8
 @pytest.mark.incremental
-class Test_cloud_storage:
+class TestCloudStorageOpenapu(obkect):
     """
 
     see: https://github.com/cloudmesh/cloudmesh-common/blob/master/cloudmesh/common/run/background.py
