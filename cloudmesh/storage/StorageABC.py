@@ -17,10 +17,9 @@ class StorageABC(metaclass=ABCMeta):
             self.kind = spec[service]['cm']['kind']
             self.cloud = service
             self.service = service
-        except Exception  as e:
+        except Exception as e:
             raise ValueError(f"storage service {service} not specified")
-            print (e)
-
+            print(e)
 
     def create_dir(self,
                    service=None,

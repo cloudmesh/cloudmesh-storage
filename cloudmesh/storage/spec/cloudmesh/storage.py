@@ -6,6 +6,7 @@ from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
 from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
 from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
 
+
 def setup(kind):
     config = "~/.cloudmesh/cloudmesh4.yaml"
     if kind == "local":
@@ -20,10 +21,12 @@ def setup(kind):
         provider = AwsProvider(service=kind, config=config)
     return provider
 
+
 def create_dir(service, directory):
     provider = setup(service)
     d = provider.create_dir(service, directory)
     return jsonify(d)
+
 
 def put(params=None):
     service = params['service']
@@ -35,23 +38,26 @@ def put(params=None):
     d = provider.put(service, source, destination, recursive)
     return jsonify(d)
 
+
 def get(service, source, destination, recursive=False):
     provider = setup(service)
     d = provider.get(service, source, destination, recursive)
     return jsonify(d)
+
 
 def list(service, directory, recursive=False):
     provider = setup(service)
     d = provider.list(service, directory, recursive)
     return jsonify(d)
 
+
 def search(service, directory, filename, recursive=False):
     provider = setup(service)
     d = provider.search(service, directory, filename, recursive)
     return jsonify(d)
 
+
 def delete(service, source, recursive=False):
     provider = setup(service)
     d = provider.delete(service, source, recursive)
     return jsonify(d)
-

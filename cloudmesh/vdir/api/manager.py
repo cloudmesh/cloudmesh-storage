@@ -89,7 +89,7 @@ class Vdir(object):
             dirname = os.path.dirname(dir_and_name).split('/')[-1]
             if dirname == '':
                 dirname = 'vdir'
-                directory='vdir'
+                directory = 'vdir'
             else:
                 directory = self.col.find_one({"cm.name": dirname, 'type': 'directory'})
             filename = os.path.basename(dir_and_name)

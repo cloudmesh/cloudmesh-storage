@@ -12,6 +12,7 @@ from cloudmesh.common.console import Console
 import warnings
 from pprint import pprint
 
+
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
@@ -79,7 +80,7 @@ class Provider(StorageABC):
         service = self.service
         VERBOSE(f"delete filename {service} {source}")
         d = self.provider.delete(service=service, source=source)
-        #raise ValueError("must return a value")
+        # raise ValueError("must return a value")
         return d
 
     def search(self, directory=None, filename=None, recursive=False):
@@ -101,7 +102,7 @@ class Provider(StorageABC):
                                recursive=recursive)
         return d
 
-    def tree (self, source):
+    def tree(self, source):
 
         data = self.provider.list(source=source)
 

@@ -91,7 +91,7 @@ class Provider(StorageABC):
 
         HEADING()
         # Determine service path - file or folder
-        #blob_file, blob_folder = self.cloud_path(destination)
+        # blob_file, blob_folder = self.cloud_path(destination)
         blob_file, blob_folder = self.cloud_path(source)
         print("File  : ", blob_file)
         print("Folder: ", blob_folder)
@@ -211,7 +211,7 @@ class Provider(StorageABC):
                         return Console.error(
                             "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
-        #pprint(dict_obj)
+        # pprint(dict_obj)
         return dict_obj
 
     def put(self, service=None, source=None, destination=None, recursive=False):
@@ -248,7 +248,7 @@ class Provider(StorageABC):
                 else:
                     upl_file = blob_folder + '/' + os.path.basename(src_path)
                 self.storage_service.create_blob_from_path(self.container,
-                                                                 upl_file, upl_path)
+                                                           upl_file, upl_path)
                 obj_list.append(self.storage_service.get_blob_properties(self.container,
                                                                          upl_file))
             else:
@@ -375,7 +375,7 @@ class Provider(StorageABC):
             path_list = []
             path_list.append(directory[1:])
             old_path = directory[1:]
-            for i in range(len(dir_list) -1):
+            for i in range(len(dir_list) - 1):
                 new_path = os.path.dirname(old_path)
                 path_list.append(new_path)
                 old_path = new_path
@@ -557,7 +557,7 @@ class Provider(StorageABC):
                     return Console.error(
                         "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
-        #pprint(dict_obj)
+        # pprint(dict_obj)
         if len(file_list) > 0:
             hdr = '#' * 90 + '\n' + 'List of files in the folder ' + '/' + blob_folder + ':'
             Console.cprint("BLUE", "", hdr)

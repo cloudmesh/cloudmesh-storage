@@ -16,7 +16,7 @@ from cloudmesh.common.util import banner
 from cloudmesh.shell.variables import Variables
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import path_expand
-from  pathlib import Path
+from pathlib import Path
 from cloudmesh.common.util import writefile
 
 pytest.storage = None
@@ -86,14 +86,14 @@ class Test_cloud_storage:
         headers = {
             'Content-Type': 'application/json',
         }
-        #data = '{"service": "azureblob", "source": "~/openapi/a.txt", "destination": "/apitest", "recursive": "False"}'
-        
+        # data = '{"service": "azureblob", "source": "~/openapi/a.txt", "destination": "/apitest", "recursive": "False"}'
+
         data = {}
         data['service'] = f"{storage}"
         data['source'] = "~/openapi/a.txt"
         data['destination'] = "/apitest"
         data['recursive'] = "False"
-        
+
         data_str = json.dumps(data)
 
         response = requests.post('http://localhost:8080/cloudmesh/storage/v1/put', headers=headers, data=data_str)

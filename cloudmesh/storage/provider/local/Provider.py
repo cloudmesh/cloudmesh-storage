@@ -16,6 +16,7 @@ from cloudmesh.common.Shell import Shell
 import os
 import platform
 
+
 def creation_date(path_to_file):
     """
     Try to get the date that a file was created, falling back to when it was
@@ -92,7 +93,7 @@ class Provider(StorageABC):
             "name": filename,
             # "ownwer": pwd.getpwuid(uid)[0],
             # "group": pwd.getgrgid(gid)[0],
-            "creation": datetime.fromtimestamp(creation_date(filename)).strftime("%m/%d/%Y, %H:%M:%S" )
+            "creation": datetime.fromtimestamp(creation_date(filename)).strftime("%m/%d/%Y, %H:%M:%S")
 
         }
         return identity
@@ -114,7 +115,6 @@ class Provider(StorageABC):
         identity = self.identifier(directory, None)
         return identity
 
-
     def create_dir_from_filename(self, filename=None):
         """
         creates a directory
@@ -124,7 +124,6 @@ class Provider(StorageABC):
         """
         directory = os.path.dirname(filename)
         return self.create_dir(directory)
-
 
     def _list(self, source=None, recursive=False):
         """
@@ -204,7 +203,6 @@ class Provider(StorageABC):
 
         return self.list(source=destination, recusrive=recusrive)
 
-
     def delete(self, source=None, recusrive=False):
         """
         deletes the source
@@ -234,7 +232,6 @@ class Provider(StorageABC):
         :return: dict
         """
 
-
         VERBOSE(locals())
         files = self.list(source=directory, recursive=recursive)
         VERBOSE(files)
@@ -247,4 +244,4 @@ class Provider(StorageABC):
     def tree(self, directory=None):
         source = self._dirname(directory)
         r = Shell.execute(f"tree {source}")
-        print (r)
+        print(r)
