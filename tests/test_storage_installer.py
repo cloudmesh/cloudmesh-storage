@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_installer.py
 # pytest -v  tests/test_storage_installer.py
-# pytest -v --capture=no -v --nocapture tests/test_storage_installer.py:Test_storage_installer.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage_installer.py:TestStorageInstaller.<METHIDNAME>
 ###############################################################
 from __future__ import print_function
 import shutil
@@ -12,8 +12,9 @@ from cloudmesh_installer.install.test import readfile, run
 
 import pytest
 
+
 @pytest.mark.incremental
-class Test_storage_installer:
+class TestStorageInstaller:
 
     def test_create_dir(self):
         path = "tmp"
@@ -71,7 +72,7 @@ class Test_storage_installer:
         assert "cloudmesh.storage" in result
 
 
-class other:
+class Other:
     def test_delete_dir(self):
         path = "tmp"
         shutil.rmtree(path)

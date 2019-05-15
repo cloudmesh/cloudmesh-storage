@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_gdrive.py
 # pytest -v  tests/test_storage_gdrive.py
-# pytest -v --capture=no tests/test_storage_gdrive.py:Test_storage.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage_gdrive.py:TestGdriveStorage.<METHIDNAME>
 ###############################################################
 import os
 from pprint import pprint
@@ -23,7 +23,7 @@ from cloudmesh.common.util import banner
 # cms set storage=gdrive
 #
 @pytest.mark.incremental
-class Test_storage:
+class TestGdriveStorage(object):
 
     def create_dir(self, location):
         d = Path(os.path.dirname(path_expand(location)))

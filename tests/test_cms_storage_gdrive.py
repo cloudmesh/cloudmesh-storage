@@ -1,8 +1,10 @@
 ###############################################################
 # pytest -v --capture=no tests/test_gdrive.py
 # pytest -v  tests/test_gdrive.py
-# pytest -v --capture=no -v --nocapture tests/test_gdrive.py:Test_gdrive.<METHIDNAME>
-###############################################################from cloudmesh.management.configuration.config import Config
+# pytest -v --capture=no tests/test_gdrive.py:TestGdrive.<METHIDNAME>
+###############################################################
+
+from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.util import HEADING
 from pprint import pprint
 from cloudmesh.storage.provider.gdrive.Provider import Provider
@@ -24,7 +26,7 @@ def execute(command):
 
 
 @pytest.mark.incremental
-class Test_gdrive:
+class TestGdrive(object):
 
     def create_file(self, location, content):
         d = Path(os.path.dirname(path_expand(location)))
@@ -56,7 +58,7 @@ class Test_gdrive:
         src = path_expand("~/.cloudmesh/storage/test/source/test/source/")
         dst = 'Useful Links.txt'
         # fetching files from dst to src
-        #file = self.p.get(source=src, destination=dst, recursive=False)
+        # file = self.p.get(source=src, destination=dst, recursive=False)
         file = run(f"cms get {src} {dst}")
 
         assert file is not None
@@ -64,7 +66,7 @@ class Test_gdrive:
     def test_list(self):
         HEADING()
         # Listing files google drive home directory
-        #contents = self.p.list(source='/', recursive=True)
+        # contents = self.p.list(source='/', recursive=True)
         src = '/'
         recursive = True
         contents = execute(f"cms list {src} {recursive}")
@@ -75,7 +77,7 @@ class Test_gdrive:
     def test_search(self):
         HEADING()
         # Searching sample_source.txt which is created earlier in home directory
-        #search_files = self.p.search(directory='/', filename='Useful Links.txt', recursive=True)
+        # search_files = self.p.search(directory='/', filename='Useful Links.txt', recursive=True)
         directory = '/'
         filename = 'Useful Links.txt'
         recursive = True
@@ -86,15 +88,15 @@ class Test_gdrive:
     def test_create_dir(self):
         HEADING()
         # Creating testdir in home directory of google drive
-        #dir = self.p.create_dir(directory='/testdir')
+        # dir = self.p.create_dir(directory='/testdir')
         directory = '/testdir'
-        dir = execute(f"cms create_dir {directory}")
-        assert dir is not None
+        directory = execute(f"cms create_dir {directory}")
+        assert directory is not None
 
     def test_delete(self):
         HEADING()
         # Deleting in google drive home sample_source.txt
-        #message = self.p.delete(filname='sample_source.txt')
+        # message = self.p.delete(filname='sample_source.txt')
         filname = 'sample_source.txt'
         message = run(f"cms delete {filname}")
 

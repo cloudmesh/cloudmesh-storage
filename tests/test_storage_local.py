@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_local.py
 # pytest -v  tests/test_local.py
-# pytest -v --capture=no -v --nocapture tests/test_local.py:Test_local.<METHIDNAME>
+# pytest -v --capture=no tests/test_local.py:TestLocal.<METHIDNAME>
 ###############################################################
 import os
 from pprint import pprint
@@ -16,7 +16,6 @@ from cloudmesh.common.util import banner
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.DEBUG import VERBOSE
 
-
 import pytest
 
 
@@ -29,27 +28,24 @@ def create_file(location, content):
 
     writefile(path_expand(location), content)
 
-@pytest.mark.incremental
-class Test_local:
 
+@pytest.mark.incremental
+class TestLocal(object):
 
     def setup_class(self):
-        #variables = Variables()
-        #service = Parameter.expand(variables['storage'])[0]
+        # variables = Variables()
+        # service = Parameter.expand(variables['storage'])[0]
 
         self.service = "local"
         self.p = Provider(service=self.service)
 
-
     def test_00__config(self):
-
         VERBOSE(self.p)
         VERBOSE(self.p.kind)
         assert self.p.kind == self.service
 
     def test_01_create_source(self):
         HEADING()
-
 
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
         create_file("~/.cloudmesh/storage/README.md", "content of a")
@@ -65,7 +61,7 @@ class Test_local:
         src = '/'
         contents = self.p.list(source=src)
 
-        VERBOSE(contents,label="c")
+        VERBOSE(contents, label="c")
 
         for c in contents:
             VERBOSE(c)
@@ -83,7 +79,7 @@ class Test_local:
         assert len(files) > 0
 
 
-class a:
+class A:
 
     def test_02_put(self):
         HEADING()
@@ -103,9 +99,7 @@ class a:
 
         assert file is not None
 
-
         assert len(contents) > 0
-
 
     def test_06_create_dir(self):
         HEADING()
@@ -119,22 +113,3 @@ class a:
         HEADING()
         src = '/created_dir'
         self.p.delete(src)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

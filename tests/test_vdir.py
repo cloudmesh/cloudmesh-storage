@@ -1,3 +1,8 @@
+###############################################################
+# pytest -v --capture=no tests/test_vdir.py
+# pytest -v  tests/test_vdir.py
+# pytest -v --capture=no tests/test_vdir.py:TestVdir.<METHIDNAME>
+###############################################################
 from cloudmesh.common.util import HEADING
 from cloudmesh.vdir.api.manager import Vdir
 from cloudmesh.storage.Provider import Provider
@@ -5,13 +10,14 @@ from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.StopWatch import StopWatch
 from cloudmesh.variables import Variables
 from cloudmesh.common.util import path_expand
-from  pathlib import Path
+from pathlib import Path
 from cloudmesh.common.util import writefile
 import os
 import pytest
 
+
 @pytest.mark.incremental
-class Test_vdir:
+class TestVdir(object):
 
     def create_file(self, location, content):
         d = Path(os.path.dirname(path_expand(location)))
@@ -26,15 +32,15 @@ class Test_vdir:
         StopWatch.start("vdir setup")
         self.vdir = Vdir()
         self.endpoint = 'box:/test.txt'
-        self.dir_and_name = '/testdir/test'
-        self.dir = 'testdir'
+        self.directory_and_name = '/testdir/test'
+        self.directory = 'testdir'
         self.file = 'test'
         self.create_file('~/.cloudmesh/vdir/test/test.txt', 'test file')
-        self.destination=path_expand("~/.cloudmesh/vdir/test")
+        self.destination = path_expand("~/.cloudmesh/vdir/test")
         variables = Variables()
         service = Parameter.expand(variables['storage'])[0]
         self.p = Provider(service=service)
-        self.p.put(source='~/.cloudmesh/vdir/test/test.txt', destination ='/', recursive=False)
+        self.p.put(source='~/.cloudmesh/vdir/test/test.txt', destination='/', recursive=False)
         StopWatch.stop("vdir setup")
 
     def test_collection(self):
@@ -48,24 +54,23 @@ class Test_vdir:
     @pytest.fixture(scope='class')
     def dummy_file(self):
         self.endpoint = 'box:/test.txt'
-        self.dir_and_name = 'test'
+        self.directory_and_name = 'test'
 
         StopWatch.start("vdir add")
         self.vdir = Vdir()
-        testfile = self.vdir.add(endpoint=self.endpoint, dir_and_name=self.dir_and_name)
+        testfile = self.vdir.add(endpoint=self.endpoint, dir_and_name=self.directory_and_name)
         StopWatch.stop("vdir add")
         return testfile
 
     @pytest.fixture(scope='class')
     def dummy_dir(self):
-        self.dir = 'testdir'
+        self.directory = 'testdir'
 
         StopWatch.start("vdir mkdir")
         self.vdir = Vdir()
-        testdir = self.vdir.mkdir(dirname=self.dir)
+        testdir = self.vdir.mkdir(dirname=self.directory)
         StopWatch.stop("vdir mkdir")
         return testdir
-
 
     def test_mkdir(self, dummy_dir):
         HEADING()
@@ -105,24 +110,21 @@ class Test_vdir:
     def test_cd(self):
         HEADING()
         StopWatch.start("vdir cd")
-        self.vdir.cd(dirname=self.dir)
+        self.vdir.cd(dirname=self.directory)
         StopWatch.stop("vdir cd")
 
-        assert self.vdir.directory == self.dir
+        assert self.vdir.directory == self.directory
 
     def test_delete(self):
         HEADING()
         StopWatch.start("vdir delete")
         file = self.vdir.delete(dir_or_name=self.file)
-        dir = self.vdir.delete(dir_or_name=self.dir)
+        directory = self.vdir.delete(dir_or_name=self.directory)
         StopWatch.stop("vdir delete")
 
-        assert all(obj is not None for obj in [file, dir])
+        assert all(obj is not None for obj in [file, directory])
 
     def test_results(self):
         HEADING()
 
         StopWatch.benchmark()
-
-
-

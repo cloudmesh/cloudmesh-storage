@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_awsobjectstore.py
 # pytest -v  tests/test_storage_awsobjectstore.py
-# pytest -v --capture=no tests/test_storage_awsobjectstore.py:Test_awsobjectstore.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage_awsobjectstore.py:TestObjectstore.<METHIDNAME>
 ###############################################################
 import os
 from pprint import pprint
@@ -23,7 +23,7 @@ from cloudmesh.common.util import banner
 # cms set storage=objstore
 #
 @pytest.mark.incremental
-class Test_objectstorage:
+class TestObjectstorage(object):
 
     def create_dir(self, location):
         d = Path(os.path.dirname(path_expand(location)))
@@ -127,7 +127,7 @@ class Test_objectstorage:
         deleted = False
         for entry in contents:
             if 'a/created_dir/' == entry['cm']["name"]:
-                #if entry["cm"]["status"] == "deleted":
+                # if entry["cm"]["status"] == "deleted":
                 deleted = True
         assert deleted
 

@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_box.py
 # pytest -v  tests/test_storage_box.py
-# pytest -v --capture=no tests/test_storage_box.py:Test_storage.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage_box.py:TestStorage.<METHIDNAME>
 ###############################################################
 import os
 from pprint import pprint
@@ -23,7 +23,7 @@ from cloudmesh.common.util import banner
 # cms set storage=box
 #
 @pytest.mark.incremental
-class Test_storage:
+class TestStorage(object):
 
     def create_dir(self, location):
         d = Path(os.path.dirname(path_expand(location)))

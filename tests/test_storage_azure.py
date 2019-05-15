@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_azure.py
 # pytest -v  tests/test_storage_azure.py
-# pytest -v --capture=no tests/test_storage_azure.py:Test_storage.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage_azure.py:TestAzureStorage.<METHIDNAME>
 ###############################################################
 import os
 from pprint import pprint
@@ -9,7 +9,7 @@ from pprint import pprint
 from cloudmesh.storage.Provider import Provider
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
-from  pathlib import Path
+from pathlib import Path
 from cloudmesh.common.util import writefile
 from cloudmesh.variables import Variables
 from cloudmesh.common.parameter import Parameter
@@ -18,11 +18,12 @@ from cloudmesh.common.util import readfile
 from cloudmesh.common.StopWatch import StopWatch
 from cloudmesh.common.util import banner
 
+
 #
 # cms set storage=azure
 #
 @pytest.mark.incremental
-class Test_storage:
+class TestAzureStorage(object):
 
     def create_dir(self, location):
         d = Path(os.path.dirname(path_expand(location)))
@@ -45,9 +46,9 @@ class Test_storage:
         # Setup a dir
         self.content = []
         self.files = ["a/a1.txt", "a/a2.txt", "a/a3.txt",
-                  "a/b/b1.txt", "a/b/b2.txt", "a/b/b3.txt",
-                  "a/b/c/c1.txt", "a/b/c/c2.txt", "a/b/c/c3.txt",
-                  "a/b/d/d1.txt", "a/b/d/d2.txt", "a/b/d/d3.txt", "a/b/d/a1.txt"]
+                      "a/b/b1.txt", "a/b/b2.txt", "a/b/b3.txt",
+                      "a/b/c/c1.txt", "a/b/c/c2.txt", "a/b/c/c3.txt",
+                      "a/b/d/d1.txt", "a/b/d/d2.txt", "a/b/d/d3.txt", "a/b/d/a1.txt"]
 
         for f in self.files:
             location = f"{home}/{f}"

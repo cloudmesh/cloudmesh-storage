@@ -1,15 +1,15 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage.py
 # pytest -v  tests/test_storage.py
-# pytest -v --capture=no -v --nocapture tests/test_storage.py:Test_storage.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage.py:TestStorage.<METHIDNAME>
 ###############################################################
 import os
 from pprint import pprint
 from cloudmesh.common.StopWatch import StopWatch
-from  cloudmesh.storage.Provider import Provider
+from cloudmesh.storage.Provider import Provider
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
-from  pathlib import Path
+from pathlib import Path
 from cloudmesh.common.util import writefile
 from cloudmesh.variables import Variables
 from cloudmesh.common.util import banner
@@ -18,13 +18,12 @@ import pytest
 
 
 @pytest.mark.incremental
-class Test_storage:
+class TestStorage(object):
 
     def create_file(self, location, content):
-
         d = Path(os.path.dirname(path_expand(location)))
         print()
-        print ("TESTDIR:",  d)
+        print("TESTDIR:", d)
 
         d.mkdir(parents=True, exist_ok=True)
 
@@ -99,12 +98,12 @@ class Test_storage:
         HEADING()
         src = '/created_dir'
         StopWatch.start("create dir")
-        dir = self.p.create_dir(src)
+        directory = self.p.create_dir(src)
         StopWatch.stop("create dir")
 
-        pprint(dir)
+        pprint(directory)
 
-        assert dir is not None
+        assert directory is not None
 
     def test_delete(self):
         HEADING()
@@ -113,22 +112,5 @@ class Test_storage:
         self.p.delete(src)
         StopWatch.stop("delete")
 
-
     def test_benchmark(self):
         StopWatch.benchmark()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
