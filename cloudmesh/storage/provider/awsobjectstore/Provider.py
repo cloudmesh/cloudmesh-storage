@@ -1,6 +1,6 @@
 from cloudmesh.storage.StorageABC import StorageABC
 import boto3
-from cloudmesh.DEBUG import VERBOSE
+from cloudmesh.common.DEBUG import VERBOSE
 from cloudmesh.common.console import Console
 from botocore.exceptions import ClientError
 

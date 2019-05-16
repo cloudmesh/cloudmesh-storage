@@ -5,7 +5,7 @@ from cloudmesh.shell.command import PluginCommand
 from cloudmesh.shell.command import command, map_parameters
 from cloudmesh.shell.variables import Variables
 from cloudmesh.storage.Provider import Provider
-from cloudmesh.DEBUG import VERBOSE
+from cloudmesh.common.DEBUG import VERBOSE
 
 
 # noinspection PyBroadException

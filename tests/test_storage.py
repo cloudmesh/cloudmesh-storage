@@ -11,8 +11,7 @@ from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from pathlib import Path
 from cloudmesh.common.util import writefile
-from cloudmesh.variables import Variables
-from cloudmesh.common.util import banner
+from cloudmesh.common.variables import Variables
 from cloudmesh.common.parameter import Parameter
 import pytest
 

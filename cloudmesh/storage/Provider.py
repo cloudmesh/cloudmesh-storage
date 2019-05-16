@@ -7,9 +7,7 @@ from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.storage.provider.awsobjectstore.Provider import Provider as AwsobjectstoreProvider
-from cloudmesh.DEBUG import VERBOSE
-from cloudmesh.common.console import Console
-import warnings
+from cloudmesh.common.DEBUG import VERBOSE
 from pprint import pprint
 
 

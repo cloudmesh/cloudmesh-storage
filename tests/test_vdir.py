@@ -8,7 +8,7 @@ from cloudmesh.vdir.api.manager import Vdir
 from cloudmesh.storage.Provider import Provider
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.variables import Variables
+from cloudmesh.common.variables import Variables
 from cloudmesh.common.util import path_expand
 from pathlib import Path
 from cloudmesh.common.util import writefile
