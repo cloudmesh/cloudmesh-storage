@@ -22,7 +22,7 @@ pytest.openapi = None
 
 # noinspection PyPep8
 @pytest.mark.incremental
-class TestCloudStorageOpenapu(obkect):
+class TestCloudStorageOpenapu(object):
     """
 
     see: https://github.com/cloudmesh/cloudmesh-common/blob/master/cloudmesh/common/run/background.py
