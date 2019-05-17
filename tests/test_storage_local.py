@@ -11,7 +11,7 @@ from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from pathlib import Path
 from cloudmesh.common.util import writefile
-from cloudmesh.common.DEBUG import VERBOSE
+from cloudmesh.common.debug import VERBOSE
 
 import pytest
 

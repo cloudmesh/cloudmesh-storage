@@ -3,7 +3,7 @@ from pathlib import Path
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.storage.StorageNewABC import StorageABC
-from cloudmesh.common.DEBUG import VERBOSE
+from cloudmesh.common.debug import VERBOSE
 import shutil
 
 # import pwd  # does not work in windows

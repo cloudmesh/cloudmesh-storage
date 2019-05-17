@@ -7,7 +7,7 @@ from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.storage.provider.awsobjectstore.Provider import Provider as AwsobjectstoreProvider
-from cloudmesh.common.DEBUG import VERBOSE
+from cloudmesh.common.debug import VERBOSE
 from pprint import pprint
 
 
@@ -36,6 +36,7 @@ class Provider(StorageABC):
     def get(self, source=None, destination=None, recursive=False):
         """
         gets the content of the source on the server to the local destionation
+
         :param source: the source file on the server
         :type source: string
         :param destination: the desination location ion teh local machine
@@ -47,9 +48,7 @@ class Provider(StorageABC):
         """
 
         VERBOSE(f"get {source} {destination} {recursive}")
-        d = self.provider.get(source=source,
-                              destination=destination,
-                              recursive=recursive)
+        d = self.provider.get(source=source, destination=destination, recursive=recursive)
         return d
 
     @DatabaseUpdate()
@@ -57,9 +56,7 @@ class Provider(StorageABC):
 
         service = self.service
         VERBOSE(f"put {service} {source} {destination}")
-        d = self.provider.put(source=source,
-                              destination=destination,
-                              recursive=recursive)
+        d = self.provider.put(source=source, destination=destination, recursive=recursive)
         return d
 
     @DatabaseUpdate()
@@ -74,6 +71,12 @@ class Provider(StorageABC):
 
     @DatabaseUpdate()
     def delete(self, source=None):
+        """
+        deletes the source
+
+        :param source: The source
+        :return: The dict representing the source
+        """
 
         service = self.service
         VERBOSE(f"delete filename {service} {source}")
@@ -85,9 +88,7 @@ class Provider(StorageABC):
 
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"search {directory}")
-        d = self.provider.search(directory=directory,
-                                 filename=filename,
-                                 recursive=recursive)
+        d = self.provider.search(directory=directory, filename=filename, recursive=recursive)
         return d
 
     @DatabaseUpdate()
@@ -96,8 +97,7 @@ class Provider(StorageABC):
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"list {source}")
         VERBOSE(locals())
-        d = self.provider.list(source=source,
-                               recursive=recursive)
+        d = self.provider.list(source=source, recursive=recursive)
         return d
 
     def tree(self, source):
