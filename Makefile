@@ -186,3 +186,27 @@ log:
 	gitchangelog | fgrep -v ":dev:" | fgrep -v ":new:" > ChangeLog
 	git commit -m "chg: dev: Update ChangeLog" ChangeLog
 	git push
+
+######################################################################
+# DOCKER
+######################################################################
+
+image:
+	docker build -t cloudmesh/cm:4.1.0 .
+
+shell:
+	docker run --rm -it cloudmesh/cm:4.1.0  /bin/bash
+
+cms:
+	docker run --rm -it cloudmesh/cm:4.1.0
+
+dockerclean:
+	-docker kill $$(docker ps -q)
+	-docker rm $$(docker ps -a -q)
+	-docker rmi $$(docker images -q)
+
+push:
+	docker push cloudmesh/cm:4.1.0
+
+run:
+	docker run cloudmesh/cm:4.1.00 /bin/sh -c "cd technologies; git pull; make"
