@@ -3,6 +3,7 @@ FROM ubuntu:19.04
 RUN apt-get -y update
 RUN apt-get -y upgrade
 RUN apt-get -y install git
+RUN apt-get -y install curl
 
 
 RUN apt-get install -y python3
@@ -19,6 +20,6 @@ WORKDIR cm
 RUN cloudmesh-installer git clone storage
 RUN cloudmesh-installer install storage -e
 
-RUN cms help
+# RUN cms help
 
 

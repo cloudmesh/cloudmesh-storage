@@ -195,7 +195,7 @@ image:
 	docker build -t cloudmesh/cm:4.1.0 .
 
 shell:
-	docker run --rm -it cloudmesh/cm:4.1.0  /bin/bash
+	docker run --rm -it -v ${HOME}/.cloudmesh:/root/.cloudmesh -v ${HOME}/.ssh:/root/.ssh cloudmesh/cm:4.1.0    /bin/bash
 
 cms:
 	docker run --rm -it cloudmesh/cm:4.1.0
@@ -209,4 +209,5 @@ push:
 	docker push cloudmesh/cm:4.1.0
 
 run:
-	docker run cloudmesh/cm:4.1.00 /bin/sh -c "cd technologies; git pull; make"
+	echo ${HOME}
+	docker run cloudmesh/cm:4.1.00 -v ${HOME}/.cloudmesh:/root/.cloudmesh /bin/sh -c "echo \"Hello\""
