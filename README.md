@@ -25,7 +25,7 @@ documentation please see
 
 * <https://github.com/cloudmesh-community/book/blob/master/vonLaszewski-cloud.epub?raw=true>
 
-where we also document how to use pyenv virtualenv.
+where we also document how to use pyenv.
 
 
 ## Installation
