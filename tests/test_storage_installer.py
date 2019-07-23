@@ -3,7 +3,6 @@
 # pytest -v  tests/test_storage_installer.py
 # pytest -v --capture=no tests/test_storage_installer.py:TestStorageInstaller.<METHIDNAME>
 ###############################################################
-from __future__ import print_function
 
 import os
 import shutil
