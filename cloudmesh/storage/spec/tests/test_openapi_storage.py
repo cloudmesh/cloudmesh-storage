@@ -10,7 +10,7 @@ import json
 import pytest
 from cloudmesh.common.run.background import run
 from cloudmesh.common.util import banner
-from cloudmesh.shell.variables import Variables
+from cloudmesh.common.variables import Variables
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import path_expand
 from pathlib import Path
