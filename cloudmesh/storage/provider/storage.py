@@ -14,24 +14,28 @@ class Provider(object):
         super(Provider, self).__init__(service=service, config=config)
 
         self.config = Config()
-        self.kind = config["cloudmesh"]["storage"][service]["cm"]["kind"]
+        self.kind = config[f"cloudmesh.storage.{service}.cm.kind"]
         self.cloud = service
         self.service = service
 
         Console.msg("FOUND Kind", self.kind)
 
         if self.kind in ["awsS3"]:
-            self.p = AwsStorageProvider(service=service,
-                                        config=config)
+            self.p = AwsStorageProvider(
+                service=service,
+                config=config)
         elif self.kind in ["box"]:
-            self.p = BoxStorageProvider(service=service,
-                                        config=config)
+            self.p = BoxStorageProvider(
+                service=service,
+                config=config)
         elif self.kind in ["gdrive"]:
-            self.p = GdriveStorageProvider(service=service,
-                                           config=config)
+            self.p = GdriveStorageProvider(
+                service=service,
+                config=config)
         elif self.kind in ["azureblob"]:
-            self.p = AzureblobStorageProvider(service=service,
-                                              config=config)
+            self.p = AzureblobStorageProvider(
+                service=service,
+                config=config)
         else:
             raise NotImplementedError
 

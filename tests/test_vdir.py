@@ -3,17 +3,18 @@
 # pytest -v  tests/test_vdir.py
 # pytest -v --capture=no tests/test_vdir.py:TestVdir.<METHIDNAME>
 ###############################################################
-from cloudmesh.common.util import HEADING
-from cloudmesh.vdir.api.manager import Vdir
-from cloudmesh.storage.Provider import Provider
-from cloudmesh.common.parameter import Parameter
-from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.variables import Variables
-from cloudmesh.common.util import path_expand
-from pathlib import Path
-from cloudmesh.common.util import writefile
 import os
+from pathlib import Path
+
 import pytest
+from cloudmesh.common.StopWatch import StopWatch
+from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.util import HEADING
+from cloudmesh.common.util import path_expand
+from cloudmesh.common.util import writefile
+from cloudmesh.common.variables import Variables
+from cloudmesh.storage.Provider import Provider
+from cloudmesh.vdir.api.manager import Vdir
 
 
 @pytest.mark.incremental
@@ -40,7 +41,8 @@ class TestVdir(object):
         variables = Variables()
         service = Parameter.expand(variables['storage'])[0]
         self.p = Provider(service=service)
-        self.p.put(source='~/.cloudmesh/vdir/test/test.txt', destination='/', recursive=False)
+        self.p.put(source='~/.cloudmesh/vdir/test/test.txt', destination='/',
+                   recursive=False)
         StopWatch.stop("vdir setup")
 
     def test_collection(self):
@@ -58,7 +60,8 @@ class TestVdir(object):
 
         StopWatch.start("vdir add")
         self.vdir = Vdir()
-        testfile = self.vdir.add(endpoint=self.endpoint, dir_and_name=self.directory_and_name)
+        testfile = self.vdir.add(endpoint=self.endpoint,
+                                 dir_and_name=self.directory_and_name)
         StopWatch.stop("vdir add")
         return testfile
 

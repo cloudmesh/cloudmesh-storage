@@ -4,18 +4,17 @@
 # pytest -v --capture=no tests/test_gdrive.py:TestGdrive.<METHIDNAME>
 ###############################################################
 
-from cloudmesh.management.configuration.config import Config
-from cloudmesh.common.util import HEADING
-from pprint import pprint
-from cloudmesh.storage.provider.gdrive.Provider import Provider
-from cloudmesh.common.run.file import run
-from cloudmesh.common.StopWatch import StopWatch
-from pathlib import Path
 import os
+from pathlib import Path
+from pprint import pprint
+
+import pytest
+from cloudmesh.common.StopWatch import StopWatch
+from cloudmesh.common.run.file import run
+from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.storage.provider.gdrive.Provider import Provider
-import pytest
 
 
 def execute(command):
@@ -37,13 +36,15 @@ class TestGdrive(object):
         self.p = Provider(service="gdrive")
         self.destination = path_expand("/")
         self.source = path_expand("~/.cloudmesh/storage/test/source/")
-        self.create_file("~/.cloudmesh/storage/test/source/test/source/sample_source.txt",
-                         "This is sample test file")
+        self.create_file(
+            "~/.cloudmesh/storage/test/source/test/source/sample_source.txt",
+            "This is sample test file")
         assert True
 
     def test_put(self):
         HEADING()
-        src = path_expand("~/.cloudmesh/storage/test/source/test/source/sample_source.txt")
+        src = path_expand(
+            "~/.cloudmesh/storage/test/source/test/source/sample_source.txt")
         dst = "/"
         # Put files from src into google drive home directory
 
@@ -77,7 +78,9 @@ class TestGdrive(object):
     def test_search(self):
         HEADING()
         # Searching sample_source.txt which is created earlier in home directory
-        # search_files = self.p.search(directory='/', filename='Useful Links.txt', recursive=True)
+        # search_files = self.p.search(
+        #                    directory='/',
+        #                    filename='Useful Links.txt', recursive=True)
         directory = '/'
         filename = 'Useful Links.txt'
         recursive = True

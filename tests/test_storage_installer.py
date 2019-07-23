@@ -4,13 +4,12 @@
 # pytest -v --capture=no tests/test_storage_installer.py:TestStorageInstaller.<METHIDNAME>
 ###############################################################
 from __future__ import print_function
-import shutil
 
 import os
-
-from cloudmesh_installer.install.test import readfile, run
+import shutil
 
 import pytest
+from cloudmesh_installer.install.test import run
 
 
 @pytest.mark.incremental

@@ -1,8 +1,8 @@
-from cloudmesh.storage.StorageABC import StorageABC
 import boto3
-from cloudmesh.common.debug import VERBOSE
-from cloudmesh.common.console import Console
 from botocore.exceptions import ClientError
+from cloudmesh.common.console import Console
+from cloudmesh.common.debug import VERBOSE
+from cloudmesh.storage.StorageABC import StorageABC
 
 
 # from libmagic import magic
@@ -14,26 +14,33 @@ class Provider(StorageABC):
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
         super().__init__(service=service, config=config)
         # self.container_name = self.credentials['container']
-        self.s3_resource = boto3.resource('s3',
-                                          aws_access_key_id=self.credentials[
-                                              'access_key_id'],
-                                          aws_secret_access_key=
-                                          self.credentials['secret_access_key'],
-                                          region_name=self.credentials['region']
-                                          )
-        self.s3_client = boto3.client('s3',
-                                      aws_access_key_id=self.credentials[
-                                          'access_key_id'],
-                                      aws_secret_access_key=self.credentials[
-                                          'secret_access_key'],
-                                      region_name=self.credentials['region']
-                                      )
+
+        credential = {
+            'aws_access_key_id': self.credentials['access_key_id'],
+            'aws_secret_access_key': self.credentials['secret_access_key'],
+            'region_name': self.credentials['region']
+        }
+
+        # TODO: use **credentials in the next calls
+
+        self.s3_resource = boto3.resource(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
         self.directory_marker_file_name = 'marker.txt'
         self.storage_dict = {}
 
     def get(self, bucket_name, object_name):
-
         """Retrieve an object from an Amazon S3 bucket
+
         :param bucket_name: string
         :param object_name: string
         :return: botocore.response.StreamingBody object. If error, return None.
@@ -55,6 +62,7 @@ class Provider(StorageABC):
         """Add an object to an Amazon S3 bucket
         The src_data argument must be of type bytes or a string that references
         a file specification.
+
         :param dest_bucket_name: string
         :param dest_object_name: string
         :param src_data: bytes of data or string reference to file spec
@@ -100,11 +108,12 @@ class Provider(StorageABC):
     def copy(self, src_bucket_name, src_object_name,
              dest_bucket_name, dest_object_name=None):
         """Copy an Amazon S3 bucket object
+
         :param src_bucket_name: string
         :param src_object_name: string
         :param dest_bucket_name: string. Must already exist.
         :param dest_object_name: string. If dest bucket/object exists, it is
-        overwritten. Default: src_object_name
+                                         overwritten. Default: src_object_name
         :return: True if object was copied, otherwise False
         """
 

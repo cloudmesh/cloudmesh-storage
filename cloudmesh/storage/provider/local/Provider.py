@@ -5,7 +5,6 @@ from cloudmesh.common.util import writefile
 from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.common.debug import VERBOSE
 import shutil
-
 # import pwd  # does not work in windows
 # from grp import getgrgid # does not work in windows
 # from datetime import datetimef # does not work in windows

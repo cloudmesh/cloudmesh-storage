@@ -4,16 +4,17 @@
 # pytest -v --capture=no tests/test_storage.py:TestStorage.<METHIDNAME>
 ###############################################################
 import os
+from pathlib import Path
 from pprint import pprint
+
+import pytest
 from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.storage.Provider import Provider
+from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
-from pathlib import Path
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
-from cloudmesh.common.parameter import Parameter
-import pytest
+from cloudmesh.storage.Provider import Provider
 
 
 @pytest.mark.incremental
@@ -40,7 +41,8 @@ class TestStorage(object):
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
         self.create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
         self.create_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
-        self.create_file("~/.cloudmesh/storage/test/a/b/c/c.txt", "content of c")
+        self.create_file("~/.cloudmesh/storage/test/a/b/c/c.txt",
+                         "content of c")
         StopWatch.stop("create source")
 
         # test if the files are ok

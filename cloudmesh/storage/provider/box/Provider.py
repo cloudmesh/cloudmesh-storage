@@ -45,8 +45,17 @@ def update_dict(elements):
                 entry['cm'][c]: entry[c]
             else:
                 entry['cm'][c]: None
-        for p in ['_response_object', '_session', 'session', 'response_object', 'created_by',
-                  'file_version', 'modified_by', 'owned_by', 'parent', 'path_collection']:
+        # TDOD: They shoudl not be deleted
+        for p in ['_response_object',
+                  '_session',
+                  'session',
+                  'response_object',
+                  'created_by',
+                  'file_version',
+                  'modified_by',
+                  'owned_by',
+                  'parent',
+                  'path_collection']:
             if p in entry.keys():
                 del (entry[p])
         d.append(entry)
@@ -55,7 +64,9 @@ def update_dict(elements):
 
 class Provider(StorageABC):
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+    def __init__(self,
+                 service=None,
+                 config="~/.cloudmesh/cloudmesh4.yaml"):
 
         super().__init__(service=service, config=config)
         self.sdk = JWTAuth.from_settings_file(self.credentials['config_path'])

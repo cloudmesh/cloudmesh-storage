@@ -4,19 +4,19 @@
 # pytest -v --capture=no tests/test_storage_gdrive.py:TestGdriveStorage.<METHIDNAME>
 ###############################################################
 import os
+from pathlib import Path
 from pprint import pprint
 
-from cloudmesh.storage.Provider import Provider
+import pytest
+from cloudmesh.common.StopWatch import StopWatch
+from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import HEADING
+from cloudmesh.common.util import banner
 from cloudmesh.common.util import path_expand
-from pathlib import Path
+from cloudmesh.common.util import readfile
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
-from cloudmesh.common.parameter import Parameter
-import pytest
-from cloudmesh.common.util import readfile
-from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.util import banner
+from cloudmesh.storage.Provider import Provider
 
 
 #

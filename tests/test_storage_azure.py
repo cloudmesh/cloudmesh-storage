@@ -4,19 +4,19 @@
 # pytest -v --capture=no tests/test_storage_azure.py:TestAzureStorage.<METHIDNAME>
 ###############################################################
 import os
+from pathlib import Path
 from pprint import pprint
 
-from cloudmesh.storage.Provider import Provider
+import pytest
+from cloudmesh.common.StopWatch import StopWatch
+from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import HEADING
+from cloudmesh.common.util import banner
 from cloudmesh.common.util import path_expand
-from pathlib import Path
+from cloudmesh.common.util import readfile
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
-from cloudmesh.common.parameter import Parameter
-import pytest
-from cloudmesh.common.util import readfile
-from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.util import banner
+from cloudmesh.storage.Provider import Provider
 
 
 #
@@ -48,7 +48,8 @@ class TestAzureStorage(object):
         self.files = ["a/a1.txt", "a/a2.txt", "a/a3.txt",
                       "a/b/b1.txt", "a/b/b2.txt", "a/b/b3.txt",
                       "a/b/c/c1.txt", "a/b/c/c2.txt", "a/b/c/c3.txt",
-                      "a/b/d/d1.txt", "a/b/d/d2.txt", "a/b/d/d3.txt", "a/b/d/a1.txt"]
+                      "a/b/d/d1.txt", "a/b/d/d2.txt", "a/b/d/d3.txt",
+                      "a/b/d/a1.txt"]
 
         for f in self.files:
             location = f"{home}/{f}"
