@@ -1,5 +1,5 @@
 #
-# this manager stors directk=ly into the db wit Database update
+# this manager stores directly into the db wit Database update
 
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.mongo.CmDatabase import CmDatabase

@@ -383,7 +383,7 @@ class Provider(StorageABC):
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
@@ -741,7 +741,7 @@ class Provider(StorageABC):
         :param service: the name of the service in the yaml file
         :param directory: the directory which either can be a directory or file
         :param filename: filename
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """

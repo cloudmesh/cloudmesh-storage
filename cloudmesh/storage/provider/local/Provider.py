@@ -88,7 +88,7 @@ class Provider(StorageABC):
             "status": status,
             "size": os.path.getsize(filename),
             "name": filename,
-            # "ownwer": pwd.getpwuid(uid)[0],
+            # "owner": pwd.getpwuid(uid)[0],
             # "group": pwd.getgrgid(gid)[0],
             "creation": datetime.fromtimestamp(creation_date(filename)).strftime("%m/%d/%Y, %H:%M:%S")
 
@@ -127,7 +127,7 @@ class Provider(StorageABC):
         lists the information as dict
 
         :param source: the source which either can be a directory or file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
@@ -138,7 +138,7 @@ class Provider(StorageABC):
         lists the information as dict
 
         :param source: the source which either can be a directory or file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
@@ -153,20 +153,20 @@ class Provider(StorageABC):
             result.append(entry)
         return result
 
-    def put(self, source=None, destination=None, recusrive=False):
+    def put(self, source=None, destination=None, recursive=False):
         """
         puts the source on the service
 
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or
                             file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
 
         source = self._dirname(source)
-        if recusrive:
+        if recursive:
             src = path_expand(source)
             dest = path_expand(destination)
             shutil.copytree(src, dest)
@@ -175,21 +175,21 @@ class Provider(StorageABC):
             dest = path_expand(destination)
             shutil.copy2(src, dest)
 
-        return self.list(source=source, recusrive=recusrive)
+        return self.list(source=source, recursive=recursive)
 
-    def get(self, source=None, destination=None, recusrive=False):
+    def get(self, source=None, destination=None, recursive=False):
         """
         gets the source and copies it in destination
 
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or
                             file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
         destination = self._dirname(source)
-        if recusrive:
+        if recursive:
             src = path_expand(source)
             dest = path_expand(destination)
             shutil.copytree(src, dest)
@@ -198,20 +198,20 @@ class Provider(StorageABC):
             dest = path_expand(destination)
             shutil.copy2(src, dest)
 
-        return self.list(source=destination, recusrive=recusrive)
+        return self.list(source=destination, recursive=recursive)
 
-    def delete(self, source=None, recusrive=False):
+    def delete(self, source=None, recursive=False):
         """
         deletes the source
 
         :param source: the source which either can be a directory or file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
         raise NotImplementedError
         source = self._dirname(source)
-        entries = self._list(source=source, recusrive=recusrive, ststus="deleted")
+        entries = self._list(source=source, recursive=recursive, ststus="deleted")
         shutil.rmtree(path_expand(source))
         return entries
 
@@ -224,7 +224,7 @@ class Provider(StorageABC):
 
         :param service: the name of the service in the yaml file
         :param directory: the directory which either can be a directory or file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """

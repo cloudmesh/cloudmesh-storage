@@ -70,10 +70,10 @@ class StorageCommand(PluginCommand):
                     puts the content of source to the destination.
                     If --recursive is specified this is done recursively from
                        the source
-                    If --async is specified, this is done asyncronously
+                    If --async is specified, this is done asynchronously
                     If a name is specified, the process can also be monitored
                        with the status command by name.
-                    If the anme is not specified all date is monitored.
+                    If the name is not specified all date is monitored.
 
                 sync status
                     The status for the asynchronous sync can be seen with this

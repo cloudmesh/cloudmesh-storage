@@ -35,13 +35,13 @@ class Provider(StorageABC):
     @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):
         """
-        gets the content of the source on the server to the local destionation
+        gets the content of the source on the server to the local destination
 
         :param source: the source file on the server
         :type source: string
-        :param destination: the desination location ion teh local machine
+        :param destination: the destination location ion teh local machine
         :type destination: string
-        :param recursive: True if the sourec is a directory and ned to be copied recurively
+        :param recursive: True if the source is a directory and ned to be copied recursively
         :type recursive: boolean
         :return: cloudmesh cm dict
         :rtype: dict

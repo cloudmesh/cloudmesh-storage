@@ -105,7 +105,7 @@ class Provider(StorageABC):
             rename = 'N'
         else:
             if os.path.isfile(src_path):
-                Console.msg("WARNNG: A file already exists with same name, "
+                Console.msg("WARNING: A file already exists with same name, "
                             "overwrite issued")
                 rename = 'Y'
             else:

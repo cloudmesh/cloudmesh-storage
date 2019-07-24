@@ -38,14 +38,14 @@ class StorageABC(metaclass=ABCMeta):
 
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
         raise NotImplementedError
         return []
 
-    def put(self, service=None, source=None, destination=None, recusrive=False):
+    def put(self, service=None, source=None, destination=None, recursive=False):
         """
         puts the source on the service
 
@@ -53,14 +53,14 @@ class StorageABC(metaclass=ABCMeta):
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or
                             file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
         raise NotImplementedError
         return []
 
-    def get(self, service=None, source=None, destination=None, recusrive=False):
+    def get(self, service=None, source=None, destination=None, recursive=False):
         """
         gets the destination and copies it in source
 
@@ -68,20 +68,20 @@ class StorageABC(metaclass=ABCMeta):
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or
                             file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
         raise NotImplementedError
         return []
 
-    def delete(self, service=None, source=None, recusrive=False):
+    def delete(self, service=None, source=None, recursive=False):
         """
         deletes the source
 
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
@@ -89,13 +89,13 @@ class StorageABC(metaclass=ABCMeta):
         return []
 
     def search(self, service=None, directory=None, filename=None,
-               recusrive=False):
+               recursive=False):
         """
         gets the destination and copies it in source
 
         :param service: the name of the service in the yaml file
         :param directory: the directory which either can be a directory or file
-        :param recursive: in case of directory the recursive referes to all
+        :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
         """
@@ -104,7 +104,7 @@ class StorageABC(metaclass=ABCMeta):
 
     def tree(self, directory=None):
         """
-        Prints a fisual representation of the files and directories
+        Prints a visual representation of the files and directories
         :param directory:
         :type directory:
         :return:

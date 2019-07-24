@@ -45,7 +45,7 @@ def update_dict(elements):
                 entry['cm'][c]: entry[c]
             else:
                 entry['cm'][c]: None
-        # TDOD: They shoudl not be deleted
+        # TODO: They should not be deleted
         for p in ['_response_object',
                   '_session',
                   'session',

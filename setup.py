@@ -17,7 +17,15 @@
 
 from setuptools import find_packages, setup
 import io
+import sys
 
+v = sys.version_info
+if v.major != 3 and v.minor != 7 and v.micro < 3:
+    print(70 * "#")
+    print("WARNING: upgrade to a python greater or equal to 3.7.3 "
+          "other version may not be  supported. "
+          "Your version is {version}. ".format(version=sys.version_info))
+    print(70 * "#")
 
 def readfile(filename):
     with io.open(filename, encoding="utf-8") as stream:
