@@ -52,6 +52,17 @@ view:
 	open docs/index.html
 
 
+requirements:
+	echo "cloudmesh-cmd5" > tmp.txt
+	echo "cloudmesh-sys" >> tmp.txt
+	echo "cloudmesh-inventory" >> tmp.txt
+	echo "cloudmesh-configuration" >> tmp.txt
+	pip-compile setup.py
+	fgrep -v "# via" requirements.txt | fgrep -v "cloudmesh" >> tmp.txt
+	mv tmp.txt requirements.txt
+	git commit -m "update requirements" requirements.txt
+	git push
+
 
 setup:
 	# brew update
@@ -88,8 +99,8 @@ test:
 	@curl -s http://127.0.0.1:5000/computer  | jq
 
 
-nosetests:
-	nosetests -v --nocapture tests/test_mongo.py
+tests:
+	pytest -v --capture=no tests/test_mongo.py
 
 
 clean:
