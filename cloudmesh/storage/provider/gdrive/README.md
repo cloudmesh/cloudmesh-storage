@@ -1,7 +1,7 @@
 # Google drive
 ## Put and Get in recursive way is still not working as expected. Delete, List, Search, Make Directory are working fine.
 
-## cloudmesh4.yaml file entries for gdrive storage
+## cloudmesh.yaml file entries for gdrive storage
 ```
     gdrive: 
       cm: 
@@ -38,7 +38,7 @@ The Google Drive API needs the following two 2 credentials files.
 * `google-drive-credentials.json`  
 
 If we run the Google Drive `Provider.py` for the **First time** then the 
-required keys, tokens are taken from the `cloudmesh4.yaml` file and creates a 
+required keys, tokens are taken from the `cloudmesh.yaml` file and creates a 
 `client_secret.json` file in the following path `~/.cloudmesh/gdrive/`  
 
 The `Authentication.py` creates a `.credentials` folder under the following 

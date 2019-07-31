@@ -37,7 +37,7 @@ class VdirCommand(PluginCommand):
               contains a number of links that point to other storage services on
               which the file is stored. The links include the provider, the name
               of the provider and its type are identified in the
-              ~/.cloudmesh4.yaml file.
+              ~/.cloudmesh/cloudmesh.yaml file.
 
               the location is identified as
 

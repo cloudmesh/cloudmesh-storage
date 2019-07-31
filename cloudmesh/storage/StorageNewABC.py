@@ -1,12 +1,12 @@
 from abc import ABCMeta
 
-from cloudmesh.management.configuration.config import Config
+from cloudmesh.configuration.Config import Config
 
 
 # noinspection PyUnusedLocal
 class StorageABC(metaclass=ABCMeta):
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
         try:
             self.config = Config(config_path=config)
 

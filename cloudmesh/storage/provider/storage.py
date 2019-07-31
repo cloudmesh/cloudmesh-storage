@@ -1,5 +1,5 @@
 from cloudmesh.common.console import Console
-from cloudmesh.management.configuration.config import Config
+from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.provider.awss3 import Provider as AwsStorageProvider
 from cloudmesh.storage.provider.azureblob import \
     Provider as AzureblobStorageProvider
@@ -9,7 +9,7 @@ from cloudmesh.storage.provider.gdrive import Provider as GdriveStorageProvider
 
 class Provider(object):
 
-    def __init__(self, service=None, config="~/.cloudmesh/.cloudmesh4.yaml"):
+    def __init__(self, service=None, config="~/.cloudmesh/.cloudmesh.yaml"):
 
         super(Provider, self).__init__(service=service, config=config)
 

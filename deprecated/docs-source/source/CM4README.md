@@ -50,14 +50,16 @@ Usage:
 
 ### The Configuration files and some relative function classes (Sachith)
 
-The cloudmesh4.yaml file contains all the configurations required for CM4 to run. 
-By default it's located in the Cloudmesh home directory (~/.cloudmesh/cloudmesh4.yaml).
+The cloudmesh.yaml file contains all the configurations required for CM4 to run. 
+By default it's located in the Cloudmesh home directory (~/.cloudmesh/cloudmesh.yaml).
 
 #### Use the Configurations file
+
 To use the configurations in CM4, you need to import the Config class and use the config
 object provided by that class to access and manipulate the configuration file. 
 
 ##### Getting the config object
+
 ```python
 from cloudmesh.cloud.configuration.config import Config
 config = Config().data["cloudmesh"]
@@ -125,7 +127,7 @@ The *MongoDB* would finish below tasks:
 * updating any changes:
   
   1. the changes updated on the nodes, like stop running node, or start stopped node.
-  2. the changes updated on the [`cloudmesh4.yaml`], like add new nodes.
+  2. the changes updated on the `cloudmesh.yaml`, like add new nodes.
   3. when the experiment is done, output and experiment status would be updated.
   4. new group is created while using `cms` will be updated
 
@@ -190,7 +192,8 @@ Here is a quick reference about how to
 
 If you want to know how to install MongoDB into local, you can review [Install MongoDB](https://docs.mongodb.com/manual/installation/)
 
-And if you want to use `cms` to help you install MongoDB, you have to update the information required for installing MongoDB into [`cloudmesh4.yaml`] file.
+And if you want to use `cms` to help you install MongoDB, you have to update the information required for installing 
+MongoDB into the `cloudmesh.yaml` file.
 
 The `cloudmesh-cloud/cmmongo/MongoDBController.py` has the functions to install MongoDB for Linux and Darwin system. 
 
@@ -280,13 +283,13 @@ Below we list some sample of running these functions for virtual machines in  AW
 
 ### AWS VM Operations (Yu)
 
-Before using the AWS Vm code, user has to update their AWS information into `cloudmesh4.yaml` file in *etc* folder.
+Before using the AWS Vm code, user has to update their AWS information into the `cloudmesh.yaml` file in *etc* folder.
 
 The *Libcloud* library has enough methods to support the operations for managing virtual machines in AWS. We use a 
 `cloudmesh-cloud/vm/Aws.py` to create the driver based on the configuration to connect to AWS.  
 
 Inherit the *Libcloud* library, we did some modifications on `AWSDriver` to extend the operation. The `create_node`
-method would create a virtual machine in AWS based on the configuration of `cloudmesh4.yaml` file  
+method would create a virtual machine in AWS based on the configuration of `cloudmesh.yaml` file  
 
 Here are some samples for running these operations by using `cloudmesh-cloud`:
 
@@ -382,7 +385,7 @@ True
  ### Chameleon VM Operation (Rui and Kimball)
 
  Same as above, before using the VM Openstack functionalities, 
- user has to update their Openstack information into the `cloudmesh4.yaml` file (~/.cloudmesh/cloudmesh.yaml by macOS convention). 
+ user has to update their Openstack information into the `cloudmesh.yaml` file (~/.cloudmesh/cloudmesh.yaml by macOS convention). 
 It is also important to notice that openstack has various providers.
  And it is important to specify each of them with correspondent log-in credentials.
 
@@ -465,7 +468,7 @@ pip install .
 - Add the MongoDB information in the cloudmesh configuration file
 
 ```bash
-vi ~/.cloudmesh/cloudmesh4.yaml
+emacs ~/.cloudmesh/cloudmesh.yaml
 ```
 
 - Run the REST API

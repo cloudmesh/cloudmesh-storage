@@ -1,7 +1,7 @@
 ## AWSS3 Cloudmesh Integration
 
 AWS S3 file storage has been integrated with cloudmesh library and is available 
-for use via commandline. As a first step we need to modify `cloudmesh4.yaml` 
+for use via commandline. As a first step we need to modify `cloudmesh.yaml` 
 config file.  Under 'storage' section, we need to add the aws section to specify
 the parameters used to store files in AWS S3. 
 

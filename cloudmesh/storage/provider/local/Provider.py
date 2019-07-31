@@ -52,7 +52,7 @@ class Provider(StorageABC):
     default location is credentials.directory / default.directory
     """
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
         super(Provider, self).__init__(service=service, config=config)
 
         self.credentials["directory"] = path_expand(self.credentials["directory"])

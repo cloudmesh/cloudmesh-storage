@@ -66,7 +66,7 @@ class Provider(StorageABC):
 
     def __init__(self,
                  service=None,
-                 config="~/.cloudmesh/cloudmesh4.yaml"):
+                 config="~/.cloudmesh/cloudmesh.yaml"):
 
         super().__init__(service=service, config=config)
         self.sdk = JWTAuth.from_settings_file(self.credentials['config_path'])

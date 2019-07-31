@@ -12,7 +12,7 @@ from apiclient.http import MediaFileUpload
 from apiclient.http import MediaIoBaseDownload
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
-from cloudmesh.management.configuration.config import Config
+from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.StorageABC import StorageABC
 from oauth2client import client
 from oauth2client import tools
@@ -21,7 +21,7 @@ from oauth2client.file import Storage
 
 class Provider(StorageABC):
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh4.yaml"):
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
         super().__init__(service=service, config=config)
         self.config = Config()
         self.storage_credentials = self.config.credentials("storage", "gdrive")
