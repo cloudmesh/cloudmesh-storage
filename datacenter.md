@@ -1,4 +1,6 @@
 # Datacenter fa19-516-152
+
+:o2: use lists in refernces
  
 ## E.Datacenter.2.b
 Microsoft's Columbia data center at Quincy Washington is a 470,000 sqft. 
