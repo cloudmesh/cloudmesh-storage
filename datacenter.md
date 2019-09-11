@@ -6,20 +6,19 @@
 Microsoft's Columbia data center at Quincy Washington is a 470,000 sqft. 
 facility built in 2007. Located close to the Columbia River, it benefits from the hydro electric energy generated from the river. The location also has other advantages such as low land costs, abundant data fiber and low cost electricity. 
 
-Reference : <https://en.wikipedia.org/wiki/Columbia_Data_Center>
+Reference : [Columbia Data Center Wiki](https://en.wikipedia.org/wiki/Columbia_Data_Center)
 
 **IT Load** - In Microsoft Ignite presentation, Microsoft Azure CTO Mark Russinovich sampled out Columbia data center and mentioned it has a 
 capacity of 64MW. He specified that there are two datacenters consisting four independent 8MW colocations totaling to a 64MW (64000kW) capacity, hence this value is chosen as the IT Load for the data center.
 
-Reference: <https://www.youtube.com/watch?v=D8hMu4jJAwo>
+Reference: [Microsoft Ignite Presentation](https://www.youtube.com/watch?v=D8hMu4jJAwo)
 
 **Cost per kWH** - 
 The Grant PUD county rate for large industrial consumers consuming greater than 15MW is $0.03/kwH but according to a portofquincy.org web article, Microsoft is receiving a rate of $0.019 hence this cost is being used. 
 
 Reference:
-<http://www.portofquincy.org/category/blog/page/2/>
-
-<https://www.grantpud.org/rates-fees>
+* [Port of Quincy Blog post](http://www.portofquincy.org/category/blog/page/2/)
+* [Rates for GrantPUD](https://www.grantpud.org/rates-fees)
 
 **Electricity Cost ($/kW)** - The yearly cost is calculated with power consumption rate of 64MW at the cost of $0.019 assuming that the data center is 100% available in a year.
  
@@ -32,11 +31,9 @@ CO2 Emission - 62250.72 Tons
 
 CO2 equivalent in cars - 13724
 
-Tool : Schneider electric Carbon Emission Calculation link -
-<https://www.schneider-electric.com/en/work/solutions/system/s1/data-center-and-network-systems/trade-off-tools/data-center-carbon-footprint-comparison-calculator/> 
+Tool : [Schneider electric Carbon Emission Calculation link](https://www.schneider-electric.com/en/work/solutions/system/s1/data-center-and-network-systems/trade-off-tools/data-center-carbon-footprint-comparison-calculator/)
 
-Reference - 
-<http://download.microsoft.com/download/8/2/9/8297f7c7-ae81-4e99-b1db-d65a01f7a8ef/microsoft_cloud_infrastructure_datacenter_and_network_fact_sheet.pdf>
+Reference - [Microsoft PUE](http://download.microsoft.com/download/8/2/9/8297f7c7-ae81-4e99-b1db-d65a01f7a8ef/microsoft_cloud_infrastructure_datacenter_and_network_fact_sheet.pdf)
 
 ## E.Datacenter.4
 
@@ -49,13 +46,11 @@ Reference -
 * A Hydro power plant can be used a peaking power plant when demand increases. When needed, the water stored in reservoir can be released and energy can be produced quickly.
 * Top providers of hydroelectricity include China, United States, Canada, Brazil and India. Of all renewable energy, 71% of renewable electricity is from Hydro energy.
 
-Reference - <https://www.nationalgeographic.org/encyclopedia/hydroelectric-energy>
-
-<https://www.eia.gov/energyexplained/hydropower/>
-
-<https://www.britannica.com/science/hydroelectric-power>
-
-<https://simple.wikipedia.org/wiki/Hydroelectricity>
+Reference -
+ * [National Geographic Reference](https://www.nationalgeographic.org/encyclopedia/hydroelectric-energy)
+ * [Hydropower Reference from eia.gov](https://www.eia.gov/energyexplained/hydropower/)
+ * [Britannica Reference](https://www.britannica.com/science/hydroelectric-power)
+ * [Wikipedia Reference](https://simple.wikipedia.org/wiki/Hydroelectricity)
 
 
 ## E.Datacenter.5
@@ -70,11 +65,9 @@ Reference - <https://www.nationalgeographic.org/encyclopedia/hydroelectric-energ
 * A post from iass-potsdam states that "An additional aspect of local value creation is linked to the emergence of citizens as renewable energy producers and energy providers. An estimated 47% of the overall installed renewable energy capacity in Germany as of 2013 — adding up to an installed capacity of 33.5 GW — is in the hand of citizens, mainly through privately owned solar rooftop systems and citizens’ wind farm cooperatives. Those projects provide approximately 1.6 million Germans with additional income or reduced spending for external electricity."
 
 Reference:
-<https://en.wikipedia.org/wiki/Renewable_energy_in_Germany>
-
-<https://www.cleanenergywire.org/news/renewables-hit-record-77-percent-german-power-easter-monday>
-
-<https://www.iass-potsdam.de/en/blog/2016/10/social-benefits-renewable-energies>
+ * [Wikipedia Reference](https://en.wikipedia.org/wiki/Renewable_energy_in_Germany)
+ * [Clean Energy Wire Reference](https://www.cleanenergywire.org/news/renewables-hit-record-77-percent-german-power-easter-monday)
+ * [Iaas-potsdam Reference](https://www.iass-potsdam.de/en/blog/2016/10/social-benefits-renewable-energies)
 
 ## E.Datacenter.8
 **Google Cloud Data Center Outage**
@@ -87,6 +80,5 @@ Reference:
 * Services that were impacted include Cloud Endpoint, Cloud Interconnect, Cloud VPN, Cloud Pub /Sub, Cloud Spanner and Cloud Storage.
 
 Reference:
- <https://status.cloud.google.com/incident/cloud-networking/19009> 
-
-<https://cloud.google.com/blog/topics/inside-google-cloud/an-update-on-sundays-service-disruption> 
+* [Google Status Reference](https://status.cloud.google.com/incident/cloud-networking/19009) 
+* [Google Blog Reference](https://cloud.google.com/blog/topics/inside-google-cloud/an-update-on-sundays-service-disruption) 
