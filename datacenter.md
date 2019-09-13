@@ -17,8 +17,10 @@ Reference: [Microsoft Ignite Presentation](https://www.youtube.com/watch?v=D8hMu
 The Grant PUD county rate for large industrial consumers consuming greater than 15MW is $0.03/kwH but according to a portofquincy.org web article, Microsoft is receiving a rate of $0.019 hence this cost is being used. 
 
 Reference:
-* [Port of Quincy Blog post](http://www.portofquincy.org/category/blog/page/2/)
-* [Rates for GrantPUD](https://www.grantpud.org/rates-fees)
+
+*  [Port of Quincy Blog post](http://www.portofquincy.org/category/blog/page/2/)
+
+*  [Rates for GrantPUD](https://www.grantpud.org/rates-fees)
 
 **Electricity Cost ($/kW)** - The yearly cost is calculated with power consumption rate of 64MW at the cost of $0.019 assuming that the data center is 100% available in a year.
  
@@ -47,12 +49,15 @@ Reference - [Microsoft PUE](http://download.microsoft.com/download/8/2/9/8297f7c
 * Top providers of hydroelectricity include China, United States, Canada, Brazil and India. Of all renewable energy, 71% of renewable electricity is from Hydro energy.
 
 Reference -
+
  * [National Geographic Reference](https://www.nationalgeographic.org/encyclopedia/hydroelectric-energy)
+ 
  * [Hydropower Reference from eia.gov](https://www.eia.gov/energyexplained/hydropower/)
+ 
  * [Britannica Reference](https://www.britannica.com/science/hydroelectric-power)
+ 
  * [Wikipedia Reference](https://simple.wikipedia.org/wiki/Hydroelectricity)
-
-
+ 
 ## E.Datacenter.5
 
 **Germany**
@@ -65,9 +70,13 @@ Reference -
 * A post from iass-potsdam states that "An additional aspect of local value creation is linked to the emergence of citizens as renewable energy producers and energy providers. An estimated 47% of the overall installed renewable energy capacity in Germany as of 2013 — adding up to an installed capacity of 33.5 GW — is in the hand of citizens, mainly through privately owned solar rooftop systems and citizens’ wind farm cooperatives. Those projects provide approximately 1.6 million Germans with additional income or reduced spending for external electricity."
 
 Reference:
+
  * [Wikipedia Reference](https://en.wikipedia.org/wiki/Renewable_energy_in_Germany)
+ 
  * [Clean Energy Wire Reference](https://www.cleanenergywire.org/news/renewables-hit-record-77-percent-german-power-easter-monday)
+ 
  * [Iaas-potsdam Reference](https://www.iass-potsdam.de/en/blog/2016/10/social-benefits-renewable-energies)
+ 
 
 ## E.Datacenter.8
 **Google Cloud Data Center Outage**
@@ -80,5 +89,7 @@ Reference:
 * Services that were impacted include Cloud Endpoint, Cloud Interconnect, Cloud VPN, Cloud Pub /Sub, Cloud Spanner and Cloud Storage.
 
 Reference:
-* [Google Status Reference](https://status.cloud.google.com/incident/cloud-networking/19009) 
+
+* [Google Status Reference](https://status.cloud.google.com/incident/cloud-networking/19009)
+ 
 * [Google Blog Reference](https://cloud.google.com/blog/topics/inside-google-cloud/an-update-on-sundays-service-disruption) 
