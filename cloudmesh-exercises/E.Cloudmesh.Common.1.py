@@ -11,7 +11,6 @@ from cloudmesh.common.variables import Variables
 
 headingText = "Pratibha - E.Cloudmesh.Common.1 HEADING"
 bannerText = "Pratibha - E.Cloudmesh.Common.1 banner"
-verboseData = {"Name": "Pratibha", "Assigment": "Cloudmesh.Common.1"}
 verboseData1 = {"headingText": headingText, "bannerText": bannerText}
 
 variables = Variables()
