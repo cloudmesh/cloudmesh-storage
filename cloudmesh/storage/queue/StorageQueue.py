@@ -1,7 +1,15 @@
 from multiprocessing import Pool
 import textwrap
+from cloudmesh.common.console import Console
+from cloudmesh.configuration.Config import Config
+from cloudmesh.storage.Provider import Provider
+from pprint import pprint
+import oyaml as yaml
+from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
+import uuid
+from cloudmesh.common3.DateTime import DateTime
 
-class Queue(object):
+class StorageQueue:
     """
     This class specifies a storage object queue, that allows the queuing of
     files to be copied between services.
@@ -56,7 +64,7 @@ class Queue(object):
     def __init__(self,
                  source,
                  destination,
-                 name=None,
+                 name="local",
                  parallelism=4):
         """
         :param name: The name of the queue (used as a collection in mongodb)
@@ -68,16 +76,63 @@ class Queue(object):
         self.destination = destination
         self.paralelism = parallelism
 
-        if name is None:
-            self.name = "storage-queue-{source}-{destination}"
-        else:
-            self.name = name
+        config = Config()
+
+        self.source_spec = config[f"cloudmesh.storage.{source}"]
+        self.destination_spec = config[f"cloudmesh.storage.{destination}"]
+
+
+
+        self.provider_source = Provider(service=source)
+        self.provider_destination = Provider(service=destination)
+
+        self.name = name
+        self.collection = f"storage-queue-{name}-{source}-{destination}"
 
         #
         # TODO: create collection in mongodb
         #
+        Console.ok(f"Collection: {self.name}")
 
 
+
+
+
+
+    def _copy_file(self, sourcefile, destinationfile):
+        """
+        adds a copy action to the queue
+
+        copies the file from the source service to the destination service using
+        the file located in the path and storing it into the remote. If remote
+        is not specified path is used for it.
+
+        The copy will not be performed if the files are the same.
+
+        :param sourcefile:
+        :param destinationfile:
+        :return:
+        """
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+        cm:
+           name: "{self.source}:{sourcefile}"
+           kind: storage
+           id: {uuid_str}
+           cloud: {self.collection}
+           collection: {self.collection}
+           created: {date}
+        action: copy
+        source: {self.source}:{sourcefile}
+        destination: {self.destination}:{destinationfile}
+        status: waiting
+        """)
+        entries = yaml.load(specification)
+
+        return entries
+
+    @DatabaseUpdate()
     def copy_file(self, sourcefile, destinationfile):
         """
         adds a copy action to the queue
@@ -92,30 +147,28 @@ class Queue(object):
         :param destinationfile:
         :return:
         """
-        date = "1 Dec 2019 7:00" # define a uniform time function in cloudmesh.common
-        specification = textwrap.dedent(f"""
-        cm:
-           id: uuid
-           collection: storage-queue-{self.source}-{self.destination}
-        action: copy
-        source: {self.source}:{sourcefile}
-        destination: {self.destination}:{destinationfile}
-        created: {date}
-        status: waiting
-        """)
-        print (specification)
-
+        self._copy_file(sourcefile, destinationfile)
 
     def copy_tree(self, sourcetree, destinationtree):
         """
         adds a tree to be copied to the queue
         it will recursively add all files within the tree
 
-        :param sourcefile:
-        :param destinationfile:
+        :param sourcetree:
+        :param destinationtree:
         :return:
         """
         # goes recursively through the dree and adds_the file
+
+        source_files = self.provider_source.list(sourcetree, recursive=True)
+
+        # create dirs first
+
+        files = []
+        for file in source_files:
+            location = file["cm"]["location"]
+            files.append(self._copy_file(location, location))
+        return files
 
     def sync(self, sourcetree, destinationtree):
         """
@@ -185,6 +238,7 @@ class Queue(object):
         :return:
         """
         # find all teh values from within the MongoDB
+        raise NotImplementedError
 
     def cancel(self, id=None):
         """
@@ -193,13 +247,14 @@ class Queue(object):
         :return:
         """
         # if None all are canceled
-
+        raise NotImplementedError
 
     def get(self):
         """
         this is a threadsafe method that gets a single job from the queue
         :return:
         """
+        raise NotImplementedError
 
     def action(self, specification):
         """
@@ -241,7 +296,7 @@ class Queue(object):
         # p = Pool(self.parallelism)
         #
         # p.map(do_action)
-
+        raise NotImplementedError
 
 
 

@@ -5,9 +5,11 @@ from cloudmesh.common.util import writefile
 from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.common.debug import VERBOSE
 import shutil
+from datetime import datetime
+
 # import pwd  # does not work in windows
 # from grp import getgrgid # does not work in windows
-# from datetime import datetimef # does not work in windows
+# from datetime import datetime # does not work in windows
 
 from cloudmesh.common.Shell import Shell
 import os
@@ -66,7 +68,7 @@ class Provider(StorageABC):
         location = Path(self.credentials["directory"]) / dirname
         return location
 
-    def identifier(self, dirname, filename, status="ok"):
+    def identifier(self, dirname, filename, absolute=False, status="ok"):
         stat_info = os.stat(filename)
         uid = stat_info.st_uid
         gid = stat_info.st_gid
@@ -83,7 +85,8 @@ class Provider(StorageABC):
                  "name": os.path.basename(filename),
                  "kind": self.kind,
                  "size": "TBD",
-                 "service": self.service
+                 "service": self.service,
+                 "cloud": self.service
                  },
             "status": status,
             "size": os.path.getsize(filename),
@@ -93,6 +96,10 @@ class Provider(StorageABC):
             "creation": datetime.fromtimestamp(creation_date(filename)).strftime("%m/%d/%Y, %H:%M:%S")
 
         }
+        #print ("DATA", filename, dirname, self.credentials["directory"])
+        if not absolute:
+            identity["cm"]["location"] = "." + filename.replace(self.credentials["directory"], "", 1)
+
         return identity
 
     def create_file(self, location, content):
@@ -122,7 +129,7 @@ class Provider(StorageABC):
         directory = os.path.dirname(filename)
         return self.create_dir(directory)
 
-    def _list(self, source=None, recursive=False):
+    def list(self, source=None, recursive=False):
         """
         lists the information as dict
 
@@ -133,7 +140,7 @@ class Provider(StorageABC):
         """
         return self._list(source=source, recursive=recursive)
 
-    def _list(self, source=None, recursive=False, status="ok"):
+    def _list(self, source=None, absolute=False, recursive=False, status="ok"):
         """
         lists the information as dict
 
@@ -143,6 +150,7 @@ class Provider(StorageABC):
         :return: dict
         """
         location = self._dirname(source)
+        # print ("L", location)
         if recursive:
             files = location.glob("**/*")
         else:
