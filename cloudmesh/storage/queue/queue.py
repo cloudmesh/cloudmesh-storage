@@ -220,6 +220,9 @@ class Queue(object):
         elif action == "delete":
             raise NotImplementedError
 
+    def do_action(self):
+        specification = self.get()
+        self.action(specification)
 
     def run(self):
         """
@@ -227,6 +230,21 @@ class Queue(object):
 
         :return:
         """
+        # sequential
+
+        # while there are still jobs in the queue:
+        #    job = get()
+        #    action (specification)
+
+        # parallel
+        #
+        # p = Pool(self.parallelism)
+        #
+        # p.map(do_action)
+
+
+
+
 
 
 
