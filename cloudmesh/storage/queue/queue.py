@@ -1,4 +1,5 @@
 from multiprocessing import Pool
+import textwrap
 
 class Queue(object):
     """
@@ -55,7 +56,7 @@ class Queue(object):
     def __init__(self,
                  source,
                  destination,
-                 name = None,
+                 name=None,
                  parallelism=4):
         """
         :param name: The name of the queue (used as a collection in mongodb)
@@ -76,25 +77,54 @@ class Queue(object):
         # TODO: create collection in mongodb
         #
 
-    def add_file(self, sourcefile, destinationfile):
+
+    def copy_file(self, sourcefile, destinationfile):
         """
-        adds the file to the queue
+        adds a copy action to the queue
+
+        copies the file from the source service to the destination service using
+        the file located in the path and storing it into the remote. If remote
+        is not specified path is used for it.
+
+        The copy will not be performed if the files are the same.
 
         :param sourcefile:
         :param destinationfile:
         :return:
         """
+        date = "1 Dec 2019 7:00" # define a uniform time function in cloudmesh.common
+        specification = textwrap.dedent(f"""
+        cm:
+           id: uuid
+           collection: storage-queue-{self.source}-{self.destination}
+        action: copy
+        source: {self.source}:{sourcefile}
+        destination: {self.destination}:{destinationfile}
+        created: {date}
+        status: waiting
+        """)
+        print (specification)
 
-    def add_tree(self, sourcetree, destinationtree):
+
+    def copy_tree(self, sourcetree, destinationtree):
         """
-        adds a tree copy to the queue
-        adds the file to the queue
+        adds a tree to be copied to the queue
+        it will recursively add all files within the tree
 
         :param sourcefile:
         :param destinationfile:
         :return:
         """
         # goes recursively through the dree and adds_the file
+
+    def sync(self, sourcetree, destinationtree):
+        """
+        just a more convenient name for copy_tree
+        :param sourcetree:
+        :param destinationtree:
+        :return:
+        """
+        self.copy_tree(sourcetree, destinationtree)
 
 
     def mkdir(self, service, path):
@@ -106,19 +136,19 @@ class Queue(object):
         :param path:
         :return:
         """
+        date = "1 Dec 2019 7:00" # define a uniform time function in cloudmesh.common
+        specification = textwrap.dedent(f"""
+        cm:
+           id: uuid
+           collection: storage-queue-{self.source}-{self.destination}
+        action: mkdir
+        source: {self.service}:{path}
+        created: {date}
+        status: waiting
+        """)
+        print (specification)
 
-    def copy(self, path, remote=None):
-        """
-        adds a copy action to the queue
 
-        copies the file from the source service to the destination service using
-        the file located in the path and storing it into the remote. If remote
-        is not specified path is used for it.
-
-        :param path:
-        :param remote:
-        :return:
-        """
 
     def delete(self, service, path):
         """
@@ -128,6 +158,17 @@ class Queue(object):
         :param path:
         :return:
         """
+        date = "1 Dec 2019 7:00" # define a uniform time function in cloudmesh.common
+        specification = textwrap.dedent(f"""
+        cm:
+           id: uuid
+           collection: storage-queue-{self.source}-{self.destination}
+        action: delete
+        source: {self.service}:{path}
+        created: {date}
+        status: waiting
+        """)
+        print (specification)
 
 
     def status(self):
@@ -143,6 +184,7 @@ class Queue(object):
 
         :return:
         """
+        # find all teh values from within the MongoDB
 
     def cancel(self, id=None):
         """
@@ -159,10 +201,33 @@ class Queue(object):
         :return:
         """
 
+    def action(self, specification):
+        """
+
+        executes the action identified by the specification. This is used by the
+        run command.
+
+        :param specification:
+        :return:
+        """
+        action = specification["action"]
+        if action == "copy":
+            raise NotImplementedError
+        elif action == "delete":
+            raise NotImplementedError
+        elif action == "mkdir":
+            raise NotImplementedError
+        elif action == "delete":
+            raise NotImplementedError
+
+
     def run(self):
         """
         runs the copy process for all jobs in the queue and completes when all actions are completed
 
         :return:
         """
+
+
+
 
