@@ -9,6 +9,7 @@ from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 import uuid
 from cloudmesh.common3.DateTime import DateTime
 
+
 class StorageQueue:
     """
     This class specifies a storage object queue, that allows the queuing of
@@ -68,8 +69,10 @@ class StorageQueue:
                  parallelism=4):
         """
         :param name: The name of the queue (used as a collection in mongodb)
-        :param source: The name of the service in cloudmesh.data from which to copy
-        :param destination: The name of the service in cloudmesh.data from which to copy
+        :param source: The name of the service in cloudmesh.data from which
+                       to copy
+        :param destination: The name of the service in cloudmesh.data from
+                            which to copy
         :param parallelism: The number of parallel threads
         """
         self.source = source
@@ -81,8 +84,6 @@ class StorageQueue:
         self.source_spec = config[f"cloudmesh.storage.{source}"]
         self.destination_spec = config[f"cloudmesh.storage.{destination}"]
 
-
-
         self.provider_source = Provider(service=source)
         self.provider_destination = Provider(service=destination)
 
@@ -93,11 +94,6 @@ class StorageQueue:
         # TODO: create collection in mongodb
         #
         Console.ok(f"Collection: {self.name}")
-
-
-
-
-
 
     def _copy_file(self, sourcefile, destinationfile):
         """
@@ -149,6 +145,7 @@ class StorageQueue:
         """
         self._copy_file(sourcefile, destinationfile)
 
+    @DatabaseUpdate()
     def copy_tree(self, sourcetree, destinationtree):
         """
         adds a tree to be copied to the queue
@@ -179,7 +176,6 @@ class StorageQueue:
         """
         self.copy_tree(sourcetree, destinationtree)
 
-
     def mkdir(self, service, path):
         """
         adds a mkdir action to the queue
@@ -189,19 +185,23 @@ class StorageQueue:
         :param path:
         :return:
         """
-        date = "1 Dec 2019 7:00" # define a uniform time function in cloudmesh.common
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
-        cm:
-           id: uuid
-           collection: storage-queue-{self.source}-{self.destination}
-        action: mkdir
-        source: {self.service}:{path}
-        created: {date}
-        status: waiting
-        """)
-        print (specification)
+                cm:
+                   name: "{self.service}:{path}"
+                   kind: storage
+                   id: {uuid_str}
+                   cloud: {self.collection}
+                   collection: {self.collection}
+                   created: {date}
+                action: mkdir
+                source: {self.service}:{path}
+                status: waiting
+                """)
+        entries = yaml.load(specification)
 
-
+        return entries
 
     def delete(self, service, path):
         """
@@ -211,18 +211,23 @@ class StorageQueue:
         :param path:
         :return:
         """
-        date = "1 Dec 2019 7:00" # define a uniform time function in cloudmesh.common
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
-        cm:
-           id: uuid
-           collection: storage-queue-{self.source}-{self.destination}
-        action: delete
-        source: {self.service}:{path}
-        created: {date}
-        status: waiting
-        """)
-        print (specification)
+                cm:
+                   name: "{self.service}:{path}"
+                   kind: storage
+                   id: {uuid_str}
+                   cloud: {self.collection}
+                   collection: {self.collection}
+                   created: {date}
+                action: delete
+                source: {self.service}:{path}
+                status: waiting
+                """)
+        entries = yaml.load(specification)
 
+        return entries
 
     def status(self):
         """
@@ -281,7 +286,8 @@ class StorageQueue:
 
     def run(self):
         """
-        runs the copy process for all jobs in the queue and completes when all actions are completed
+        runs the copy process for all jobs in the queue and completes when all
+        actions are completed
 
         :return:
         """
@@ -297,10 +303,3 @@ class StorageQueue:
         #
         # p.map(do_action)
         raise NotImplementedError
-
-
-
-
-
-
-
