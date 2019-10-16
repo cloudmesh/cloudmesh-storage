@@ -27,11 +27,11 @@
 
 ### Assignments
 
--[x] E.Cloudmesh.Common.1
--[x] E.Cloudmesh.Common.2
--[x] E.Cloudmesh.Common.3
--[x] E.Cloudmesh.Common.4
--[x] E.Cloudmesh.Common.5
--[x] E.Cloudmesh.Shell.1
--[x] E.Cloudmesh.Shell.2
--[x] E.Cloudmesh.Shell.3
+- [x] E.Cloudmesh.Common.1
+- [x] E.Cloudmesh.Common.2
+- [x] E.Cloudmesh.Common.3
+- [x] E.Cloudmesh.Common.4
+- [x] E.Cloudmesh.Common.5
+- [x] E.Cloudmesh.Shell.1
+- [x] E.Cloudmesh.Shell.2
+- [x] E.Cloudmesh.Shell.3
