@@ -6,6 +6,7 @@ from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.common.debug import VERBOSE
 import shutil
 from datetime import datetime
+from pprint import pprint
 
 # import pwd  # does not work in windows
 # from grp import getgrgid # does not work in windows
@@ -68,7 +69,7 @@ class Provider(StorageABC):
         location = Path(self.credentials["directory"]) / dirname
         return location
 
-    def identifier(self, dirname, filename, absolute=False, status="ok"):
+    def identifier(self, dirname, filename, absolute=False, file=True, status="ok"):
         stat_info = os.stat(filename)
         uid = stat_info.st_uid
         gid = stat_info.st_gid
@@ -96,6 +97,13 @@ class Provider(StorageABC):
             "creation": datetime.fromtimestamp(creation_date(filename)).strftime("%m/%d/%Y, %H:%M:%S")
 
         }
+        if file:
+            identity['file'] =True
+            identity['dir'] = False
+        else:
+            identity['file'] =False
+            identity['dir'] = True
+
         #print ("DATA", filename, dirname, self.credentials["directory"])
         if not absolute:
             identity["cm"]["location"] = "." + filename.replace(self.credentials["directory"], "", 1)
@@ -129,7 +137,7 @@ class Provider(StorageABC):
         directory = os.path.dirname(filename)
         return self.create_dir(directory)
 
-    def list(self, source=None, recursive=False):
+    def list(self, source=None, files_only=False, dir_only=False, recursive=False):
         """
         lists the information as dict
 
@@ -138,9 +146,18 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-        return self._list(source=source, recursive=recursive)
+        return self._list(source=source,
+                          files_only=files_only,
+                          dir_only=dir_only,
+                          recursive=recursive)
 
-    def _list(self, source=None, absolute=False, recursive=False, status="ok"):
+    def _list(self,
+              source=None,
+              absolute=False,
+              recursive=False,
+              files_only=False,
+              dir_only=False,
+              status="ok"):
         """
         lists the information as dict
 
@@ -157,8 +174,18 @@ class Provider(StorageABC):
             files = location.glob("*")
         result = []
         for file in files:
-            entry = self.identifier(source, str(file), status=status)
-            result.append(entry)
+
+            is_dir = file.is_dir()
+            is_file = file.is_file()
+
+            if dir_only and is_dir:
+                entry = self.identifier(source, str(file), file=False, status=status)
+                result.append(entry)
+            elif files_only and is_file:
+                entry = self.identifier(source, str(file), file=True, status=status)
+            else:
+                entry = self.identifier(source, str(file), file=is_file, status=status)
+                result.append(entry)
         return result
 
     def put(self, source=None, destination=None, recursive=False):

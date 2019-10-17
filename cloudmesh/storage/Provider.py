@@ -92,12 +92,12 @@ class Provider(StorageABC):
         return d
 
     @DatabaseUpdate()
-    def list(self, source=None, recursive=None):
+    def list(self, source=None, dir_only=False, recursive=False):
 
         # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"list {source}")
         VERBOSE(locals())
-        d = self.provider.list(source=source, recursive=recursive)
+        d = self.provider.list(source=source, dir_only=dir_only, recursive=recursive)
         return d
 
     def tree(self, source):

@@ -8,7 +8,8 @@ import oyaml as yaml
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 import uuid
 from cloudmesh.common3.DateTime import DateTime
-
+import sys
+from  cloudmesh.mongo.CmDatabase import CmDatabase
 
 class StorageQueue:
     """
@@ -77,7 +78,7 @@ class StorageQueue:
         """
         self.source = source
         self.destination = destination
-        self.paralelism = parallelism
+        self.parallelism = parallelism
 
         config = Config()
 
@@ -89,6 +90,7 @@ class StorageQueue:
 
         self.name = name
         self.collection = f"storage-queue-{name}-{source}-{destination}"
+        self.number = 0
 
         #
         # TODO: create collection in mongodb
@@ -113,6 +115,7 @@ class StorageQueue:
         uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
         cm:
+           number: {self.number}
            name: "{self.source}:{sourcefile}"
            kind: storage
            id: {uuid_str}
@@ -124,8 +127,8 @@ class StorageQueue:
         destination: {self.destination}:{destinationfile}
         status: waiting
         """)
-        entries = yaml.load(specification)
-
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
         return entries
 
     @DatabaseUpdate()
@@ -157,15 +160,32 @@ class StorageQueue:
         """
         # goes recursively through the dree and adds_the file
 
-        source_files = self.provider_source.list(sourcetree, recursive=True)
+        sources = self.provider_source.list(sourcetree, recursive=True)
+
+        files = []
+        dirs = []
+
+        for source in sources:
+            if bool(source['file']):
+                files.append(source)
+            else:
+                dirs.append((source))
+
 
         # create dirs first
 
-        files = []
-        for file in source_files:
+        actions = []
+
+        for file in dirs:
             location = file["cm"]["location"]
-            files.append(self._copy_file(location, location))
-        return files
+            actions.append(self.mkdir(self.destination, location))
+
+        # now copy files
+
+        for file in files:
+            location = file["cm"]["location"]
+            actions.append(self._copy_file(location, location))
+        return actions
 
     def sync(self, sourcetree, destinationtree):
         """
@@ -189,17 +209,19 @@ class StorageQueue:
         uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
                 cm:
-                   name: "{self.service}:{path}"
+                   number: {self.number}
+                   name: "{service}:{path}"
                    kind: storage
                    id: {uuid_str}
                    cloud: {self.collection}
                    collection: {self.collection}
                    created: {date}
                 action: mkdir
-                source: {self.service}:{path}
+                source: {service}:{path}
                 status: waiting
                 """)
-        entries = yaml.load(specification)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
 
         return entries
 
@@ -215,6 +237,7 @@ class StorageQueue:
         uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
                 cm:
+                   number: {self.number}
                    name: "{self.service}:{path}"
                    kind: storage
                    id: {uuid_str}
@@ -225,8 +248,8 @@ class StorageQueue:
                 source: {self.service}:{path}
                 status: waiting
                 """)
-        entries = yaml.load(specification)
-
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
         return entries
 
     def status(self):
@@ -254,12 +277,6 @@ class StorageQueue:
         # if None all are canceled
         raise NotImplementedError
 
-    def get(self):
-        """
-        this is a threadsafe method that gets a single job from the queue
-        :return:
-        """
-        raise NotImplementedError
 
     def action(self, specification):
         """
@@ -272,17 +289,28 @@ class StorageQueue:
         """
         action = specification["action"]
         if action == "copy":
-            raise NotImplementedError
+            print ("COPY", specification)
+            # update status
         elif action == "delete":
-            raise NotImplementedError
+            print ("DELETE", specification)
+            # update status
         elif action == "mkdir":
-            raise NotImplementedError
-        elif action == "delete":
-            raise NotImplementedError
+            print ("MKDIR", specification)
+            # update status
 
-    def do_action(self):
-        specification = self.get()
-        self.action(specification)
+    def get_actions(self):
+        cm = CmDatabase()
+        entries = cm.find(cloud=self.collection,
+                          kind='storage')
+        mkdir = []
+        copy = []
+        for entry in entries:
+            pprint (entry)
+            if entry['action'] == 'mkdir':
+                mkdir.append(entry)
+            elif entry['action'] == 'copy':
+                copy.append(entry)
+        return mkdir, copy
 
     def run(self):
         """
@@ -291,15 +319,16 @@ class StorageQueue:
 
         :return:
         """
-        # sequential
+        mkdir, copy = self.get_actions()
 
-        # while there are still jobs in the queue:
-        #    job = get()
-        #    action (specification)
+        # create directories
+        #
+        p = Pool(self.parallelism)
+        #
+        p.map(self.action, mkdir)
 
-        # parallel
+        # COPY FILES
         #
-        # p = Pool(self.parallelism)
+        p = Pool(self.parallelism)
         #
-        # p.map(do_action)
-        raise NotImplementedError
+        p.map(self.action, copy)
