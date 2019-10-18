@@ -123,8 +123,12 @@ class StorageQueue:
            collection: {self.collection}
            created: {date}
         action: copy
-        source: {self.source}:{sourcefile}
-        destination: {self.destination}:{destinationfile}
+        source: 
+          service: {self.source}
+          path: {sourcefile}
+        destination: 
+          service: {self.destination}
+          path: {destinationfile}
         status: waiting
         """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
@@ -217,7 +221,9 @@ class StorageQueue:
                    collection: {self.collection}
                    created: {date}
                 action: mkdir
-                source: {service}:{path}
+                source: 
+                  service: {service}
+                  path: {path}
                 status: waiting
                 """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
@@ -245,7 +251,9 @@ class StorageQueue:
                    collection: {self.collection}
                    created: {date}
                 action: delete
-                source: {self.service}:{path}
+                source: 
+                  service: {self.service}
+                  path: {path}
                 status: waiting
                 """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
