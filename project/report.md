@@ -13,6 +13,7 @@ This project is to develop API and rest services to manage and transfer files be
  Multiple cloud providers offer storage solutions to manage data in the form of files. The intention here is to build a command which can provide functionality to read the files from a queue and move them from a source to a target cloud provider's storage. In this method, users will be able to split or move the data across different cloud providers that provider cheaper solutions. 
 
 ## Requirements
+
 * AWS, Google cloud accounts
 * cloudmesh-storage API
 * REST API
@@ -21,7 +22,8 @@ This project is to develop API and rest services to manage and transfer files be
 TBD
 
 ## Architecture Diagram
- ![Architecture](images/architecture.PNG)
+
+![Architecture](images/architecture2.png)
 
 Description
 
@@ -36,6 +38,7 @@ Description
 * Storage and Utility APIs on AWS and Google cloud.   
 
 ## Technology Used
+
 * cloudmesh-storage
 * Python
 * REST
@@ -44,6 +47,7 @@ Description
 * OpenAPI
 
 ## Progress
+
 * Update report.md with architecture and command details.
 * Generated command using cloudmesh shell - cms storage_service command
 * Create AWS account and Google Cloud accounts
@@ -57,6 +61,7 @@ Next Steps
 
 
 ## References
+
 * <https://github.com/googleapis/google-cloud-python#google-cloud-python-client>
 * <https://aws.amazon.com/s3/>
 * <https://boto3.amazonaws.com/v1/documentation/api/latest/guide/resources.html>
