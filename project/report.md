@@ -23,7 +23,7 @@ TBD
 
 ## Architecture Diagram
 
-![Architecture](images/architecture2.PNG)
+![Architecture](images/architecture2.png)
 
 Description
 
