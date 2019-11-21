@@ -31,7 +31,7 @@ class StorageABC(metaclass=ABCMeta):
         raise NotImplementedError
         return {}
 
-    def list(self, source=None, recursive=False):
+    def list(self, recursive=False):
         """
         lists the information as dict
 

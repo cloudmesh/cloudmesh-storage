@@ -97,6 +97,7 @@ class StorageCommand(PluginCommand):
                        "storage")
         VERBOSE(arguments)
 
+
         if arguments.storage is None:
             try:
                 v = Variables()
@@ -115,24 +116,21 @@ class StorageCommand(PluginCommand):
         if arguments["get"]:
             provider = Provider(arguments.storage[0])
 
-            result = provider.get(arguments.storage,
-                                  arguments.SOURCE,
+            result = provider.get(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
 
         elif arguments.put:
             provider = Provider(arguments.storage[0])
 
-            result = provider.put(arguments.storage,
-                                  arguments.SOURCE,
+            result = provider.put(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
 
         elif arguments.create and arguments.dir:
             provider = Provider(arguments.storage[0])
 
-            result = provider.createdir(arguments.storage,
-                                        arguments.DIRECTORY)
+            result = provider.create_dir(arguments.DIRECTORY)
 
         elif arguments.list:
 
@@ -143,8 +141,7 @@ class StorageCommand(PluginCommand):
             for storage in arguments.storage:
                 provider = Provider(storage)
 
-                result = provider.list(arguments.storage,
-                                       arguments.SOURCE,
+                result = provider.list(arguments.SOURCE,
                                        arguments.recursive)
 
         elif arguments.delete:
@@ -155,8 +152,7 @@ class StorageCommand(PluginCommand):
             for storage in arguments.storage:
                 provider = Provider(storage)
 
-                provider.delete(arguments.storage,
-                                arguments.SOURCE)
+                provider.delete(arguments.SOURCE)
 
         elif arguments.search:
             #
@@ -166,8 +162,7 @@ class StorageCommand(PluginCommand):
             for storage in arguments.storage:
                 provider = Provider(storage)
 
-                provider.search(arguments.storage,
-                                arguments.DIRECTORY,
+                provider.search(arguments.DIRECTORY,
                                 arguments.FILENAME,
                                 arguments.recursive)
 

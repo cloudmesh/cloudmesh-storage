@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage.py
 # pytest -v  tests/test_storage.py
-# pytest -v --capture=no tests/test_storage.py:TestStorage.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage.py::TestStorage::<METHIDNAME>
 ###############################################################
 import os
 from pathlib import Path
@@ -9,6 +9,7 @@ from pprint import pprint
 
 import pytest
 from cloudmesh.common.StopWatch import StopWatch
+from cloudmesh.common3.Benchmark import Benchmark
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
@@ -16,6 +17,7 @@ from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
 from cloudmesh.storage.Provider import Provider
 
+cloud = 'AWS'
 
 @pytest.mark.incremental
 class TestStorage(object):
@@ -50,8 +52,19 @@ class TestStorage(object):
 
     def test_put(self):
         HEADING()
-        src = path_expand("~/.cloudmesh/storage/test/a/a.txt")
-        dst = "/"
+
+        #root="~/.cloudmesh"
+        #src = "storage/test/a/a.txt"
+
+        # source = f"local:{src}"
+        # destination = f"aws:{src}"
+        # test_file = self.p.put(src, dst)
+
+        #src = "storage_a:test/a/a.txt"
+
+
+        src = "~/.cloudmesh/storage/test/"
+        dst = '/'
         StopWatch.start("put")
         test_file = self.p.put(src, dst)
         StopWatch.stop("put")
@@ -60,10 +73,33 @@ class TestStorage(object):
 
         assert test_file is not None
 
+    def test_put_recursive(self):
+        HEADING()
+
+        #root="~/.cloudmesh"
+        #src = "storage/test/a/a.txt"
+
+        # source = f"local:{src}"
+        # destination = f"aws:{src}"
+        # test_file = self.p.put(src, dst)
+
+        #src = "storage_a:test/a/a.txt"
+
+
+        src = "~/.cloudmesh/storage/test/"
+        dst = '/'
+        StopWatch.start("put")
+        test_file = self.p.put(src, dst,True)
+        StopWatch.stop("put")
+
+        pprint(test_file)
+
+        assert test_file is not None
+
     def test_get(self):
         HEADING()
-        src = path_expand("/a.txt")
-        dst = path_expand("~/test.txt")
+        src = "/a.txt"
+        dst = "~/.cloudmesh/storage/test"
         StopWatch.start("get")
         file = self.p.get(src, dst)
         StopWatch.stop("get")
@@ -85,19 +121,17 @@ class TestStorage(object):
     def test_search(self):
         HEADING()
         src = '/'
-        filename = 'test.txt'
-        #
-        # bug use named arguments
-        #
+        filename = "a.txt"
         StopWatch.start("search")
         search_files = self.p.search(src, filename, True)
-        StopWatch.stop("serach")
+        StopWatch.stop("search")
         pprint(search_files)
         assert len(search_files) > 0
+        #assert filename in search_files[0]['cm']["name"]
 
     def test_create_dir(self):
         HEADING()
-        src = '/created_dir'
+        src = 'created_dir'
         StopWatch.start("create dir")
         directory = self.p.create_dir(src)
         StopWatch.stop("create dir")
@@ -114,4 +148,4 @@ class TestStorage(object):
         StopWatch.stop("delete")
 
     def test_benchmark(self):
-        StopWatch.benchmark()
+        Benchmark.print(sysinfo=False, csv=True, tag=cloud)
