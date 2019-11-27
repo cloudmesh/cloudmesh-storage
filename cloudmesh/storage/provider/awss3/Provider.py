@@ -148,16 +148,20 @@ class Provider(StorageABC):
 
         # function to list file  or directory
 
-    #def list(self, service=None, source=None, recursive=False):
-    def list(self, source=None, recursive=False):
+
+    def list(self, source=None, dir_only=False, recursive=False):
         """
         lists the information as dict
-        :param service: the name of the service in the yaml file
+
         :param source: the source which either can be a directory or file
+        :param dir_only: Only the directory names
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
+
         """
+        if dir_only:
+            raise NotImplementedError
         #self.storage_dict['service'] = service
         self.storage_dict['action'] = 'list'
         self.storage_dict['source'] = source
