@@ -80,7 +80,7 @@ class Provider(StorageABC):
 
         service = self.service
         VERBOSE(f"delete filename {service} {source}")
-        d = self.provider.delete(service=service, source=source)
+        d = self.provider.delete(source=source)
         # raise ValueError("must return a value")
         return d
 

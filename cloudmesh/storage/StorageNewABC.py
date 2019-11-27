@@ -31,15 +31,18 @@ class StorageABC(metaclass=ABCMeta):
         raise NotImplementedError
         return {}
 
-    def list(self, recursive=False):
+    def list(self, source=None, dir_only=False, recursive=False):
         """
         lists the information as dict
 
         :param source: the source which either can be a directory or file
+        :param dir_only: Only the directory names
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
+
         """
+
         raise NotImplementedError
         return []
 
