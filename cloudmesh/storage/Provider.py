@@ -29,8 +29,14 @@ class Provider(StorageABC):
             self.provider = AwsProvider(service=service, config=config)
         elif self.kind == "awsobjectstore":
             self.provider = AwsobjectstoreProvider(service=service, config=config)
+        elif self.kind in ['google']:
+            from cloudmesh.google.storage.Provider import \
+                Provider as GoogleStorageProvider
+            self.provider = GoogleStorageProvider(service=service, config=config)
         else:
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
+
+
 
     @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):
