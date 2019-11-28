@@ -108,10 +108,7 @@ class StorageCommand(PluginCommand):
 
         arguments.storage = Parameter.expand(arguments.storage)
 
-        #
-        # BUG: some commands could be run on more than the first provider,
-        # such as list
-        # thus the if condition needs to be reorganized
+
 
         if arguments["get"]:
             provider = Provider(arguments.storage[0])
@@ -134,11 +131,7 @@ class StorageCommand(PluginCommand):
 
         elif arguments.list:
 
-            #
-            # BUG: this command is much more complicated
-            #
-
-            for storage in arguments.storage:
+             for storage in arguments.storage:
                 provider = Provider(storage)
 
                 result = provider.list(arguments.SOURCE,
@@ -146,18 +139,13 @@ class StorageCommand(PluginCommand):
 
         elif arguments.delete:
 
-            #
-            # BUG:: this command could be much more complicated
-            #
             for storage in arguments.storage:
                 provider = Provider(storage)
 
                 provider.delete(arguments.SOURCE)
 
         elif arguments.search:
-            #
-            # BUG: this command is much more complicated
-            #
+
 
             for storage in arguments.storage:
                 provider = Provider(storage)
