@@ -246,7 +246,8 @@ class Provider(StorageABC):
         """
         raise NotImplementedError
         source = self._dirname(source)
-        entries = self._list(source=source, recursive=recursive, ststus="deleted")
+        # entries = self._list(source=source, recursive=recursive, ststus="deleted")
+        entries = self._list(source=source, recursive=recursive, status="deleted")
         shutil.rmtree(path_expand(source))
         return entries
 

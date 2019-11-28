@@ -19,8 +19,7 @@ class StorageABC(metaclass=ABCMeta):
             raise ValueError(f"storage service {service} not specified")
             print(e)
 
-    def create_dir(self,
-                   directory=None):
+    def create_dir(self, directory=None):
         """
         creates a directory
 
@@ -29,17 +28,20 @@ class StorageABC(metaclass=ABCMeta):
         :return: dict
         """
         raise NotImplementedError
-        return {}
+        return []
 
-    def list(self, source=None, recursive=False):
+    def list(self, source=None, dir_only=False, recursive=False):
         """
         lists the information as dict
 
         :param source: the source which either can be a directory or file
+        :param dir_only: Only the directory names
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
+
         """
+
         raise NotImplementedError
         return []
 

@@ -29,8 +29,14 @@ class Provider(StorageABC):
             self.provider = AwsProvider(service=service, config=config)
         elif self.kind == "awsobjectstore":
             self.provider = AwsobjectstoreProvider(service=service, config=config)
+        elif self.kind in ['google']:
+            from cloudmesh.google.storage.Provider import \
+                Provider as GoogleStorageProvider
+            self.provider = GoogleStorageProvider(service=service, config=config)
         else:
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
+
+
 
     @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):
@@ -60,13 +66,12 @@ class Provider(StorageABC):
         return d
 
     @DatabaseUpdate()
-    def createdir(self, directory=None):
+    def create_dir(self, directory=None):
 
-        # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"create_dir {directory}")
         VERBOSE(directory)
         service = self.service
-        d = self.provider.create_dir(service=service, directory=directory)
+        d = self.provider.create_dir(directory=directory)
         return d
 
     @DatabaseUpdate()
@@ -80,13 +85,12 @@ class Provider(StorageABC):
 
         service = self.service
         VERBOSE(f"delete filename {service} {source}")
-        d = self.provider.delete(service=service, source=source)
+        d = self.provider.delete(source=source)
         # raise ValueError("must return a value")
         return d
 
     def search(self, directory=None, filename=None, recursive=False):
 
-        # BUG DOES NOT FOLLOW SPEC
         VERBOSE(f"search {directory}")
         d = self.provider.search(directory=directory, filename=filename, recursive=recursive)
         return d
