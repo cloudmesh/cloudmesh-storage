@@ -31,5 +31,3 @@ where we also document how to use pyenv.
 ## Installation
 
 * See <https://github.com/cloudmesh/cloudmesh-installer>
-
-test
