@@ -94,7 +94,41 @@ class Provider(StorageABC):
 
         return info
 
-    # function to create a directory
+    def bucket_create(self,name=None):
+        try:
+            self.s3_client.create_bucket(
+            ACL='private',
+            Bucket=name,
+            )
+            print("Bucket Created:",name)
+            return True
+        except botocore.exceptions.ClientError as e:
+             if e:
+                message = "One or more errors occurred while creating the bucket: {}".format(
+                    e)
+                raise Exception(message)
+                return True
+
+
+    def bucket_exists(self,name=None):
+        try:
+            self.s3_client.head_bucket(Bucket=name)
+            print("Bucket Exists!",name)
+            return True
+        except botocore.exceptions.ClientError as e:
+            # If a client error is thrown, then check that it was a 404 error.
+            # If it was a 404 error, then the bucket does not exist.
+            error_code = int(e.response['Error']['Code'])
+            if error_code == 403:
+                print("Private Bucket. Forbidden Access!")
+                return True
+            elif error_code == 404:
+                print("Bucket Does Not Exist!",name)
+                return False
+
+    # function to create a directory the function will first check if the bucket exists or not,if the bucket doesn't exist it will create the bucket and it will create the directory specified.
+    # the name of the bucket will come from YAML specifications and the directory name comes from the arguments.
+
     def create_dir(self, directory=None):
         """
         creates a directory
@@ -106,11 +140,13 @@ class Provider(StorageABC):
         # filePath = self.joinFileNameDir(self.directory_marker_file_name, directory)
         # filePath = self.massage_path(directory) + '/' + self.directory_marker_file_name
         file_path = self.massage_path(directory)
-
-        #self.storage_dict['service'] = service
         self.storage_dict['action'] = 'create_dir'
         self.storage_dict['directory'] = directory
         dir_files_list = []
+
+        bucket = self.container_name
+        if not self.bucket_exists(name=bucket):
+           self.bucket_create(name=bucket)
 
         # obj = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=filePath))
         obj = list(self.s3_resource.Bucket(self.container_name) \
@@ -138,7 +174,7 @@ class Provider(StorageABC):
             self.storage_dict['message'] = 'Directory created'
         else:
             # print('Directory already present')
-            self.storage_dict['message'] = 'Directory already present'
+            self.storage_dict['message'] = 'Directory/Bucket already present'
 
         self.storage_dict['objlist'] = dir_files_list
         pprint(self.storage_dict)
@@ -419,10 +455,10 @@ class Provider(StorageABC):
         is_source_dir = os.path.isdir(trimmed_source)
 
         files_uploaded = []
-        pprint(trimmed_source)
-        pprint(trimmed_destination)
-        pprint(self.container_name)
-        pprint(is_source_file)
+
+        bucket = self.container_name
+        if not self.bucket_exists(name=bucket):
+            self.bucket_create(name=bucket)
 
         if is_source_file is True:
             # print('file flow')
