@@ -101,7 +101,37 @@ class Provider(StorageABC):
             Bucket=name,
             )
             print("Bucket Created:",name)
+            fileContent = ""
+            file_path = self.massage_path(name)
+            self.storage_dict['action'] = 'bucket_create'
+            self.storage_dict['bucket'] = name
+            dir_files_list = []
+            self.container_name = name
+            obj = list(self.s3_resource.Bucket(self.container_name) \
+                       .objects.filter(Prefix=file_path + '/'))
+
+            if len(obj) == 0:
+                markerObject = self.s3_resource.Object(
+                    self.container_name, self.directory_marker_file_name
+                ).put(Body=fileContent)
+
+                # make head call to extract meta data
+                # and derive obj dict
+                metadata = self.s3_client.head_object(
+                    Bucket=self.container_name, Key=self.directory_marker_file_name)
+                dir_files_list.append(self.extract_file_dict(
+                    self.massage_path(name),
+                    metadata)
+                )
+                self.storage_dict['message'] = 'Bucket created'
+            self.storage_dict['objlist'] = dir_files_list
+            pprint(self.storage_dict)
+            dictObj = self.update_dict(self.storage_dict['objlist'])
+            # return self.storage_dict
+            return dictObj
             return True
+
+
         except botocore.exceptions.ClientError as e:
              if e:
                 message = "One or more errors occurred while creating the bucket: {}".format(
@@ -115,6 +145,7 @@ class Provider(StorageABC):
             self.s3_client.head_bucket(Bucket=name)
             print("Bucket Exists!",name)
             return True
+            return name
         except botocore.exceptions.ClientError as e:
             # If a client error is thrown, then check that it was a 404 error.
             # If it was a 404 error, then the bucket does not exist.
@@ -196,9 +227,8 @@ class Provider(StorageABC):
         :return: dict
 
         """
-        if dir_only:
-            raise NotImplementedError
-        #self.storage_dict['service'] = service
+        #if dir_only:
+        #    raise NotImplementedError
         self.storage_dict['action'] = 'list'
         self.storage_dict['source'] = source
         self.storage_dict['recursive'] = recursive
@@ -216,12 +246,16 @@ class Provider(StorageABC):
             for obj in objs:
                 if obj.key.startswith(self.massage_path(trimmed_source)):
                     pprint(obj.key)
-                    file_name = obj.key.replace(self.directory_marker_file_name,
-                                                '')
+                    file_name = obj.key
+                    #obj.key.replace(self.directory_marker_file_name,
+                    #                            '')
                     if file_name[-1] == '/':
+
+
                         # Its a directory
                         '''
                         if (fileName.replace(trimmedSource,'').count('/') == 1):
+                            
                             dirFilesList.append(fileName)
                         '''
                         x = 1
@@ -269,8 +303,9 @@ class Provider(StorageABC):
             for obj in objs:
                 if obj.key.startswith(self.massage_path(trimmed_source)):
                     # print(obj.key)
-                    file_name = obj.key.replace(self.directory_marker_file_name,
-                                                '')
+                    file_name = obj.key
+                    #file_name = obj.key.replace(self.directory_marker_file_name,
+                    #                            '')
                     if file_name[-1] == '/':
                         # Its a directory
                         '''
