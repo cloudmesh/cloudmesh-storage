@@ -50,6 +50,17 @@ class TestStorage(object):
         # test if the files are ok
         assert True
 
+    def test_create_bucket(self):
+        HEADING()
+        src = 'cloudmeshtest2'
+        StopWatch.start("create bucket")
+        bucket = self.p.bucket_create(src)
+        StopWatch.stop("create bucket")
+
+        pprint(bucket)
+
+        assert bucket is not None
+
     def test_put(self):
         HEADING()
 
@@ -112,6 +123,18 @@ class TestStorage(object):
         src = '/'
         StopWatch.start("list")
         contents = self.p.list(src)
+        StopWatch.stop("list")
+        for c in contents:
+            pprint(c)
+
+        assert len(contents) > 0
+
+    def test_list_dir_only(self):
+        HEADING()
+        src = '/'
+        dir = "a"
+        StopWatch.start("list")
+        contents = self.p.list(src,dir,True)
         StopWatch.stop("list")
         for c in contents:
             pprint(c)

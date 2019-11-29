@@ -75,6 +75,12 @@ class Provider(StorageABC):
         return d
 
     @DatabaseUpdate()
+    def bucket_create(self, name=None):
+        service = self.service
+        d = self.provider.bucket_create(name=name)
+        return d
+
+    @DatabaseUpdate()
     def delete(self, source=None):
         """
         deletes the source
