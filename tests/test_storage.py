@@ -50,16 +50,7 @@ class TestStorage(object):
         # test if the files are ok
         assert True
 
-    def test_create_bucket(self):
-        HEADING()
-        src = 'cloudmeshtest2'
-        StopWatch.start("create bucket")
-        bucket = self.p.bucket_create(src)
-        StopWatch.stop("create bucket")
 
-        pprint(bucket)
-
-        assert bucket is not None
 
     def test_put(self):
         HEADING()
@@ -169,6 +160,17 @@ class TestStorage(object):
         StopWatch.start("delete")
         self.p.delete(src)
         StopWatch.stop("delete")
+
+    def test_create_bucket(self):
+        HEADING()
+        src = 'cloudmeshtest2'
+        StopWatch.start("create bucket")
+        bucket = self.p.bucket_create(src)
+        StopWatch.stop("create bucket")
+
+        pprint(bucket)
+
+        assert bucket is not None
 
     def test_benchmark(self):
         Benchmark.print(sysinfo=False, csv=True, tag=cloud)
