@@ -49,7 +49,7 @@ class TestStorage(object):
         self.aws = awsprovider(service=service)
 
     def test_create_source(self):
-        util.banner()
+        HEADING()
         StopWatch.start("create source")
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
         self.create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
