@@ -4,6 +4,7 @@
 # pytest -v --capture=no tests/test_storage.py::TestStorage::<METHIDNAME>
 ###############################################################
 import os
+import shutil
 from pathlib import Path
 from pprint import pprint
 
@@ -15,12 +16,20 @@ from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
 from cloudmesh.common3.Benchmark import Benchmark
+#from cloudmesh_installer.install.util import util
 from cloudmesh.storage.Provider import Provider
-
+from cloudmesh.storage.provider.awss3.Provider import Provider as awsprovider
+#from cloudmesh.configuration.Config import Config
 cloud = 'AWS'
 
 @pytest.mark.incremental
 class TestStorage(object):
+
+    #def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+        #pprint(service)
+    #    super().__init__(service=service, config=config)
+
+
 
     def create_file(self, location, content):
         d = Path(os.path.dirname(path_expand(location)))
@@ -36,9 +45,11 @@ class TestStorage(object):
         service = Parameter.expand(variables['storage'])[0]
 
         self.p = Provider(service=service)
+        # Please modify the specific provider for running the pytest
+        self.aws = awsprovider(service=service)
 
     def test_create_source(self):
-        HEADING()
+        util.banner()
         StopWatch.start("create source")
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
         self.create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
@@ -58,8 +69,8 @@ class TestStorage(object):
         #root="~/.cloudmesh"
         #src = "storage/test/a/a.txt"
 
-        # source = f"local:{src}"
-        # destination = f"aws:{src}"
+        #src = f"local:{src}"
+        #dst = f"aws:{src}"
         # test_file = self.p.put(src, dst)
 
         #src = "storage_a:test/a/a.txt"
@@ -161,11 +172,12 @@ class TestStorage(object):
         self.p.delete(src)
         StopWatch.stop("delete")
 
+    # this pytest is specifically for AWS,AZURE and Google only
     def test_create_bucket(self):
         HEADING()
         src = 'cloudmeshtest2'
         StopWatch.start("create bucket")
-        bucket = self.p.bucket_create(src)
+        bucket = self.aws.bucket_create(src)
         StopWatch.stop("create bucket")
 
         pprint(bucket)

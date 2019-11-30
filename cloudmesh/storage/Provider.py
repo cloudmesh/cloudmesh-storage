@@ -73,12 +73,12 @@ class Provider(StorageABC):
         service = self.service
         d = self.provider.create_dir(directory=directory)
         return d
-
-    @DatabaseUpdate()
-    def bucket_create(self, name=None):
-        service = self.service
-        d = self.provider.bucket_create(name=name)
-        return d
+    # commented it out as this provider is general and this bucket_create is there in create_dir implementation of AwsS3 provider.
+    #@DatabaseUpdate()
+    #def bucket_create(self, name=None):
+    #    service = self.service
+    #    d = self.provider.bucket_create(name=name)
+    #    return d
 
     @DatabaseUpdate()
     def delete(self, source=None):
