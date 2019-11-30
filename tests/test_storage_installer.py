@@ -8,7 +8,7 @@ import os
 import shutil
 
 import pytest
-from cloudmesh_installer.install.test import run
+from cloudmesh_installer.install.util import run
 
 
 @pytest.mark.incremental
