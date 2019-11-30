@@ -36,8 +36,6 @@ class Provider(StorageABC):
         else:
             raise ValueError(f"Storage provider '{self.kind}' not yet supported")
 
-
-
     @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):
         """
@@ -53,7 +51,6 @@ class Provider(StorageABC):
         :rtype: dict
         """
 
-        VERBOSE(f"get {source} {destination} {recursive}")
         d = self.provider.get(source=source, destination=destination, recursive=recursive)
         return d
 
@@ -61,15 +58,12 @@ class Provider(StorageABC):
     def put(self, source=None, destination=None, recursive=False):
 
         service = self.service
-        VERBOSE(f"put {service} {source} {destination}")
         d = self.provider.put(source=source, destination=destination, recursive=recursive)
         return d
 
     @DatabaseUpdate()
     def create_dir(self, directory=None):
 
-        VERBOSE(f"create_dir {directory}")
-        VERBOSE(directory)
         service = self.service
         d = self.provider.create_dir(directory=directory)
         return d
@@ -84,23 +78,18 @@ class Provider(StorageABC):
         """
 
         service = self.service
-        VERBOSE(f"delete filename {service} {source}")
         d = self.provider.delete(source=source)
         # raise ValueError("must return a value")
         return d
 
     def search(self, directory=None, filename=None, recursive=False):
 
-        VERBOSE(f"search {directory}")
         d = self.provider.search(directory=directory, filename=filename, recursive=recursive)
         return d
 
     @DatabaseUpdate()
     def list(self, source=None, dir_only=False, recursive=False):
 
-        # BUG DOES NOT FOLLOW SPEC
-        VERBOSE(f"list {source}")
-        VERBOSE(locals())
         d = self.provider.list(source=source, dir_only=dir_only, recursive=recursive)
         return d
 

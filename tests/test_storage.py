@@ -15,14 +15,33 @@ from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
 from cloudmesh.common3.Benchmark import Benchmark
+from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
+from cloudmesh.common.debug import VERBOSE
 
-cloud = 'AWS'
+Benchmark.debug()
+
+user = Config()["cloudmesh.profile.user"]
+variables = Variables()
+VERBOSE(variables.dict())
+
+key = variables['key']
+
+cloud = variables.parameter('storage')
+
+print(f"Test run for {cloud}")
+
+if cloud is None:
+    raise ValueError("storage is not set")
+
+provider = Provider(service=cloud)
+print('provider:', provider, provider.kind)
+
 
 @pytest.mark.incremental
 class TestStorage(object):
 
-    def create_file(self, location, content):
+    def create_local_file(self, location, content):
         d = Path(os.path.dirname(path_expand(location)))
         print()
         print("TESTDIR:", d)
@@ -31,20 +50,14 @@ class TestStorage(object):
 
         writefile(path_expand(location), content)
 
-    def setup(self):
-        variables = Variables()
-        service = Parameter.expand(variables['storage'])[0]
-
-        self.p = Provider(service=service)
-
-    def test_create_source(self):
+    def test_create_local_source(self):
         HEADING()
         StopWatch.start("create source")
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
-        self.create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
-        self.create_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
-        self.create_file("~/.cloudmesh/storage/test/a/b/c/c.txt",
-                         "content of c")
+        self.create_local_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
+        self.create_local_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
+        self.create_local_file("~/.cloudmesh/storage/test/a/b/c/c.txt",
+                               "content of c")
         StopWatch.stop("create source")
 
         # test if the files are ok
@@ -53,20 +66,19 @@ class TestStorage(object):
     def test_put(self):
         HEADING()
 
-        #root="~/.cloudmesh"
-        #src = "storage/test/a/a.txt"
+        # root="~/.cloudmesh"
+        # src = "storage/test/a/a.txt"
 
-        # source = f"local:{src}"
-        # destination = f"aws:{src}"
+        # src = f"local:{src}"
+        # dst = f"aws:{src}"
         # test_file = self.p.put(src, dst)
 
-        #src = "storage_a:test/a/a.txt"
-
+        # src = "storage_a:test/a/a.txt"
 
         src = "~/.cloudmesh/storage/test/"
         dst = '/'
         StopWatch.start("put")
-        test_file = self.p.put(src, dst)
+        test_file = provider.put(src, dst)
         StopWatch.stop("put")
 
         pprint(test_file)
@@ -76,20 +88,19 @@ class TestStorage(object):
     def test_put_recursive(self):
         HEADING()
 
-        #root="~/.cloudmesh"
-        #src = "storage/test/a/a.txt"
+        # root="~/.cloudmesh"
+        # src = "storage/test/a/a.txt"
 
         # source = f"local:{src}"
         # destination = f"aws:{src}"
         # test_file = self.p.put(src, dst)
 
-        #src = "storage_a:test/a/a.txt"
-
+        # src = "storage_a:test/a/a.txt"
 
         src = "~/.cloudmesh/storage/test/"
         dst = '/'
         StopWatch.start("put")
-        test_file = self.p.put(src, dst,True)
+        test_file = provider.put(src, dst, True)
         StopWatch.stop("put")
 
         pprint(test_file)
@@ -101,7 +112,7 @@ class TestStorage(object):
         src = "/a.txt"
         dst = "~/.cloudmesh/storage/test"
         StopWatch.start("get")
-        file = self.p.get(src, dst)
+        file = provider.get(src, dst)
         StopWatch.stop("get")
         pprint(file)
 
@@ -111,7 +122,19 @@ class TestStorage(object):
         HEADING()
         src = '/'
         StopWatch.start("list")
-        contents = self.p.list(src)
+        contents = provider.list(src)
+        StopWatch.stop("list")
+        for c in contents:
+            pprint(c)
+
+        assert len(contents) > 0
+
+    def test_list_dir_only(self):
+        HEADING()
+        src = '/'
+        dir = "a"
+        StopWatch.start("list")
+        contents = provider.list(src, dir, True)
         StopWatch.stop("list")
         for c in contents:
             pprint(c)
@@ -123,17 +146,17 @@ class TestStorage(object):
         src = '/'
         filename = "a.txt"
         StopWatch.start("search")
-        search_files = self.p.search(src, filename, True)
+        search_files = provider.search(src, filename, True)
         StopWatch.stop("search")
         pprint(search_files)
         assert len(search_files) > 0
-        #assert filename in search_files[0]['cm']["name"]
+        # assert filename in search_files[0]['cm']["name"]
 
     def test_create_dir(self):
         HEADING()
         src = 'created_dir'
         StopWatch.start("create dir")
-        directory = self.p.create_dir(src)
+        directory = provider.create_dir(src)
         StopWatch.stop("create dir")
 
         pprint(directory)
@@ -144,7 +167,7 @@ class TestStorage(object):
         HEADING()
         src = '/created_dir'
         StopWatch.start("delete")
-        self.p.delete(src)
+        provider.delete(src)
         StopWatch.stop("delete")
 
     def test_benchmark(self):
