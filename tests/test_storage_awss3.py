@@ -216,6 +216,19 @@ class TestStorageAwss3(object):
 
         assert len(search_files) == 4
 
+        # this pytest is specifically for AWS,AZURE and Google only
+
+    #def test_create_bucket(self):
+    #    HEADING()
+    #    src = 'cloudmeshtest2'
+    #    StopWatch.start("create bucket")
+    #    bucket = self.aws.bucket_create(src)
+    #    StopWatch.stop("create bucket")
+
+    #    pprint(bucket)
+
+     #   assert bucket is not None
+
     def test_results(self):
         HEADING()
         # storage = self.p.service

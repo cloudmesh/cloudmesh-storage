@@ -5,6 +5,7 @@ from pprint import pprint
 import boto3
 import botocore
 from cloudmesh.storage.StorageNewABC import StorageABC
+from cloudmesh.common.console import Console
 
 
 class Provider(StorageABC):
@@ -143,18 +144,18 @@ class Provider(StorageABC):
     def bucket_exists(self,name=None):
         try:
             self.s3_client.head_bucket(Bucket=name)
-            print("Bucket Exists!",name)
             return True
             return name
         except botocore.exceptions.ClientError as e:
             # If a client error is thrown, then check that it was a 404 error.
             # If it was a 404 error, then the bucket does not exist.
             error_code = int(e.response['Error']['Code'])
+
             if error_code == 403:
-                print("Private Bucket. Forbidden Access!")
+                Console.error(f"Bucket {name} is private. Access forbidden!")
                 return True
             elif error_code == 404:
-                print("Bucket Does Not Exist!",name)
+                Console.error(f"Bucket {name} does not exist")
                 return False
 
     # function to create a directory the function will first check if the bucket exists or not,if the bucket doesn't exist it will create the bucket and it will create the directory specified.
