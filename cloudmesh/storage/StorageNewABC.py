@@ -11,8 +11,8 @@ class StorageABC(metaclass=ABCMeta):
             self.config = Config(config_path=config)
 
             spec = self.config["cloudmesh.storage"]
-            self.credentials = spec[service]['credentials']
-            self.kind = spec[service]['cm']['kind']
+            self.credentials = self.config[f"cloudmesh.storage.{service}.credentials"]
+            self.kind = self.config[f"cloudmesh.storage.{service}.cm.kind"]
             self.cloud = service
             self.service = service
         except Exception as e:
