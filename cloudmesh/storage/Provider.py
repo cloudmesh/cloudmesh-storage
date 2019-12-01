@@ -16,10 +16,7 @@ class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
 
-        print ("OOOOOO")
         super(Provider, self).__init__(service=service, config=config)
-        print ("KKKKKKK")
-        print("KIND", self.kind)
         if self.kind == "local":
             self.provider = LocalProvider(service=service, config=config)
         elif self.kind == "box":
