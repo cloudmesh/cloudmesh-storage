@@ -6,7 +6,6 @@ from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
 from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-from cloudmesh.storage.provider.awsobjectstore.Provider import Provider as AwsobjectstoreProvider
 #from cloudmesh.google.storage.Provider import Provider as GoogleStorageProvider
 from cloudmesh.common.debug import VERBOSE
 from pprint import pprint
@@ -27,8 +26,6 @@ class Provider(StorageABC):
             self.provider = AzureblobProvider(service=service, config=config)
         elif self.kind == "awss3":
             self.provider = AwsProvider(service=service, config=config)
-        elif self.kind == "awsobjectstore":
-            self.provider = AwsobjectstoreProvider(service=service, config=config)
         # elif self.kind in ['google']:
         #     self.provider = GoogleStorageProvider(service=service, config=config)
         elif self.kind in ['google']:
