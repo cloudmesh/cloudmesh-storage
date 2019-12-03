@@ -11,6 +11,12 @@ from cloudmesh.common.console import Console
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+        """
+        TBD
+
+        :param service: TBD
+        :param config: TBD
+        """
         #pprint(service)
         super().__init__(service=service, config=config)
         self.container_name = self.credentials['bucket']
@@ -841,6 +847,7 @@ class Provider(StorageABC):
                recursive=False):
         """
         gets the destination and copies it in source
+
         :param service: the name of the service in the yaml file
         :param directory: the directory which either can be a directory or file
         :param filename: filename
