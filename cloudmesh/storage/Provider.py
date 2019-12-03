@@ -7,6 +7,7 @@ from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.storage.provider.awsobjectstore.Provider import Provider as AwsobjectstoreProvider
+#from cloudmesh.google.storage.Provider import Provider as GoogleStorageProvider
 from cloudmesh.common.debug import VERBOSE
 from pprint import pprint
 
@@ -16,7 +17,6 @@ class Provider(StorageABC):
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
 
         super(Provider, self).__init__(service=service, config=config)
-
         if self.kind == "local":
             self.provider = LocalProvider(service=service, config=config)
         elif self.kind == "box":
@@ -29,12 +29,14 @@ class Provider(StorageABC):
             self.provider = AwsProvider(service=service, config=config)
         elif self.kind == "awsobjectstore":
             self.provider = AwsobjectstoreProvider(service=service, config=config)
+        # elif self.kind in ['google']:
+        #     self.provider = GoogleStorageProvider(service=service, config=config)
         elif self.kind in ['google']:
             from cloudmesh.google.storage.Provider import \
                 Provider as GoogleStorageProvider
             self.provider = GoogleStorageProvider(service=service, config=config)
         else:
-            raise ValueError(f"Storage provider '{self.kind}' not yet supported")
+            raise ValueError(f"Storage provider '{self.service}' not yet supported")
 
     @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):

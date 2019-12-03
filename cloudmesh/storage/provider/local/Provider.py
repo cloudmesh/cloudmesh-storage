@@ -173,6 +173,14 @@ class Provider(StorageABC):
         else:
             files = location.glob("*")
         result = []
+        
+        # Code added to handle case when input is a file name
+        if location.is_file():
+            entry = self.identifier(source, str(location), file=True,
+                                    status=status)
+            result.append(entry)
+            return result
+        
         for file in files:
 
             is_dir = file.is_dir()
@@ -248,7 +256,13 @@ class Provider(StorageABC):
         source = self._dirname(source)
         # entries = self._list(source=source, recursive=recursive, ststus="deleted")
         entries = self._list(source=source, recursive=recursive, status="deleted")
-        shutil.rmtree(path_expand(source))
+        # shutil.rmtree doesn't work if source is a file object.
+        # Code modified to implement delete for file objects as well.
+        if os.path.isfile(source):
+            os.remove(source)
+        else:
+            shutil.rmtree(path_expand(source))
+
         return entries
 
     def search(self,
