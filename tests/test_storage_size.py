@@ -1,4 +1,3 @@
-# fix names
 ###############################################################
 # pytest -v --capture=no tests/test_storage.py
 # pytest -v  tests/test_storage.py
@@ -20,11 +19,6 @@ from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
 from cloudmesh.common.debug import VERBOSE
 
-# sizes = [512, 1024]
-#
-
-sizes = [512]
-
 Benchmark.debug()
 
 user = Config()["cloudmesh.profile.user"]
@@ -45,45 +39,66 @@ print('provider:', provider, provider.kind)
 
 
 @pytest.mark.incremental
-class TestStorageSize(object):
+class TestStorage(object):
 
-    def size_example_put(n):
-        path = path_expand("~/.cloudmesh/tmp/put")
-        # creat dir inpath
+    def create_local_file(self, location, content):
+        d = Path(os.path.dirname(path_expand(location)))
+        print()
+        print("TESTDIR:", d)
 
-        Benchmark.file(f"{path}/{n}",n)
-        # now put the file to the cloud probvider
+        d.mkdir(parents=True, exist_ok=True)
 
+        writefile(path_expand(location), content)
 
-    def size_example_get(n):
-        path = path_expand("~/.cloudmesh/tmp/get")
-        # creat dir inpath
+    def create_local_source(self, size=1024):
+        StopWatch.start(f"create source {size}")
+        source = path_expand(f"~/.cloudmesh/storage/temp/{size}.txt")
+        Benchmark.file(source, size)
+        StopWatch.stop(f"create source {size}")
 
-        Benchmark.file(f"{path}/{n}", n)
-        # now put the file to the cloud probvider
+        # test if the files are ok
+        assert True
 
-    def test_size_put(self):
-        for size in sizes: # do some reasonable stuff here
-            # trick now is that we use STorpwatch for nameing the timer
-            Stopwatch.start(f"put {size}")
-            slef.size_rexample_put(size)
-            Stopwatch.stop(f"put {size}")
-            # find a way on to see if you can get the file size from the provider
-            # may be a missing function ... in the provider
-            # maybe we can also create a hash function?
-            # look into the dict that you get from the file for your provider to see what they have
-            # look into the api ...
+    def test_create_local_source(self):
+        HEADING()
+        for size in [512,1024]:
+            self.create_local_source(size=size)
 
-    def test_size_get(self):
-        for size in sizes: # do some reasonable stuff here
-            # trick now is that we use STorpwatch for nameing the timer
-            Stopwatch.start(f"get {size}")
-            slef.size_rexample_get(size)
-            Stopwatch.stop(f"get {size}")
-            # assert check if files in put and get dir on local machine are the same
+        # test if the files are ok
+        assert True
 
-    def test_cleanup(self):
-        # delelte all the files form ths test
+    def test_put(self):
+        HEADING()
+
+        # root="~/.cloudmesh"
+        # src = "storage/test/a/a.txt"
+
+        # src = f"local:{src}"
+        # dst = f"aws:{src}"
+        # test_file = self.p.put(src, dst)
+
+        # src = "storage_a:test/a/a.txt"
+
+        src = "~/.cloudmesh/storage/temp/"
+        dst = '/'
+        StopWatch.start("put")
+        test_file = provider.put(src, dst)
+        StopWatch.stop("put")
+
+        pprint(test_file)
+
+        assert test_file is not None
+
+    def test_get(self):
+        HEADING()
+        src = "/test.txt"
+        dst = "~/.cloudmesh/storage/temp"
+        StopWatch.start("get")
+        file = provider.get(src, dst)
+        StopWatch.stop("get")
+        pprint(file)
+
+        assert file is not None
 
     def test_benchmark(self):
         Benchmark.print(sysinfo=False, csv=True, tag=cloud)
