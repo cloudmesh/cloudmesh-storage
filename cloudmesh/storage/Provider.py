@@ -1,10 +1,8 @@
-from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
-from cloudmesh.storage.provider.azureblob.Provider import \
-    Provider as AzureblobProvider
-from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
+
+
 from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
 from cloudmesh.storage.StorageNewABC import StorageABC
-from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
+
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 #from cloudmesh.google.storage.Provider import Provider as GoogleStorageProvider
 from cloudmesh.common.debug import VERBOSE
@@ -19,15 +17,21 @@ class Provider(StorageABC):
         if self.kind == "local":
             self.provider = LocalProvider(service=service, config=config)
         elif self.kind == "box":
+            from cloudmesh.storage.provider.box.Provider import \
+                Provider as BoxProvider
             self.provider = BoxProvider(service=service, config=config)
         elif self.kind == "gdrive":
+            from cloudmesh.storage.provider.gdrive.Provider import \
+                Provider as GdriveProvider
             self.provider = GdriveProvider(service=service, config=config)
         elif self.kind == "azureblob":
+            from cloudmesh.storage.provider.azureblob.Provider import \
+                Provider as AzureblobProvider
             self.provider = AzureblobProvider(service=service, config=config)
         elif self.kind == "awss3":
+            from cloudmesh.storage.provider.awss3.Provider import \
+                Provider as AwsProvider
             self.provider = AwsProvider(service=service, config=config)
-        # elif self.kind in ['google']:
-        #     self.provider = GoogleStorageProvider(service=service, config=config)
         elif self.kind in ['google']:
             from cloudmesh.google.storage.Provider import \
                 Provider as GoogleStorageProvider
