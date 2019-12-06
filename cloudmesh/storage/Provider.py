@@ -10,6 +10,8 @@ class Provider(StorageABC):
 
         super(Provider, self).__init__(service=service, config=config)
         if self.kind == "local":
+            from cloudmesh.storage.provider.local.Provider import \
+                Provider as LocalProvider
             self.provider = LocalProvider(service=service, config=config)
         elif self.kind == "box":
             from cloudmesh.storage.provider.box.Provider import \
