@@ -936,37 +936,30 @@ class Provider(StorageABC):
         # return self.storage_dict
         return dictObj
 
-    def copy(self, source=None, destination=None, recursive=False):
+    def copy(self, source=None, source_obj=None,
+              destination=None, dest_obj=None, recursive=False):
         """
-        Copies object(s) from source to destination
-        :param source: "awss3:source_obj" the source is combination of
-                        source CSP name and source object name which either
-                        can be a directory or file
-        :param destination: "azure:desti_obj" the destination is
-                            combination of destination CSP and destination
-                            object name which either can be a directory or file
-        :param recursive: in case of directory the recursive refers to all
-                          subdirectories in the specified source
-        :return: dict
+        Copies objects from source CSP to target CSP
+        :param source: source CSP, Azure Blob storage
+        :param source_obj: Object to be copied, can be file/directory
+        :param destination: destination CSP, AWS S3
+        :param dest_obj: target object name, can be file/directory
+        :param recursive: boolean, recursive copy flag
+        :return: dictionary with details of copied objects
         """
 
-        # Fetch CSP names and object names
-        if source:
-            source_CSP, source_obj = source.split(':')
-        else:
-            source_CSP, source_obj = None, None
-
-        if destination:
-            target_CSP, target_obj = destination.split(':')
-        else:
-            target_CSP, target_obj = None, None
-
-        self.storage_dict['source'] = source_CSP
+        self.storage_dict['source'] = source
         self.storage_dict['source_obj'] = source_obj
-        self.storage_dict['target'] = target_CSP
-        self.storage_dict['target_obj'] = target_obj
+        self.storage_dict['target'] = destination
+        self.storage_dict['target_obj'] = dest_obj
         self.storage_dict['action'] = 'copy'
         self.storage_dict['recursive'] = recursive
+
+        print("CALL GET ON AZURE AND self.put")
+        if source == "azure":
+            # init azure provider
+            # call azure get
+        
 
         pprint(self.storage_dict)
         return self.storage_dict

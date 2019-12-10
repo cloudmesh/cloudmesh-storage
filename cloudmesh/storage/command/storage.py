@@ -113,10 +113,11 @@ class StorageCommand(PluginCommand):
                     arguments.storage = None
                     raise ValueError("Storage provider is not defined")
             else:
-                if arguments.SOURCE.split(":")[0] == "local":
-                    arguments.storage = arguments.DESTINATION.split(":")[0]
-                elif arguments.DESTINATION.split(":")[0] == "local":
+                if arguments.DESTINATION.split(":")[0] == "local":
                     arguments.storage = arguments.SOURCE.split(":")[0]
+                else:
+                    arguments.storage = arguments.DESTINATION.split(":")[0]
+
 
         arguments.storage = Parameter.expand(arguments.storage)
 
@@ -171,9 +172,6 @@ class StorageCommand(PluginCommand):
             raise NotImplementedError
 
         elif arguments.copy:
-            print("IN THE STORAGE COPY")
-            print(arguments)
-
             VERBOSE(f"COPY: Executing Copy command from {arguments.SOURCE} to "
                     f"{arguments.DESTINATION} providers")
             print(f"INITIALIZE with {arguments.storage[0]} provider.")

@@ -134,27 +134,27 @@ class Provider(StorageABC):
         """
         # Fetch CSP names and object names
         if source:
-            source_CSP, source_obj = source.split(':')
+            source, source_obj = source.split(':')
         else:
-            source_CSP, source_obj = None, None
+            source, source_obj = None, None
 
         if destination:
-            target_CSP, target_obj = destination.split(':')
+            target, target_obj = destination.split(':')
         else:
-            target_CSP, target_obj = None, None
+            target, target_obj = None, None
 
         source_obj = str(Path(source_obj).expanduser())
         target_obj = str(Path(target_obj).expanduser())
 
-        print(source_CSP, source_obj,target_CSP, target_obj)
+        print(source, source_obj,target, target_obj)
 
-        if source_CSP == "local":
+        if source == "local":
             print(f"CALL PUT METHOD OF {self.kind} PROVIDER.")
             result = self.provider.put(source=source_obj,
                                        destination=target_obj,
                                        recursive=recursive)
             return result
-        elif target_CSP == "local":
+        elif target == "local":
             print(f"CALL GET METHOD OF {self.kind} PROVIDER.")
             result = self.provider.get(source=source_obj,
                                        destination=target_obj,
@@ -162,3 +162,7 @@ class Provider(StorageABC):
             return result
         else:
             print("Cloud to cloud copy", self.kind)
+            result = self.provider.copy(source=source, source_obj=source_obj,
+                                        destination=target, dest_obj=target_obj,
+                                        recursive=recursive)
+            return result
