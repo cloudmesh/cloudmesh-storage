@@ -84,6 +84,7 @@ class TestAzureStorage(object):
     def test_list(self):
         HEADING()
         StopWatch.start("LIST Directory")
+        banner(self.p.service)
         contents = self.p.list(self.p.service, "/")
         StopWatch.stop("LIST Directory")
         for c in contents:

@@ -116,3 +116,6 @@ class Provider(StorageABC):
         # dict_to_tree(d, 0)
 
         pprint(data)
+
+    def copy(self, ):
+        pass

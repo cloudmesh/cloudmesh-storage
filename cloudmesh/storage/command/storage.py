@@ -24,6 +24,7 @@ class StorageCommand(PluginCommand):
                 storage [--storage=SERVICE] search  DIRECTORY FILENAME [--recursive] [--output=OUTPUT]
                 storage [--storage=SERVICE] sync SOURCE DESTINATION [--name=NAME] [--async]
                 storage [--storage=SERVICE] sync status [--name=NAME]
+                storage [--storage=SERVICE] copy SOURCE DESTINATION [--recursive]
                 storage config list [--output=OUTPUT]
 
           This command does some useful things.
@@ -81,6 +82,11 @@ class StorageCommand(PluginCommand):
 
                 config list
                     Lists the configures storage services in the yaml file
+
+                storage copy SOURCE DESTINATION
+                    Copies objects from SOURCE CSP to DESTINATION CSP
+                    SOURCE: awss3:"source_object_name"
+                    DESTINATION: azure:"target_object_name"
 
           Example:
             set storage=azureblob
@@ -157,3 +163,29 @@ class StorageCommand(PluginCommand):
         elif arguments.rsync:
             # TODO: implement
             raise NotImplementedError
+
+        elif arguments.copy:
+        # This flow is designed in such a way that copy command is run
+        # in target CSP's provider
+        print("IN THE STORAGE COPY")
+        print(arguments)
+        if arguments.source:
+            source_CSP, source_obj = arguments.source.split(':')
+        else:
+            source_CSP, source_obj = None, None
+        if arguments.target:
+            # print("************** ", arguments.target)
+            target_CSP, target_obj = arguments.target.split(':')
+            # print("************** ", target_CSP, target_obj )
+        else:
+            target_CSP, target_obj = None, None
+
+        VERBOSE(f"Executing Copy command from {source_CSP} to {target_CSP} "
+                f"providers for {source_obj}")
+
+        provider = Provider(source=source_CSP, source_obj=source_obj,
+                            target=target_CSP, target_obj=target_obj)
+
+        provider.copy(source=source_CSP, source_obj=source_obj,
+                      target=target_CSP, target_obj=target_obj,
+                      recursive=True)
