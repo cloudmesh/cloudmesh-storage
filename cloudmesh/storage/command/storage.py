@@ -24,8 +24,9 @@ class StorageCommand(PluginCommand):
                 storage [--storage=SERVICE] search  DIRECTORY FILENAME [--recursive] [--output=OUTPUT]
                 storage [--storage=SERVICE] sync SOURCE DESTINATION [--name=NAME] [--async]
                 storage [--storage=SERVICE] sync status [--name=NAME]
-                storage [--storage=SERVICE] copy SOURCE DESTINATION [--recursive]
                 storage config list [--output=OUTPUT]
+                storage copy SOURCE DESTINATION [--recursive]
+
 
           This command does some useful things.
 
@@ -103,14 +104,16 @@ class StorageCommand(PluginCommand):
                        "storage")
         VERBOSE(arguments)
 
-
         if arguments.storage is None:
-            try:
-                v = Variables()
-                arguments.storage = v['storage']
-            except Exception as e:
-                arguments.storage = None
-                raise ValueError("Storage provider is not defined")
+            if arguments.copy is None:
+                try:
+                    v = Variables()
+                    arguments.storage = v['storage']
+                except Exception as e:
+                    arguments.storage = None
+                    raise ValueError("Storage provider is not defined")
+            else:
+                arguments.storage = arguments.DESTINATION.split(":")[0]
 
         arguments.storage = Parameter.expand(arguments.storage)
 
@@ -165,27 +168,15 @@ class StorageCommand(PluginCommand):
             raise NotImplementedError
 
         elif arguments.copy:
-        # This flow is designed in such a way that copy command is run
-        # in target CSP's provider
-        print("IN THE STORAGE COPY")
-        print(arguments)
-        if arguments.source:
-            source_CSP, source_obj = arguments.source.split(':')
-        else:
-            source_CSP, source_obj = None, None
-        if arguments.target:
-            # print("************** ", arguments.target)
-            target_CSP, target_obj = arguments.target.split(':')
-            # print("************** ", target_CSP, target_obj )
-        else:
-            target_CSP, target_obj = None, None
+            print("IN THE STORAGE COPY")
+            print(arguments)
 
-        VERBOSE(f"Executing Copy command from {source_CSP} to {target_CSP} "
-                f"providers for {source_obj}")
+            VERBOSE(f"COPY: Executing Copy command from {arguments.SOURCE} to "
+                    f"{arguments.DESTINATION} providers")
+            print(f"INITIALIZE with {arguments.storage[0]} provider.")
 
-        provider = Provider(source=source_CSP, source_obj=source_obj,
-                            target=target_CSP, target_obj=target_obj)
+            provider = Provider(arguments.storage[0])
 
-        provider.copy(source=source_CSP, source_obj=source_obj,
-                      target=target_CSP, target_obj=target_obj,
-                      recursive=True)
+            result = provider.copy(arguments.SOURCE,
+                                   arguments.DESTINATION,
+                                   arguments.recursive)

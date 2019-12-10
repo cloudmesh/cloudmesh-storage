@@ -117,5 +117,35 @@ class Provider(StorageABC):
 
         pprint(data)
 
-    def copy(self, ):
-        pass
+    # @DatabaseUpdate()
+    def copy(self, source=None, destination=None, recursive=False):
+        """
+        Copies object(s) from source to destination
+        :param source: "awss3:source_obj" the source is combination of
+                        source CSP name and source object name which either
+                        can be a directory or file
+        :param destination: "azure:desti_obj" the destination is
+                            combination of destination CSP and destination
+                            object name which either can be a directory or file
+        :param recursive: in case of directory the recursive refers to all
+                          subdirectories in the specified source
+        :return: dict
+        """
+        # Fetch CSP names and object names
+        if source:
+            source_CSP, source_obj = source.split(':')
+        else:
+            source_CSP, source_obj = None, None
+
+        if destination:
+            target_CSP, target_obj = destination.split(':')
+        else:
+            target_CSP, target_obj = None, None
+
+        print(source_CSP, source_obj,target_CSP, target_obj)
+        if source_CSP == "local" or target_CSP == "local":
+            d = self.provider.copy(source=source, destination=destination,
+                                   recursive=recursive)
+            return d
+        else:
+            print("Cloud to cloud copy")
