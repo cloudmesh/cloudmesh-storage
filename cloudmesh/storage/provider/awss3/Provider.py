@@ -6,7 +6,8 @@ import boto3
 import botocore
 from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.common.console import Console
-
+# TODO code changed
+import platform
 
 class Provider(StorageABC):
 
@@ -559,11 +560,16 @@ class Provider(StorageABC):
                 files_to_upload = []
                 for (dirpath, dirnames, filenames) in os.walk(trimmed_source):
                     for f in filenames:
-                        files_to_upload.append(
-                                '/' + self.massage_path(dirpath) + '/' + f)
-                        #print('FILE :', os.path.join(dirpath, f))
-                        #dir ,tgtfile = os.path.split(f)
-                        #files_to_upload.append(tgtfile)
+                        # TODO code changed
+                        if platform.system() == "Windows":
+                            files_to_upload.append(
+                                self.massage_path(dirpath) + '/' + f)
+                        else:
+                            files_to_upload.append(
+                                    '/' + self.massage_path(dirpath) + '/' + f)
+                            #print('FILE :', os.path.join(dirpath, f))
+                            #dir ,tgtfile = os.path.split(f)
+                            #files_to_upload.append(tgtfile)
 
 
 
@@ -589,8 +595,13 @@ class Provider(StorageABC):
                 for (dirpath, dirnames, filenames) in os.walk(trimmed_source):
                     for fileName in filenames:
                      #   print('/'+self.massage_path(dirpath)+'/'+fileName)
-                        files_to_upload.append(
-                            '/' + self.massage_path(dirpath) + '/' + fileName)
+                     # TODO code changed
+                        if platform.system() == "Windows":
+                            files_to_upload.append(
+                                    self.massage_path(dirpath) + '/' + fileName)
+                        else:
+                            files_to_upload.append(
+                                '/' + self.massage_path(dirpath) + '/' + fileName)
 
                 for file in files_to_upload:
                     self.s3_client.upload_file(file,

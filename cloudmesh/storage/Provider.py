@@ -2,6 +2,7 @@ from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.common.debug import VERBOSE
 from pprint import pprint
+from pathlib import Path
 
 ## transfer_155 branch
 class Provider(StorageABC):
@@ -142,10 +143,22 @@ class Provider(StorageABC):
         else:
             target_CSP, target_obj = None, None
 
+        source_obj = str(Path(source_obj).expanduser())
+        target_obj = str(Path(target_obj).expanduser())
+
         print(source_CSP, source_obj,target_CSP, target_obj)
-        if source_CSP == "local" or target_CSP == "local":
-            d = self.provider.copy(source=source, destination=destination,
-                                   recursive=recursive)
-            return d
+
+        if source_CSP == "local":
+            print(f"CALL PUT METHOD OF {self.kind} PROVIDER.")
+            result = self.provider.put(source=source_obj,
+                                       destination=target_obj,
+                                       recursive=recursive)
+            return result
+        elif target_CSP == "local":
+            print(f"CALL GET METHOD OF {self.kind} PROVIDER.")
+            result = self.provider.get(source=source_obj,
+                                       destination=target_obj,
+                                       recursive=recursive)
+            return result
         else:
-            print("Cloud to cloud copy")
+            print("Cloud to cloud copy", self.kind)

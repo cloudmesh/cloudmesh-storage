@@ -113,7 +113,10 @@ class StorageCommand(PluginCommand):
                     arguments.storage = None
                     raise ValueError("Storage provider is not defined")
             else:
-                arguments.storage = arguments.DESTINATION.split(":")[0]
+                if arguments.SOURCE.split(":")[0] == "local":
+                    arguments.storage = arguments.DESTINATION.split(":")[0]
+                elif arguments.DESTINATION.split(":")[0] == "local":
+                    arguments.storage = arguments.SOURCE.split(":")[0]
 
         arguments.storage = Parameter.expand(arguments.storage)
 
