@@ -937,7 +937,7 @@ class Provider(StorageABC):
         return dictObj
 
     def copy(self, source=None, source_obj=None,
-              destination=None, dest_obj=None, recursive=False):
+             destination=None, dest_obj=None, recursive=False):
         """
         Copies objects from source CSP to target CSP
         :param source: source CSP, Azure Blob storage
@@ -957,9 +957,10 @@ class Provider(StorageABC):
 
         print("CALL GET ON AZURE AND self.put")
         if source == "azure":
+            pass
             # init azure provider
             # call azure get
-        
+
 
         pprint(self.storage_dict)
         return self.storage_dict
