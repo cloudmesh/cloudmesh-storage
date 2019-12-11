@@ -202,29 +202,28 @@ class Provider(StorageABC):
                                              destination=local_target_obj,
                                              recursive=recursive)
                 Console.ok(f"Fetched {source_obj} from {source} CSP")
-
-                if (result and len(result[0]['fileName']) == 0) or \
-                   len(result) == 0:
+                # pprint(result)
+                if len(result) == 0:
                     return Console.error(f"{source_obj} could not be found "
                                          f"in {source} CSP. Please check.")
             except Exception as e:
                 return Console.error(f"Error while fetching {source_obj} from " 
                                      f"{source} CSP. Please check. {e}")
             else:
-                source_obj = Path(local_target_obj) / source_obj
+                source_obj = str(Path(local_target_obj) / source_obj)
                 print("upload =====> ",source_obj, target_obj)
                 try:
                     result = target_provider.put(source=source_obj,
                                                  destination=target_obj,
                                                  recursive=recursive)
-                    Console.ok(f"Copied {local_target_obj} to {target} CSP")
+
+                    Console.ok(f"Copied {source_obj} to {target} CSP")
 
                     if result is None:
-                        return Console.error(f"Error while copying {source_obj}"
-                                             f" to {target} CSP. Source "
-                                             f"object not found")
+                        return Console.error(f"{source_obj} couldn't be copied"
+                                             f" to {target} CSP.")
                     return result
                 except Exception as e:
                     return Console.error(f"Error while copying {source_obj} to "
-                                         f"{target} CSP. Please check. ", e)
+                                         f"{target} CSP. Please check,{e}")
 

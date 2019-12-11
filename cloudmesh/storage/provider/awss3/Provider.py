@@ -57,7 +57,7 @@ class Provider(StorageABC):
     # for different scenarios of file inputs
     def massage_path(self, file_name_path):
         massaged_path = file_name_path
-        #pprint(massaged_path)
+        # pprint(massaged_path)
 
         # convert possible windows style path to unix path
         massaged_path = massaged_path.replace('\\', '/')
