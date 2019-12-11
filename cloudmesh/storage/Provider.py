@@ -212,7 +212,7 @@ class Provider(StorageABC):
                                      f"{source} CSP. Please check. {e}")
             else:
                 source_obj = Path(local_target_obj) / source_obj
-                print("upload =====> ", local_target_obj)
+                print("upload =====> ",source_obj, target_obj)
                 try:
                     result = target_provider.put(source=source_obj,
                                                  destination=target_obj,
@@ -221,7 +221,7 @@ class Provider(StorageABC):
 
                     if result is None:
                         return Console.error(f"Error while copying {source_obj}"
-                                             f" from {source} CSP. Source "
+                                             f" to {target} CSP. Source "
                                              f"object not found")
                     return result
                 except Exception as e:
