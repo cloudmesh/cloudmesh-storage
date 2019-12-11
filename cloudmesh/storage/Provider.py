@@ -3,8 +3,9 @@ from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.common.debug import VERBOSE
 from pprint import pprint
 from pathlib import Path
+from cloudmesh.common.console import Console
 
-## transfer_155 branch
+
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
@@ -161,8 +162,69 @@ class Provider(StorageABC):
                                        recursive=recursive)
             return result
         else:
-            print("Cloud to cloud copy", self.kind)
-            result = self.provider.copy(source=source, source_obj=source_obj,
-                                        destination=target, dest_obj=target_obj,
-                                        recursive=recursive)
-            return result
+            VERBOSE("Cloud to cloud copy", self.kind)
+
+            target_kind = self.kind
+            target_provider = self.provider
+            config = "~/.cloudmesh/cloudmesh.yaml"
+
+            print("target===> ", target_kind, target_provider)
+
+            if source:
+                super().__init__(service=source, config=config)
+                source_kind = self.kind
+                if source_kind == "azureblob":
+                    from cloudmesh.storage.provider.azureblob.Provider import \
+                         Provider as AzureblobProvider
+                    source_provider = AzureblobProvider(service=source,
+                                                        config=config)
+                elif source_kind == "awss3":
+                    from cloudmesh.storage.provider.awss3.Provider import \
+                         Provider as AwsProvider
+                    source_provider = AwsProvider(service=source, config=config)
+                else:
+                    return NotImplementedError
+
+            print("source===> ", source_kind, source_provider)
+
+            # get local storage directory
+            super().__init__(service="local", config=config)
+            local_storage = self.config[
+                                    "cloudmesh.storage.local.default.directory"]
+
+            local_target_obj = str(Path(local_storage).expanduser())
+            source_obj = str(Path(source_obj).expanduser())
+
+            print("local===> ", local_storage, local_target_obj)
+
+            try:
+                result = source_provider.get(source=source_obj,
+                                             destination=local_target_obj,
+                                             recursive=recursive)
+                Console.ok(f"Fetched {source_obj} from {source} CSP")
+
+                if (result and len(result[0]['fileName']) == 0) or \
+                   len(result) == 0:
+                    return Console.error(f"{source_obj} could not be found "
+                                         f"in {source} CSP. Please check.")
+            except Exception as e:
+                return Console.error(f"Error while fetching {source_obj} from " 
+                                     f"{source} CSP. Please check. {e}")
+            else:
+                source_obj = Path(local_target_obj) / source_obj
+                print("upload =====> ", local_target_obj)
+                try:
+                    result = target_provider.put(source=source_obj,
+                                                 destination=target_obj,
+                                                 recursive=recursive)
+                    Console.ok(f"Copied {local_target_obj} to {target} CSP")
+
+                    if result is None:
+                        return Console.error(f"Error while copying {source_obj}"
+                                             f" from {source} CSP. Source "
+                                             f"object not found")
+                    return result
+                except Exception as e:
+                    return Console.error(f"Error while copying {source_obj} to "
+                                         f"{target} CSP. Please check. ", e)
+
