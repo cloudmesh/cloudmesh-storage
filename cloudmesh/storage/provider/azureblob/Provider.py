@@ -486,13 +486,16 @@ class Provider(StorageABC):
         pprint(dict_obj)
         return dict_obj
 
-    def list(self, service=None, source=None, recursive=False):
+    # TODO code change:
+    # def list(self, service=None, source=None, recursive=False):
+    def list(self, source=None, dir_only=False, recursive=False):
         """
         lists all files specified in the source
 
         :param source: this can be a file or directory
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
+        :param dir_only: boolean, enlist only directories
         :return: dict
 
         """

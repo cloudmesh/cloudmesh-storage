@@ -1,42 +1,43 @@
-from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
-from cloudmesh.storage.provider.azureblob.Provider import \
-    Provider as AzureblobProvider
-from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
-from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
 from cloudmesh.storage.StorageNewABC import StorageABC
-from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-#from cloudmesh.storage.provider.awsobjectstore.Provider import Provider as AwsobjectstoreProvider
-#from cloudmesh.google.storage.Provider import Provider as GoogleStorageProvider
 from cloudmesh.common.debug import VERBOSE
 from pprint import pprint
+from pathlib import Path
 
-
+## transfer_155 branch
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
 
         super(Provider, self).__init__(service=service, config=config)
         if self.kind == "local":
+            from cloudmesh.storage.provider.local.Provider import \
+                Provider as LocalProvider
             self.provider = LocalProvider(service=service, config=config)
         elif self.kind == "box":
+            from cloudmesh.storage.provider.box.Provider import \
+                Provider as BoxProvider
             self.provider = BoxProvider(service=service, config=config)
         elif self.kind == "gdrive":
+            from cloudmesh.storage.provider.gdrive.Provider import \
+                Provider as GdriveProvider
             self.provider = GdriveProvider(service=service, config=config)
         elif self.kind == "azureblob":
+            from cloudmesh.storage.provider.azureblob.Provider import \
+                Provider as AzureblobProvider
             self.provider = AzureblobProvider(service=service, config=config)
         elif self.kind == "awss3":
+            from cloudmesh.storage.provider.awss3.Provider import \
+                Provider as AwsProvider
             self.provider = AwsProvider(service=service, config=config)
-        elif self.kind == "awsobjectstore":
-            self.provider = AwsobjectstoreProvider(service=service, config=config)
-        # elif self.kind in ['google']:
-        #     self.provider = GoogleStorageProvider(service=service, config=config)
         elif self.kind in ['google']:
             from cloudmesh.google.storage.Provider import \
                 Provider as GoogleStorageProvider
-            self.provider = GoogleStorageProvider(service=service, config=config)
+            self.provider = GoogleStorageProvider(service=service,
+                                                  config=config)
         else:
-            raise ValueError(f"Storage provider '{self.service}' not yet supported")
+            raise ValueError(
+                f"Storage provider '{self.service}' not yet supported")
 
     @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):
@@ -47,20 +48,23 @@ class Provider(StorageABC):
         :type source: string
         :param destination: the destination location ion teh local machine
         :type destination: string
-        :param recursive: True if the source is a directory and ned to be copied recursively
+        :param recursive: True if the source is a directory
+                          and ned to be copied recursively
         :type recursive: boolean
         :return: cloudmesh cm dict
         :rtype: dict
         """
 
-        d = self.provider.get(source=source, destination=destination, recursive=recursive)
+        d = self.provider.get(source=source, destination=destination,
+                              recursive=recursive)
         return d
 
     @DatabaseUpdate()
     def put(self, source=None, destination=None, recursive=False):
 
         service = self.service
-        d = self.provider.put(source=source, destination=destination, recursive=recursive)
+        d = self.provider.put(source=source, destination=destination,
+                              recursive=recursive)
         return d
 
     @DatabaseUpdate()
@@ -69,13 +73,6 @@ class Provider(StorageABC):
         service = self.service
         d = self.provider.create_dir(directory=directory)
         return d
-
-    # @DatabaseUpdate()
-    # def blob_metadata(self, blob_name=None):
-    #
-    #     service = self.service
-    #     d = self.provider.blob_metadata(blob_name=blob_name)
-    #     return d
 
     @DatabaseUpdate()
     def delete(self, source=None):
@@ -93,13 +90,15 @@ class Provider(StorageABC):
 
     def search(self, directory=None, filename=None, recursive=False):
 
-        d = self.provider.search(directory=directory, filename=filename, recursive=recursive)
+        d = self.provider.search(directory=directory, filename=filename,
+                                 recursive=recursive)
         return d
 
     @DatabaseUpdate()
     def list(self, source=None, dir_only=False, recursive=False):
 
-        d = self.provider.list(source=source, dir_only=dir_only, recursive=recursive)
+        d = self.provider.list(source=source, dir_only=dir_only,
+                               recursive=recursive)
         return d
 
     def tree(self, source):
@@ -118,3 +117,52 @@ class Provider(StorageABC):
         # dict_to_tree(d, 0)
 
         pprint(data)
+
+    # @DatabaseUpdate()
+    def copy(self, source=None, destination=None, recursive=False):
+        """
+        Copies object(s) from source to destination
+        :param source: "awss3:source_obj" the source is combination of
+                        source CSP name and source object name which either
+                        can be a directory or file
+        :param destination: "azure:desti_obj" the destination is
+                            combination of destination CSP and destination
+                            object name which either can be a directory or file
+        :param recursive: in case of directory the recursive refers to all
+                          subdirectories in the specified source
+        :return: dict
+        """
+        # Fetch CSP names and object names
+        if source:
+            source, source_obj = source.split(':')
+        else:
+            source, source_obj = None, None
+
+        if destination:
+            target, target_obj = destination.split(':')
+        else:
+            target, target_obj = None, None
+
+        source_obj = str(Path(source_obj).expanduser())
+        target_obj = str(Path(target_obj).expanduser())
+
+        print(source, source_obj,target, target_obj)
+
+        if source == "local":
+            print(f"CALL PUT METHOD OF {self.kind} PROVIDER.")
+            result = self.provider.put(source=source_obj,
+                                       destination=target_obj,
+                                       recursive=recursive)
+            return result
+        elif target == "local":
+            print(f"CALL GET METHOD OF {self.kind} PROVIDER.")
+            result = self.provider.get(source=source_obj,
+                                       destination=target_obj,
+                                       recursive=recursive)
+            return result
+        else:
+            print("Cloud to cloud copy", self.kind)
+            result = self.provider.copy(source=source, source_obj=source_obj,
+                                        destination=target, dest_obj=target_obj,
+                                        recursive=recursive)
+            return result

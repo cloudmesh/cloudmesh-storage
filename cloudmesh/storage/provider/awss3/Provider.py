@@ -6,11 +6,18 @@ import boto3
 import botocore
 from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.common.console import Console
-
+# TODO code changed
+import platform
 
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+        """
+        TBD
+
+        :param service: TBD
+        :param config: TBD
+        """
         #pprint(service)
         super().__init__(service=service, config=config)
         self.container_name = self.credentials['bucket']
@@ -553,11 +560,16 @@ class Provider(StorageABC):
                 files_to_upload = []
                 for (dirpath, dirnames, filenames) in os.walk(trimmed_source):
                     for f in filenames:
-                        files_to_upload.append(
-                                '/' + self.massage_path(dirpath) + '/' + f)
-                        #print('FILE :', os.path.join(dirpath, f))
-                        #dir ,tgtfile = os.path.split(f)
-                        #files_to_upload.append(tgtfile)
+                        # TODO code changed
+                        if platform.system() == "Windows":
+                            files_to_upload.append(
+                                self.massage_path(dirpath) + '/' + f)
+                        else:
+                            files_to_upload.append(
+                                    '/' + self.massage_path(dirpath) + '/' + f)
+                            #print('FILE :', os.path.join(dirpath, f))
+                            #dir ,tgtfile = os.path.split(f)
+                            #files_to_upload.append(tgtfile)
 
 
 
@@ -583,8 +595,13 @@ class Provider(StorageABC):
                 for (dirpath, dirnames, filenames) in os.walk(trimmed_source):
                     for fileName in filenames:
                      #   print('/'+self.massage_path(dirpath)+'/'+fileName)
-                        files_to_upload.append(
-                            '/' + self.massage_path(dirpath) + '/' + fileName)
+                     # TODO code changed
+                        if platform.system() == "Windows":
+                            files_to_upload.append(
+                                    self.massage_path(dirpath) + '/' + fileName)
+                        else:
+                            files_to_upload.append(
+                                '/' + self.massage_path(dirpath) + '/' + fileName)
 
                 for file in files_to_upload:
                     self.s3_client.upload_file(file,
@@ -841,6 +858,7 @@ class Provider(StorageABC):
                recursive=False):
         """
         gets the destination and copies it in source
+
         :param service: the name of the service in the yaml file
         :param directory: the directory which either can be a directory or file
         :param filename: filename
@@ -917,3 +935,32 @@ class Provider(StorageABC):
         dictObj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
         return dictObj
+
+    def copy(self, source=None, source_obj=None,
+             destination=None, dest_obj=None, recursive=False):
+        """
+        Copies objects from source CSP to target CSP
+        :param source: source CSP, Azure Blob storage
+        :param source_obj: Object to be copied, can be file/directory
+        :param destination: destination CSP, AWS S3
+        :param dest_obj: target object name, can be file/directory
+        :param recursive: boolean, recursive copy flag
+        :return: dictionary with details of copied objects
+        """
+
+        self.storage_dict['source'] = source
+        self.storage_dict['source_obj'] = source_obj
+        self.storage_dict['target'] = destination
+        self.storage_dict['target_obj'] = dest_obj
+        self.storage_dict['action'] = 'copy'
+        self.storage_dict['recursive'] = recursive
+
+        print("CALL GET ON AZURE AND self.put")
+        if source == "azure":
+            pass
+            # init azure provider
+            # call azure get
+
+
+        pprint(self.storage_dict)
+        return self.storage_dict
