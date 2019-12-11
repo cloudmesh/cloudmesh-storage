@@ -6,7 +6,7 @@ from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
 from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-from cloudmesh.storage.provider.awsobjectstore.Provider import Provider as AwsobjectstoreProvider
+#from cloudmesh.storage.provider.awsobjectstore.Provider import Provider as AwsobjectstoreProvider
 #from cloudmesh.google.storage.Provider import Provider as GoogleStorageProvider
 from cloudmesh.common.debug import VERBOSE
 from pprint import pprint
@@ -69,6 +69,13 @@ class Provider(StorageABC):
         service = self.service
         d = self.provider.create_dir(directory=directory)
         return d
+
+    # @DatabaseUpdate()
+    # def blob_metadata(self, blob_name=None):
+    #
+    #     service = self.service
+    #     d = self.provider.blob_metadata(blob_name=blob_name)
+    #     return d
 
     @DatabaseUpdate()
     def delete(self, source=None):
