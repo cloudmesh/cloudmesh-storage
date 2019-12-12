@@ -147,7 +147,7 @@ class Provider(StorageABC):
         source_obj = str(Path(source_obj).expanduser())
         target_obj = str(Path(target_obj).expanduser())
 
-        print("DEBUG: values= ", source, source_obj, target, target_obj)
+        # print("DEBUG: values= ", source, source_obj, target, target_obj)
 
         if source == "local":
             print(f"CALL PUT METHOD OF {self.kind} PROVIDER.")
@@ -168,7 +168,7 @@ class Provider(StorageABC):
             target_provider = self.provider
             config = "~/.cloudmesh/cloudmesh.yaml"
 
-            print("target===> ", target_kind, target_provider)
+            # print("target===> ", target_kind, target_provider)
 
             if source:
                 super().__init__(service=source, config=config)
@@ -185,7 +185,7 @@ class Provider(StorageABC):
                 else:
                     return NotImplementedError
 
-            print("source===> ", source_kind, source_provider)
+            # print("source===> ", source_kind, source_provider)
 
             # get local storage directory
             super().__init__(service="local", config=config)
@@ -195,7 +195,7 @@ class Provider(StorageABC):
             local_target_obj = str(Path(local_storage).expanduser())
             source_obj = str(Path(source_obj).expanduser())
 
-            print("local===> ", local_storage, local_target_obj)
+            # print("local===> ", local_storage, local_target_obj)
 
             try:
                 result = source_provider.get(source=source_obj,
@@ -211,7 +211,7 @@ class Provider(StorageABC):
                                      f"{source} CSP. Please check. {e}")
             else:
                 source_obj = str(Path(local_target_obj) / source_obj)
-                print("upload =====> ",source_obj, target_obj)
+                # print("upload =====> ",source_obj, target_obj)
                 try:
                     result = target_provider.put(source=source_obj,
                                                  destination=target_obj,

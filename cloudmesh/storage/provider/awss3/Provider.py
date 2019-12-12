@@ -6,7 +6,7 @@ import boto3
 import botocore
 from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.common.console import Console
-# TODO code changed
+
 import platform
 
 class Provider(StorageABC):
@@ -560,7 +560,7 @@ class Provider(StorageABC):
                 files_to_upload = []
                 for (dirpath, dirnames, filenames) in os.walk(trimmed_source):
                     for f in filenames:
-                        # TODO code changed
+
                         if platform.system() == "Windows":
                             files_to_upload.append(
                                 self.massage_path(dirpath) + '/' + f)
@@ -595,7 +595,7 @@ class Provider(StorageABC):
                 for (dirpath, dirnames, filenames) in os.walk(trimmed_source):
                     for fileName in filenames:
                      #   print('/'+self.massage_path(dirpath)+'/'+fileName)
-                     # TODO code changed
+                     
                         if platform.system() == "Windows":
                             files_to_upload.append(
                                     self.massage_path(dirpath) + '/' + fileName)
@@ -935,32 +935,3 @@ class Provider(StorageABC):
         dictObj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
         return dictObj
-
-    def copy(self, source=None, source_obj=None,
-             destination=None, dest_obj=None, recursive=False):
-        """
-        Copies objects from source CSP to target CSP
-        :param source: source CSP, Azure Blob storage
-        :param source_obj: Object to be copied, can be file/directory
-        :param destination: destination CSP, AWS S3
-        :param dest_obj: target object name, can be file/directory
-        :param recursive: boolean, recursive copy flag
-        :return: dictionary with details of copied objects
-        """
-
-        self.storage_dict['source'] = source
-        self.storage_dict['source_obj'] = source_obj
-        self.storage_dict['target'] = destination
-        self.storage_dict['target_obj'] = dest_obj
-        self.storage_dict['action'] = 'copy'
-        self.storage_dict['recursive'] = recursive
-
-        print("CALL GET ON AZURE AND self.put")
-        if source == "azure":
-            pass
-            # init azure provider
-            # call azure get
-
-
-        pprint(self.storage_dict)
-        return self.storage_dict

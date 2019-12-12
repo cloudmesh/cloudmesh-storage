@@ -194,6 +194,7 @@ class TestStorage(object):
         # if storage = 'aws'   set storage2 = 'azure'
         # if storage = 'azure' set storage2 = 'aws'
         # cms set storage2='azure'
+
         HEADING()
         try:
             cloud2 = variables.parameter('storage2')
@@ -215,18 +216,23 @@ class TestStorage(object):
         pprint(file)
         assert len(file) > 0
 
-        # src = "a1.txt"
-        # dst = "/"
-        # tag = f"copy {cloud} to {cloud2}"
-        # print(f"Test run for copy {cloud}:{src} {cloud2}:{dst}")
-        #
-        # StopWatch.start(tag)
-        # file = provider.copy(f'{cloud}:{src}', f'{cloud2}:{dst}')
-        # StopWatch.stop(tag)
-        # print("=============================")
-        # pprint(file)
-        # print("=============================")
-        # assert len(file) > 0
+        # copy command uses provider of target CSP hence __init__ of target
+        # provider
+        provider2 = Provider(service=cloud2)
+
+        print('provider2:', provider2, provider2.kind)
+
+        src = "a1.txt"
+        dst = "/"
+        tag = f"copy {cloud} to {cloud2}"
+        print(f"Test run for copy {cloud}:{src} {cloud2}:{dst}")
+
+        StopWatch.start(tag)
+        file = provider2.copy(f'{cloud}:{src}', f'{cloud2}:{dst}')
+        StopWatch.stop(tag)
+        pprint(file)
+
+        assert len(file) > 0
 
     def test_benchmark(self):
         Benchmark.print(sysinfo=False, csv=True, tag=cloud)
