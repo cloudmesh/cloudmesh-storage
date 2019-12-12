@@ -36,6 +36,10 @@ class Provider(StorageABC):
                 Provider as GoogleStorageProvider
             self.provider = GoogleStorageProvider(service=service,
                                                   config=config)
+        elif self.kind in ['oracle']:
+            from cloudmesh.oracle.storage.Provider import \
+                Provider as OracleStorageProvider
+            self.provider = OracleStorageProvider(service=service, config=config)
         else:
             raise ValueError(
                 f"Storage provider '{self.service}' not yet supported")
