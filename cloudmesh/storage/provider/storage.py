@@ -5,6 +5,7 @@ from cloudmesh.storage.provider.azureblob import \
     Provider as AzureblobStorageProvider
 from cloudmesh.storage.provider.box import Provider as BoxStorageProvider
 from cloudmesh.storage.provider.gdrive import Provider as GdriveStorageProvider
+from cloudmesh.oracle.storage.Provider import Provider as OracleStorageProvider
 from google.cloud import storage
 
 class Provider(object):
@@ -38,6 +39,10 @@ class Provider(object):
                 config=config)
         elif self.kind in ["azureblob"]:
             self.p = AzureblobStorageProvider(
+                service=service,
+                config=config)
+        elif self.kind in ["oracle"]:
+            self.p = OracleStorageProvider(
                 service=service,
                 config=config)
         else:
