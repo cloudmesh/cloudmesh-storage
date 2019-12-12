@@ -119,7 +119,7 @@ class Provider(StorageABC):
 
         pprint(data)
 
-    # @DatabaseUpdate()
+    @DatabaseUpdate()
     def copy(self, source=None, destination=None, recursive=False):
         """
         Copies object(s) from source to destination
@@ -147,7 +147,7 @@ class Provider(StorageABC):
         source_obj = str(Path(source_obj).expanduser())
         target_obj = str(Path(target_obj).expanduser())
 
-        print(source, source_obj,target, target_obj)
+        print("DEBUG: values= ", source, source_obj, target, target_obj)
 
         if source == "local":
             print(f"CALL PUT METHOD OF {self.kind} PROVIDER.")
@@ -162,7 +162,7 @@ class Provider(StorageABC):
                                        recursive=recursive)
             return result
         else:
-            VERBOSE("Cloud to cloud copy", self.kind)
+            VERBOSE(f"Copy from {source} to {destination}.")
 
             target_kind = self.kind
             target_provider = self.provider
