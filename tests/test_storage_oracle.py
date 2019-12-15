@@ -120,7 +120,6 @@ class TestStorageOracle(object):
         self.p.put(f"{home}/a/a1.txt", f"{src}/a1.txt")
         StopWatch.start("DELETE Directory")
         contents = self.p.delete(src)
-        print("KKKK:", contents)
         StopWatch.stop("DELETE Directory")
         deleted = False
         for entry in contents:
