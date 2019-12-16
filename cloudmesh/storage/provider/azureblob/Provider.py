@@ -8,7 +8,7 @@ from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import banner
 from cloudmesh.common.util import path_expand
 from cloudmesh.storage.StorageABC import StorageABC
-
+from pathlib import Path
 
 class Provider(StorageABC):
 
@@ -73,8 +73,11 @@ class Provider(StorageABC):
 
     def local_path(self, source_path):
         src_path = path_expand(source_path)
-        if src_path[0] not in [".", "/", "~"]:
-            src_path = os.path.join(os.getcwd(), source_path)
+        # Code added to skip join for absolute paths
+        # In Windows src_path[0] is drive name "C"
+        if not Path(src_path).is_absolute():
+            if src_path[0] not in [".", "/", "~"]:
+                src_path = os.path.join(os.getcwd(), source_path)
         return src_path
 
     def get(self, service=None, source=None, destination=None, recursive=False):
@@ -486,13 +489,16 @@ class Provider(StorageABC):
         pprint(dict_obj)
         return dict_obj
 
-    def list(self, service=None, source=None, recursive=False):
+    # TODO code change:
+    # def list(self, service=None, source=None, recursive=False):
+    def list(self, source=None, dir_only=False, recursive=False):
         """
         lists all files specified in the source
 
         :param source: this can be a file or directory
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
+        :param dir_only: boolean, enlist only directories
         :return: dict
 
         """

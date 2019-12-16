@@ -25,6 +25,8 @@ class StorageCommand(PluginCommand):
                 storage [--storage=SERVICE] sync SOURCE DESTINATION [--name=NAME] [--async]
                 storage [--storage=SERVICE] sync status [--name=NAME]
                 storage config list [--output=OUTPUT]
+                storage copy SOURCE DESTINATION [--recursive]
+
 
           This command does some useful things.
 
@@ -82,6 +84,11 @@ class StorageCommand(PluginCommand):
                 config list
                     Lists the configures storage services in the yaml file
 
+                storage copy SOURCE DESTINATION
+                    Copies objects from SOURCE CSP to DESTINATION CSP
+                    SOURCE: awss3:"source_object_name"
+                    DESTINATION: azure:"target_object_name"
+
           Example:
             set storage=azureblob
             storage put SOURCE DESTINATION --recursive
@@ -97,14 +104,20 @@ class StorageCommand(PluginCommand):
                        "storage")
         VERBOSE(arguments)
 
-
         if arguments.storage is None:
-            try:
-                v = Variables()
-                arguments.storage = v['storage']
-            except Exception as e:
-                arguments.storage = None
-                raise ValueError("Storage provider is not defined")
+            if arguments.copy is None:
+                try:
+                    v = Variables()
+                    arguments.storage = v['storage']
+                except Exception as e:
+                    arguments.storage = None
+                    raise ValueError("Storage provider is not defined")
+            else:
+                if arguments.DESTINATION.split(":")[0] == "local":
+                    arguments.storage = arguments.SOURCE.split(":")[0]
+                else:
+                    arguments.storage = arguments.DESTINATION.split(":")[0]
+
 
         arguments.storage = Parameter.expand(arguments.storage)
 
@@ -157,3 +170,14 @@ class StorageCommand(PluginCommand):
         elif arguments.rsync:
             # TODO: implement
             raise NotImplementedError
+
+        elif arguments.copy:
+            VERBOSE(f"COPY: Executing Copy command from {arguments.SOURCE} to "
+                    f"{arguments.DESTINATION} providers")
+            print(f"INITIALIZE with {arguments.storage[0]} provider.")
+
+            provider = Provider(arguments.storage[0])
+
+            result = provider.copy(arguments.SOURCE,
+                                   arguments.DESTINATION,
+                                   arguments.recursive)

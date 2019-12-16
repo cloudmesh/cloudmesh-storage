@@ -2,6 +2,8 @@ from cloudmesh.storage.StorageNewABC import StorageABC
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.common.debug import VERBOSE
 from pprint import pprint
+from pathlib import Path
+from cloudmesh.common.console import Console
 
 
 class Provider(StorageABC):
@@ -120,3 +122,112 @@ class Provider(StorageABC):
         # dict_to_tree(d, 0)
 
         pprint(data)
+
+    @DatabaseUpdate()
+    def copy(self, source=None, destination=None, recursive=False):
+        """
+        Copies object(s) from source to destination
+        :param source: "awss3:source_obj" the source is combination of
+                        source CSP name and source object name which either
+                        can be a directory or file
+        :param destination: "azure:desti_obj" the destination is
+                            combination of destination CSP and destination
+                            object name which either can be a directory or file
+        :param recursive: in case of directory the recursive refers to all
+                          subdirectories in the specified source
+        :return: dict
+        """
+        # Fetch CSP names and object names
+        if source:
+            source, source_obj = source.split(':')
+        else:
+            source, source_obj = None, None
+
+        if destination:
+            target, target_obj = destination.split(':')
+        else:
+            target, target_obj = None, None
+
+        source_obj = str(Path(source_obj).expanduser())
+        target_obj = str(Path(target_obj).expanduser())
+
+        # print("DEBUG: values= ", source, source_obj, target, target_obj)
+
+        if source == "local":
+            print(f"CALL PUT METHOD OF {self.kind} PROVIDER.")
+            result = self.provider.put(source=source_obj,
+                                       destination=target_obj,
+                                       recursive=recursive)
+            return result
+        elif target == "local":
+            print(f"CALL GET METHOD OF {self.kind} PROVIDER.")
+            result = self.provider.get(source=source_obj,
+                                       destination=target_obj,
+                                       recursive=recursive)
+            return result
+        else:
+            VERBOSE(f"Copy from {source} to {destination}.")
+
+            target_kind = self.kind
+            target_provider = self.provider
+            config = "~/.cloudmesh/cloudmesh.yaml"
+
+            # print("target===> ", target_kind, target_provider)
+
+            if source:
+                super().__init__(service=source, config=config)
+                source_kind = self.kind
+                if source_kind == "azureblob":
+                    from cloudmesh.storage.provider.azureblob.Provider import \
+                         Provider as AzureblobProvider
+                    source_provider = AzureblobProvider(service=source,
+                                                        config=config)
+                elif source_kind == "awss3":
+                    from cloudmesh.storage.provider.awss3.Provider import \
+                         Provider as AwsProvider
+                    source_provider = AwsProvider(service=source, config=config)
+                else:
+                    return NotImplementedError
+
+            # print("source===> ", source_kind, source_provider)
+
+            # get local storage directory
+            super().__init__(service="local", config=config)
+            local_storage = self.config[
+                                    "cloudmesh.storage.local.default.directory"]
+
+            local_target_obj = str(Path(local_storage).expanduser())
+            source_obj = str(Path(source_obj).expanduser())
+
+            # print("local===> ", local_storage, local_target_obj)
+
+            try:
+                result = source_provider.get(source=source_obj,
+                                             destination=local_target_obj,
+                                             recursive=recursive)
+                Console.ok(f"Fetched {source_obj} from {source} CSP")
+                # pprint(result)
+                if len(result) == 0:
+                    return Console.error(f"{source_obj} could not be found "
+                                         f"in {source} CSP. Please check.")
+            except Exception as e:
+                return Console.error(f"Error while fetching {source_obj} from " 
+                                     f"{source} CSP. Please check. {e}")
+            else:
+                source_obj = str(Path(local_target_obj) / source_obj)
+                # print("upload =====> ",source_obj, target_obj)
+                try:
+                    result = target_provider.put(source=source_obj,
+                                                 destination=target_obj,
+                                                 recursive=recursive)
+
+                    Console.ok(f"Copied {source_obj} to {target} CSP")
+
+                    if result is None:
+                        return Console.error(f"{source_obj} couldn't be copied"
+                                             f" to {target} CSP.")
+                    return result
+                except Exception as e:
+                    return Console.error(f"Error while copying {source_obj} to "
+                                         f"{target} CSP. Please check,{e}")
+

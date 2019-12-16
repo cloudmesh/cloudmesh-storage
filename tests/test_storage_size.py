@@ -91,8 +91,8 @@ class TestStorage(object):
 
     def test_get(self):
         HEADING()
-        src = "/test.txt"
-        dst = "~/.cloudmesh/storage/temp"
+        src = "/1024.txt"
+        dst = "~/.cloudmesh/storage/temp/"
         StopWatch.start("get")
         file = provider.get(src, dst)
         StopWatch.stop("get")
