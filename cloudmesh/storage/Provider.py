@@ -194,8 +194,14 @@ class Provider(StorageABC):
                     from cloudmesh.storage.provider.awss3.Provider import \
                          Provider as AwsProvider
                     source_provider = AwsProvider(service=source, config=config)
+                elif source_kind == "oracle" :
+                    from cloudmesh.oracle.storage.Provider import \
+                        Provider as OracleStorageProvider
+                    source_provider = OracleStorageProvider(service=source,
+                                                            config=config)
                 else:
-                    return NotImplementedError
+                    return Console.error(f"Provider for {source_kind} is not "
+                                         f"yet implemented.")
 
             # print("source===> ", source_kind, source_provider)
 
@@ -207,14 +213,14 @@ class Provider(StorageABC):
             local_target_obj = str(Path(local_storage).expanduser())
             source_obj = str(Path(source_obj).expanduser())
 
-            # print("local===> ", local_storage, local_target_obj)
+            print("local===> ", local_storage, local_target_obj)
 
             try:
                 result = source_provider.get(source=source_obj,
                                              destination=local_target_obj,
                                              recursive=recursive)
                 Console.ok(f"Fetched {source_obj} from {source} CSP")
-                # pprint(result)
+                pprint(result)
                 if len(result) == 0:
                     return Console.error(f"{source_obj} could not be found "
                                          f"in {source} CSP. Please check.")
@@ -223,7 +229,7 @@ class Provider(StorageABC):
                                      f"{source} CSP. Please check. {e}")
             else:
                 source_obj = str(Path(local_target_obj) / source_obj)
-                # print("upload =====> ",source_obj, target_obj)
+                print("upload =====> ",source_obj, target_obj)
                 try:
                     result = target_provider.put(source=source_obj,
                                                  destination=target_obj,
