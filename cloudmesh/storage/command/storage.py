@@ -86,8 +86,8 @@ class StorageCommand(PluginCommand):
 
              storage copy SOURCE DESTINATION
                Copies objects from SOURCE CSP to DESTINATION CSP
-               SOURCE: awss3:"source_object_name"
-               DESTINATION: azure:"target_object_name"
+               SOURCE: awss3:source
+               DESTINATION: azure:target
 
            Example:
               set storage=azureblob
