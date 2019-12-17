@@ -172,7 +172,7 @@ class TestStorage(object):
 
     def test_copy_local(self):
         HEADING()
-        src = "/a.txt"
+        src = "a.txt"
         dst = "~/.cloudmesh/storage/test"
         tag = f"copy {cloud} to local"
         StopWatch.start(tag)
