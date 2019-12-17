@@ -174,7 +174,8 @@ class StorageCommand(PluginCommand):
         elif arguments.copy:
             VERBOSE(f"COPY: Executing Copy command from {arguments.SOURCE} to "
                     f"{arguments.DESTINATION} providers")
-            print(f"INITIALIZE with {arguments.storage[0]} provider.")
+            print(f"DEBUG storage.py: INITIALIZE with {arguments.storage[0]} "
+                  "provider.")
 
             provider = Provider(arguments.storage[0])
 

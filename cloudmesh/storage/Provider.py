@@ -149,10 +149,17 @@ class Provider(StorageABC):
         else:
             target, target_obj = None, None
 
+        # oracle provider expects a target name
+        if target_obj is None or \
+           len(target_obj.strip()) == 0:
+            # print("DEBUG:", Path(source_obj).parts)
+            target_obj = Path(source_obj).parts[-1]
+
         source_obj = str(Path(source_obj).expanduser())
         target_obj = str(Path(target_obj).expanduser())
 
-        # print("DEBUG: values= ", source, source_obj, target, target_obj)
+        print("DEBUG Provider: values= ", source, source_obj, target,
+              target_obj)
 
         if source == "local":
             print(f"CALL PUT METHOD OF {self.kind} PROVIDER.")
