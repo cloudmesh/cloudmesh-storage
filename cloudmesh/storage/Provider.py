@@ -127,6 +127,7 @@ class Provider(StorageABC):
     def copy(self, source=None, destination=None, recursive=False):
         """
         Copies object(s) from source to destination
+
         :param source: "awss3:source_obj" the source is combination of
                         source CSP name and source object name which either
                         can be a directory or file
