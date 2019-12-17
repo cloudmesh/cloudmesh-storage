@@ -7,11 +7,21 @@ Pratibha Madharapakkam Pagadala |  [fa19-516-152](https://github.com/cloudmesh-c
 
 ## Introduction
 
-This project is to develop API and rest services to manage and transfer files between different cloud service providers. A cloudmesh based command will be implemented to transfer files from a source to target cloud provider. In this instance, the functionality will be implemented for AWS and Google Cloud. For performance evaluation py tests will be created. 
+This project is to develop API and rest services to manage and transfer
+files between different cloud service providers. A cloudmesh based
+command will be implemented to transfer files from a source to target
+cloud provider. In this instance, the functionality will be implemented
+for AWS and Google Cloud. For performance evaluation py tests will be
+created.
 
 ## Motivation
 
- Multiple cloud providers offer storage solutions to manage data in the form of files. The intention here is to build a command which can provide functionality to move them from a source to a target cloud provider's storage. In this method, users will be able to split or move the data across different cloud providers that provider cheaper solutions. 
+ Multiple cloud providers offer storage solutions to manage data in the
+ form of files. The intention here is to build a command which can
+ provide functionality to move them from a source to a target cloud
+ provider's storage. In this method, users will be able to split or move
+ the data across different cloud providers that provider cheaper
+ solutions.
 
 ## Architecture Diagram
 
@@ -26,7 +36,10 @@ Description
   3. Add the files
   4. delete the files
   
-* Cloudmesh storage_switch command will run on the local server. According to the options and arguments, this would delegate the functions between AWS and Google Cloud.  
+* Cloudmesh storage_switch command will run on the local server.
+  According to the options and arguments, this would delegate the
+  functions between AWS and Google Cloud.
+
 * Storage and Utility APIs on AWS and Google cloud.   
 
 ## Technology Used
@@ -40,7 +53,7 @@ Description
 
 ## Implementation Plan
 
-Usage:
+:o2: the man page is not 80 pages wide, please fix in code and here
 
 ````
 Usage:
@@ -79,24 +92,34 @@ Example:
 	cms storage_service delete --source=aws:uploadtest1.txt
 
 ````
-# Dependencies
-* storage service command utiltizes cloudmesh awss3's Provider class for put and get functions.
+## Dependencies
+
+* storage service command utiltizes cloudmesh awss3's Provider class for
+  put and get functions.
+
 * Google Cloud Provider is developed using google's Storage API.  
 * The command has been tested on Windows 10.
 
 ## Testing
+
 To be updated
+
 ## Benchmarks
+
 To be updated
+
 ## Progress
 
-- [x] Generated command using cloudmesh shell - cms storage_service command
-- [x] Create AWS account and Google Cloud accounts
-- [x] Access AWS account using cloudmesh commands
-- [x] Update provider classes for AWS and Google Cloud.
-- [x] Copy file from aws to google cloud
-- [x] Copy file from google cloud to aws. 
-- [x] Develop pytests for testing and provide benchmarks
+:o: please remove this section and maybbbe add somewhere a features
+section. progress is no longer needed.
+
+* [x] Generated command using cloudmesh shell: cms storage_service command
+* [x] Create AWS account and Google Cloud accounts
+* [x] Access AWS account using cloudmesh commands
+* [x] Update provider classes for AWS and Google Cloud.
+* [x] Copy file from aws to google cloud
+* [x] Copy file from google cloud to aws. 
+* [x] Develop pytests for testing and provide benchmarks
 
 ## References
 
