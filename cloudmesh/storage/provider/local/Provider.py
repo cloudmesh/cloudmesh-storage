@@ -79,7 +79,7 @@ class Provider(StorageABC):
                 {"modified": "today",
                  "created": "today",
                  "location": str(Path(dirname) / filename),
-                 "directory": dirname,
+                 "directory": str(Path(dirname)),
                  "filename": filename,
                  "isfile": os.path.isfile(filename),
                  "isdir": os.path.isdir(filename),
@@ -124,8 +124,9 @@ class Provider(StorageABC):
 
         d = self._dirname(directory)
         d.mkdir(parents=True, exist_ok=True)
-        identity = self.identifier(directory, None)
-        return identity
+        #print(directory)
+        #identity = self.identifier(directory,None,None)
+        #return identity
 
     def create_dir_from_filename(self, filename=None):
         """
@@ -179,6 +180,7 @@ class Provider(StorageABC):
             entry = self.identifier(source, str(location), file=True,
                                     status=status)
             result.append(entry)
+            pprint(entry)
             return result
         
         for file in files:
@@ -189,11 +191,13 @@ class Provider(StorageABC):
             if dir_only and is_dir:
                 entry = self.identifier(source, str(file), file=False, status=status)
                 result.append(entry)
+                pprint(entry)
             elif files_only and is_file:
                 entry = self.identifier(source, str(file), file=True, status=status)
             else:
                 entry = self.identifier(source, str(file), file=is_file, status=status)
                 result.append(entry)
+                pprint(entry)
         return result
 
     def put(self, source=None, destination=None, recursive=False):
@@ -231,14 +235,18 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-        destination = self._dirname(source)
+        src = path_expand(source)
+        source_file_name = os.path.basename(src)
+        source_dir = os.path.dirname(src)
+        print(source_dir)
+
+        dest = path_expand(destination)
+        is_target_file = os.path.isfile(dest)
+        is_target_dir = os.path.isdir(dest)
+        print(dest)
         if recursive:
-            src = path_expand(source)
-            dest = path_expand(destination)
             shutil.copytree(src, dest)
         else:
-            src = path_expand(source)
-            dest = path_expand(destination)
             shutil.copy2(src, dest)
 
         return self.list(source=destination, recursive=recursive)
@@ -252,9 +260,7 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-        raise NotImplementedError
         source = self._dirname(source)
-        # entries = self._list(source=source, recursive=recursive, ststus="deleted")
         entries = self._list(source=source, recursive=recursive, status="deleted")
         # shutil.rmtree doesn't work if source is a file object.
         # Code modified to implement delete for file objects as well.

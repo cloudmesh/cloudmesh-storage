@@ -8,11 +8,34 @@ from pathlib import Path
 from pprint import pprint
 
 import pytest
-from cloudmesh.common.debug import VERBOSE
+from cloudmesh.common.StopWatch import StopWatch
+from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
+from cloudmesh.common.variables import Variables
+from cloudmesh.common.Benchmark import Benchmark
+from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
+from cloudmesh.common.debug import VERBOSE
+
+Benchmark.debug()
+
+user = Config()["cloudmesh.profile.user"]
+variables = Variables()
+VERBOSE(variables.dict())
+
+key = variables['key']
+
+cloud = variables.parameter('storage')
+
+print(f"Test run for {cloud}")
+
+if cloud is None:
+    raise ValueError("storage is not set")
+
+provider = Provider(service=cloud)
+print('provider:', provider, provider.kind)
 
 
 def create_file(location, content):
@@ -54,6 +77,7 @@ class TestLocal(object):
 
     def test_02_list(self):
         HEADING()
+        StopWatch.start("list")
         src = '/'
         contents = self.p.list(source=src)
 
@@ -61,37 +85,41 @@ class TestLocal(object):
 
         for c in contents:
             VERBOSE(c)
+        StopWatch.stop("list")
 
     def test_05_search(self):
         HEADING()
+        StopWatch.start("search")
         src = '/'
         filename = 'a.txt'
         #
         # bug use named arguments
         #
         files = self.p.search(directory=src, filename=filename, recursive=True)
-        pprint(files)
+        #pprint(files)
+        StopWatch.stop("search")
 
         assert len(files) > 0
 
-
-class A:
-
     def test_02_put(self):
         HEADING()
+        StopWatch.start("put")
         src = path_expand("~/.cloudmesh/storage/test/a/a.txt")
-        dst = "/"
+        dst = "~/"
         test_file = self.p.put(src, dst)
-        pprint(test_file)
+        #pprint(test_file)
+        StopWatch.stop("put")
 
         assert test_file is not None
 
     def test_03_get(self):
         HEADING()
-        src = path_expand("/a.txt")
+        StopWatch.start("get")
+        src = path_expand("~/a.txt")
         dst = path_expand("~/test.txt")
         file = self.p.get(src, dst)
-        pprint(file)
+        #pprint(file)
+        StopWatch.stop("get")
 
         assert file is not None
 
@@ -99,13 +127,20 @@ class A:
 
     def test_06_create_dir(self):
         HEADING()
-        src = '/created_dir'
+        StopWatch.start("create_dir")
+        src = path_expand("~/created_dir")
         directory = self.p.create_dir(src)
-        pprint(directory)
+        #pprint(directory)
+        StopWatch.stop("create_dir")
 
         assert directory is not None
 
     def test_07_delete(self):
         HEADING()
-        src = '/created_dir'
+        StopWatch.start("delete")
+        src = path_expand("~/created_dir")
         self.p.delete(src)
+        StopWatch.stop("delete")
+
+    def test_benchmark(self):
+        Benchmark.print(sysinfo=False, csv=True, tag=cloud)
