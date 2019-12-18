@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_gdrive.py
 # pytest -v  tests/test_storage_gdrive.py
-# pytest -v --capture=no tests/test_storage_gdrive.py:TestGdriveStorage.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage_gdrive.py:TestGdriveStorage.<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path
@@ -133,7 +133,8 @@ class TestGdriveStorage(object):
 
     def test_recursive_put(self):
         # must be implemented by student from ~/.cloudmesh/storage/test
-        # make sure all files are in the list see self.content which contains all files
+        # make sure all files are in the list see self.content which contains
+        # all files
         home = self.sourcedir
         StopWatch.start("PUT Directory --recursive")
         upl_files = self.p.put(self.p.service, f"{home}", "/a", True)

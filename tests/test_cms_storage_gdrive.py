@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_gdrive.py
 # pytest -v  tests/test_gdrive.py
-# pytest -v --capture=no tests/test_gdrive.py:TestGdrive.<METHIDNAME>
+# pytest -v --capture=no tests/test_gdrive.py:TestGdrive.<METHIODNAME>
 ###############################################################
 
 import os
@@ -99,9 +99,9 @@ class TestGdrive(object):
     def test_delete(self):
         HEADING()
         # Deleting in google drive home sample_source.txt
-        # message = self.p.delete(filname='sample_source.txt')
-        filname = 'sample_source.txt'
-        message = run(f"cms delete {filname}")
+        # message = self.p.delete(filename='sample_source.txt')
+        filename = 'sample_source.txt'
+        message = run(f"cms delete {filename}")
 
         assert message is not None
 
