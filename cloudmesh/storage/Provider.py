@@ -123,15 +123,43 @@ class Provider(StorageABC):
 
         pprint(data)
 
+    @staticmethod
+    def get_source_provider(source_kind, source, config):
+        VERBOSE(source_kind)
+        if source_kind == "azureblob":
+            from cloudmesh.storage.provider.azureblob.Provider import \
+                Provider as AzureblobProvider
+            source_provider = AzureblobProvider(service=source,
+                                                config=config)
+        elif source_kind == "awss3":
+            from cloudmesh.storage.provider.awss3.Provider import \
+                Provider as AwsProvider
+            source_provider = AwsProvider(service=source, config=config)
+        elif source_kind == "oracle":
+            from cloudmesh.oracle.storage.Provider import \
+                Provider as OracleStorageProvider
+            source_provider = OracleStorageProvider(service=source,
+                                                    config=config)
+        elif source_kind == "google":
+            from cloudmesh.google.storage.Provider import \
+                Provider as GoogleStorageProvider
+            source_provider = GoogleStorageProvider(service=source,
+                                                    config=config)
+        else:
+            return Console.error(f"Provider for {source_kind} is not "
+                                 f"yet implemented.")
+
+        return source_provider
+
     @DatabaseUpdate()
     def copy(self, source=None, destination=None, recursive=False):
         """
         Copies object(s) from source to destination
 
-        :param source: "awss3:source_obj" the source is combination of
+        :param source: "awss3:source.txt" the source is combination of
                         source CSP name and source object name which either
                         can be a directory or file
-        :param destination: "azure:desti_obj" the destination is
+        :param destination: "azure:target.txt" the destination is
                             combination of destination CSP and destination
                             object name which either can be a directory or file
         :param recursive: in case of directory the recursive refers to all
@@ -185,23 +213,8 @@ class Provider(StorageABC):
             if source:
                 super().__init__(service=source, config=config)
                 source_kind = self.kind
-                if source_kind == "azureblob":
-                    from cloudmesh.storage.provider.azureblob.Provider import \
-                         Provider as AzureblobProvider
-                    source_provider = AzureblobProvider(service=source,
-                                                        config=config)
-                elif source_kind == "awss3":
-                    from cloudmesh.storage.provider.awss3.Provider import \
-                         Provider as AwsProvider
-                    source_provider = AwsProvider(service=source, config=config)
-                elif source_kind == "oracle" :
-                    from cloudmesh.oracle.storage.Provider import \
-                        Provider as OracleStorageProvider
-                    source_provider = OracleStorageProvider(service=source,
-                                                            config=config)
-                else:
-                    return Console.error(f"Provider for {source_kind} is not "
-                                         f"yet implemented.")
+                source_provider = self.get_source_provider(source_kind,
+                                                           source, config)
 
             # print("source===> ", source_kind, source_provider)
 
@@ -213,35 +226,33 @@ class Provider(StorageABC):
             local_target_obj = str(Path(local_storage).expanduser())
             source_obj = str(Path(source_obj).expanduser())
 
-            print("local===> ", local_storage, local_target_obj)
+            # print("local===> ", local_storage, local_target_obj)
 
             try:
                 result = source_provider.get(source=source_obj,
                                              destination=local_target_obj,
                                              recursive=recursive)
-                Console.ok(f"Fetched {source_obj} from {source} CSP")
-                pprint(result)
-                if len(result) == 0:
+                # pprint(result)
+                if result and len(result) == 0:
                     return Console.error(f"{source_obj} could not be found "
                                          f"in {source} CSP. Please check.")
+                Console.ok(f"Fetched {source_obj} from {source} CSP")
             except Exception as e:
                 return Console.error(f"Error while fetching {source_obj} from " 
                                      f"{source} CSP. Please check. {e}")
             else:
                 source_obj = str(Path(local_target_obj) / source_obj)
-                print("upload =====> ",source_obj, target_obj)
+                # print("upload =====> ",source_obj, target_obj)
                 try:
                     result = target_provider.put(source=source_obj,
                                                  destination=target_obj,
                                                  recursive=recursive)
 
-                    Console.ok(f"Copied {source_obj} to {target} CSP")
-
                     if result is None:
                         return Console.error(f"{source_obj} couldn't be copied"
                                              f" to {target} CSP.")
+                    Console.ok(f"Copied {source_obj} to {target} CSP")
                     return result
                 except Exception as e:
                     return Console.error(f"Error while copying {source_obj} to "
                                          f"{target} CSP. Please check,{e}")
-
