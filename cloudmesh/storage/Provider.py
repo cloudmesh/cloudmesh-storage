@@ -256,3 +256,7 @@ class Provider(StorageABC):
                 except Exception as e:
                     return Console.error(f"Error while copying {source_obj} to "
                                          f"{target} CSP. Please check,{e}")
+
+
+if __name__ == "__main__":
+    pass
