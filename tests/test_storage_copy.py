@@ -21,23 +21,12 @@ from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.util import banner
 from cloudmesh.common.console import Console
 
+
 Benchmark.debug()
 
 user = Config()["cloudmesh.profile.user"]
 variables = Variables()
-#VERBOSE(variables.dict())
-
 key = variables['key']
-
-# cloud = variables.parameter('storage')
-#
-# print(f"Test run for {cloud}")
-#
-# if cloud is None:
-#     raise ValueError("storage is not set")
-#
-# provider = Provider(service=cloud)
-# print('provider:', provider, provider.kind)
 
 benchmark_tag = "storage copy"
 
@@ -92,7 +81,7 @@ class TestStorage(object):
                 else:
                     dst = file
 
-                print("==================================> ", storage)
+                # print("==================================> ", storage)
                 provider = Provider(service=storage)
 
                 banner(f"copy {source}:{src} to {target}:{dst}")
@@ -102,87 +91,13 @@ class TestStorage(object):
 
                 response = provider.copy(f'{source}:{src}', f'{target}:{dst}')
                 if response is None:
-                    Console.error(f"NULL reposnse for copy {source}:{src} to "
+                    Console.error(f"NULL response for copy {source}:{src} to "
                                   f"{target}:{dst}")
                     pass_flag = False
 
                 StopWatch.stop(texttag)
 
         assert pass_flag
-
-    # def create_local_source(self, size=1024):
-    #     StopWatch.start(f"create source {size}")
-    #     source = path_expand(f"~/.cloudmesh/storage/temp/{size}.txt")
-    #     Benchmark.file(source, size)
-    #     StopWatch.stop(f"create source {size}")
-    #
-    #     # test if the files are ok
-    #     assert True
-    #
-    #
-    # def test_copy_local(self):
-    #     HEADING()
-    #     src = "/a.txt"
-    #     dst = "~/.cloudmesh/storage/test"
-    #     tag = f"copy {cloud} to local"
-    #     StopWatch.start(tag)
-    #     file = provider.copy(f'{cloud}:{src}', f'local:{dst}')
-    #     StopWatch.stop(tag)
-    #     pprint(file)
-    #     assert file is not None
-    #
-    #     dst = "/"
-    #     src = "~/.cloudmesh/storage/test/a.txt"
-    #     tag = f"copy local to {cloud}"
-    #     StopWatch.start(tag)
-    #     file = provider.copy(f'local:{src}', f'{cloud}:{dst}')
-    #     StopWatch.stop(tag)
-    #     pprint(file)
-    #     assert file is not None
-    #
-    # def test_copy_cloud(self):
-    #     # if storage = 'aws'   set storage2 = 'azure'
-    #     # if storage = 'azure' set storage2 = 'aws'
-    #     # cms set storage2='azure'
-    #
-    #     HEADING()
-    #     try:
-    #         cloud2 = variables.parameter('storage2')
-    #     except KeyError as e:
-    #         raise ValueError("Parameter 'storage2' is not set. "
-    #                          "Please use 'cms set storage2='azure'")
-    #     except Exception as e:
-    #         cloud2 = None
-    #         raise ValueError("Error occurred: ", e)
-    #
-    #     src = "a1.txt"
-    #     dst = "/"
-    #     tag = f"copy {cloud2} to {cloud}"
-    #
-    #     print(f"Test run for copy {cloud2}:{src} {cloud}:{dst}")
-    #     StopWatch.start(tag)
-    #     file = provider.copy(f'{cloud2}:{src}', f'{cloud}:{dst}')
-    #     StopWatch.stop(tag)
-    #     pprint(file)
-    #     assert len(file) > 0
-    #
-    #     # copy command uses provider of target CSP hence __init__ of target
-    #     # provider
-    #     provider2 = Provider(service=cloud2)
-    #
-    #     print('provider2:', provider2, provider2.kind)
-    #
-    #     src = "a1.txt"
-    #     dst = "/"
-    #     tag = f"copy {cloud} to {cloud2}"
-    #     print(f"Test run for copy {cloud}:{src} {cloud2}:{dst}")
-    #
-    #     StopWatch.start(tag)
-    #     file = provider2.copy(f'{cloud}:{src}', f'{cloud2}:{dst}')
-    #     StopWatch.stop(tag)
-    #     pprint(file)
-    #
-    #     assert len(file) > 0
 
     def test_benchmark(self):
         Benchmark.print(sysinfo=False, csv=True, tag=benchmark_tag)
