@@ -58,7 +58,7 @@ class TestStorage(object):
         # sources = ['local', 'oracle']
         local_source = "~/.cloudmesh/storage/test"
 
-        sizes = [1, 10]
+        sizes = [1]
         for size in sizes:
             file = f"size-{size}-file.txt"
             print("0" * 100)
@@ -94,13 +94,18 @@ class TestStorage(object):
                     texttag = f"copy {source}:{src} to {target}:{dst}"
 
                     StopWatch.start(texttag)
-    #TODO : add try
-                    response = provider.copy(f'{source}:{src}',
-                                             f'{target}:{dst}')
-                    if response is None:
-                        Console.error(f"NULL response for copy {source}:{src}"
-                                      f"to {target}:{dst}")
+
+                    try:
+                        response = provider.copy(f'{source}:{src}',
+                                                 f'{target}:{dst}')
+                        if response is None:
+                            Console.error(f"NULL response for copy {source}:"
+                                          f"{src} to {target}:{dst}")
+                            pass_flag = False
+                    except Exception as e:
                         pass_flag = False
+                        Console.error(f"Exception: copy {source}:{src} to "
+                                      f"{target}:{dst} - {e}")
 
                     StopWatch.stop(texttag)
                     print("0" * 100)
