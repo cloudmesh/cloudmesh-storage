@@ -125,7 +125,7 @@ class Provider(StorageABC):
 
     @staticmethod
     def get_source_provider(source_kind, source, config):
-        VERBOSE(source_kind)
+        # VERBOSE(source_kind)
         if source_kind == "azureblob":
             from cloudmesh.storage.provider.azureblob.Provider import \
                 Provider as AzureblobProvider
@@ -202,8 +202,7 @@ class Provider(StorageABC):
                                        recursive=recursive)
             return result
         else:
-            VERBOSE(f"Copy from {source} to {destination}.")
-
+            # VERBOSE(f"Copy from {source} to {destination}.")
             target_kind = self.kind
             target_provider = self.provider
             config = "~/.cloudmesh/cloudmesh.yaml"

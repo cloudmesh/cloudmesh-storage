@@ -36,7 +36,7 @@ class TestStorage(object):
 
     def test_create_local_source(self):
         HEADING()
-        sizes = [1, 2, 3]
+        sizes = [1, 10]
 
         for size in sizes:
             texttag = f"create size-{size} file"
@@ -54,48 +54,56 @@ class TestStorage(object):
 
     def test_copy(self):
         HEADING()
-        # sources = ['local', 'awss3', 'azure', 'oracle', 'google']
-        sources = ['local', 'azure']
+        sources = ['local', 'awss3', 'azure', 'oracle', 'google']
+        # sources = ['local', 'oracle']
         local_source = "~/.cloudmesh/storage/test"
 
-        size = 1
-        file = f"size-{size}-file.txt"
-        pass_flag = True
+        sizes = [1, 10]
+        for size in sizes:
+            file = f"size-{size}-file.txt"
+            print("0" * 100)
+            print(file)
+            print("0" * 100)
+            pass_flag = True
 
-        for source in sources:
-            targets = sources.copy()
-            targets.remove(source)
+            for source in sources:
+                targets = sources.copy()
+                targets.remove(source)
 
-            for target in targets:
+                for target in targets:
 
-                storage = target
+                    storage = target
 
-                if source == "local":
-                    src = str(Path(Path(local_source) / file))
-                else:
-                    src = file
+                    if source == "local":
+                        src = str(Path(Path(local_source) / file))
+                    else:
+                        src = file
 
-                if target == "local":
-                    dst = str(Path(Path(local_source) / file))
-                    storage = source
-                else:
-                    dst = file
+                    if target == "local":
+                        dst = str(Path(Path(local_source) / file))
+                        storage = source
+                    elif target == "azure":
+                        dst = '/'
+                    else:
+                        dst = file
 
-                # print("==================================> ", storage)
-                provider = Provider(service=storage)
+                    print("0"*100)
+                    provider = Provider(service=storage)
 
-                banner(f"copy {source}:{src} to {target}:{dst}")
-                texttag = f"copy {source}:{src} to {target}:{dst}"
+                    banner(f"copy {source}:{src} to {target}:{dst}")
+                    texttag = f"copy {source}:{src} to {target}:{dst}"
 
-                StopWatch.start(texttag)
+                    StopWatch.start(texttag)
+    #TODO : add try
+                    response = provider.copy(f'{source}:{src}',
+                                             f'{target}:{dst}')
+                    if response is None:
+                        Console.error(f"NULL response for copy {source}:{src}"
+                                      f"to {target}:{dst}")
+                        pass_flag = False
 
-                response = provider.copy(f'{source}:{src}', f'{target}:{dst}')
-                if response is None:
-                    Console.error(f"NULL response for copy {source}:{src} to "
-                                  f"{target}:{dst}")
-                    pass_flag = False
-
-                StopWatch.stop(texttag)
+                    StopWatch.stop(texttag)
+                    print("0" * 100)
 
         assert pass_flag
 
