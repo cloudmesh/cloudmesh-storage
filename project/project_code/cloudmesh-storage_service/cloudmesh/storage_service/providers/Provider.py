@@ -18,9 +18,9 @@ class Provider(StorageABC):
         return self.provider.copy(source_cloud , target_cloud, source_file, target_file)
 
 
-    def delete(self, source_cloud, bucket):
+    def delete(self, source):
 
-        return self.provider.delete(source_cloud, bucket)
+        return self.provider.delete(source)
 
 
     def list (self, source_cloud= None, location=None):

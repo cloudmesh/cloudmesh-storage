@@ -27,16 +27,14 @@ class Provider(StorageABC):
         self.aws_provider = AWSProv(service='aws')
         self.local_dir = self.config["cloudmesh"]["storage"]["local"]["dir"]
 
-    def list(self, cloudName):
+    def list(self, sourceName):
         #cloudName = "aws"
-        status = self.aws_provider.list(source=cloudName, recursive=True)
+        status = self.aws_provider.list(source=sourceName, recursive=True)
         if status is not None:
             pprint(status)
         else:
-            Console.error(f"{cloudName} cannot be listed ")
-
-    def delete(self, source=None, recursive=False):
-        self.aws_provider.delete("aws", recursive=True)
+            Console.error(f"{sourceName} cannot be listed ")
+        return status
 
     def copy(self, source=None, target=None, source_file_dir=None, target_fil_dir=None):
 
@@ -90,3 +88,11 @@ class Provider(StorageABC):
 
             pprint(tar_dir)
         return tar_dir
+
+    def delete(self, source):
+        status = self.aws_provider.delete(source, recursive=True)
+        if status is not None:
+            pprint(status)
+        else:
+            Console.error(f"{source} cannot be deleted ")
+        return status

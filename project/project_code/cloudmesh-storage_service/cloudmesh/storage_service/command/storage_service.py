@@ -63,7 +63,6 @@ class Storage_serviceCommand(PluginCommand):
             else:
                 print("Source Provider Not Implemented")
         elif arguments.copy:
-            print("Inside Arguments.copy")
             scloud, sbucket = source.split(":", 1) or None
             tcloud, tbucket = target.split(":", 1) or None
             #print(scloud + " " + tcloud + " " + sbucket + " " + tbucket)
@@ -76,5 +75,11 @@ class Storage_serviceCommand(PluginCommand):
                 provider.copy(scloud, tcloud, sbucket, tbucket)
             else:
                 print("Not Implemented")
-
+        elif arguments.delete:
+            scloud, sbucket = source.split(":", 1) or None
+            if (scloud == "aws" or scloud == "google"):
+                provider = Provider(service=scloud)
+                provider.delete(sbucket)
+            else:
+                print("Source Provider Not Implemented")
         return ""
