@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage.py
 # pytest -v  tests/test_storage.py
-# pytest -v --capture=no tests/test_storage.py::TestStorage::<METHIDNAME>
+# pytest -v --capture=no tests/test_storage.py::TestStorage::<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path
@@ -61,7 +61,7 @@ class TestStorage(object):
 
     def test_create_local_source(self):
         HEADING()
-        for size in [512,1024]:
+        for size in [512, 1024]:
             self.create_local_source(size=size)
 
         # test if the files are ok

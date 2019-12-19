@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_vdir.py
 # pytest -v  tests/test_vdir.py
-# pytest -v --capture=no tests/test_vdir.py:TestVdir.<METHIDNAME>
+# pytest -v --capture=no tests/test_vdir.py:TestVdir.<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path

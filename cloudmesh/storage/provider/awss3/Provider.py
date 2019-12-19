@@ -9,6 +9,7 @@ from cloudmesh.common.console import Console
 
 import platform
 
+
 class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
@@ -18,7 +19,7 @@ class Provider(StorageABC):
         :param service: TBD
         :param config: TBD
         """
-        #pprint(service)
+        # pprint(service)
         super().__init__(service=service, config=config)
         self.container_name = self.credentials['bucket']
         self.s3_resource = boto3.resource(
@@ -68,7 +69,7 @@ class Provider(StorageABC):
 
         # expand home directory in path
         massaged_path = massaged_path.replace('~', os.path.expanduser('~'))
-        #pprint(massaged_path)
+        # pprint(massaged_path)
 
         # expand possible current directory reference in path
         if massaged_path[0:2] == '.\\' or massaged_path[0:2] == './':
@@ -102,13 +103,23 @@ class Provider(StorageABC):
 
         return info
 
-    def bucket_create(self,name=None):
+    def bucket_create(self, name=None):
+        """
+        gets the source name from the put function
+
+        :param service: the name of the service in the yaml file
+        :param name: the bucket name which needs to be created
+
+        :return: dict,Boolean
+
+        """
+
         try:
             self.s3_client.create_bucket(
-            ACL='private',
-            Bucket=name,
+                ACL='private',
+                Bucket=name,
             )
-            print("Bucket Created:",name)
+            print("Bucket Created:", name)
             fileContent = ""
             file_path = self.massage_path(name)
             self.storage_dict['action'] = 'bucket_create'
@@ -141,14 +152,22 @@ class Provider(StorageABC):
 
 
         except botocore.exceptions.ClientError as e:
-             if e:
+            if e:
                 message = "One or more errors occurred while creating the bucket: {}".format(
                     e)
                 raise Exception(message)
                 return True
 
+    def bucket_exists(self, name=None):
+        """
+        gets the source from the put function
 
-    def bucket_exists(self,name=None):
+        :param service: the name of the service in the yaml file
+        :param name: the bucket name which needs to be checked for exists
+
+        :return: Boolean
+
+        """
         try:
             self.s3_client.head_bucket(Bucket=name)
             return True
@@ -171,9 +190,12 @@ class Provider(StorageABC):
     def create_dir(self, directory=None):
         """
         creates a directory
+
         :param service: the name of the service in the yaml file
         :param directory: the name of the directory
+
         :return: dict
+
         """
         fileContent = ""
         # filePath = self.joinFileNameDir(self.directory_marker_file_name, directory)
@@ -185,7 +207,7 @@ class Provider(StorageABC):
 
         bucket = self.container_name
         if not self.bucket_exists(name=bucket):
-           self.bucket_create(name=bucket)
+            self.bucket_create(name=bucket)
 
         # obj = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=filePath))
         obj = list(self.s3_resource.Bucket(self.container_name) \
@@ -223,7 +245,6 @@ class Provider(StorageABC):
 
         # function to list file  or directory
 
-
     def list(self, source=None, dir_only=False, recursive=False):
         """
         lists the information as dict
@@ -232,10 +253,11 @@ class Provider(StorageABC):
         :param dir_only: Only the directory names
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
+
         :return: dict
 
         """
-        #if dir_only:
+        # if dir_only:
         #    raise NotImplementedError
         self.storage_dict['action'] = 'list'
         self.storage_dict['source'] = source
@@ -246,7 +268,7 @@ class Provider(StorageABC):
 
         dir_files_list = []
         trimmed_source = self.massage_path(source)
-        #trimmed_source = source
+        # trimmed_source = source
         pprint(trimmed_source)
 
         if not recursive:
@@ -255,10 +277,9 @@ class Provider(StorageABC):
                 if obj.key.startswith(self.massage_path(trimmed_source)):
                     pprint(obj.key)
                     file_name = obj.key
-                    #obj.key.replace(self.directory_marker_file_name,
+                    # obj.key.replace(self.directory_marker_file_name,
                     #                            '')
                     if file_name[-1] == '/':
-
 
                         # Its a directory
                         '''
@@ -312,7 +333,7 @@ class Provider(StorageABC):
                 if obj.key.startswith(self.massage_path(trimmed_source)):
                     # print(obj.key)
                     file_name = obj.key
-                    #file_name = obj.key.replace(self.directory_marker_file_name,
+                    # file_name = obj.key.replace(self.directory_marker_file_name,
                     #                            '')
                     if file_name[-1] == '/':
                         # Its a directory
@@ -350,13 +371,16 @@ class Provider(StorageABC):
     def delete(self, source=None, recursive=True):
         """
         deletes the source
+
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
+
         :return: dict
+
         """
-        #self.storage_dict['service'] = service
+        # self.storage_dict['service'] = service
         self.storage_dict['action'] = 'delete'
         self.storage_dict['source'] = source
         self.storage_dict['recursive'] = recursive
@@ -457,7 +481,7 @@ class Provider(StorageABC):
                     self.storage_dict['message'] = 'Source Deleted'
                 else:
                     self.storage_dict[
-                        'message'] = 'Source has child objects. Please delete '\
+                        'message'] = 'Source has child objects. Please delete ' \
                                      'child objects first or use recursive option'
 
         self.storage_dict['objlist'] = dir_files_list
@@ -469,25 +493,26 @@ class Provider(StorageABC):
     # function to upload file or directory
     def put(self, source=None, destination=None, recursive=False):
         """
-        puts the source on the service
+       puts the source on the service
+
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or file
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
+
         """
 
-        #src_service, src = source.split(":", 1)
-        #dest_service, dest = destination.split(":", 1)
+        # src_service, src = source.split(":", 1)
+        # dest_service, dest = destination.split(":", 1)
 
         # check if the source an destination roots exist
 
-
-        #self.storage_dict['service'] = service
+        # self.storage_dict['service'] = service
         self.storage_dict['action'] = 'put'
-        self.storage_dict['source'] = source #src
-        self.storage_dict['destination'] = destination #dest
+        self.storage_dict['source'] = source  # src
+        self.storage_dict['destination'] = destination  # dest
         self.storage_dict['recursive'] = recursive
         pprint(self.storage_dict)
 
@@ -566,12 +591,10 @@ class Provider(StorageABC):
                                 self.massage_path(dirpath) + '/' + f)
                         else:
                             files_to_upload.append(
-                                    '/' + self.massage_path(dirpath) + '/' + f)
-                            #print('FILE :', os.path.join(dirpath, f))
-                            #dir ,tgtfile = os.path.split(f)
-                            #files_to_upload.append(tgtfile)
-
-
+                                '/' + self.massage_path(dirpath) + '/' + f)
+                            # print('FILE :', os.path.join(dirpath, f))
+                            # dir ,tgtfile = os.path.split(f)
+                            # files_to_upload.append(tgtfile)
 
                 for file in files_to_upload:
                     dir, tgtfile = os.path.split(file)
@@ -594,11 +617,11 @@ class Provider(StorageABC):
                 files_to_upload = []
                 for (dirpath, dirnames, filenames) in os.walk(trimmed_source):
                     for fileName in filenames:
-                     #   print('/'+self.massage_path(dirpath)+'/'+fileName)
-                     
+                        #   print('/'+self.massage_path(dirpath)+'/'+fileName)
+
                         if platform.system() == "Windows":
                             files_to_upload.append(
-                                    self.massage_path(dirpath) + '/' + fileName)
+                                self.massage_path(dirpath) + '/' + fileName)
                         else:
                             files_to_upload.append(
                                 '/' + self.massage_path(dirpath) + '/' + fileName)
@@ -606,7 +629,7 @@ class Provider(StorageABC):
                 for file in files_to_upload:
                     self.s3_client.upload_file(file,
                                                self.container_name,
-                                               trimmed_destination +  self.massage_path(
+                                               trimmed_destination + self.massage_path(
                                                    file.replace(trimmed_source,
                                                                 '')))
 
@@ -620,12 +643,12 @@ class Provider(StorageABC):
                     # obj dict to extract meta data
                     metadata = self.s3_client.head_object(
                         Bucket=self.container_name,
-                        Key=trimmed_destination +  self.massage_path(
+                        Key=trimmed_destination + self.massage_path(
                             file.replace(trimmed_source, '')
                         )
                     )
                     files_uploaded.append(self.extract_file_dict(
-                        trimmed_destination +  self.massage_path(
+                        trimmed_destination + self.massage_path(
                             file.replace(trimmed_source, '')
                         )
                         , metadata))
@@ -646,6 +669,7 @@ class Provider(StorageABC):
     def get(self, source=None, destination=None, recursive=False):
         """
        gets the source from the service
+
         :param service: the name of the service in the yaml file
         :param source: the source which either can be a directory or file
         :param destination: the destination which either can be a directory or file
@@ -653,7 +677,7 @@ class Provider(StorageABC):
                           subdirectories in the specified source
         :return: dict
         """
-        #self.storage_dict['service'] = service
+        # self.storage_dict['service'] = service
         self.storage_dict['action'] = 'get'
         self.storage_dict['source'] = source
         self.storage_dict['destination'] = destination
@@ -867,7 +891,7 @@ class Provider(StorageABC):
         :return: dict
         """
 
-        #self.storage_dict['service'] = service
+        # self.storage_dict['service'] = service
         self.storage_dict['search'] = 'search'
         self.storage_dict['directory'] = directory
         self.storage_dict['filename'] = filename

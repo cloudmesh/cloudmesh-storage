@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_installer.py
 # pytest -v  tests/test_storage_installer.py
-# pytest -v --capture=no tests/test_storage_installer.py:TestStorageInstaller.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage_installer.py:TestStorageInstaller.<METHODNAME>
 ###############################################################
 
 import os

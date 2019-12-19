@@ -19,7 +19,7 @@ class StorageCommand(PluginCommand):
              storage [--storage=SERVICE] create dir DIRECTORY
              storage [--storage=SERVICE] get SOURCE DESTINATION [--recursive]
              storage [--storage=SERVICE] put SOURCE DESTINATION [--recursive]
-             storage [--storage=SERVICE] list SOURCE [--recursive] [--output=OUTPUT]
+             storage [--storage=SERVICE] list [SOURCE] [--recursive] [--output=OUTPUT]
              storage [--storage=SERVICE] delete SOURCE
              storage [--storage=SERVICE] search  DIRECTORY FILENAME [--recursive] [--output=OUTPUT]
              storage [--storage=SERVICE] sync SOURCE DESTINATION [--name=NAME] [--async]
@@ -144,7 +144,9 @@ class StorageCommand(PluginCommand):
 
         elif arguments.list:
 
-             for storage in arguments.storage:
+            source = arguments.SOURCE or '.'
+            
+            for storage in arguments.storage:
                 provider = Provider(storage)
 
                 result = provider.list(arguments.SOURCE,
@@ -174,7 +176,8 @@ class StorageCommand(PluginCommand):
         elif arguments.copy:
             VERBOSE(f"COPY: Executing Copy command from {arguments.SOURCE} to "
                     f"{arguments.DESTINATION} providers")
-            print(f"INITIALIZE with {arguments.storage[0]} provider.")
+            print(f"DEBUG storage.py: INITIALIZE with {arguments.storage[0]} "
+                  "provider.")
 
             provider = Provider(arguments.storage[0])
 
