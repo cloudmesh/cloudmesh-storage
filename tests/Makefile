@@ -24,3 +24,4 @@ awss3:
 
 vdir:
  	pytest -v --capture=no tests/test_vdir.py
+

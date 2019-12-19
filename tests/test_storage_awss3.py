@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_awss3.py
 # pytest -v  tests/test_storage_awss3.py
-# pytest -v --capture=no tests/test_storage_awss3.py:TestStorageAwss3.<METHIDNAME>
+# pytest -v --capture=no tests/test_storage_awss3.py:TestStorageAwss3.<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path
@@ -133,7 +133,8 @@ class TestStorageAwss3(object):
 
     def test_recursive_put(self):
         # must be implemented by student from ~/.cloudmesh/storage/test
-        # make sure all files are in the list see self.content which contains all files
+        # make sure all files are in the list see self.content which contains
+        # all files
         home = self.sourcedir
         StopWatch.start("PUT Directory --recursive")
         upl_files = self.p.put(self.p.service, f"{home}", "/a", True)
@@ -218,7 +219,7 @@ class TestStorageAwss3(object):
 
         # this pytest is specifically for AWS,AZURE and Google only
 
-    #def test_create_bucket(self):
+    # def test_create_bucket(self):
     #    HEADING()
     #    src = 'cloudmeshtest2'
     #    StopWatch.start("create bucket")
@@ -227,7 +228,7 @@ class TestStorageAwss3(object):
 
     #    pprint(bucket)
 
-     #   assert bucket is not None
+    #   assert bucket is not None
 
     def test_results(self):
         HEADING()
