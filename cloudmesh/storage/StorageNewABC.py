@@ -106,3 +106,21 @@ class StorageABC(metaclass=ABCMeta):
         :rtype:
         """
         return self.p.tree()
+
+    def copy(self, source=None, destination=None, recursive=False):
+        """
+        Copies object(s) from source to destination
+
+        :param source: "awss3:source.txt" the source is combination of
+                        source CSP name and source object name which either
+                        can be a directory or file
+        :param destination: "azure:target.txt" the destination is
+                            combination of destination CSP and destination
+                            object name which either can be a directory or file
+        :param recursive: in case of directory the recursive refers to all
+                          subdirectories in the specified source
+        :return: dict
+        """
+
+        raise NotImplementedError
+        return []
