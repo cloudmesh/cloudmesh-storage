@@ -107,6 +107,50 @@ pytest -v --capture=no -W ignore::DeprecationWarning /test/Test_storage_service.
 
 Benchmarks results - [storage_service benchmarks](https://github.com/cloudmesh-community/fa19-516-152/blob/master/project/project_code/cloudmesh-storage_service/cloudmesh/storage_service/test/testResults.txt)
 
+```
++-------------------+-----------------------------------------------------------------------------------+
+| Machine Attribute | Value                                                                             |
++-------------------+-----------------------------------------------------------------------------------+
+| cpu_count         | 4                                                                                 |
+| mac_version       |                                                                                   |
+| machine           | ('AMD64',)                                                                        |
+| mem_available     | 3.4 GiB                                                                           |
+| mem_free          | 3.4 GiB                                                                           |
+| mem_percent       | 56.8%                                                                             |
+| mem_total         | 7.9 GiB                                                                           |
+| mem_used          | 4.5 GiB                                                                           |
+| node              | ('PratiSree',)                                                                    |
+| platform          | Windows-10-10.0.18362-SP0                                                         |
+| processor         | ('Intel64 Family 6 Model 69 Stepping 1, GenuineIntel',)                           |
+| processors        | Windows                                                                           |
+| python            | 3.7.4 (tags/v3.7.4:e09359112e, Jul  8 2019, 20:34:20) [MSC v.1916 64 bit (AMD64)] |
+| release           | ('10',)                                                                           |
+| sys               | win32                                                                             |
+| system            | Windows                                                                           |
+| user              |                                                                                   |
+| version           | 10.0.18362                                                                        |
+| win_version       | ('10', '10.0.18362', 'SP0', '')                                                   |
++-------------------+-----------------------------------------------------------------------------------+
+```
+
+```
++------------------+-------+
+| timer            | time  |
++------------------+-------+
+| LIST AWS         | 2.735 |
+| LIST GOOGLE      | 0.475 |
+| LOCAL_TO_AWS_DIR | 1.238 |
+| AWS_TO_LOCAL_DIR | 0.694 |
+| AWS_TO_LOCAL     | 1.582 |
+| LOCAL_TO_AWS     | 0.819 |
+| AWS_TO_GOOGLE    | 3.069 |
+| GOOGLE_TO_LOCAL  | 0.667 |
+| LOCAL_TO_GOOGLE  | 0.588 |
+| GOOGLE_TO_AWS    | 2.16  |
+| DELETE GOOGLE    | 0.544 |
+| DELETE AWS       | 1.338 |
++------------------+-------+
+```
 
 ## References
 
