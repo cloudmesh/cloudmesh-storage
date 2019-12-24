@@ -177,6 +177,8 @@ class Provider(StorageABC):
         else:
             target, target_obj = None, None
 
+        source_obj.replace(":", "")
+
         # oracle provider expects a target name
         if target_obj is None or \
            len(target_obj.strip()) == 0:
@@ -207,15 +209,11 @@ class Provider(StorageABC):
             target_provider = self.provider
             config = "~/.cloudmesh/cloudmesh.yaml"
 
-            # print("target===> ", target_kind, target_provider)
-
             if source:
                 super().__init__(service=source, config=config)
                 source_kind = self.kind
                 source_provider = self.get_source_provider(source_kind,
                                                            source, config)
-
-            # print("source===> ", source_kind, source_provider)
 
             # get local storage directory
             super().__init__(service="local", config=config)
@@ -225,13 +223,10 @@ class Provider(StorageABC):
             local_target_obj = str(Path(local_storage).expanduser())
             source_obj = str(Path(source_obj).expanduser())
 
-            # print("local===> ", local_storage, local_target_obj)
-
             try:
                 result = source_provider.get(source=source_obj,
                                              destination=local_target_obj,
                                              recursive=recursive)
-                # pprint(result)
                 if result and len(result) == 0:
                     return Console.error(f"{source_obj} could not be found "
                                          f"in {source} CSP. Please check.")
@@ -241,7 +236,7 @@ class Provider(StorageABC):
                                      f"{source} CSP. Please check. {e}")
             else:
                 source_obj = str(Path(local_target_obj) / source_obj)
-                # print("upload =====> ",source_obj, target_obj)
+
                 try:
                     result = target_provider.put(source=source_obj,
                                                  destination=target_obj,
@@ -255,7 +250,14 @@ class Provider(StorageABC):
                 except Exception as e:
                     return Console.error(f"Error while copying {source_obj} to "
                                          f"{target} CSP. Please check,{e}")
-
-
-if __name__ == "__main__":
-    pass
+                finally:
+                    Console.info("\nRemoving local intermediate file.")
+                    from cloudmesh.storage.provider.local.Provider import \
+                        Provider as LocalProvider
+                    local_provider = LocalProvider(service="local",
+                                                   config=config)
+                    try:
+                        local_provider.delete(source_obj, recursive=recursive)
+                    except Exception as e:
+                        Console.error(f"{source_obj} could not be deleted from "
+                                      f"local storage.")
