@@ -90,14 +90,67 @@ class StorageCommand(PluginCommand):
                SOURCE - awss3:source.txt
                DESTINATION - azure:target.txt
 
-           Example:
-              set storage=azureblob
-              storage put SOURCE DESTINATION --recursive
+           Example 1:
+              cms set storage=azureblob
+              cms storage put SOURCE DESTINATION --recursive
 
               is the same as
-              storage --storage=azureblob put SOURCE DESTINATION --recursive
+              cms storage --storage=azureblob put SOURCE DESTINATION --recursive
 
-              storage copy azure:source.txt oracle:target.txt
+              cms storage copy azure:source.txt oracle:target.txt
+
+            Example 2 (google):
+
+              cms set cloud=google
+
+              cms set storage=google
+
+              List all:
+
+               cms storage --storage=google list
+
+              Key word list:
+
+                cms storage --storage=google list a
+
+                a : an example key word
+
+              List specific file/folder:
+
+                cms storage --storage=google list topfolder1/folder2/file1
+
+                topfolder1/folder2/file1 : an example blob at a specific
+                google storage bucket location
+
+              Get:
+
+                cms storage --storage=google get /a/a ~/.cloudmesh/storage/test/google_test
+
+                /a/a : an example blob at google storage bucket
+
+                ~/.cloudmesh/storage/test/google_test : an example local
+                storage location
+
+              Put:
+
+                cms storage --storage=google put ~/.cloudmesh/storage/test/google_test /a/a
+
+                ~/.cloudmesh/storage/test/google_test : example local storage
+                location
+
+                /a/a : an example blob at google storage bucket
+
+              Create DIR:
+
+                cms storage --storage=google create dir testdir
+
+                testdir : example directory name at google storage bucket
+
+              Delete:
+
+                cms storage --storage=google delete testblob
+
+                testblob : example blob name available at google storage bucket
 
         """
         # arguments.CONTAINER = arguments["--container"]
