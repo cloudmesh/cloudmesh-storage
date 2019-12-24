@@ -255,7 +255,14 @@ class Provider(StorageABC):
                 except Exception as e:
                     return Console.error(f"Error while copying {source_obj} to "
                                          f"{target} CSP. Please check,{e}")
-
-
-if __name__ == "__main__":
-    pass
+                finally:
+                    Console.info("Removing local intermediate file.")
+                    from cloudmesh.storage.provider.local.Provider import \
+                        Provider as LocalProvider
+                    local_provider = LocalProvider(service="local",
+                                                   config=config)
+                    try:
+                        local_provider.delete(source_obj, recursive=recursive)
+                    except Exception as e:
+                        Console.error(f"{source_obj} could not be deleted from "
+                                      f"local storage.")
