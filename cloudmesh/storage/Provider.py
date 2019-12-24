@@ -177,6 +177,8 @@ class Provider(StorageABC):
         else:
             target, target_obj = None, None
 
+        source_obj.replace(":", "")
+
         # oracle provider expects a target name
         if target_obj is None or \
            len(target_obj.strip()) == 0:
@@ -256,7 +258,7 @@ class Provider(StorageABC):
                     return Console.error(f"Error while copying {source_obj} to "
                                          f"{target} CSP. Please check,{e}")
                 finally:
-                    Console.info("Removing local intermediate file.")
+                    Console.info("\nRemoving local intermediate file.")
                     from cloudmesh.storage.provider.local.Provider import \
                         Provider as LocalProvider
                     local_provider = LocalProvider(service="local",
