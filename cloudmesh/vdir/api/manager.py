@@ -22,15 +22,19 @@ class Vdir(object):
                 if self.directory == 'vdir':
                     Console.error("Root directory reached.")
                 else:
-                    cwd = self.col.find_one({'type': 'directory', 'cm.name': self.directory})
+                    cwd = self.col.find_one({'type': 'directory',
+                                             'cm.name': self.directory})
                     self.directory = cwd['parent']
-                    pwd = self.col.find_one({'type': 'directory', 'cm.name': self.directory})
+                    pwd = self.col.find_one({'type': 'directory',
+                                             'cm.name': self.directory})
                     return pwd
             else:
-                directory = self.col.find_one({'type': 'directory', 'cm.name': dirname})
+                directory = self.col.find_one({'type': 'directory',
+                                               'cm.name': dirname})
                 if directory['parent'] == self.directory:
                     self.directory = dirname
-                    pwd = self.col.find_one({'type': 'directory', 'cm.name': self.directory})
+                    pwd = self.col.find_one({'type': 'directory',
+                                             'cm.name': self.directory})
                     return pwd
                 else:
                     Console.error('Directory does not exist at this location.')
