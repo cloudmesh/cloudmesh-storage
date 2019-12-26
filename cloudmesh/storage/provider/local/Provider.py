@@ -130,9 +130,9 @@ class Provider(StorageABC):
 
     def create_dir_from_filename(self, filename=None):
         """
-        creates a directory
+        creates a directory form a filename
 
-        :param directory: the name of the directory for the filename
+        :param filename: the filename path
         :return: dict
         """
         directory = os.path.dirname(filename)
@@ -278,7 +278,6 @@ class Provider(StorageABC):
         """
         gets the destination and copies it in source
 
-        :param service: the name of the service in the yaml file
         :param directory: the directory which either can be a directory or file
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source

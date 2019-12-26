@@ -11,8 +11,8 @@ def setup():
 
 def mkdir(params=None):
     vdir = setup()
-    dir = params['dir']
-    d = vdir.mkdir(dir)
+    directory = params['dir']
+    d = vdir.mkdir(directory)
     return jsonify(d)
 
 

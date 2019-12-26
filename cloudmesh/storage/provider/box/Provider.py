@@ -74,7 +74,10 @@ class Provider(StorageABC):
 
     def put(self, service=None, source=None, destination=None, recursive=False):
         """
-        uploads file to Box, if source is directory and recursive is true uploads all files in source directory
+        uploads file to Box, if source is directory and recursive is true
+        uploads all files in source directory
+
+        :param service: the name of the service in the yaml file
         :param source: local file or directory to be uploaded
         :param destination: cloud directory to upload to
         :param recursive: if true upload all files in source directory, source must be directory not file
@@ -147,6 +150,8 @@ class Provider(StorageABC):
     def get(self, service=None, source=None, destination=None, recursive=False):
         """
         downloads file from Box, if recursive is true and source is directory downloads all files in directory
+
+        :param service: the name of the service in the yaml file
         :param source: cloud file or directory to download
         :param destination: local directory to be downloaded into
         :param recursive: if true download all files in source directory, source must be directory
@@ -202,6 +207,8 @@ class Provider(StorageABC):
     def search(self, service=None, directory=None, filename=None, recursive=False):
         """
         searches directory for file, if recursive searches all subdirectories
+
+        :param service: the name of the service in the yaml file
         :param directory: cloud directory to search in
         :param filename: name of file to search for
         :param recursive: if true search all child directories of original directory
@@ -248,6 +255,8 @@ class Provider(StorageABC):
     def create_dir(self, service=None, directory=None):
         """
         creates a new directory
+
+        :param service: the name of the service in the yaml file
         :param directory: path for new directory
         :return: dict of new directory
         """
@@ -276,6 +285,8 @@ class Provider(StorageABC):
     def list(self, service=None, source=None, recursive=False):
         """
         lists all contents of directory, if recursive lists contents of subdirectories as well
+
+        :param service: the name of the service in the yaml file
         :param source: cloud directory to list all contents of
         :param recursive: if true list contents of all child directories
         :return: dict(s) of files and directories
@@ -317,7 +328,10 @@ class Provider(StorageABC):
     def delete(self, service=None, source=None, recursive=False):
         """
         deletes file or directory
+
+        :param service: the name of the service in the yaml file
         :param source: file or directory to be deleted
+        :param recursive: copy the directory recurseively
         :return: None
         """
         try:

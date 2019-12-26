@@ -85,11 +85,10 @@ class TestCloudStorageOpenapi(object):
         }
         # data = '{"service": "azureblob", "source": "~/openapi/a.txt", "destination": "/apitest", "recursive": "False"}'
 
-        data = {}
-        data['service'] = f"{storage}"
-        data['source'] = "~/openapi/a.txt"
-        data['destination'] = "/apitest"
-        data['recursive'] = "False"
+        data = {'service': f"{storage}", 
+                'source': "~/openapi/a.txt",
+                'destination': "/apitest", 
+                'recursive': "False"}
 
         data_str = json.dumps(data)
 

@@ -1,15 +1,16 @@
-from multiprocessing import Pool
 import textwrap
+import uuid
+from multiprocessing import Pool
+from pprint import pprint
+
+import oyaml as yaml
+from cloudmesh.common.DateTime import DateTime
 from cloudmesh.common.console import Console
 from cloudmesh.configuration.Config import Config
-from cloudmesh.storage.Provider import Provider
-from pprint import pprint
-import oyaml as yaml
+from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-import uuid
-from cloudmesh.common.DateTime import DateTime
-import sys
-from  cloudmesh.mongo.CmDatabase import CmDatabase
+from cloudmesh.storage.Provider import Provider
+
 
 class StorageQueue:
     """
@@ -244,7 +245,7 @@ class StorageQueue:
         specification = textwrap.dedent(f"""
                 cm:
                    number: {self.number}
-                   name: "{self.service}:{path}"
+                   name: "{service}:{path}"
                    kind: storage
                    id: {uuid_str}
                    cloud: {self.collection}
@@ -252,7 +253,7 @@ class StorageQueue:
                    created: {date}
                 action: delete
                 source: 
-                  service: {self.service}
+                  service: {service}
                   path: {path}
                 status: waiting
                 """)

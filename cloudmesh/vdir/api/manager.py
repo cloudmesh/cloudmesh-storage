@@ -44,7 +44,8 @@ class Vdir(object):
     @DatabaseUpdate()
     def mkdir(self, dirname):
         try:
-            directory = self.col.find_one({"cm.name": dirname, 'type': 'directory'})
+            directory = self.col.find_one({"cm.name": dirname,
+                                           'type': 'directory'})
             if directory is None:
                 dir_dict = dict()
                 dir_dict['cm'] = {
@@ -66,22 +67,34 @@ class Vdir(object):
         try:
             dash = '-' * 40
             if directory is not None:
-                cloudmesh = self.col.find({'$or': [{'vdirectory': directory}, {'parent': directory}]})
-                count = self.col.count_documents({'$or': [{'vdirectory': directory}, {'parent': directory}]})
+                cloudmesh = self.col.find(
+                    {'$or': [{'vdirectory': directory},
+                             {'parent': directory}]})
+                count = self.col.count_documents(
+                    {'$or': [{'vdirectory': directory},
+                             {'parent': directory}]})
             else:
-                cloudmesh = self.col.find({'$or': [{'vdirectory': self.directory}, {'parent': self.directory}]})
-                count = self.col.count_documents({'$or': [{'vdirectory': self.directory}, {'parent': self.directory}]})
-            locations = "{:<20} {:>}".format("Name", "Location") + "\n" + dash + "\n"
+                cloudmesh = self.col.find(
+                    {'$or': [{'vdirectory': self.directory},
+                             {'parent': self.directory}]})
+                count = self.col.count_documents(
+                    {'$or': [{'vdirectory': self.directory},
+                             {'parent': self.directory}]})
+            locations = "{:<20} {:>}".format("Name", "Location") + \
+                        "\n" + dash + "\n"
             for i in range(0, count):
                 entry = cloudmesh[i]
                 if entry['type'] == 'fileendpoint':
-                    location = entry['provider'] + ":" + entry['cloud_directory'] + "/" + entry['filename']
+                    location = entry['provider'] + ":" + \
+                               entry['cloud_directory'] + "/" + \
+                               entry['filename']
                 else:
                     if self.directory == '':
                         location = 'Vdir'
                     else:
                         location = self.directory
-                locations += "{:<20} {:>}".format(entry['cm']['name'], location) + "\n"
+                locations += "{:<20} {:>}".format(entry['cm']['name'],
+                                                  location) + "\n"
             print(locations)
             return locations
         except Exception as e:
@@ -95,9 +108,12 @@ class Vdir(object):
                 dirname = 'vdir'
                 directory = 'vdir'
             else:
-                directory = self.col.find_one({"cm.name": dirname, 'type': 'directory'})
+                directory = self.col.find_one(
+                    {"cm.name": dirname,
+                     'type': 'directory'})
             filename = os.path.basename(dir_and_name)
-            file = self.col.find_one({"cm.name": filename, 'type': 'fileendpoint'})
+            file = self.col.find_one({"cm.name": filename,
+                                      'type': 'fileendpoint'})
             if directory is not None and file is None:
                 file_dict = dict()
                 file_dict['cm'] = {
@@ -110,8 +126,8 @@ class Vdir(object):
                 file_dict['cloud_directory'] = os.path.dirname(endpoint).split(':')[1]
                 file_dict['filename'] = os.path.basename(endpoint)
                 file_dict['provider'] = os.path.dirname(endpoint).split(':')[0]
-                file_dict['cm']['created'] = datetime.utcnow()
-                file_dict['cm']['modified'] = datetime.utcnow()
+                file_dict['cm']['created'] = str(datetime.utcnow())
+                file_dict['cm']['modified'] = str(datetime.utcnow())
                 return file_dict
             elif directory is None:
                 Console.error("Virtual directory not found.")

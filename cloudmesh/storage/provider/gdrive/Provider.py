@@ -95,8 +95,9 @@ class Provider(StorageABC):
         print(credentials_path)
         credentials = store.get()
         if not credentials or credentials.invalid:
-            flow = client.flow_from_clientsecrets(self.client_secret_file,
-                                                  self.scopes)
+            flow = client.flow_from_clientsecrets(
+                self.client_secret_file,
+                self.scopes)
             flow.user_agent = self.application_name
             if self.flags:
                 credentials = tools.run_flow(flow, store, self.flags)

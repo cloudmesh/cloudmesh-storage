@@ -23,7 +23,6 @@ class StorageABC(metaclass=ABCMeta):
         """
         creates a directory
 
-        :param service: the name of the service in the yaml file
         :param directory: the name of the directory
         :return: dict
         """
