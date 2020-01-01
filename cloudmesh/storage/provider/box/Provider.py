@@ -80,7 +80,8 @@ class Provider(StorageABC):
         :param service: the name of the service in the yaml file
         :param source: local file or directory to be uploaded
         :param destination: cloud directory to upload to
-        :param recursive: if true upload all files in source directory, source must be directory not file
+        :param recursive: if true upload all files in source directory,
+                          source must be directory not file
         :return: file dict(s) that have been uploaded
         """
         try:

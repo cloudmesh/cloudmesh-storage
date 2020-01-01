@@ -27,15 +27,12 @@ class Provider(object):
                 service=service,
                 config=config)
         elif self.kind in ["gcpbucket"]:
-            from google.cloud import storage
             from cloudmesh.google.storage.Provider import \
                 Provider as GCPStorageProvider
             self.p = GCPStorageProvider(
                 service=service,
                 config=config)
         elif self.kind in ["gdrive"]:
-            from google.cloud import storage
-
             from cloudmesh.storage.provider.gdrive import \
                 Provider as GdriveStorageProvider
             self.p = GdriveStorageProvider(

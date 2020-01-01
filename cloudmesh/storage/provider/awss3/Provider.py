@@ -136,7 +136,8 @@ class Provider(StorageABC):
                 # make head call to extract meta data
                 # and derive obj dict
                 metadata = self.s3_client.head_object(
-                    Bucket=self.container_name, Key=self.directory_marker_file_name)
+                    Bucket=self.container_name,
+                    Key=self.directory_marker_file_name)
                 dir_files_list.append(self.extract_file_dict(
                     self.massage_path(name),
                     metadata)
@@ -148,7 +149,6 @@ class Provider(StorageABC):
             # return self.storage_dict
             return dict_obj
             return True
-
 
         except botocore.exceptions.ClientError as e:
             if e:
@@ -619,7 +619,8 @@ class Provider(StorageABC):
                                 self.massage_path(dirpath) + '/' + fileName)
                         else:
                             files_to_upload.append(
-                                '/' + self.massage_path(dirpath) + '/' + fileName)
+                                '/' + self.massage_path(
+                                    dirpath) + '/' + fileName)
 
                 for file in files_to_upload:
                     self.s3_client.upload_file(file,

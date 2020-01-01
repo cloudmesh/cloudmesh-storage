@@ -121,10 +121,7 @@ class StorageCommand(PluginCommand):
                 else:
                     arguments.storage = arguments.DESTINATION.split(":")[0]
 
-
         arguments.storage = Parameter.expand(arguments.storage)
-
-
 
         if arguments["get"]:
             provider = Provider(arguments.storage[0])
@@ -163,7 +160,6 @@ class StorageCommand(PluginCommand):
                 provider.delete(arguments.SOURCE)
 
         elif arguments.search:
-
 
             for storage in arguments.storage:
                 provider = Provider(storage)

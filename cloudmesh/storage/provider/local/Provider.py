@@ -58,7 +58,8 @@ class Provider(StorageABC):
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
         super(Provider, self).__init__(service=service, config=config)
 
-        self.credentials["directory"] = path_expand(self.credentials["directory"])
+        self.credentials["directory"] = path_expand(
+            self.credentials["directory"])
 
     def _filename(self, filename):
         return Path(self.credentials["directory"]) / filename
@@ -69,7 +70,8 @@ class Provider(StorageABC):
         location = Path(self.credentials["directory"]) / dirname
         return location
 
-    def identifier(self, dirname, filename, absolute=False, file=True, status="ok"):
+    def identifier(self, dirname, filename, absolute=False, file=True,
+                   status="ok"):
         stat_info = os.stat(filename)
         uid = stat_info.st_uid
         gid = stat_info.st_gid
@@ -94,19 +96,21 @@ class Provider(StorageABC):
             "name": filename,
             # "owner": pwd.getpwuid(uid)[0],
             # "group": pwd.getgrgid(gid)[0],
-            "creation": datetime.fromtimestamp(creation_date(filename)).strftime("%m/%d/%Y, %H:%M:%S")
+            "creation": datetime.fromtimestamp(
+                creation_date(filename)).strftime("%m/%d/%Y, %H:%M:%S")
 
         }
         if file:
-            identity['file'] =True
+            identity['file'] = True
             identity['dir'] = False
         else:
-            identity['file'] =False
+            identity['file'] = False
             identity['dir'] = True
 
-        #print ("DATA", filename, dirname, self.credentials["directory"])
+        # print ("DATA", filename, dirname, self.credentials["directory"])
         if not absolute:
-            identity["cm"]["location"] = "." + filename.replace(self.credentials["directory"], "", 1)
+            identity["cm"]["location"] = "." + filename.replace(
+                self.credentials["directory"], "", 1)
 
         return identity
 
@@ -124,9 +128,9 @@ class Provider(StorageABC):
 
         d = self._dirname(directory)
         d.mkdir(parents=True, exist_ok=True)
-        #print(directory)
-        #identity = self.identifier(directory,None,None)
-        #return identity
+        # print(directory)
+        # identity = self.identifier(directory,None,None)
+        # return identity
 
     def create_dir_from_filename(self, filename=None):
         """
@@ -138,7 +142,8 @@ class Provider(StorageABC):
         directory = os.path.dirname(filename)
         return self.create_dir(directory)
 
-    def list(self, source=None, files_only=False, dir_only=False, recursive=False):
+    def list(self, source=None, files_only=False, dir_only=False,
+             recursive=False):
         """
         lists the information as dict
 
@@ -174,7 +179,7 @@ class Provider(StorageABC):
         else:
             files = location.glob("*")
         result = []
-        
+
         # Code added to handle case when input is a file name
         if location.is_file():
             entry = self.identifier(source, str(location), file=True,
@@ -182,20 +187,23 @@ class Provider(StorageABC):
             result.append(entry)
             pprint(entry)
             return result
-        
+
         for file in files:
 
             is_dir = file.is_dir()
             is_file = file.is_file()
 
             if dir_only and is_dir:
-                entry = self.identifier(source, str(file), file=False, status=status)
+                entry = self.identifier(source, str(file), file=False,
+                                        status=status)
                 result.append(entry)
                 pprint(entry)
             elif files_only and is_file:
-                entry = self.identifier(source, str(file), file=True, status=status)
+                entry = self.identifier(source, str(file), file=True,
+                                        status=status)
             else:
-                entry = self.identifier(source, str(file), file=is_file, status=status)
+                entry = self.identifier(source, str(file), file=is_file,
+                                        status=status)
                 result.append(entry)
                 pprint(entry)
         return result
@@ -261,7 +269,8 @@ class Provider(StorageABC):
         :return: dict
         """
         source = self._dirname(source)
-        entries = self._list(source=source, recursive=recursive, status="deleted")
+        entries = self._list(source=source, recursive=recursive,
+                             status="deleted")
         # shutil.rmtree doesn't work if source is a file object.
         # Code modified to implement delete for file objects as well.
         if os.path.isfile(source):
