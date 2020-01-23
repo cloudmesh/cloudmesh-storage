@@ -126,7 +126,7 @@ class Provider(StorageABC):
                         temp_res.append(
                             self.upload_file(source=source, filename=f,
                                              parent_it=file_parent_id))
-                return self.update_dict(tempres)
+                return self.update_dict(temp_res)
             else:
                 query_params = "name='" + destination + "' and trashed=false"
                 sourceid = self.driveService.files().list(
