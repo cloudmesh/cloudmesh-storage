@@ -4,3 +4,4 @@ twine
 invoke
 pytest
 pytest-cov
+pip-tools
