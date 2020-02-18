@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage.py
 # pytest -v  tests/test_storage.py
-# pytest -v --capture=no tests/test_storage.py::TestStorage::<METHODNAME>
+# pytest -v --capture=no tests/test_storage..py:::TestStorage::<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path

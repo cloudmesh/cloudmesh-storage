@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_awsobjectstore.py
 # pytest -v  tests/test_storage_awsobjectstore.py
-# pytest -v --capture=no tests/test_storage_awsobjectstore.py:TestObjectstore.<METHODNAME>
+# pytest -v --capture=no tests/test_storage_awsobjectstore..py::TestObjectstore::<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path

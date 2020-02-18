@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_local.py
 # pytest -v  tests/test_local.py
-# pytest -v --capture=no tests/test_local.py:TestLocal.<METHIDNAME>
+# pytest -v --capture=no tests/test_local..py::TestLocal.<METHIDNAME>
 ###############################################################
 import os
 from pathlib import Path

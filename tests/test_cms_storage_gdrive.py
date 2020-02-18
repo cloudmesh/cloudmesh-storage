@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_gdrive.py
 # pytest -v  tests/test_gdrive.py
-# pytest -v --capture=no tests/test_gdrive.py:TestGdrive.<METHIODNAME>
+# pytest -v --capture=no tests/test_gdrive..py::TestGdrive.<METHIODNAME>
 ###############################################################
 
 import os

@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_gdrive.py
 # pytest -v  tests/test_storage_gdrive.py
-# pytest -v --capture=no tests/test_storage_gdrive.py:TestGdriveStorage.<METHODNAME>
+# pytest -v --capture=no tests/test_storage_gdrive..py::TestGdriveStorage::<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path

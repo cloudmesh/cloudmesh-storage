@@ -1,7 +1,7 @@
 ###############################################################
 # pytest -v --capture=no tests/test_storage_azure.py
 # pytest -v  tests/test_storage_azure.py
-# pytest -v --capture=no tests/test_storage_azure.py:TestAzureStorage.<METHODNAME>
+# pytest -v --capture=no tests/test_storage_azure..py::TestAzureStorage::<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path
