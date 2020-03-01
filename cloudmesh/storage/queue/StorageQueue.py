@@ -96,9 +96,13 @@ class StorageQueue:
         #
         # TODO: create collection in mongodb
         #
+        # Create collection in mongodb via CmDatabase
+        cm = CmDatabase()
+        if self.collection not in cm.collections():
+            cm.command({"create":self.collection})
         Console.ok(f"Collection: {self.name}")
 
-    def _copy_file(self, sourcefile, destinationfile):
+    def _copy_file(self, sourcefile, destinationfile=None):
         """
         adds a copy action to the queue
 
@@ -114,6 +118,11 @@ class StorageQueue:
         """
         date = DateTime.now()
         uuid_str = str(uuid.uuid1())
+
+        # If remove is not specified, source path is used for it.
+        if destinationfile == None or destinationfile == "":
+            destinationfile = sourcefile
+
         specification = textwrap.dedent(f"""
         cm:
            number: {self.number}
@@ -133,6 +142,9 @@ class StorageQueue:
         status: waiting
         """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        cm = CmDatabase()
+        cm.insert(entries, self.collection)
+
         self.number = self.number + 1
         return entries
 
