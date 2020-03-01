@@ -58,8 +58,13 @@ class Provider(StorageABC):
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
         super(Provider, self).__init__(service=service, config=config)
 
-        self.credentials["directory"] = path_expand(
-            self.credentials["directory"])
+        if "directory" in self.credentials.keys():
+            self.credentials["directory"] = path_expand(
+                self.credentials["directory"])
+        else:
+            self.credentials["directory"] = path_expand(
+                self.default["directory"]
+            )
 
     def _filename(self, filename):
         return Path(self.credentials["directory"]) / filename
@@ -306,3 +311,9 @@ class Provider(StorageABC):
         source = self._dirname(directory)
         r = Shell.execute(f"tree {source}")
         print(r)
+
+
+
+if __name__ == "__main__":
+    p = Provider(service="storage_a")
+    print()

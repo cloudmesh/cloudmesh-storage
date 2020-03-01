@@ -15,6 +15,7 @@ class StorageABC(metaclass=ABCMeta):
             self.kind = spec[service]['cm']['kind']
             self.cloud = service
             self.service = service
+            self.default = spec[service]['default']
         except Exception as e:
             raise ValueError(f"storage service {service} not specified")
             print(e)
