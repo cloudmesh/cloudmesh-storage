@@ -31,6 +31,10 @@ class Provider(StorageABC):
             from cloudmesh.storage.provider.awss3.Provider import \
                 Provider as AwsProvider
             self.provider = AwsProvider(service=service, config=config)
+        elif self.kind == "parallelawss3":
+            from cloudmesh.storage.provider.awss3.Provider import \
+                Provider as AwsParallelProvider
+            self.provider = AwsParallelProvider(service=service, config=config)
         elif self.kind in ['google']:
             from cloudmesh.google.storage.Provider import \
                 Provider as GoogleStorageProvider
