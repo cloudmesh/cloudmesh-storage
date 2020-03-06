@@ -13,7 +13,7 @@ from apiclient.http import MediaIoBaseDownload
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
 from cloudmesh.configuration.Config import Config
-from cloudmesh.storage.StorageABC import StorageABC
+from cloudmesh.abstract.StorageABC import StorageABC
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage

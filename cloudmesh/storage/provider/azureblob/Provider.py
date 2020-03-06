@@ -7,7 +7,7 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import banner
 from cloudmesh.common.util import path_expand
-from cloudmesh.storage.StorageABC import StorageABC
+from cloudmesh.abstract.StorageABC import StorageABC
 from pathlib import Path
 
 class Provider(StorageABC):
