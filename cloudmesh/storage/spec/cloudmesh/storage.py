@@ -1,24 +1,31 @@
 from flask import jsonify
-from cloudmesh.storage.provider.azureblob.Provider import \
-    Provider as AzureblobProvider
-from cloudmesh.storage.provider.box.Provider import Provider as BoxProvider
-from cloudmesh.storage.provider.awss3.Provider import Provider as AwsProvider
-from cloudmesh.storage.provider.local.Provider import Provider as LocalProvider
-from cloudmesh.storage.provider.gdrive.Provider import Provider as GdriveProvider
-
+from cloudmesh.common.console import Console
 
 def setup(kind):
     config = "~/.cloudmesh/cloudmesh.yaml"
     if kind == "local":
+        from cloudmesh.storage.provider.local.Provider import \
+            Provider as LocalProvider
         provider = LocalProvider(service=kind, config=config)
     elif kind == "box":
+        from cloudmesh.storage.provider.box.Provider import \
+            Provider as BoxProvider
         provider = BoxProvider(service=kind, config=config)
     elif kind == "gdrive":
+        from cloudmesh.storage.provider.gdrive.Provider import \
+            Provider as GdriveProvider
         provider = GdriveProvider(service=kind, config=config)
     elif kind == "azureblob":
+        from cloudmesh.storage.provider.azureblob.Provider import \
+            Provider as AzureblobProvider
         provider = AzureblobProvider(service=kind, config=config)
     elif kind == "awss3":
+        from cloudmesh.storage.provider.awss3.Provider import \
+            Provider as AwsProvider
+
         provider = AwsProvider(service=kind, config=config)
+    else:
+        Console.error(f"Storage Provider is not supported: {kind}")
     return provider
 
 
