@@ -2,7 +2,7 @@ from pathlib import Path
 
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
-from cloudmesh.abstract.StorageNewABC import StorageABC
+from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.debug import VERBOSE
 import shutil
 from datetime import datetime

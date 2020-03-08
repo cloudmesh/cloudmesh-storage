@@ -4,7 +4,7 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
 from os.path import basename, join, dirname
 import os
-from cloudmesh.abstract.StorageABC import StorageABC
+from cloudmesh.abstract.StorageDeprecatedABC import StorageABC
 
 
 def get_id(source, results, source_type):
