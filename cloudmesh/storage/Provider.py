@@ -65,7 +65,8 @@ class Provider(StorageABC):
         :rtype: dict
         """
 
-        d = self.provider.get(source=source, destination=destination,
+        d = self.provider.get(source=source,
+                              destination=destination,
                               recursive=recursive)
         return d
 
