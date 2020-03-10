@@ -11,6 +11,11 @@ from cloudmesh.abstract.StorageABC import StorageABC
 from pathlib import Path
 
 class Provider(StorageABC):
+    kind = "azureblob"
+
+    sample = "TODO: missing"
+
+    output = {}  # "TODO: missing"
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
         super().__init__(service=service, config=config)

@@ -63,6 +63,11 @@ def update_dict(elements):
 
 
 class Provider(StorageABC):
+    kind = "box"
+
+    sample = "TODO: missing"
+
+    output = {}  # "TODO: missing"
 
     def __init__(self,
                  service=None,

@@ -11,6 +11,12 @@ import platform
 
 
 class Provider(StorageABC):
+    kind = "awss3"
+
+    sample = "TODO: missing"
+
+    output = {} # "TODO: missing"
+
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
         """

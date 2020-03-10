@@ -30,7 +30,7 @@ class Provider(StorageABC):
             from cloudmesh.oracle.storage.Provider import Provider as P
         else:
             raise ValueError(
-                f"Storage provider '{self.kind}' not supported")
+                f"Storage provider '{kind}' not supported")
         return P
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):

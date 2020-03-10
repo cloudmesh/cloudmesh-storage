@@ -21,6 +21,12 @@ from oauth2client.file import Storage
 
 class Provider(StorageABC):
 
+    kind = "gdrive"
+
+    sample = "TODO: missing"
+
+    output = {}  # "TODO: missing"
+
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
         super().__init__(service=service, config=config)
         self.config = Config()

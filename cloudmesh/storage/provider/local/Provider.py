@@ -55,6 +55,12 @@ class Provider(StorageABC):
     default location is credentials.directory / default.directory
     """
 
+    kind = "local"
+
+    sample = "TODO: missing"
+
+    output = {}  # "TODO: missing"
+
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
         super(Provider, self).__init__(service=service, config=config)
 
