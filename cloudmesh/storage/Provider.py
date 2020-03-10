@@ -9,6 +9,19 @@ from cloudmesh.common.console import Console
 class Provider(StorageABC):
 
     @staticmethod
+    def get_kind():
+        kind = ["local",
+                "box",
+                "gdrive",
+                "azureblob",
+                "awss3",
+                "parallelawss3",
+                "google",
+                "oracle"]
+        return kind
+
+
+    @staticmethod
     def get_provider(kind):
         P = None
         if kind == "local":
