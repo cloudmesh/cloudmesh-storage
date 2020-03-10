@@ -20,6 +20,13 @@ class Provider(object):
             self.p = AwsStorageProvider(
                 service=service,
                 config=config)
+        elif self.kind in ["parallelawsS3"]:
+            from cloudmesh.storage.provider.parallelawss3 import \
+                Provider as ParallelAwsStorageProvider
+            self.p = ParallelAwsStorageProvider(
+                service=service,
+                config=config)
+
         elif self.kind in ["box"]:
             from cloudmesh.storage.provider.box import \
                 Provider as BoxStorageProvider
