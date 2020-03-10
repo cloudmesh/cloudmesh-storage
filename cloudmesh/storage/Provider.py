@@ -1,4 +1,4 @@
-from cloudmesh.storage.StorageNewABC import StorageABC
+from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.common.debug import VERBOSE
 from pprint import pprint
@@ -8,46 +8,40 @@ from cloudmesh.common.console import Console
 
 class Provider(StorageABC):
 
+    @staticmethod
+    def get_provider(kind):
+        P = None
+        if kind == "local":
+            from cloudmesh.storage.provider.local.Provider import Provider as P
+        elif kind == "box":
+            from cloudmesh.storage.provider.box.Provider import Provider as P
+        elif kind == "gdrive":
+            from cloudmesh.storage.provider.gdrive.Provider import Provider as P
+        elif kind == "azureblob":
+            from cloudmesh.storage.provider.azureblob.Provider import \
+                Provider as P
+        elif kind == "awss3":
+            from cloudmesh.storage.provider.awss3.Provider import Provider as P
+        elif kind == "parallelawss3":
+            from cloudmesh.storage.provider.awss3.Provider import Provider as P
+        elif kind in ['google']:
+            from cloudmesh.google.storage.Provider import Provider as P
+        elif kind in ['oracle']:
+            from cloudmesh.oracle.storage.Provider import Provider as P
+        else:
+            raise ValueError(
+                f"Storage provider '{self.kind}' not supported")
+        return P
+
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
 
         super(Provider, self).__init__(service=service, config=config)
-        if self.kind == "local":
-            from cloudmesh.storage.provider.local.Provider import \
-                Provider as LocalProvider
-            self.provider = LocalProvider(service=service, config=config)
-        elif self.kind == "box":
-            from cloudmesh.storage.provider.box.Provider import \
-                Provider as BoxProvider
-            self.provider = BoxProvider(service=service, config=config)
-        elif self.kind == "gdrive":
-            from cloudmesh.storage.provider.gdrive.Provider import \
-                Provider as GdriveProvider
-            self.provider = GdriveProvider(service=service, config=config)
-        elif self.kind == "azureblob":
-            from cloudmesh.storage.provider.azureblob.Provider import \
-                Provider as AzureblobProvider
-            self.provider = AzureblobProvider(service=service, config=config)
-        elif self.kind == "awss3":
-            from cloudmesh.storage.provider.awss3.Provider import \
-                Provider as AwsProvider
-            self.provider = AwsProvider(service=service, config=config)
-        elif self.kind == "parallelawss3":
-            from cloudmesh.storage.provider.awss3.Provider import \
-                Provider as AwsParallelProvider
-            self.provider = AwsParallelProvider(service=service, config=config)
-        elif self.kind in ['google']:
-            from cloudmesh.google.storage.Provider import \
-                Provider as GoogleStorageProvider
-            self.provider = GoogleStorageProvider(service=service,
-                                                  config=config)
-        elif self.kind in ['oracle']:
-            from cloudmesh.oracle.storage.Provider import \
-                Provider as OracleStorageProvider
-            self.provider = \
-                OracleStorageProvider(service=service, config=config)
-        else:
+        P = Provider.get_provider(self.kind)
+        self.provider = P(service=service, config=config)
+        if self.provider is None:
             raise ValueError(
-                f"Storage provider '{self.service}' not yet supported")
+                f"Storage provider '{self.service}'"
+                f"' not yet supported")
 
     @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):
@@ -187,7 +181,7 @@ class Provider(StorageABC):
 
         # oracle provider expects a target name
         if target_obj is None or \
-           len(target_obj.strip()) == 0:
+            len(target_obj.strip()) == 0:
             # print("DEBUG:", Path(source_obj).parts)
             target_obj = Path(source_obj).parts[-1]
 
@@ -224,7 +218,7 @@ class Provider(StorageABC):
             # get local storage directory
             super().__init__(service="local", config=config)
             local_storage = self.config[
-                                    "cloudmesh.storage.local.default.directory"]
+                "cloudmesh.storage.local.default.directory"]
 
             local_target_obj = str(Path(local_storage).expanduser())
             source_obj = str(Path(source_obj).expanduser())
@@ -238,7 +232,7 @@ class Provider(StorageABC):
                                          f"in {source} CSP. Please check.")
                 Console.ok(f"Fetched {source_obj} from {source} CSP")
             except Exception as e:
-                return Console.error(f"Error while fetching {source_obj} from " 
+                return Console.error(f"Error while fetching {source_obj} from "
                                      f"{source} CSP. Please check. {e}")
             else:
                 source_obj = str(Path(local_target_obj) / source_obj)

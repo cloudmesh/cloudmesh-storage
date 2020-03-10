@@ -98,6 +98,9 @@ class StorageQueue:
         #
         Console.ok(f"Collection: {self.name}")
 
+
+
+
     def _copy_file(self, sourcefile, destinationfile):
         """
         adds a copy action to the queue
