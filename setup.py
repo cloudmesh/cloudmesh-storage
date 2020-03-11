@@ -18,6 +18,7 @@
 from setuptools import find_packages, setup
 import io
 import sys
+import os
 
 v = sys.version_info
 if v.major != 3 and v.minor != 7 and v.micro < 3:
@@ -32,10 +33,6 @@ def readfile(filename):
         return stream.read().split()
 
 
-# requiers = readfile ('requirements.txt')
-#
-# add minimum requirements here
-#
 requiers = """
 apiclient
 boxsdk
@@ -51,15 +48,17 @@ azure
 azure-storage-common
 azure-storage-nspkg
 azure-storage-blob
-""".split("\n")
+""".splitlines()
 
-#cloudmesh-common
-#cloudmesh-cmd5
-#cloudmesh-sys
-#cloudmesh-configuration
+requiers_cloudmesh = """
+cloudmesh-common
+cloudmesh-cmd5
+cloudmesh-abstract
+cloudmesh-configuration
+""".splitlines()
 
-
-# dependency_links = ['http://github.com/nicolaiarocci/eve.git@develop']
+if  "PRODUCTION" not in os.environ:
+    requiers = requiers + requiers_cloudmesh
 
 version = readfile("VERSION")[0].strip()
 
