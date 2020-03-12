@@ -1,6 +1,11 @@
 from cloudmesh.common.console import Console
 from cloudmesh.configuration.Config import Config
 
+#
+# USE cloudmesh.storage.Provider.py
+#
+
+
 class Provider(object):
 
     def __init__(self, service=None, config="~/.cloudmesh/.cloudmesh.yaml"):
