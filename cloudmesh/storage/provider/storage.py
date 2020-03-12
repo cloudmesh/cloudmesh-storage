@@ -5,6 +5,9 @@ from cloudmesh.configuration.Config import Config
 # USE cloudmesh.storage.Provider.py
 #
 
+#
+# This provider needs also a get_provider method just as the one in Provider.py
+#
 
 class Provider(object):
 
