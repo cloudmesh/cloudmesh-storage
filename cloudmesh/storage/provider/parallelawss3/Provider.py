@@ -8,12 +8,36 @@ from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.console import Console
 
 import platform
-
+import textwrap
 
 class Provider(StorageABC):
     kind = "parallelawss3"
 
-    sample = "TODO: missing"
+    sample = textwrap.dedent(
+        """
+        cloudmesh:
+          storage:
+            {name}:
+              cm:
+                active: false
+                heading: homedir
+                host: aws.com
+                label: home-dir
+                kind: parallelawss3
+                version: TBD
+                service: storage
+              default:
+                directory: {directory}
+              credentials:
+                name: {name}
+                bucket: home
+                container: {container}
+                access_key_id: {access_key_id}
+                secret_access_key: {secret_access_key}
+                region: {region}
+            """
+    )
+
 
     output = {}  # "TODO: missing"
 
