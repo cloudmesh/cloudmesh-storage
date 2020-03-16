@@ -4,7 +4,7 @@ from pprint import pprint
 
 import boto3
 import botocore
-from cloudmesh.abstract.StorageDeprecatedABC import StorageABC
+from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.console import Console
 
 import platform

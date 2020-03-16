@@ -9,6 +9,14 @@ from cloudmesh.common.console import Console
 
 import platform
 import textwrap
+import uuid
+import oyaml as yaml
+from multiprocessing import Pool
+
+from cloudmesh.common.DateTime import DateTime
+from cloudmesh.mongo.CmDatabase import CmDatabase
+from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
+
 
 class Provider(StorageABC):
     kind = "parallelawss3"
@@ -19,7 +27,7 @@ class Provider(StorageABC):
           storage:
             {name}:
               cm:
-                active: false
+                active: true
                 heading: homedir
                 host: aws.com
                 label: home-dir
@@ -27,21 +35,31 @@ class Provider(StorageABC):
                 version: TBD
                 service: storage
               default:
-                directory: {directory}
+                directory: TBD
               credentials:
-                name: {name}
-                bucket: home
-                container: {container}
-                access_key_id: {access_key_id}
-                secret_access_key: {secret_access_key}
-                region: {region}
+                name: {username}
+                bucket: {container_name}
+                container: TBD
+                access_key_id: {aws_access_key_id}
+                secret_access_key: {aws_secret_access_key}
+                region: {region_name}
             """
     )
 
+    status = [
+        'completed',
+        'waiting',
+        'inprogress',
+        'canceled'
+    ]
 
     output = {}  # "TODO: missing"
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+
+    def __init__(self,
+                 name=None,
+                 config="~/.cloudmesh/cloudmesh.yaml",
+                 parallelism=4):
         """
         TBD
 
@@ -49,20 +67,13 @@ class Provider(StorageABC):
         :param config: TBD
         """
         # pprint(service)
-        super().__init__(service=service, config=config)
+        super().__init__(service=name, config=config)
+        self.parallelism = parallelism
+        self.name = name
+        self.collection = f"storage-queue-{name}"
+        self.number = 0
         self.container_name = self.credentials['bucket']
-        self.s3_resource = boto3.resource(
-            's3',
-            aws_access_key_id=self.credentials['access_key_id'],
-            aws_secret_access_key=self.credentials['secret_access_key'],
-            region_name=self.credentials['region']
-        )
-        self.s3_client = boto3.client(
-            's3',
-            aws_access_key_id=self.credentials['access_key_id'],
-            aws_secret_access_key=self.credentials['secret_access_key'],
-            region_name=self.credentials['region']
-        )
+
         self.directory_marker_file_name = 'marker.txt'
         self.storage_dict = {}
 
@@ -269,9 +280,187 @@ class Provider(StorageABC):
         # return self.storage_dict
         return dict_obj
 
-        # function to list file  or directory
+    def _mkdir(self, directory):
+        self.s3_resource = boto3.resource(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
+        file_content = ""
+        file_path = self.massage_path(directory)
+        dir_files_list = []
 
-    def list(self, source=None, dir_only=False, recursive=False):
+        bucket = self.container_name
+        if not self.bucket_exists(name=bucket):
+            self.bucket_create(name=bucket)
+
+        obj = list(self.s3_resource.Bucket(self.container_name) \
+                   .objects.filter(Prefix=file_path + '/'))
+
+        if len(obj) == 0:
+            self.s3_resource.Object(
+                self.container_name, self.massage_path(
+                    directory) + '/' + self.directory_marker_file_name
+            ).put(Body=file_content)
+
+            # make head call to extract meta data
+            # and derive obj dict
+            metadata = self.s3_client.head_object(
+                Bucket=self.container_name, Key=self.massage_path(
+                    directory) + '/' + self.directory_marker_file_name)
+            dir_files_list.append(self.extract_file_dict(
+                self.massage_path(directory) + '/', metadata)
+            )
+        else:
+            print('Directory already present')
+
+    @DatabaseUpdate()
+    def mkdir(self, path):
+        """
+        adds a mkdir action to the queue
+
+        create the directory in the storage service
+        :param service: service must be either source or destination
+        :param path:
+        :return:
+        """
+
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+                  cm:
+                    number: {self.number}
+                    kind: storage
+                    id: {uuid_str}
+                    cloud: {self.name}
+                    name: {path}
+                    collection: {self.collection}
+                    created: {date}
+                  action: mkdir
+                  path: {path}
+                  status: waiting
+            """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+
+        return entries
+
+    @DatabaseUpdate()
+    def list(self, path):
+        """
+        adds a list action to the queue
+
+        list the directory in the storage service
+        :param service: service must be either source or destination
+        :param path:
+        :return:
+        """
+
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+                      cm:
+                        number: {self.number}
+                        kind: storage
+                        id: {uuid_str}
+                        cloud: {self.name}
+                        name: {path}
+                        collection: {self.collection}
+                        created: {date}
+                      action: list
+                      path: {path}
+                      status: waiting
+                """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+
+        return entries
+
+    def action(self, specification):
+        """
+        executes the action identified by the specification. This is used by the
+        run command.
+
+        :param specification:
+        :return:
+        """
+        cm = CmDatabase()
+        action = specification["action"]
+        if action == "copy":
+            print("COPY", specification)
+            # update status
+        elif action == "delete":
+            print("DELETE", specification)
+            # update status
+        elif action == "mkdir":
+            specification['status']= 'inprogress'
+            cm.update(specification)
+            # print("MKDIR", specification)
+            self._mkdir(specification['path'])
+            # update status
+            specification['status']= 'completed'
+            cm.update(specification)
+        elif action == "list":
+            specification['status'] = 'inprogress'
+            cm.update(specification)
+            # print("LIST", specification)
+            self._list(specification['path'])
+            # update status
+            specification['status'] = 'completed'
+            cm.update(specification)
+
+    def get_actions(self):
+        cm = CmDatabase()
+        entries = cm.find(cloud=self.name,
+                          kind='storage')
+        mkdir = []
+        copy = []
+        list = []
+        for entry in entries:
+            pprint(entry)
+            if entry['action'] == 'mkdir' and entry['status'] == 'waiting':
+                mkdir.append(entry)
+            elif entry['action'] == 'copy':
+                copy.append(entry)
+            elif entry['action'] == 'list' and entry['status'] == 'waiting':
+                list.append(entry)
+        return mkdir, copy, list
+
+
+    def run(self):
+        """
+        runs the copy process for all jobs in the queue and completes when all
+        actions are completed
+
+        :return:
+        """
+        mkdir_action, copy_action, list_action = self.get_actions()
+
+        # create directories
+        #
+        p = Pool(self.parallelism)
+        #
+        p.map(self.action, mkdir_action)
+
+        # COPY FILES
+        #
+        p = Pool(self.parallelism)
+        #
+        p.map(self.action, copy_action)
+
+        # LIST FILES
+        p = Pool(self.parallelism)
+        p.map(self.action, list_action)
+
+        # function to list file  or directory
+    def _list(self, source=None, dir_only=False, recursive=False):
         """
         lists the information as dict
 
@@ -285,12 +474,19 @@ class Provider(StorageABC):
         """
         # if dir_only:
         #    raise NotImplementedError
-        self.storage_dict['action'] = 'list'
-        self.storage_dict['source'] = source
-        self.storage_dict['recursive'] = recursive
-
+        self.s3_resource = boto3.resource(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
         objs = list(self.s3_resource.Bucket(self.container_name).objects.all())
-        pprint(objs)
 
         dir_files_list = []
         trimmed_source = self.massage_path(source)
@@ -387,11 +583,7 @@ class Provider(StorageABC):
             self.storage_dict['message'] = dirFilesList
         '''
 
-        self.storage_dict['objlist'] = dir_files_list
         pprint(self.storage_dict)
-        dict_obj = self.update_dict(self.storage_dict['objlist'])
-        # return self.storage_dict
-        return dict_obj
 
     # function to delete file or directory
     def delete(self, source=None, recursive=True):
@@ -982,3 +1174,19 @@ class Provider(StorageABC):
         dict_obj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
         return dict_obj
+
+
+if __name__ == "__main__":
+    p = Provider(name="aws")
+    # p.mkdir("/abcworking1")
+    # p.mkdir("/abcworking2")
+    # p.mkdir("/abcworking3")
+    # p.mkdir("/abcworking4")
+    # p.mkdir("/abcworking5")
+    # p.mkdir("/abcworking6")
+
+    p.list('/')
+
+    p.run()
+
+
