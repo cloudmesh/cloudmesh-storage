@@ -339,7 +339,7 @@ class Provider(StorageABC):
                 action: delete
                 source: 
                   path: {path}
-                recursiave: {recursive}
+                recursive: {recursive}
                 status: waiting
                 """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
@@ -672,7 +672,7 @@ class Provider(StorageABC):
         :return: dict
 
         """
-        source = specificatioin['path']
+        source = specificatioin['source']['path']
         recursive = specificatioin['recursive']
 
         trimmed_source = self.massage_path(source)
@@ -683,6 +683,18 @@ class Provider(StorageABC):
         # setting recursive as True for all delete cases
         # recursive = True
 
+        self.s3_resource = boto3.resource(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
         try:
             file_obj = self.s3_client.get_object(Bucket=self.container_name,
                                                  Key=trimmed_source)
@@ -820,6 +832,18 @@ class Provider(StorageABC):
 
         files_uploaded = []
 
+        self.s3_resource = boto3.resource(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
         bucket = self.container_name
         if not self.bucket_exists(name=bucket):
             self.bucket_create(name=bucket)
@@ -1282,14 +1306,18 @@ class Provider(StorageABC):
 
 if __name__ == "__main__":
     p = Provider(name="aws")
-    p.mkdir("/abcworking2")
-    p.mkdir("/abcworking3")
+    # p.mkdir("/abcworking2")
+    # p.mkdir("/abcworking3")
     # p.mkdir("/abcworking4")
     # p.mkdir("/abcworking5")
     # p.mkdir("/abcworking6")
 
     # p.list('/')
     # p.run()
-    p.cancel()
+    # p.cancel()
+    # p.delete(path="testABC")
+    # p.copy(sourcefile="./Provider.py", destinationfile="testABC.txt")
+
+
     p.run()
 
