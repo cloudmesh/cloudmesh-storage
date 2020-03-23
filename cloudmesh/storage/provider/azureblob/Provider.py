@@ -38,14 +38,14 @@ class Provider(StorageABC):
             }
             element.properties = element.properties.__dict__
             entry["cm"]["created"] = \
-                element.properties["creation_time"].isoformat()[0]
+                element.properties["create"].isoformat()[0]
             entry["cm"]["updated"] = \
                 element.properties["last_modified"].isoformat()[0]
             entry["cm"]["size"] = element.properties["content_length"]
             del element.properties["copy"]
             del element.properties["lease"]
             del element.properties["content_settings"]
-            del element.properties["creation_time"]
+            del element.properties["create"]
             del element.properties["last_modified"]
             if func == 'delete':
                 entry["cm"]["status"] = "deleted"
