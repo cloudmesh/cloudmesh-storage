@@ -77,6 +77,7 @@ class Provider(StorageABC):
         self.directory_marker_file_name = 'marker.txt'
         self.storage_dict = {}
 
+    @DatabaseUpdate()
     def update_dict(self, elements, kind=None):
         # this is an internal function for building dict object
         d = []
@@ -84,11 +85,6 @@ class Provider(StorageABC):
             # entry = element.__dict__
             # entry = element['objlist']
             entry = element
-            entry["cm"] = {
-                "kind": "storage",
-                "cloud": self.cloud,
-                "name": entry['fileName']
-            }
 
             # element.properties = element.properties.__dict__
             d.append(entry)
@@ -225,7 +221,20 @@ class Provider(StorageABC):
     # function to create a directory the function will first check if the bucket exists or not,if the bucket doesn't exist it will create the bucket and it will create the directory specified.
     # the name of the bucket will come from YAML specifications and the directory name comes from the arguments.
 
-    def _mkdir(self, directory):
+    def _mkdir(self, specification):
+    #     cm:
+    #     number: {self.number}
+    #     kind: storage
+    #     id: {uuid_str}
+    #     cloud: {self.name}
+    #     name: {path}
+    #     collection: {self.collection}
+    #     created: {date}
+    #
+    # action: mkdir
+    # path: {path}
+    # status: waiting
+        directory = specification['path']
         self.s3_resource = boto3.resource(
             's3',
             aws_access_key_id=self.credentials['access_key_id'],
@@ -266,7 +275,10 @@ class Provider(StorageABC):
         else:
             print('Directory already present')
 
-    @DatabaseUpdate
+        specification['status'] = 'completed'
+        return specification
+
+    @DatabaseUpdate()
     def copy(self, sourcefile, destinationfile):
         """
         adds a copy action to the queue
@@ -304,7 +316,7 @@ class Provider(StorageABC):
         return entries
 
 
-    @DatabaseUpdate
+    @DatabaseUpdate()
     def delete(self, path):
         """
         adds a delete action to the queue
@@ -332,7 +344,7 @@ class Provider(StorageABC):
         self.number = self.number + 1
         return entries
 
-    @DatabaseUpdate
+    @DatabaseUpdate()
     def cancel(self, id=None):
         """
         cancels a job with a specific id
@@ -428,7 +440,6 @@ class Provider(StorageABC):
         :param specification:
         :return:
         """
-        cm = CmDatabase()
         action = specification["action"]
         if action == "copy":
             print("COPY", specification)
@@ -437,21 +448,14 @@ class Provider(StorageABC):
             print("DELETE", specification)
             # update status
         elif action == "mkdir":
-            specification['status']= 'inprogress'
-            cm.update(specification)
             # print("MKDIR", specification)
-            self._mkdir(specification['path'])
+            specification = self._mkdir(specification)
             # update status
-            specification['status']= 'completed'
-            cm.update(specification)
+            self.update_dict(elements=[specification])
         elif action == "list":
-            specification['status'] = 'inprogress'
-            cm.update(specification)
             # print("LIST", specification)
             self._list(specification['path'])
             # update status
-            specification['status'] = 'completed'
-            cm.update(specification)
 
     def get_actions(self):
         cm = CmDatabase()
@@ -1215,7 +1219,7 @@ class Provider(StorageABC):
 
 if __name__ == "__main__":
     p = Provider(name="aws")
-    # p.mkdir("/abcworking1")
+    # p.mkdir("/abcworking2")
     # p.mkdir("/abcworking2")
     # p.mkdir("/abcworking3")
     # p.mkdir("/abcworking4")
@@ -1223,7 +1227,5 @@ if __name__ == "__main__":
     # p.mkdir("/abcworking6")
 
     # p.list('/')
-
     # p.run()
-
 
