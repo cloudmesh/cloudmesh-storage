@@ -225,61 +225,6 @@ class Provider(StorageABC):
     # function to create a directory the function will first check if the bucket exists or not,if the bucket doesn't exist it will create the bucket and it will create the directory specified.
     # the name of the bucket will come from YAML specifications and the directory name comes from the arguments.
 
-    def create_dir(self, directory=None):
-        """
-        creates a directory
-
-        :param directory: the name of the directory
-
-        :return: dict
-
-        """
-        file_content = ""
-        # filePath = self.joinFileNameDir(self.directory_marker_file_name, directory)
-        # filePath = self.massage_path(directory) + '/' + self.directory_marker_file_name
-        file_path = self.massage_path(directory)
-        self.storage_dict['action'] = 'create_dir'
-        self.storage_dict['directory'] = directory
-        dir_files_list = []
-
-        bucket = self.container_name
-        if not self.bucket_exists(name=bucket):
-            self.bucket_create(name=bucket)
-
-        # obj = list(self.s3_resource.Bucket(self.container_name).objects.filter(Prefix=filePath))
-        obj = list(self.s3_resource.Bucket(self.container_name) \
-                   .objects.filter(Prefix=file_path + '/'))
-
-        if len(obj) == 0:
-            # markerObject = self.s3_resource.Object(self.container_name, filePath).put(Body=fileContent)
-            marker_object = self.s3_resource.Object(
-                self.container_name, self.massage_path(
-                    directory) + '/' + self.directory_marker_file_name
-            ).put(Body=file_content)
-
-            # make head call to extract meta data
-            # and derive obj dict
-            metadata = self.s3_client.head_object(
-                Bucket=self.container_name, Key=self.massage_path(
-                    directory) + '/' + self.directory_marker_file_name)
-            dir_files_list.append(self.extract_file_dict(
-                self.massage_path(directory) + '/',
-                metadata)
-            )
-
-            # print('Directory created')
-            # print(markerObject)
-            self.storage_dict['message'] = 'Directory created'
-        else:
-            # print('Directory already present')
-            self.storage_dict['message'] = 'Directory/Bucket already present'
-
-        self.storage_dict['objlist'] = dir_files_list
-        pprint(self.storage_dict)
-        dict_obj = self.update_dict(self.storage_dict['objlist'])
-        # return self.storage_dict
-        return dict_obj
-
     def _mkdir(self, directory):
         self.s3_resource = boto3.resource(
             's3',
@@ -320,6 +265,98 @@ class Provider(StorageABC):
             )
         else:
             print('Directory already present')
+
+    @DatabaseUpdate
+    def copy(self, sourcefile, destinationfile):
+        """
+        adds a copy action to the queue
+
+        copies the file from the source service to the destination service using
+        the file located in the path and storing it into the remote. If remote
+        is not specified path is used for it.
+
+        The copy will not be performed if the files are the same.
+
+        :param sourcefile:
+        :param destinationfile:
+        :return:
+        """
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+        cm:
+           number: {self.number}
+           name: "{sourcefile}:{destinationfile}"
+           kind: storage
+           id: {uuid_str}
+           cloud: {self.name}
+           collection: {self.collection}
+           created: {date}
+        action: copy
+        source: 
+          path: {sourcefile}
+        destination: 
+          path: {destinationfile}
+        status: waiting
+        """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+        return entries
+
+
+    @DatabaseUpdate
+    def delete(self, path):
+        """
+        adds a delete action to the queue
+
+        :param path:
+        :return:
+        """
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+                cm:
+                   number: {self.number}
+                   name: "{path}"
+                   kind: storage
+                   id: {uuid_str}
+                   cloud: {self.name}
+                   collection: {self.collection}
+                   created: {date}
+                action: delete
+                source: 
+                  path: {path}
+                status: waiting
+                """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+        return entries
+
+    @DatabaseUpdate
+    def cancel(self, id=None):
+        """
+        cancels a job with a specific id
+        :param id:
+        :return:
+        """
+        # if None all are canceled
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+                        cm:
+                           number: {self.number}
+                           name: "{id}"
+                           kind: storage
+                           id: {uuid_str}
+                           cloud: {self.name}
+                           collection: {self.collection}
+                           created: {date}
+                        action: delete
+                        status: waiting
+                        """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+        return entries
 
     @DatabaseUpdate()
     def mkdir(self, path):
@@ -1185,8 +1222,8 @@ if __name__ == "__main__":
     # p.mkdir("/abcworking5")
     # p.mkdir("/abcworking6")
 
-    p.list('/')
+    # p.list('/')
 
-    p.run()
+    # p.run()
 
 

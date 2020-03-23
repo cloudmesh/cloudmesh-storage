@@ -23,8 +23,8 @@ class StorageQueue:
     Please note that actions only add modify the queue in the db, however,
     the run command executes them one by one.
 
-    It will be up to thes method to quarantee order. For example, in case of a
-    recursive copy it wwould make sens to create directories first.
+    It will be up to the method to guarantee order. For example, in case of a
+    recursive copy it would make sense to create directories first.
 
     """
 
