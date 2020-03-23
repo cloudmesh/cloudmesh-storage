@@ -279,7 +279,7 @@ class Provider(StorageABC):
         return specification
 
     @DatabaseUpdate()
-    def copy(self, sourcefile, destinationfile):
+    def copy(self, sourcefile, destinationfile, recursive=False):
         """
         adds a copy action to the queue
 
@@ -309,6 +309,7 @@ class Provider(StorageABC):
           path: {sourcefile}
         destination: 
           path: {destinationfile}
+        recursive: {recursive}
         status: waiting
         """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
@@ -317,7 +318,7 @@ class Provider(StorageABC):
 
 
     @DatabaseUpdate()
-    def delete(self, path):
+    def delete(self, path, recursive=True):
         """
         adds a delete action to the queue
 
@@ -338,6 +339,7 @@ class Provider(StorageABC):
                 action: delete
                 source: 
                   path: {path}
+                recursiave: {recursive}
                 status: waiting
                 """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
@@ -363,7 +365,7 @@ class Provider(StorageABC):
                            cloud: {self.name}
                            collection: {self.collection}
                            created: {date}
-                        action: delete
+                        action: cancel
                         status: waiting
                         """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
@@ -402,7 +404,7 @@ class Provider(StorageABC):
         return entries
 
     @DatabaseUpdate()
-    def list(self, path):
+    def list(self, path, dir_only=False, recursive=False):
         """
         adds a list action to the queue
 
@@ -425,6 +427,8 @@ class Provider(StorageABC):
                         created: {date}
                       action: list
                       path: {path}
+                      dir_only:{dir_only}
+                      recursive:{recursive}
                       status: waiting
                 """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
@@ -442,11 +446,15 @@ class Provider(StorageABC):
         """
         action = specification["action"]
         if action == "copy":
-            print("COPY", specification)
+            # print("COPY", specification)
+            specification = self._put(specification)
             # update status
+            self.update_dict(elements=[specification])
         elif action == "delete":
-            print("DELETE", specification)
+            # print("DELETE", specification)
+            specification = self._delete(specification)
             # update status
+            self.update_dict(elements=[specification])
         elif action == "mkdir":
             # print("MKDIR", specification)
             specification = self._mkdir(specification)
@@ -454,8 +462,12 @@ class Provider(StorageABC):
             self.update_dict(elements=[specification])
         elif action == "list":
             # print("LIST", specification)
-            self._list(specification['path'])
+            specification = self._list(specification)
             # update status
+            self.update_dict(elements=[specification])
+        elif action == "cancel":
+            specification = self._cancel(specification)
+            self.update_dict(elements=[specification])
 
     def get_actions(self):
         cm = CmDatabase()
@@ -464,15 +476,22 @@ class Provider(StorageABC):
         mkdir = []
         copy = []
         list = []
+        delete = []
+        cancel = []
         for entry in entries:
             pprint(entry)
             if entry['action'] == 'mkdir' and entry['status'] == 'waiting':
                 mkdir.append(entry)
-            elif entry['action'] == 'copy':
+            elif entry['action'] == 'copy' and entry['status'] == 'waiting':
                 copy.append(entry)
             elif entry['action'] == 'list' and entry['status'] == 'waiting':
                 list.append(entry)
-        return mkdir, copy, list
+            elif entry['action'] == 'delete' and entry['status'] == 'waiting':
+                delete.append(entry)
+            elif entry['action'] == 'cancel' and entry['status'] == 'waiting':
+                cancel.append(entry)
+
+        return mkdir, copy, list, delete, cancel
 
 
     def run(self):
@@ -482,7 +501,19 @@ class Provider(StorageABC):
 
         :return:
         """
-        mkdir_action, copy_action, list_action = self.get_actions()
+        mkdir_action, copy_action, list_action, delete_action, cancel_action = self.get_actions()
+
+        # cancel the actions
+        #
+        p = Pool(self.parallelism)
+        #
+        p.map(self.action, cancel_action)
+
+        # delete files/directories
+        #
+        p = Pool(self.parallelism)
+        #
+        p.map(self.action, delete_action)
 
         # create directories
         #
@@ -501,7 +532,7 @@ class Provider(StorageABC):
         p.map(self.action, list_action)
 
         # function to list file  or directory
-    def _list(self, source=None, dir_only=False, recursive=False):
+    def _list(self, specification):
         """
         lists the information as dict
 
@@ -515,6 +546,9 @@ class Provider(StorageABC):
         """
         # if dir_only:
         #    raise NotImplementedError
+        source = specification['path']
+        dir_only = specification['dir_only']
+        recursive = specification['recursive']
         self.s3_resource = boto3.resource(
             's3',
             aws_access_key_id=self.credentials['access_key_id'],
@@ -625,23 +659,21 @@ class Provider(StorageABC):
         '''
 
         pprint(self.storage_dict)
+        specification['status'] = 'completed'
+        return specification
 
     # function to delete file or directory
-    def delete(self, source=None, recursive=True):
+    def _delete(self, specificatioin):
         """
         deletes the source
 
-        :param source: the source which either can be a directory or file
-        :param recursive: in case of directory the recursive refers to all
-                          subdirectories in the specified source
+        :param specificatioin:
 
         :return: dict
 
         """
-        # self.storage_dict['service'] = service
-        self.storage_dict['action'] = 'delete'
-        self.storage_dict['source'] = source
-        self.storage_dict['recursive'] = recursive
+        source = specificatioin['path']
+        recursive = specificatioin['recursive']
 
         trimmed_source = self.massage_path(source)
 
@@ -673,7 +705,7 @@ class Provider(StorageABC):
                 trimmed_source).delete()
 
             # print('File deleted')
-            self.storage_dict['message'] = 'Source Deleted'
+            # self.storage_dict['message'] = 'Source Deleted'
 
         else:
             # Search for a directory
@@ -684,7 +716,8 @@ class Provider(StorageABC):
             total_all_objs = len(all_objs)
 
             if total_all_objs == 0:
-                self.storage_dict['message'] = 'Source Not Found'
+                print()
+                # self.storage_dict['message'] = 'Source Not Found'
 
             elif total_all_objs > 0 and recursive is True:
                 for obj in all_objs:
@@ -709,7 +742,7 @@ class Provider(StorageABC):
                                             obj.key).delete()
                     # dir_files_list.append(obj.key)
 
-                self.storage_dict['message'] = 'Source Deleted'
+                # self.storage_dict['message'] = 'Source Deleted'
 
             elif total_all_objs > 0 and recursive is False:
                 # check if marker file exists in this directory
@@ -736,20 +769,23 @@ class Provider(StorageABC):
                         self.container_name,
                         trimmed_source + '/' +
                         self.directory_marker_file_name).delete()
-                    self.storage_dict['message'] = 'Source Deleted'
+                    # self.storage_dict['message'] = 'Source Deleted'
                 else:
-                    self.storage_dict[
-                        'message'] = 'Source has child objects. Please delete ' \
-                                     'child objects first or use recursive option'
+                    print()
+                    # self.storage_dict[
+                    #     'message'] = 'Source has child objects. Please delete ' \
+                    #                  'child objects first or use recursive option'
 
-        self.storage_dict['objlist'] = dir_files_list
-        pprint(self.storage_dict)
-        dict_obj = self.update_dict(self.storage_dict['objlist'])
+        # self.storage_dict['objlist'] = dir_files_list
+        # pprint(self.storage_dict)
+        # dict_obj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
-        return dict_obj
+        # return dict_obj
+        specificatioin['status'] = 'completed'
+        return specificatioin
 
     # function to upload file or directory
-    def put(self, source=None, destination=None, recursive=False):
+    def _put(self, specification):
         """
        puts the source on the service
 
@@ -761,17 +797,20 @@ class Provider(StorageABC):
 
         """
 
+        source = specification['source']['path']
+        destination = specification['destination']['path']
+        recursive = specification['recursive']
         # src_service, src = source.split(":", 1)
         # dest_service, dest = destination.split(":", 1)
 
         # check if the source an destination roots exist
 
         # self.storage_dict['service'] = service
-        self.storage_dict['action'] = 'put'
-        self.storage_dict['source'] = source  # src
-        self.storage_dict['destination'] = destination  # dest
-        self.storage_dict['recursive'] = recursive
-        pprint(self.storage_dict)
+        # self.storage_dict['action'] = 'put'
+        # self.storage_dict['source'] = source  # src
+        # self.storage_dict['destination'] = destination  # dest
+        # self.storage_dict['recursive'] = recursive
+        # pprint(self.storage_dict)
 
         trimmed_source = self.massage_path(source)
         trimmed_destination = self.massage_path(destination)
@@ -832,7 +871,7 @@ class Provider(StorageABC):
                 files_uploaded.append(
                     self.extract_file_dict(destination_key, metadata))
 
-            self.storage_dict['message'] = 'Source uploaded'
+            # self.storage_dict['message'] = 'Source uploaded'
         elif is_source_dir is True:
             # Look if its a directory
             # print('dir flow')
@@ -912,16 +951,38 @@ class Provider(StorageABC):
                         , metadata))
 
             # self.storage_dict['filesUploaded'] = files_uploaded
-            self.storage_dict['message'] = 'Source uploaded'
+            # self.storage_dict['message'] = 'Source uploaded'
 
         else:
-            self.storage_dict['message'] = 'Source not found'
+            print()
+            # self.storage_dict['message'] = 'Source not found'
 
-        self.storage_dict['objlist'] = files_uploaded
-        pprint(self.storage_dict)
-        dict_obj = self.update_dict(self.storage_dict['objlist'])
+        # self.storage_dict['objlist'] = files_uploaded
+        # pprint(self.storage_dict)
+        # dict_obj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
-        return dict_obj
+        # return dict_obj
+        specification['status']='completed'
+        return specification
+
+    def _cancel(self, specification):
+        cm = CmDatabase()
+        entries = cm.find(cloud=self.name,
+                          kind='storage')
+        id = specification['cm']['name']
+        if id == 'None':
+            for entry in entries:
+                if entry['status'] == 'waiting':
+                    entry['status']= "cancelled"
+        else:
+            for entry in entries:
+                if entry['cm']['id'] == id and entry['status'] == 'waiting':
+                    entry['status'] = "cancelled"
+                    break;
+        cm.update(entries)
+
+        specification['status'] = 'completed'
+        return specification
 
     # function to download file or directory
     def get(self, source=None, destination=None, recursive=False):
@@ -1217,15 +1278,18 @@ class Provider(StorageABC):
         return dict_obj
 
 
+
+
 if __name__ == "__main__":
     p = Provider(name="aws")
-    # p.mkdir("/abcworking2")
-    # p.mkdir("/abcworking2")
-    # p.mkdir("/abcworking3")
+    p.mkdir("/abcworking2")
+    p.mkdir("/abcworking3")
     # p.mkdir("/abcworking4")
     # p.mkdir("/abcworking5")
     # p.mkdir("/abcworking6")
 
     # p.list('/')
     # p.run()
+    p.cancel()
+    p.run()
 
