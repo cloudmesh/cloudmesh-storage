@@ -21,7 +21,7 @@ from oauth2client.file import Storage
 
 class Provider(StorageABC):
 
-    kind = "gdrive"
+    kind = "parallelgdrive"
 
     sample = "TODO: missing"
 

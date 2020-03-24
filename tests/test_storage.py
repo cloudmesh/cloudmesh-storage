@@ -19,6 +19,9 @@ from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
 from cloudmesh.common.debug import VERBOSE
 
+#
+# cms set storage=gdrive
+#
 Benchmark.debug()
 
 user = Config()["cloudmesh.profile.user"]

@@ -30,6 +30,8 @@ class Provider(StorageABC):
             from cloudmesh.storage.provider.box.Provider import Provider as P
         elif kind == "gdrive":
             from cloudmesh.storage.provider.gdrive.Provider import Provider as P
+        elif kind == "parallelgdrive":
+            from cloudmesh.storage.provider.parallelgdrive.Provider import Provider as P
         elif kind == "azureblob":
             from cloudmesh.storage.provider.azureblob.Provider import \
                 Provider as P
