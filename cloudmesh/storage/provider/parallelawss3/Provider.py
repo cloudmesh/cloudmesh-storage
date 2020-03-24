@@ -55,7 +55,6 @@ class Provider(StorageABC):
 
     output = {}  # "TODO: missing"
 
-
     def __init__(self,
                  name=None,
                  config="~/.cloudmesh/cloudmesh.yaml",
@@ -117,7 +116,8 @@ class Provider(StorageABC):
     def join_file_name_dir(self, filename, dirname):
         full_file_path = ''
         if len(self.massage_path(dirname)) > 0:
-            # fullFilePath = self.massage_path(dirName) + '/' + self.massage_path(fileName)
+            # fullFilePath = self.massage_path(dirName) + '/' + \
+            #                self.massage_path(fileName)
             full_file_path = self.massage_path(
                 dirname) + '/' + self.massage_path(
                 filename)
@@ -161,7 +161,7 @@ class Provider(StorageABC):
             self.storage_dict['bucket'] = name
             dir_files_list = []
             self.container_name = name
-            obj = list(self.s3_resource.Bucket(self.container_name) \
+            obj = list(self.s3_resource.Bucket(self.container_name)
                        .objects.filter(Prefix=file_path + '/'))
 
             if len(obj) == 0:
@@ -222,18 +222,18 @@ class Provider(StorageABC):
     # the name of the bucket will come from YAML specifications and the directory name comes from the arguments.
 
     def _mkdir(self, specification):
-    #     cm:
-    #     number: {self.number}
-    #     kind: storage
-    #     id: {uuid_str}
-    #     cloud: {self.name}
-    #     name: {path}
-    #     collection: {self.collection}
-    #     created: {date}
-    #
-    # action: mkdir
-    # path: {path}
-    # status: waiting
+        #     cm:
+        #     number: {self.number}
+        #     kind: storage
+        #     id: {uuid_str}
+        #     cloud: {self.name}
+        #     name: {path}
+        #     collection: {self.collection}
+        #     created: {date}
+        #
+        # action: mkdir
+        # path: {path}
+        # status: waiting
         directory = specification['path']
         self.s3_resource = boto3.resource(
             's3',
@@ -315,7 +315,6 @@ class Provider(StorageABC):
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
         self.number = self.number + 1
         return entries
-
 
     @DatabaseUpdate()
     def delete(self, path, recursive=True):
@@ -493,7 +492,6 @@ class Provider(StorageABC):
 
         return mkdir, copy, list, delete, cancel
 
-
     def run(self):
         """
         runs the copy process for all jobs in the queue and completes when all
@@ -532,6 +530,7 @@ class Provider(StorageABC):
         p.map(self.action, list_action)
 
         # function to list file  or directory
+
     def _list(self, specification):
         """
         lists the information as dict
@@ -986,7 +985,7 @@ class Provider(StorageABC):
         # dict_obj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
         # return dict_obj
-        specification['status']='completed'
+        specification['status'] = 'completed'
         return specification
 
     def _cancel(self, specification):
@@ -997,12 +996,12 @@ class Provider(StorageABC):
         if id == 'None':
             for entry in entries:
                 if entry['status'] == 'waiting':
-                    entry['status']= "cancelled"
+                    entry['status'] = "cancelled"
         else:
             for entry in entries:
                 if entry['cm']['id'] == id and entry['status'] == 'waiting':
                     entry['status'] = "cancelled"
-                    break;
+                    break
         cm.update(entries)
 
         specification['status'] = 'completed'
@@ -1302,8 +1301,6 @@ class Provider(StorageABC):
         return dict_obj
 
 
-
-
 if __name__ == "__main__":
     p = Provider(name="aws")
     # p.mkdir("/abcworking2")
@@ -1318,6 +1315,4 @@ if __name__ == "__main__":
     # p.delete(path="testABC")
     # p.copy(sourcefile="./Provider.py", destinationfile="testABC.txt")
 
-
     p.run()
-
