@@ -16,16 +16,16 @@ class StorageCommand(PluginCommand):
         ::
 
            Usage:
-             storage [--storage=SERVICE] create dir DIRECTORY
-             storage [--storage=SERVICE] get SOURCE DESTINATION [--recursive]
-             storage [--storage=SERVICE] put SOURCE DESTINATION [--recursive]
-             storage [--storage=SERVICE] list [SOURCE] [--recursive] [--output=OUTPUT]
-             storage [--storage=SERVICE] delete SOURCE
+             storage [--storage=SERVICE] [--parallel=N] create dir DIRECTORY
+             storage [--storage=SERVICE] [--parallel=N] get SOURCE DESTINATION [--recursive]
+             storage [--storage=SERVICE] [--parallel=N] put SOURCE DESTINATION [--recursive]
+             storage [--storage=SERVICE] [--parallel=N] list [SOURCE] [--recursive] [--output=OUTPUT]
+             storage [--storage=SERVICE] [--parallel=N] delete SOURCE
              storage [--storage=SERVICE] search  DIRECTORY FILENAME [--recursive] [--output=OUTPUT]
              storage [--storage=SERVICE] sync SOURCE DESTINATION [--name=NAME] [--async]
              storage [--storage=SERVICE] sync status [--name=NAME]
              storage config list [--output=OUTPUT]
-             storage copy SOURCE DESTINATION [--recursive]
+             storage [--parallel=N] copy SOURCE DESTINATION [--recursive]
 
 
            This command does some useful things.
