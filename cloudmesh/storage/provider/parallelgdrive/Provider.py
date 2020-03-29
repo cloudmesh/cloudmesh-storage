@@ -7,9 +7,9 @@ import sys
 from pathlib import Path
 
 import httplib2
-from apiclient import discovery
-from apiclient.http import MediaFileUpload
-from apiclient.http import MediaIoBaseDownload
+from googleapiclient import discovery
+from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseDownload
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
 from cloudmesh.configuration.Config import Config
