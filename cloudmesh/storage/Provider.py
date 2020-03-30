@@ -13,6 +13,7 @@ class Provider(StorageABC):
         kind = ["local",
                 "box",
                 "gdrive",
+                "parallelgdrive",
                 "azureblob",
                 "awss3",
                 "parallelawss3",
