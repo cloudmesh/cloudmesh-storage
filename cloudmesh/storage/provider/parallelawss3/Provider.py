@@ -1,19 +1,17 @@
 import os
+import platform
 import stat
+import textwrap
+import uuid
+from multiprocessing import Pool
 from pprint import pprint
 
 import boto3
 import botocore
-from cloudmesh.abstract.StorageABC import StorageABC
-from cloudmesh.common.console import Console
-
-import platform
-import textwrap
-import uuid
 import oyaml as yaml
-from multiprocessing import Pool
-
+from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.DateTime import DateTime
+from cloudmesh.common.console import Console
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 
@@ -218,8 +216,12 @@ class Provider(StorageABC):
                 Console.error(f"Bucket {name} does not exist")
                 return False
 
-    # function to create a directory the function will first check if the bucket exists or not,if the bucket doesn't exist it will create the bucket and it will create the directory specified.
-    # the name of the bucket will come from YAML specifications and the directory name comes from the arguments.
+    # function to create a directory the function will
+    # first check if the bucket  exists or not,
+    # if the bucket doesn't exist it will create the bucket
+    # and it will create the directory specified.
+    # the name of the bucket will come from YAML specifications and the
+    # directory name comes from the arguments.
 
     def _mkdir(self, specification):
         #     cm:
@@ -255,7 +257,7 @@ class Provider(StorageABC):
         if not self.bucket_exists(name=bucket):
             self.bucket_create(name=bucket)
 
-        obj = list(self.s3_resource.Bucket(self.container_name) \
+        obj = list(self.s3_resource.Bucket(self.container_name)
                    .objects.filter(Prefix=file_path + '/'))
 
         if len(obj) == 0:
@@ -289,8 +291,9 @@ class Provider(StorageABC):
 
         The copy will not be performed if the files are the same.
 
-        :param sourcefile:
-        :param destinationfile:
+        :param sourcefile: The source file to copy
+        :param destinationfile: The destination file path
+        :param recursive: whether or not copy the file/dir recursively
         :return:
         """
         date = DateTime.now()
@@ -322,6 +325,7 @@ class Provider(StorageABC):
         adds a delete action to the queue
 
         :param path:
+        :param recursive:
         :return:
         """
         date = DateTime.now()
@@ -377,7 +381,6 @@ class Provider(StorageABC):
         adds a mkdir action to the queue
 
         create the directory in the storage service
-        :param service: service must be either source or destination
         :param path:
         :return:
         """
@@ -408,8 +411,9 @@ class Provider(StorageABC):
         adds a list action to the queue
 
         list the directory in the storage service
-        :param service: service must be either source or destination
         :param path:
+        :param dir_only:
+        :param recursive:
         :return:
         """
 
@@ -598,8 +602,7 @@ class Provider(StorageABC):
 
                         elif (file_name.replace(trimmed_source, '')[
                                   0] == '/' and file_name.replace(
-                            trimmed_source,
-                            '').count('/') == 1):
+                            trimmed_source, '').count('/') == 1):
                             # dir_files_list.append(file_name)
 
                             # make head call to extract meta data
@@ -761,7 +764,7 @@ class Provider(StorageABC):
                     self.s3_resource.Bucket(
                         self.container_name).objects.filter(
                         Prefix=trimmed_source + '/' +
-                               self.directory_marker_file_name)
+                           self.directory_marker_file_name)
                 )
                 marker_exits = False
                 if len(marker_obj_list) == 1:
@@ -1310,7 +1313,6 @@ if __name__ == "__main__":
     # p.mkdir("/abcworking6")
 
     # p.list('/')
-    # p.run()
     # p.cancel()
     # p.delete(path="testABC")
     # p.copy(sourcefile="./Provider.py", destinationfile="testABC.txt")
