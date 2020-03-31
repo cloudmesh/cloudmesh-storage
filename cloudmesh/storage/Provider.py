@@ -16,6 +16,7 @@ class Provider(StorageABC):
                 "azureblob",
                 "awss3",
                 "parallelawss3",
+                'parallelgdrive',
                 "google",
                 "oracle"]
         return kind
