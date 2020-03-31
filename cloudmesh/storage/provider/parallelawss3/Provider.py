@@ -228,8 +228,7 @@ class Provider(StorageABC):
         # if dir_only:
         #    raise NotImplementedError
         source = specification['path']
-        dir_only = specification['dir_only']
-        recursive = specification['recursive']
+        recursive = True
         self.s3_resource = boto3.resource(
             's3',
             aws_access_key_id=self.credentials['access_key_id'],
@@ -816,8 +815,6 @@ class Provider(StorageABC):
                         created: {date}
                       action: list
                       path: {path}
-                      dir_only:{dir_only}
-                      recursive:{recursive}
                       status: waiting
                 """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
@@ -1220,3 +1217,15 @@ class Provider(StorageABC):
 
 if __name__ == "__main__":
     p = Provider(name="aws")
+
+    p.mkdir(path="testdir1")
+    p.mkdir(path="testdir2")
+    p.mkdir(path="testdir3")
+    p.mkdir(path="testdir4")
+    p.list(path=".")
+    p.delete(path="testdir1")
+    p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
+
+    p.run()
+
+
