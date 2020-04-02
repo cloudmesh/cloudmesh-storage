@@ -3,21 +3,20 @@
 # pytest -v  tests/test_storage.py
 # pytest -v --capture=no tests/test_storage..py:::TestStorage::<METHIDNAME>
 ###############################################################
-import os
-from pathlib import Path
+import shutil
 from pprint import pprint
 
 import pytest
+from cloudmesh.common.Benchmark import Benchmark
+from cloudmesh.common.Shell import Shell
 from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
-from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
-from cloudmesh.common.debug import VERBOSE
 
 #
 # cms set storage=gdrive
@@ -46,22 +45,28 @@ print('provider:', provider, provider.kind)
 @pytest.mark.incremental
 class TestStorage(object):
 
-    def create_local_file(self, location, content):
-        d = Path(os.path.dirname(path_expand(location)))
-        print()
-        print("TESTDIR:", d)
+    def create_file(self, location, content):
+        print(f"create: {location}")
+        Shell.mkdir(location)
+        writefile(location, content)
 
-        d.mkdir(parents=True, exist_ok=True)
+    def test_clean(self):
+        HEADING()
 
-        writefile(path_expand(location), content)
+        try:
+            shutil.rmtree(location)
+        except OSError as e:
+            print(e.strerror)
+            assert False, "Directory {location} could not be deleted"
+
 
     def test_create_local_source(self):
         HEADING()
         StopWatch.start("create source")
         self.sourcedir = path_expand(f"{location}/storage/source/test/")
-        self.create_local_file(f"{location}/storage/source/test/a/a.txt", "content of a")
-        self.create_local_file(f"{location}/storage/source/test/a/b/b.txt", "content of b")
-        self.create_local_file(f"{location}/storage/source/test/a/b/c/c.txt",
+        self.create_file(f"{location}/storage/source/test/a/a.txt", "content of a")
+        self.create_file(f"{location}/storage/source/test/a/b/b.txt", "content of b")
+        self.create_file(f"{location}/storage/source/test/a/b/c/c.txt",
                                "content of c")
         StopWatch.stop("create source")
 

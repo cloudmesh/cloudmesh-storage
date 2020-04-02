@@ -8,16 +8,15 @@ from pathlib import Path
 from pprint import pprint
 
 import pytest
+from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
-from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
-from cloudmesh.common.debug import VERBOSE
 
 #
 # TODO: all asserts are incomplete
