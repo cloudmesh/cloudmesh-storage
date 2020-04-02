@@ -204,6 +204,7 @@ class StorageCommand(PluginCommand):
                 provider.delete(arguments.SOURCE)
 
         elif arguments.sdelete:
+
             scloud, sbucket = source.split(":", 1) or None
             if (scloud == "aws" or scloud == "google"):
                 provider = Provider(service=scloud)
