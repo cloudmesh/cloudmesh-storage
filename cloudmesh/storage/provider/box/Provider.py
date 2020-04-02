@@ -274,7 +274,8 @@ class Provider(StorageABC):
                     folder = self.client.folder('0').create_subfolder(new_dir)
                     folder_dict = update_dict(folder)
                     return folder_dict
-                folders = [item for item in self.client.search().query(parent, type='folder')]
+                folders = [item for item in
+                           self.client.search().query(parent, type='folder')]
                 if len(folders) > 0:
                     parent = folders[0].id
                     folder = self.client.folder(parent).create_subfolder(new_dir)
@@ -298,16 +299,19 @@ class Provider(StorageABC):
             subfolders = []
             path = basename(source)
             if path == '':
-                contents = [item for item in self.client.folder('0').get_items()]
+                contents = [item for item in
+                            self.client.folder('0').get_items()]
                 for c in contents:
                     if c.type == 'folder':
                         subfolders.append(c)
                     result_list.append(c)
             else:
-                folders = [item for item in self.client.search().query(path, type='folder')]
+                folders = [item for item in
+                           self.client.search().query(path, type='folder')]
                 folder_id = get_id(path, folders, 'folder')
                 if folder_id:
-                    contents = [result for result in self.client.folder(folder_id).get_items()]
+                    contents = [result for result in
+                                self.client.folder(folder_id).get_items()]
                     for c in contents:
                         if c.type == 'folder':
                             subfolders.append(c)
@@ -316,7 +320,9 @@ class Provider(StorageABC):
                     Console.error("Directory " + path + " not found.")
             if recursive:
                 while len(subfolders) > 0:
-                    contents = [item for item in self.client.folder(subfolders[0].id).get_items()]
+                    contents = [item for item in
+                                self.client.folder(
+                                    subfolders[0].id).get_items()]
                     for c in contents:
                         if c.type == 'folder':
                             subfolders.append(c)
@@ -347,7 +353,9 @@ class Provider(StorageABC):
             if not any(result.name == name for result in results):
                 Console.error("Source not found.")
             else:
-                item_ind = next((index for (index, result) in enumerate(results) if (result.name == name)), None)
+                item_ind = next((index for (index, result) in
+                                 enumerate(results) if (result.name == name)),
+                                None)
                 item_id = results[item_ind].id
                 item_type = results[item_ind].type
                 deleted.append(results[item_ind])
