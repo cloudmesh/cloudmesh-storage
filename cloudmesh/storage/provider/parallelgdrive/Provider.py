@@ -1,3 +1,14 @@
+# Sara's changes through line 87
+from __future__ import print_function
+import pickle
+import os.path
+import io
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseDownload
+from googleapiclient import errors
 import argparse
 import io
 import json
@@ -5,7 +16,7 @@ import mimetypes
 import os
 import sys
 from pathlib import Path
-
+from googleapiclient import errors
 import httplib2
 from googleapiclient import discovery
 from googleapiclient.http import MediaFileUpload
@@ -18,97 +29,58 @@ from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 
+# If modifying these scopes, delete the file token.pickle.
+SCOPES = ['https://www.googleapis.com/auth/drive']
 
-class Provider(StorageABC):
+class Provider():
 
-    kind = "parallelgdrive"
+    #kind = "parallelgdrive"
 
-    sample = "TODO: missing"
+    def __init__(self, service=None):
+        creds = None
+        # The file token.pickle stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists('token.pickle'):
+            with open('token.pickle', 'rb') as token:
+                creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    'credentials.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open('token.pickle', 'wb') as token:
+                pickle.dump(creds, token)
 
-    output = {}  # "TODO: missing"
-
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
-        super().__init__(service=service, config=config)
-        self.config = Config()
-        self.storage_credentials = self.config.credentials("storage", "gdrive")
-        if self.storage_credentials['maxfiles'] > 1000:
-            Console.error("Page size must be smaller than 1000")
-            sys.exit(1)
-        self.limitFiles = self.storage_credentials['maxfiles']
-        self.scopes = self.storage_credentials['scopes']
-        self.clientSecretFile = path_expand(
-            self.storage_credentials['location_secret'])
-        self.applicationName = self.storage_credentials['application_name']
-        self.generate_key_json()
-        self.flags = self.generate_flags_json()
-        self.credentials = self.get_credentials()
-        self.http = self.credentials.authorize(httplib2.Http())
-        self.driveService = discovery.build('drive', 'v3', http=self.http)
-        self.cloud = service
+        service = build('drive', 'v3', credentials=creds)
         self.service = service
 
-        self.fields = "nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)"
+    def list(self, service=None):
+        # Call the Drive v3 API
+        results = self.service.files().list(
+            pageSize=10, fields="nextPageToken, files(id, name)").execute()
+        items = results.get('files', [])
+        if not items:
+            print('No files found.')
+        else:
+            print('Files:')
+            for item in items:
+                print(u'{0} ({1})'.format(item['name'], item['id']))
 
-    def generate_flags_json(self):
-        #
-        # TODO: Bug, argparse is not used, we use docopts.
-        #
-        args = argparse.Namespace(
-            auth_host_name=self.storage_credentials["auth_host_name"],
-            auth_host_port=self.storage_credentials["auth_host_port"],
-            logging_level='ERROR', noauth_local_webserver=False)
-        return args
+    def upload2(self, service=None):
+        # Upload 'google.jpg'
 
-    def generate_key_json(self):
-        config_path = self.storage_credentials['location_secret']
-        path = Path(path_expand(config_path)).resolve()
-        config_folder = os.path.dirname(path)
-        if not os.path.exists(config_folder):
-            os.makedirs(config_folder)
-        data = {"installed": {
-            "client_id": self.storage_credentials["client_id"],
-            "project_id": self.storage_credentials["project_id"],
-            "auth_uri": self.storage_credentials["auth_uri"],
-            "token_uri": self.storage_credentials["token_uri"],
-            "client_secret": self.storage_credentials["client_secret"],
-            "auth_provider_x509_cert_url": self.storage_credentials[
-                "auth_provider_x509_cert_url"],
-            "redirect_uris": self.storage_credentials["redirect_uris"]
-        }
-        }
-        with open(self.clientSecretFile, 'w') as fp:
-            json.dump(data, fp)
-
-    def get_credentials(self):
-
-        """
-            We have stored the credentials in ".credentials"
-            folder and there is a file named 'google-drive-credentials.json'
-            that has all the credentials required for our authentication
-            If there is nothing stored in it this program creates credentials
-            json file for future authentication
-            Here the authentication type is OAuth2
-        :return:
-        :rtype:
-        """
-        cwd = self.storage_credentials['location_gdrive_credentials']
-        path = Path(path_expand(cwd)).resolve()
-        if not os.path.exists(path):
-            os.makedirs(path)
-        credentials_path = os.path.join(path, 'google-drive-credentials.json')
-        credentials_path = Path(path_expand(credentials_path)).resolve()
-        store = Storage(credentials_path)
-        print(credentials_path)
-        credentials = store.get()
-        if not credentials or credentials.invalid:
-            flow = client.flow_from_clientsecrets(
-                self.client_secret_file,
-                self.scopes)
-            flow.user_agent = self.application_name
-            if self.flags:
-                credentials = tools.run_flow(flow, store, self.flags)
-
-        return credentials
+        file_metadata = {'name': 'google.jpg'}
+        media = MediaFileUpload('google.jpg',
+                                mimetype='image/jpeg')
+        file = self.service.files().create(body=file_metadata,
+                                      media_body=media,
+                                      fields='id').execute()
+        print('File ID: %s' % file.get('id'))
 
     def put(self, service=None, source=None, destination=None, recursive=False):
         if recursive:
@@ -306,37 +278,6 @@ class Provider(StorageABC):
             print('Folder ID: %s' % file.get('id'))
             id = file.get('id')
         return self.update_dict(files)
-
-    def list(self, service=None, source=None, recursive=False):
-        if recursive:
-            results = self.driveService.files().list(
-                pageSize=self.limitFiles,
-                fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
-            items = results.get('files', [])
-            if not items:
-                Console.error('No files found')
-                print('No files found.')
-            else:
-                return self.update_dict(items)
-        else:
-            query_params = "name='" + source + "' and trashed=false"
-            sourceid = self.driveService.files().list(
-                q=query_params,
-                pageSize=self.limitFiles,
-                fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
-            file_id = sourceid['files'][0]['id']
-            query_params = "'" + file_id + "' in parents"
-            results = self.driveService.files().list(
-                q=query_params,
-                pageSize=self.limitFiles,
-                fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
-            items = results.get('files', [])
-            print(items)
-            if not items:
-                Console.error('No files found')
-                print('No files found.')
-            else:
-                return self.update_dict(items)
 
     def search(self, service=None, directory=None, filename=None,
                recursive=False):
