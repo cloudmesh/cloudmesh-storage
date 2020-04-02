@@ -1,7 +1,7 @@
 ###############################################################
-# pytest -v --capture=no tests/test_storage.py
-# pytest -v  tests/test_storage.py
-# pytest -v --capture=no tests/test_storage..py:::TestStorage::<METHIDNAME>
+# pytest -v --capture=no tests/awss3/test_parallelaws3.py
+# pytest -v  tests/awss3/test_parallelaws3.py
+# pytest -v --capture=no tests/awss3/test_parallelaws3.py:::TestStorage::<METHIDNAME>
 ###############################################################
 import os
 from pathlib import Path
@@ -41,7 +41,7 @@ print('provider:', provider, provider.kind)
 
 
 @pytest.mark.incremental
-class TestStorage(object):
+class TestStorageParallelaws3(object):
 
     def create_local_file(self, location, content):
         d = Path(os.path.dirname(path_expand(location)))

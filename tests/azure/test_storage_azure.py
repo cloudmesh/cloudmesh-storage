@@ -1,7 +1,7 @@
 ###############################################################
-# pytest -v --capture=no tests/test_storage_awss3.py
-# pytest -v  tests/test_storage_awss3.py
-# pytest -v --capture=no tests/test_storage_awss3..py::TestStorageAwss3::<METHODNAME>
+# pytest -v --capture=no tests/azure/test_storage_azure.py
+# pytest -v  tests/azure/test_storage_azure.py
+# pytest -v --capture=no tests/azure/test_storage_azure..py::TestStorageAzure::<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path
@@ -20,10 +20,10 @@ from cloudmesh.storage.Provider import Provider
 
 
 #
-# cms set storage=awss3
+# cms set storage=azure
 #
 @pytest.mark.incremental
-class TestStorageAwss3(object):
+class TestStorageAzure(object):
 
     def create_dir(self, location):
         d = Path(os.path.dirname(path_expand(location)))
@@ -84,6 +84,7 @@ class TestStorageAwss3(object):
     def test_list(self):
         HEADING()
         StopWatch.start("LIST Directory")
+        banner(self.p.service)
         contents = self.p.list(self.p.service, "/")
         StopWatch.stop("LIST Directory")
         for c in contents:
@@ -105,7 +106,7 @@ class TestStorageAwss3(object):
         pprint(directory)
 
         assert dir is not None
-        assert "a/created_dir/" in directory[0]['cm']['name']
+        assert "a/created_dir" in directory[0]["name"]
 
     def test_search(self):
         HEADING()
@@ -116,7 +117,7 @@ class TestStorageAwss3(object):
         StopWatch.stop("SEARCH file")
         pprint(search_files)
         assert len(search_files) > 0
-        assert filename in search_files[0]['cm']["name"]
+        assert search_files[0]["name"] == filename
 
     def test_delete(self):
         HEADING()
@@ -126,9 +127,9 @@ class TestStorageAwss3(object):
         StopWatch.stop("DELETE Directory")
         deleted = False
         for entry in contents:
-            if 'a/created_dir/' == entry['cm']["name"]:
-                # if entry["cm"]["status"] == "deleted":
-                deleted = True
+            if "created_dir" in entry["cm"]["name"]:
+                if entry["cm"]["status"] == "deleted":
+                    deleted = True
         assert deleted
 
     def test_recursive_put(self):
@@ -215,24 +216,11 @@ class TestStorageAwss3(object):
         search_files = self.p.search(self.p.service, src, filename, True)
         StopWatch.stop("SEARCH file under root dir --r")
 
-        assert len(search_files) == 4
-
-        # this pytest is specifically for AWS,AZURE and Google only
-
-    # def test_create_bucket(self):
-    #    HEADING()
-    #    src = 'cloudmeshtest2'
-    #    StopWatch.start("create bucket")
-    #    bucket = self.aws.bucket_create(src)
-    #    StopWatch.stop("create bucket")
-
-    #    pprint(bucket)
-
-    #   assert bucket is not None
+        assert len(search_files) == 2
 
     def test_results(self):
         HEADING()
         # storage = self.p.service
         service = self.service
-        banner(f"Benchmark results for {service} Storage")
+        banner(f"Benchmark results for '{service}' Storage")
         StopWatch.benchmark()

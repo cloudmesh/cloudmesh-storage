@@ -1,6 +1,6 @@
 ###############################################################
-# pytest -v --capture=no tests/test_storage_oracle.py
-# pytest -v  tests/test_storage_oracle.py
+# pytest -v --capture=no tests/oracle/test_storage_oracle.py
+# pytest -v  tests/oracle/test_storage_oracle.py
 ###############################################################
 import os
 from pathlib import Path

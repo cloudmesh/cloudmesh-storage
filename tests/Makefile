@@ -2,23 +2,23 @@ all: azureblob box gdrive vdir awss3
 	echo
 
 
-azureblob:
-	pytest -v --capture=no tests/test_storage_azure.py
+azureb:
+	pytest -v --capture=no tests/azure/test_storage_azure.py
 	cms set storage=azureblob
 	pytest -v --capture=no tests/test_general_storage.py
 
 box:
-	pytest -v --capture=no tests/test_storage_box.py
+	pytest -v --capture=no tests/box/test_storage_box.py
 	cms set storage=box
 	pytest -v --capture=no tests/test_general_storage.py
 
 gdrive:
-	pytest -v --capture=no tests/test_storage_gdrive.py
+	pytest -v --capture=no tests/gdrive/test_storage_gdrive.py
 	cms set storage=gdrive
 	pytest -v --capture=no tests/test_general_storage.py
 
 awss3:
-	pytest -v --capture=no tests/test_storage_awss3.py
+	pytest -v --capture=no tests/awss3/test_storage_awss3.py
 	cms set storage=awss3
 	pytest -v --capture=no tests/test_general_storage.py
 

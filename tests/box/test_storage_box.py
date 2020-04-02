@@ -1,7 +1,7 @@
 ###############################################################
-# pytest -v --capture=no tests/test_storage_azure.py
-# pytest -v  tests/test_storage_azure.py
-# pytest -v --capture=no tests/test_storage_azure..py::TestAzureStorage::<METHODNAME>
+# pytest -v --capture=no tests/box/test_storage_box.py
+# pytest -v  tests/box/test_storage_box.py
+# pytest -v --capture=no tests/box/test_storage_box..py::TestStorageBox::<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path
@@ -20,10 +20,10 @@ from cloudmesh.storage.Provider import Provider
 
 
 #
-# cms set storage=azure
+# cms set storage=box
 #
 @pytest.mark.incremental
-class TestAzureStorage(object):
+class TestStorageBox(object):
 
     def create_dir(self, location):
         d = Path(os.path.dirname(path_expand(location)))
@@ -84,7 +84,6 @@ class TestAzureStorage(object):
     def test_list(self):
         HEADING()
         StopWatch.start("LIST Directory")
-        banner(self.p.service)
         contents = self.p.list(self.p.service, "/")
         StopWatch.stop("LIST Directory")
         for c in contents:
@@ -222,5 +221,5 @@ class TestAzureStorage(object):
         HEADING()
         # storage = self.p.service
         service = self.service
-        banner(f"Benchmark results for '{service}' Storage")
+        banner(f"Benchmark results for {service} Storage")
         StopWatch.benchmark()
