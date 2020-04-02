@@ -1,0 +1,225 @@
+============================= test session starts =============================
+platform win32 -- Python 3.7.4, pytest-5.3.1, py-1.8.0, pluggy-0.13.1 -- c:\users\pratibha\documents\e516\env3\scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Pratibha\documents\e516\cm\cloudmesh-storage_service
+collecting ... collected 13 items
+
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_listaws [s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='test1.txt'),
+ s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='test1/'),
+ s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='test1/testAwsToLocal.txt'),
+ s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testFol/testAwsToLocal.txt'),
+ s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testFol/testAwsToLocal1.txt'),
+ s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testFol/testUpload.txt'),
+ s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testFol/testUpload1.txt'),
+ s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testLocalToAws.txt'),
+ s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testfoltestLocalToAws1.txt'),
+ s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='uploadtest1.txt')]
+'test1'
+{'action': 'list',
+ 'objlist': [{'contentLength': '16',
+              'fileName': 'test1.txt',
+              'lastModificationDate': 'Wed, 20 Nov 2019 04:13:05 GMT'},
+             {'contentLength': '16',
+              'fileName': 'test1/testAwsToLocal.txt',
+              'lastModificationDate': 'Fri, 13 Dec 2019 04:38:04 GMT'}],
+ 'recursive': True,
+ 'source': 'test1'}
+[{'cm': {'cloud': 'aws', 'kind': 'storage', 'name': 'test1.txt'},
+  'contentLength': '16',
+  'fileName': 'test1.txt',
+  'lastModificationDate': 'Wed, 20 Nov 2019 04:13:05 GMT'},
+ {'cm': {'cloud': 'aws', 'kind': 'storage', 'name': 'test1/testAwsToLocal.txt'},
+  'contentLength': '16',
+  'fileName': 'test1/testAwsToLocal.txt',
+  'lastModificationDate': 'Fri, 13 Dec 2019 04:38:04 GMT'}]
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_listgoogle 'Listing from source - a1'
+['Name: a1/ , Created: 18-Dec-2019 01:29:11',
+ 'Name: a1/test1.txt , Created: 18-Dec-2019 01:29:43']
+'Listing contents from bucket - gcp_516'
+['Name: a1/ , Created: 18-Dec-2019 01:29:11',
+ 'Name: a1/test1.txt , Created: 18-Dec-2019 01:29:43',
+ 'Name: test1.txt , Created: 11-Dec-2019 04:37:43',
+ 'Name: test1Copy.txt , Created: 18-Dec-2019 21:55:44',
+ 'Name: testAwsToGoogle.txt , Created: 18-Dec-2019 21:55:41',
+ 'Name: text1copy.txt , Created: 18-Dec-2019 21:55:42',
+ 'Name: uploadtest1.txt , Created: 16-Dec-2019 01:34:06']
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_localtoaws_dir localawsuploadtesttestFol1/
+uploadtest
+uploadtest
+not absolute
+C:\Users\Pratibha\.cloudmesh\download
+'C:/Users/Pratibha/.cloudmesh/download/uploadtest'
+{'action': 'put',
+ 'destination': 'testFol1/',
+ 'recursive': True,
+ 'source': 'C:/Users/Pratibha/.cloudmesh/download/uploadtest'}
+{'action': 'put',
+ 'destination': 'testFol1/',
+ 'message': 'Source uploaded',
+ 'objlist': [{'contentLength': '16',
+              'fileName': 'testFol1/testAwsToLocal.txt',
+              'lastModificationDate': 'Thu, 19 Dec 2019 04:59:10 GMT'},
+             {'contentLength': '16',
+              'fileName': 'testFol1/testAwsToLocal1.txt',
+              'lastModificationDate': 'Thu, 19 Dec 2019 04:59:10 GMT'},
+             {'contentLength': '16',
+              'fileName': 'testFol1/testUpload.txt',
+              'lastModificationDate': 'Thu, 19 Dec 2019 04:59:10 GMT'},
+             {'contentLength': '16',
+              'fileName': 'testFol1/testUpload1.txt',
+              'lastModificationDate': 'Thu, 19 Dec 2019 04:59:10 GMT'}],
+ 'recursive': True,
+ 'source': 'C:/Users/Pratibha/.cloudmesh/download/uploadtest'}
+[32mFile copied from local to aws[0m
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_awstolocal_dir localawstestFol1/uploadtest
+testFol1/
+testFol1
+not absolute
+C:\Users\Pratibha\.cloudmesh\download
+'C:/Users/Pratibha/.cloudmesh/download/testFol1'
+{'action': 'put',
+ 'destination': 'uploadtest',
+ 'recursive': True,
+ 'source': 'C:/Users/Pratibha/.cloudmesh/download/testFol1'}
+{'action': 'put',
+ 'destination': 'uploadtest',
+ 'message': 'Source not found',
+ 'objlist': [],
+ 'recursive': True,
+ 'source': 'C:/Users/Pratibha/.cloudmesh/download/testFol1'}
+[32mFile copied from local to aws[0m
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_AwsToLocal awslocaltest1.txttestAwsToLocal.txt
+testAwsToLocal.txt
+not absolute
+C:\Users\Pratibha\.cloudmesh\download
+'C:/Users/Pratibha/.cloudmesh/download/testAwsToLocal.txt'
+{'action': 'get',
+ 'destination': 'C:/Users/Pratibha/.cloudmesh/download/testAwsToLocal.txt',
+ 'message': 'Source downloaded',
+ 'objlist': [{'contentLength': '16',
+              'fileName': 'test1.txt',
+              'lastModificationDate': 'Wed, 20 Nov 2019 04:13:05 GMT'}],
+ 'recursive': True,
+ 'source': 'test1.txt'}
+[32mFile copied from aws to local[0m
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_localtoaws localawstest1.txttestLocalToAws.txt
+test1.txt
+test1.txt
+not absolute
+C:\Users\Pratibha\.cloudmesh\download
+'C:/Users/Pratibha/.cloudmesh/download/test1.txt'
+{'action': 'put',
+ 'destination': 'testLocalToAws.txt',
+ 'recursive': True,
+ 'source': 'C:/Users/Pratibha/.cloudmesh/download/test1.txt'}
+{'action': 'put',
+ 'destination': 'testLocalToAws.txt',
+ 'message': 'Source uploaded',
+ 'objlist': [{'contentLength': '16',
+              'fileName': 'testLocalToAws.txt',
+              'lastModificationDate': 'Thu, 19 Dec 2019 04:59:13 GMT'}],
+ 'recursive': True,
+ 'source': 'C:/Users/Pratibha/.cloudmesh/download/test1.txt'}
+[32mFile copied from local to aws[0m
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_awstogoogle awsgoogletest1.txttestAwsToGoogle.txt
+C:\Users\Pratibha\.cloudmesh\download
+absolute
+WindowsPath('C:/Users/Pratibha/.cloudmesh/download')
+source_file=test1.txt Target= C:\Users\Pratibha\.cloudmesh\download/test1.txt
+{'action': 'get',
+ 'destination': 'C:\\Users\\Pratibha\\.cloudmesh\\download/test1.txt',
+ 'message': 'Source downloaded',
+ 'objlist': [{'contentLength': '16',
+              'fileName': 'test1.txt',
+              'lastModificationDate': 'Wed, 20 Nov 2019 04:13:05 GMT'}],
+ 'recursive': True,
+ 'source': 'test1.txt'}
+[32mFile copied from aws to google[0m
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_googletolocal ('test1.txt', 'testGoogleToLocal.txt')
+[32mFile copied from test1.txt to C:/Users/Pratibha/.cloudmesh/download/testGoogleToLocal.txt[0m
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_localtogoogle ('test1.txt', 'text1copy.txt')
+Copying file from Local to Google
+[32mFile copied from test1.txt to text1copy.txt[0m
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_googletoaws awsgoogletest1.txttest1Copy.txt
+C:\Users\Pratibha\.cloudmesh\download
+absolute
+WindowsPath('C:/Users/Pratibha/.cloudmesh/download')
+source_file=test1.txt Target= C:\Users\Pratibha\.cloudmesh\download/test1.txt
+{'action': 'get',
+ 'destination': 'C:\\Users\\Pratibha\\.cloudmesh\\download/test1.txt',
+ 'message': 'Source downloaded',
+ 'objlist': [{'contentLength': '16',
+              'fileName': 'test1.txt',
+              'lastModificationDate': 'Wed, 20 Nov 2019 04:13:05 GMT'}],
+ 'recursive': True,
+ 'source': 'test1.txt'}
+[32mFile copied from aws to google[0m
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_deletegoogle [32mtext1copy.txt has been deleted from Google - gcp_516[0m
+'a1/'
+'a1/test1.txt'
+'test1.txt'
+'test1Copy.txt'
+'testAwsToGoogle.txt'
+'uploadtest1.txt'
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_deleteaws {'action': 'delete',
+ 'message': 'Source Not Found',
+ 'objlist': [],
+ 'recursive': True,
+ 'source': 'testLocalToAws.txt.txt'}
+[]
+PASSED
+cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_results 
++-------------------+-----------------------------------------------------------------------------------+
+| Machine Attribute | Value                                                                             |
++-------------------+-----------------------------------------------------------------------------------+
+| cpu_count         | 4                                                                                 |
+| mac_version       |                                                                                   |
+| machine           | ('AMD64',)                                                                        |
+| mem_available     | 3.4 GiB                                                                           |
+| mem_free          | 3.4 GiB                                                                           |
+| mem_percent       | 56.8%                                                                             |
+| mem_total         | 7.9 GiB                                                                           |
+| mem_used          | 4.5 GiB                                                                           |
+| node              | ('PratiSree',)                                                                    |
+| platform          | Windows-10-10.0.18362-SP0                                                         |
+| processor         | ('Intel64 Family 6 Model 69 Stepping 1, GenuineIntel',)                           |
+| processors        | Windows                                                                           |
+| python            | 3.7.4 (tags/v3.7.4:e09359112e, Jul  8 2019, 20:34:20) [MSC v.1916 64 bit (AMD64)] |
+| release           | ('10',)                                                                           |
+| sys               | win32                                                                             |
+| system            | Windows                                                                           |
+| user              |                                                                                   |
+| version           | 10.0.18362                                                                        |
+| win_version       | ('10', '10.0.18362', 'SP0', '')                                                   |
++-------------------+-----------------------------------------------------------------------------------+
++------------------+-------+---------------------+-----+----------------+------+---------+-------------+---------------------------------+
+| timer            | time  | start               | tag | node           | user | system  | mac_version | win_version                     |
++------------------+-------+---------------------+-----+----------------+------+---------+-------------+---------------------------------+
+| LIST AWS         | 2.735 | 2019-12-19 04:59:05 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| LIST GOOGLE      | 0.475 | 2019-12-19 04:59:08 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| LOCAL_TO_AWS_DIR | 1.238 | 2019-12-19 04:59:08 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| AWS_TO_LOCAL_DIR | 0.694 | 2019-12-19 04:59:10 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| AWS_TO_LOCAL     | 1.582 | 2019-12-19 04:59:10 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| LOCAL_TO_AWS     | 0.819 | 2019-12-19 04:59:12 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| AWS_TO_GOOGLE    | 3.069 | 2019-12-19 04:59:13 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| GOOGLE_TO_LOCAL  | 0.667 | 2019-12-19 04:59:16 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| LOCAL_TO_GOOGLE  | 0.588 | 2019-12-19 04:59:16 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| GOOGLE_TO_AWS    | 2.16  | 2019-12-19 04:59:17 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| DELETE GOOGLE    | 0.544 | 2019-12-19 04:59:19 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
+| DELETE AWS       | 1.338 | 2019-12-19 04:59:20 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
++------------------+-------+---------------------+-----+----------------+------+---------+-------------+---------------------------------+
+
+PASSED
+
+============================= 13 passed in 20.40s =============================
