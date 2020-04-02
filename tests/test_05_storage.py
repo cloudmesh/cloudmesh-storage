@@ -21,6 +21,9 @@ from cloudmesh.storage.Provider import Provider
 #
 # cms set storage=gdrive
 #
+
+ASSERT_MISSING = False
+
 Benchmark.debug()
 
 location = "/tmp/cloudmesh/storage"
@@ -61,10 +64,16 @@ class TestStorage(object):
         HEADING()
         Benchmark.Start()
         self.sourcedir = path_expand(f"{location}/storage/source/test/")
-        self.create_file(f"{location}/storage/source/test/a/a.txt", "content of a")
-        self.create_file(f"{location}/storage/source/test/a/b/b.txt", "content of b")
-        self.create_file(f"{location}/storage/source/test/a/b/c/c.txt",
-                               "content of c")
+
+        tree = [
+            "a/a.txt",
+            "a/b/b.txt",
+            "a/b/c/c.txt"
+        ]
+
+        for file in tree:
+            self.create_file(f"{location}/test/file", f"content of {file}")
+
         Benchmark.Stop()
 
         # test if the files are ok
@@ -97,14 +106,6 @@ class TestStorage(object):
     def test_put_recursive(self):
         HEADING()
 
-        # root=f"{location}"
-        # src = "storage/test/a/a.txt"
-
-        # source = f"local:{src}"
-        # destination = f"aws:{src}"
-        # test_file = self.p.put(src, dst)
-
-        # src = "storage_a:test/a/a.txt"
         src = f"{location}/storage/source/test/"
         dst = f"{location}/storage/destination"
 
@@ -116,18 +117,16 @@ class TestStorage(object):
 
         assert test_file is not None
 
-
     def test_get_recursive(self):
         home = self.sourcedir
-        src = f"{location}/storage/source/test/"
-        dst = f"{location}/storage/destination"
+        src = f"{location}/storage/source/test/a"
+        dst = f"{location}/storage/destination/get"
         Benchmark.Start()
-        dnld_files = self.p.get(self.p.service, "/a", f"{home}/get", True)
+        test_files = self.p.get(src, dst, True)
         Benchmark.Stop()
-        pprint(dnld_files)
+        pprint(test_files)
 
-        assert dnld_files is not None
-
+        assert test_files is not None
 
     def test_list(self):
         HEADING()
@@ -180,5 +179,7 @@ class TestStorage(object):
         provider.delete(src)
         Benchmark.Stop()
 
+        assert ASSERT_MISSING
+
     def test_benchmark(self):
-        Benchmark.print()sysinfo=False, csv=True, tag=service)
+        Benchmark.print()
