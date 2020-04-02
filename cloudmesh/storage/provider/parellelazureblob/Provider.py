@@ -1,14 +1,15 @@
 import os
 import re
+from pathlib import Path
 from pprint import pprint
 
 from azure.storage.blob import BlockBlobService
+from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import banner
 from cloudmesh.common.util import path_expand
-from cloudmesh.abstract.StorageABC import StorageABC
-from pathlib import Path
+
 
 class Provider(StorageABC):
     kind = "azureblob"
@@ -85,7 +86,7 @@ class Provider(StorageABC):
                 src_path = os.path.join(os.getcwd(), source_path)
         return src_path
 
-    def get(self, service=None, source=None, destination=None, recursive=False):
+    def get(self, source=None, destination=None, recursive=False):
         """
         Downloads file from Destination(Service) to Source(local)
 
@@ -240,7 +241,7 @@ class Provider(StorageABC):
         # pprint(dict_obj)
         return dict_obj
 
-    def put(self, service=None, source=None, destination=None, recursive=False):
+    def put(self, source=None, destination=None, recursive=False):
         """
         Uploads file from Source(local) to Destination(Service)
 
@@ -331,7 +332,7 @@ class Provider(StorageABC):
         pprint(dict_obj)
         return dict_obj
 
-    def delete(self, service=None, source=None, recursive=False):
+    def delete(self, source=None, recursive=False):
         """
         Deletes the source from cloud service
 
@@ -387,7 +388,7 @@ class Provider(StorageABC):
         pprint(dict_obj)
         return dict_obj
 
-    def create_dir(self, service=None, directory=None):
+    def create_dir(self, directory=None):
         """
         Creates a directory in the cloud service
 
@@ -441,7 +442,7 @@ class Provider(StorageABC):
         pprint(dict_obj[0])
         return dict_obj[0]
 
-    def search(self, service=None, directory=None, filename=None,
+    def search(self, directory=None, filename=None,
                recursive=False):
         """
         searches the filename in the directory
@@ -495,7 +496,7 @@ class Provider(StorageABC):
         return dict_obj
 
     # TODO code change:
-    # def list(self, service=None, source=None, recursive=False):
+    # def list(self, source=None, recursive=False):
     def list(self, source=None, dir_only=False, recursive=False):
         """
         lists all files specified in the source
