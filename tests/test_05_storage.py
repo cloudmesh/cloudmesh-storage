@@ -57,16 +57,15 @@ class TestStorage(object):
             print(e.strerror)
             assert False, "Directory {location} could not be deleted"
 
-
     def test_create_local_source(self):
         HEADING()
-        StopWatch.start("create source")
+        Benchmark.Start()
         self.sourcedir = path_expand(f"{location}/storage/source/test/")
         self.create_file(f"{location}/storage/source/test/a/a.txt", "content of a")
         self.create_file(f"{location}/storage/source/test/a/b/b.txt", "content of b")
         self.create_file(f"{location}/storage/source/test/a/b/c/c.txt",
                                "content of c")
-        StopWatch.stop("create source")
+        Benchmark.Stop()
 
         # test if the files are ok
         assert True
@@ -74,24 +73,26 @@ class TestStorage(object):
     def test_put(self):
         HEADING()
 
-        # root=f"{location}"
-        # src = "storage/test/a/a.txt"
-
-        # src = f"local:{src}"
-        # dst = f"aws:{src}"
-        # test_file = self.p.put(src, dst)
-
-        # src = "storage_a:test/a/a.txt"
-
-        src = f"{location}/storage/source/test/"
-        dst = f"{location}/storage/destination"
-        StopWatch.start("put")
+        src = f"{location}/storage/source/test/a.txt"
+        dst = f"{location}/storage/destination/a.txt"
+        Benchmark.Start()
         test_file = provider.put(src, dst)
-        StopWatch.stop("put")
+        Benchmark.Stop()
 
         pprint(test_file)
 
         assert test_file is not None
+
+    def test_get(self):
+        HEADING()
+        src = f"{location}/storage/source/test/a.txt"
+        dst = f"{location}/storage/destination/a.txt"
+        Benchmark.Start()
+        file = provider.get(src, dst)
+        Benchmark.Stop()
+        pprint(file)
+
+        assert file is not None
 
     def test_put_recursive(self):
         HEADING()
@@ -104,34 +105,36 @@ class TestStorage(object):
         # test_file = self.p.put(src, dst)
 
         # src = "storage_a:test/a/a.txt"
-
         src = f"{location}/storage/source/test/"
         dst = f"{location}/storage/destination"
-        StopWatch.start("put")
+
+        Benchmark.Start()
         test_file = provider.put(src, dst, True)
-        StopWatch.stop("put")
+        Benchmark.Stop()
 
         pprint(test_file)
 
         assert test_file is not None
 
-    def test_get(self):
-        HEADING()
-        src = f"{location}/storage/source/test/a.txt"
-        dst = f"{location}/storage/destination/a.txt"
-        StopWatch.start("get")
-        file = provider.get(src, dst)
-        StopWatch.stop("get")
-        pprint(file)
 
-        assert file is not None
+    def test_get_recursive(self):
+        home = self.sourcedir
+        src = f"{location}/storage/source/test/"
+        dst = f"{location}/storage/destination"
+        Benchmark.Start()
+        dnld_files = self.p.get(self.p.service, "/a", f"{home}/get", True)
+        Benchmark.Stop()
+        pprint(dnld_files)
+
+        assert dnld_files is not None
+
 
     def test_list(self):
         HEADING()
         src = f"{location}/storage/source/test/"
-        StopWatch.start("list")
+        Benchmark.Start()
         contents = provider.list(src)
-        StopWatch.stop("list")
+        Benchmark.Stop()
         for c in contents:
             pprint(c)
 
@@ -140,9 +143,9 @@ class TestStorage(object):
     def test_list_dir_only(self):
         HEADING()
         src = f"{location}/storage/source/test/a"
-        StopWatch.start("list")
+        Benchmark.Start()
         contents = provider.list(src, dir, True)
-        StopWatch.stop("list")
+        Benchmark.Stop()
         for c in contents:
             pprint(c)
 
@@ -152,9 +155,9 @@ class TestStorage(object):
         HEADING()
         src = f"{location}/storage/source/test/"
         filename = "a.txt"
-        StopWatch.start("search")
+        Benchmark.Start()
         search_files = provider.search(src, filename, True)
-        StopWatch.stop("search")
+        Benchmark.Stop()
         pprint(search_files)
         assert len(search_files) > 0
         # assert filename in search_files[0]['cm']["name"]
@@ -162,9 +165,9 @@ class TestStorage(object):
     def test_create_dir(self):
         HEADING()
         src = f"{location}/storage/source/test/created_dir"
-        StopWatch.start("create dir")
+        Benchmark.Start()
         directory = provider.create_dir(src)
-        StopWatch.stop("create dir")
+        Benchmark.Stop()
 
         pprint(directory)
 
@@ -173,9 +176,9 @@ class TestStorage(object):
     def test_delete(self):
         HEADING()
         src = f"{location}/storage/source/test/created_dir"
-        StopWatch.start("delete")
+        Benchmark.Start()
         provider.delete(src)
-        StopWatch.stop("delete")
+        Benchmark.Stop()
 
     def test_benchmark(self):
-        Benchmark.print(sysinfo=False, csv=True, tag=service)
+        Benchmark.print()sysinfo=False, csv=True, tag=service)
