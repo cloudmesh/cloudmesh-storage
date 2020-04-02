@@ -17,6 +17,7 @@ install:
   - pwd
 
 script:
+  - cms set storage=local
   - pytest -v --capture=no tests/test_01_storage_size.py
   - pytest -v --capture=no tests/test_02_storage_installer.py
   - pytest -v --capture=no tests/test_03_storage_local.py

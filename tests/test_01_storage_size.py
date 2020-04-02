@@ -19,7 +19,13 @@ from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
 from cloudmesh.common.debug import VERBOSE
 
+#
+# TODO: all asserts are incomplete
+#
+
 Benchmark.debug()
+
+tmp = "/tmp/cloudmesh/storage"
 
 user = Config()["cloudmesh.profile.user"]
 variables = Variables()
@@ -52,7 +58,7 @@ class TestStorage(object):
 
     def create_local_source(self, size=1024):
         StopWatch.start(f"create source {size}")
-        source = path_expand(f"~/.cloudmesh/storage/temp/{size}.txt")
+        source = path_expand(f"{tmp}/source/{size}.txt")
         Benchmark.file(source, size)
         StopWatch.stop(f"create source {size}")
 
@@ -79,8 +85,8 @@ class TestStorage(object):
 
         # src = "storage_a:test/a/a.txt"
 
-        src = "~/.cloudmesh/storage/temp/"
-        dst = '/'
+        src = f"{tmp}/source/"
+        dst = f"{tmp}/destination/"
         StopWatch.start("put")
         test_file = provider.put(src, dst)
         StopWatch.stop("put")
@@ -91,8 +97,8 @@ class TestStorage(object):
 
     def test_get(self):
         HEADING()
-        src = "/1024.txt"
-        dst = "~/.cloudmesh/storage/temp/"
+        src = f"{tmp}/source/1024.txt"
+        dst = f"{tmp}/destination/new-1024.txt"
         StopWatch.start("get")
         file = provider.get(src, dst)
         StopWatch.stop("get")
