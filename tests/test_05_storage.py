@@ -29,16 +29,14 @@ user = Config()["cloudmesh.profile.user"]
 variables = Variables()
 VERBOSE(variables.dict())
 
-key = variables['key']
+service = variables.parameter('storage')
 
-cloud = variables.parameter('storage')
+print(f"Test run for {service}")
 
-print(f"Test run for {cloud}")
-
-if cloud is None:
+if service is None:
     raise ValueError("storage is not set")
 
-provider = Provider(service=cloud)
+provider = Provider(service=service)
 print('provider:', provider, provider.kind)
 
 
@@ -180,4 +178,4 @@ class TestStorage(object):
         StopWatch.stop("delete")
 
     def test_benchmark(self):
-        Benchmark.print(sysinfo=False, csv=True, tag=cloud)
+        Benchmark.print(sysinfo=False, csv=True, tag=service)
