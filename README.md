@@ -70,7 +70,7 @@ TODO: you will be responsible for merging needed documentation form the
 old documentation and delete it if it is merged and no longer needed in
 the old documentation.
 
-## Architecture
+## Design
 
 ### Cloudmesh Provider Concept
 
@@ -95,14 +95,52 @@ THis move is not conducted by you but by Gregor, so we preserve the git
 history. He has a special git command that does this. So please for now
 develop in thsi directory if not already given other instructions.
 
-### Architecture
+### Arrchitecture
 
-TODO: This document is missing
+Current architecture concepts: [Cloudmesh Storage Concepts](https://cloudmesh.github.io/cloudmesh-manual/concepts/storage.html)
 
-### New Architecture for Parallel Transfers
+* TODO: Link to the document with the parallel architetcture is missing
 
-TODO: This document is missing
+* Parallel Queue
 
+### Comamnds
+
+See: [Storage Commands](https://cloudmesh.github.io/cloudmesh-manual/manual-storage.html)
+
+* TODO: If a command is missing let Gregor know and we work on integrating it.
+
+### API
+
+See: [Storage API](https://cloudmesh.github.io/cloudmesh-manual/api/index.html#cloudmesh-api)
+
+* TODO: If your docstrings are incomplete or incorrect please fix
+* TODO: If your API is missing please contact Gregor
+
+The API for storage will likely have cloudmesh.storage
+
+HOwever if your API is in a provider specific directory, please add it
+to the documentation here. In that case communicate with Gregor for
+guidance.
+
+In addition to the manual pages, they are also available as API so you can directly access the commands from teh API.
+
+Please see:
+
+* [cms storage](https://cloudmesh.github.io/cloudmesh-manual/api/cloudmesh.storage.command.html)
+* [cms vdir](https://cloudmesh.github.io/cloudmesh-manual/api/cloudmesh.vdir.command.html)
+
+### Jupyter Example
+
+TODO: Please develop an example to showcase how your code can be used form JUpyter
+
+see: [Jupyter example for compute](https://cloudmesh.github.io/cloudmesh-manual/jupyter/index.html)
+
+for an example for using compute providers.
+
+### API Example
+
+TODO: Please also provde an example on hoe t use your provider directly.
+This can be most likely copied from a pytset.
 
 ## Tests
 
