@@ -4,7 +4,8 @@ from cloudmesh.common.variables import Variables
 from cloudmesh.shell.command import PluginCommand
 from cloudmesh.shell.command import command, map_parameters
 from cloudmesh.storage.Provider import Provider
-
+from cloudmesh.common.util import yn_choice
+from cloudmesh.common.console import Console
 
 # noinspection PyBroadException
 class StorageCommand(PluginCommand):
@@ -19,10 +20,8 @@ class StorageCommand(PluginCommand):
              storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N]
              storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
              storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
-             storage list [SOURCE] [--recursive]  [--storage=SERVICE] [--parallel=N] [--output=OUTPUT]
-             storage slist --source=SOURCE:SOURCE_FILE_DIR [WILLBEMERGED]
-             storage delete SOURCE [--storage=SERVICE] [--parallel=N]
-             storage sdelete --source=SOURCE:SOURCE_FILE_DIR [WILLBEMERGED]
+             storage list [SOURCE] [--recursive] [--parallel=N] [--output=OUTPUT] [--dryrun]
+             storage delete SOURCE [--parallel=N] [--dryrun]
              storage search  DIRECTORY FILENAME [--recursive] [--storage=SERVICE] [--parallel=N] [--output=OUTPUT]
              storage sync SOURCE DESTINATION [--name=NAME] [--async] [--storage=SERVICE]
              storage sync status [--name=NAME] [--storage=SERVICE]
@@ -133,6 +132,7 @@ class StorageCommand(PluginCommand):
 
         VERBOSE(arguments)
         map_parameters(arguments,
+                       "dryrun",
                        "recursive",
                        "storage",
                        "source",
@@ -140,21 +140,9 @@ class StorageCommand(PluginCommand):
 
         source = arguments.source
         target = arguments.target
-        VERBOSE(arguments)
+        variables = Variables()
 
-        if arguments.storage is None:
-            if arguments.copy is None:
-                try:
-                    v = Variables()
-                    arguments.storage = v['storage']
-                except Exception as e:
-                    arguments.storage = None
-                    raise ValueError("Storage provider is not defined")
-            else:
-                if arguments.DESTINATION.split(":")[0] == "local":
-                    arguments.storage = arguments.SOURCE.split(":")[0]
-                else:
-                    arguments.storage = arguments.DESTINATION.split(":")[0]
+        VERBOSE(arguments)
 
         arguments.storage = Parameter.expand(arguments.storage)
 
@@ -179,39 +167,64 @@ class StorageCommand(PluginCommand):
 
         elif arguments.list:
 
-            source = arguments.SOURCE or '.'
+            """
+            storage list SOURCE [--parallel=N]
+            """
+            sources = arguments.SOURCE or variables["storage"] or 'local:.'
+            sources = Parameter.expand(sources)
 
-            for storage in arguments.storage:
-                provider = Provider(storage)
+            deletes = []
+            for source in sources:
+                storage, entry = Parameter.separate(source)
 
-                result = provider.list(source,
-                                       arguments.recursive)
+                storage = storage or "local"
+                deletes.append((storage, entry))
 
-        elif arguments.slist:
-            scloud, sbucket = source.split(":", 1) or None
-            if (scloud == "aws" or scloud == "google"):
-                provider = Provider(service=scloud)
-                provider.list(sbucket)
-            else:
-                print("Source Provider Not Implemented")
+            _sources = ', '.join(sources)
 
+            for delete in deletes:
+                service, entry = delete
+                if arguments.dryrun:
+                    print(f"Dryrun: list {service}:{entry}")
+                else:
+                    provider = Provider(service=service)
+                    provider.list(name=entry)
+
+            return ""
 
         elif arguments.delete:
 
-            for storage in arguments.storage:
-                provider = Provider(storage)
+            """
+            storage delete SOURCE [--parallel=N]
+            """
+            sources = arguments.SOURCE or variables["storage"] or 'local:.'
+            sources = Parameter.expand(sources)
 
-                provider.delete(arguments.SOURCE)
+            deletes = []
+            for source in sources:
+                storage, entry = Parameter.separate(source)
 
-        elif arguments.sdelete:
+                storage = storage or "local"
+                deletes.append((storage, entry))
 
-            scloud, sbucket = source.split(":", 1) or None
-            if (scloud == "aws" or scloud == "google"):
-                provider = Provider(service=scloud)
-                provider.delete(sbucket)
+            _sources = ', '.join(sources)
+
+            answer = yn_choice(f"Would you like to delete {_sources}?", default="no")
+
+            if answer:
+
+                for delete in deletes:
+                    service, entry = delete
+                    if arguments.dryrun:
+                        print(f"Dryrun: delete {service}:{entry}")
+                    else:
+                        provider = Provider(service=service)
+                        provider.delete(name=entry)
+
             else:
-                print("Source Provider Not Implemented")
+                Console.error("Deletion canceled")
 
+            return ""
 
         elif arguments.search:
 
