@@ -1,10 +1,11 @@
-from boxsdk import JWTAuth
+import os
+from os.path import basename, join, dirname
+
 from boxsdk import Client
+from boxsdk import JWTAuth
+from cloudmesh.abstract.StorageDeprecatedABC import StorageABC
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
-from os.path import basename, join, dirname
-import os
-from cloudmesh.abstract.StorageDeprecatedABC import StorageABC
 
 
 def get_id(source, results, source_type):
@@ -77,12 +78,11 @@ class Provider(StorageABC):
         self.sdk = JWTAuth.from_settings_file(self.credentials['config_path'])
         self.client = Client(self.sdk)
 
-    def put(self, service=None, source=None, destination=None, recursive=False):
+    def put(self, source=None, destination=None, recursive=False):
         """
         uploads file to Box, if source is directory and recursive is true
         uploads all files in source directory
 
-        :param service: the name of the service in the yaml file
         :param source: local file or directory to be uploaded
         :param destination: cloud directory to upload to
         :param recursive: if true upload all files in source directory,
@@ -153,11 +153,10 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def get(self, service=None, source=None, destination=None, recursive=False):
+    def get(self, source=None, destination=None, recursive=False):
         """
         downloads file from Box, if recursive is true and source is directory downloads all files in directory
 
-        :param service: the name of the service in the yaml file
         :param source: cloud file or directory to download
         :param destination: local directory to be downloaded into
         :param recursive: if true download all files in source directory, source must be directory
@@ -210,11 +209,10 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def search(self, service=None, directory=None, filename=None, recursive=False):
+    def search(self, directory=None, filename=None, recursive=False):
         """
         searches directory for file, if recursive searches all subdirectories
 
-        :param service: the name of the service in the yaml file
         :param directory: cloud directory to search in
         :param filename: name of file to search for
         :param recursive: if true search all child directories of original directory
@@ -258,11 +256,10 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def create_dir(self, service=None, directory=None):
+    def create_dir(self, directory=None):
         """
         creates a new directory
 
-        :param service: the name of the service in the yaml file
         :param directory: path for new directory
         :return: dict of new directory
         """
@@ -288,11 +285,10 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def list(self, service=None, source=None, recursive=False):
+    def list(self, source=None, recursive=False):
         """
         lists all contents of directory, if recursive lists contents of subdirectories as well
 
-        :param service: the name of the service in the yaml file
         :param source: cloud directory to list all contents of
         :param recursive: if true list contents of all child directories
         :return: dict(s) of files and directories
@@ -331,11 +327,10 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def delete(self, service=None, source=None, recursive=False):
+    def delete(self, source=None, recursive=False):
         """
         deletes file or directory
 
-        :param service: the name of the service in the yaml file
         :param source: file or directory to be deleted
         :param recursive: copy the directory recurseively
         :return: None
