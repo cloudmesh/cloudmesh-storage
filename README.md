@@ -1,5 +1,8 @@
 # Cloudmesh Storage Module
 
+## Changelog
+
+see: [Changelog](https://github.com/cloudmesh/cloudmesh-storage/blob/master/CHANGELOG.md)
 
 ## Requirements
 
