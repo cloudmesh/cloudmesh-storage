@@ -12,12 +12,11 @@ install:
   - python --version
   - pip install cloudmesh-installer
   - cloudmesh-installer get storage
+  - cms help
   - ls
   - pwd
 
 script:
-  - mkdir -p ~/.cloudmesh
-  - wget -P ~/.cloudmesh https://raw.githubusercontent.com/cloudmesh/cloudmesh-configuration/master/cloudmesh/configuration/etc/cloudmesh.yaml
   - pytest -v --capture=no tests/test_01_storage_size.py
   - pytest -v --capture=no tests/test_02_storage_installer.py
   - pytest -v --capture=no tests/test_03_storage_local.py
