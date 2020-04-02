@@ -4,20 +4,15 @@
 # pytest -v --capture=no tests/awss3/test_parallelaws3.py:::TestStorage::<METHIDNAME>
 ###############################################################
 import os
+import sys
 from pprint import pprint
 
-import pytest
 from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.common.Shell import Shell
 from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
-from cloudmesh.common.variables import Variables
-from cloudmesh.configuration.Config import Config
-from cloudmesh.storage.Provider import Provider
-import sys
 
 print("this seems to be the same as in test_05_storage")
 
@@ -29,7 +24,6 @@ print("we exist now to makes usre this gets your attention")
 sys.exit()
 
 # cms set storage=parallelaws3
-
 
 
 Benchmark.debug()
@@ -60,8 +54,10 @@ class TestStorageParallelaws3(object):
         HEADING()
         StopWatch.start("create source")
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
-        self.create_local_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
-        self.create_local_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
+        self.create_local_file("~/.cloudmesh/storage/test/a/a.txt",
+                               "content of a")
+        self.create_local_file("~/.cloudmesh/storage/test/a/b/b.txt",
+                               "content of b")
         self.create_local_file("~/.cloudmesh/storage/test/a/b/c/c.txt",
                                "content of c")
         StopWatch.stop("create source")

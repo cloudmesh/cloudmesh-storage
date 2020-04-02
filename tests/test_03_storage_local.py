@@ -45,7 +45,9 @@ def create_file(location, content):
 
     writefile(path_expand(location), content)
 
+
 location = "/tmp/cloudmesh/storage"
+
 
 @pytest.mark.incremental
 class TestLocal(object):
@@ -95,7 +97,7 @@ class TestLocal(object):
         # bug use named arguments
         #
         files = self.p.search(directory=src, filename=filename, recursive=True)
-        #pprint(files)
+        # pprint(files)
         StopWatch.stop("search")
 
         assert len(files) > 0
@@ -106,7 +108,7 @@ class TestLocal(object):
         src = path_expand("{location}/test/a/a.txt")
         dst = f"{location}/destination"
         test_file = self.p.put(src, dst)
-        #pprint(test_file)
+        # pprint(test_file)
         StopWatch.stop("put")
 
         assert test_file is not None
@@ -117,12 +119,12 @@ class TestLocal(object):
         src = path_expand(f"{location}/destination/a.txt")
         dst = path_expand(f"{location}/destination/test.txt")
         file = self.p.get(src, dst)
-        #pprint(file)
+        # pprint(file)
         StopWatch.stop("get")
 
         assert file is not None
 
-        #assert len(content) > 0
+        # assert len(content) > 0
 
     def test_06_create_dir(self):
         HEADING()
@@ -130,7 +132,7 @@ class TestLocal(object):
         src = path_expand("{dst}/created_dir")
         StopWatch.start("create_dir")
         directory = self.p.create_dir(src)
-        #pprint(directory)
+        # pprint(directory)
         StopWatch.stop("create_dir")
 
         assert directory is not None

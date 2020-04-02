@@ -1,8 +1,8 @@
-import pytest
+from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage_service.providers.Provider import Provider
 
-from cloudmesh.common.StopWatch import StopWatch
+service = "aws-google"
 
 
 class TestStorageService():
@@ -13,17 +13,17 @@ class TestStorageService():
         self.local_dir = config["cloudmesh"]["storage"]["local"]["dir"]
 
     def test_listaws(self):
-        StopWatch.start("LIST AWS")
+        Benchmark.Start()
         awsProvider = Provider(service="aws")
         testResult = awsProvider.list("test1")
-        StopWatch.stop("LIST AWS")
+        Benchmark.Stop()
         assert testResult is not None
 
     def test_listgoogle(self):
-        StopWatch.start("LIST GOOGLE")
+        Benchmark.Start("LIST GOOGLE")
         googleProvider = Provider(service="google")
         testResult = googleProvider.list("a1")
-        StopWatch.stop("LIST GOOGLE")
+        Benchmark.Stop("LIST GOOGLE")
         assert testResult is not None
 
     def test_localtoaws_dir(self):
@@ -32,10 +32,11 @@ class TestStorageService():
         sourceFile = "uploadtest"
         targetFile = "testFol1/"
 
-        StopWatch.start("LOCAL_TO_AWS_DIR")
+        Benchmark.Start("LOCAL_TO_AWS_DIR")
         awsProvider = Provider(service="aws")
-        testResult = awsProvider.copy(sourcecloud, targetcloud, sourceFile, targetFile)
-        StopWatch.stop("LOCAL_TO_AWS_DIR")
+        testResult = awsProvider.copy(sourcecloud, targetcloud, sourceFile,
+                                      targetFile)
+        Benchmark.Stop("LOCAL_TO_AWS_DIR")
         assert testResult is not None
 
     def test_awstolocal_dir(self):
@@ -44,10 +45,11 @@ class TestStorageService():
         sourceFile = "testFol1/"
         targetFile = "uploadtest"
 
-        StopWatch.start("AWS_TO_LOCAL_DIR")
+        Benchmark.Start("AWS_TO_LOCAL_DIR")
         awsProvider = Provider(service="aws")
-        testResult = awsProvider.copy(sourcecloud, targetcloud, sourceFile, targetFile)
-        StopWatch.stop("AWS_TO_LOCAL_DIR")
+        testResult = awsProvider.copy(sourcecloud, targetcloud, sourceFile,
+                                      targetFile)
+        Benchmark.Stop("AWS_TO_LOCAL_DIR")
         assert testResult is not None
 
     def test_AwsToLocal(self):
@@ -56,10 +58,11 @@ class TestStorageService():
         sourceFile = "test1.txt"
         targetFile = "testAwsToLocal.txt"
 
-        StopWatch.start("AWS_TO_LOCAL")
+        Benchmark.Start("AWS_TO_LOCAL")
         awsProvider = Provider(service=sourcecloud)
-        testResult = awsProvider.copy(sourcecloud, targetcloud, sourceFile, targetFile)
-        StopWatch.stop("AWS_TO_LOCAL")
+        testResult = awsProvider.copy(sourcecloud, targetcloud, sourceFile,
+                                      targetFile)
+        Benchmark.Stop("AWS_TO_LOCAL")
 
         assert testResult is not None
 
@@ -69,10 +72,11 @@ class TestStorageService():
         sourceFile = "test1.txt"
         targetFile = "testLocalToAws.txt"
 
-        StopWatch.start("LOCAL_TO_AWS")
+        Benchmark.Start("LOCAL_TO_AWS")
         awsProvider = Provider(service="aws")
-        testResult = awsProvider.copy(sourcecloud, targetcloud, sourceFile, targetFile)
-        StopWatch.stop("LOCAL_TO_AWS")
+        testResult = awsProvider.copy(sourcecloud, targetcloud, sourceFile,
+                                      targetFile)
+        Benchmark.Stop("LOCAL_TO_AWS")
         assert testResult is not None
 
     def test_awstogoogle(self):
@@ -81,10 +85,11 @@ class TestStorageService():
         sourceFile = "test1.txt"
         targetFile = "testAwsToGoogle.txt"
 
-        StopWatch.start("AWS_TO_GOOGLE")
+        Benchmark.Start("AWS_TO_GOOGLE")
         awsProvider = Provider(service=sourcecloud)
-        testResult = awsProvider.copy(sourcecloud, targetcloud, sourceFile, targetFile)
-        StopWatch.stop("AWS_TO_GOOGLE")
+        testResult = awsProvider.copy(sourcecloud, targetcloud, sourceFile,
+                                      targetFile)
+        Benchmark.Stop("AWS_TO_GOOGLE")
 
         assert testResult is not None
 
@@ -94,10 +99,11 @@ class TestStorageService():
         sourceFile = "test1.txt"
         targetFile = "testGoogleToLocal.txt"
 
-        StopWatch.start("GOOGLE_TO_LOCAL")
+        Benchmark.Start("GOOGLE_TO_LOCAL")
         googleProvider = Provider(service=sourcecloud)
-        testResult = googleProvider.copy(sourcecloud, targetcloud, sourceFile, targetFile)
-        StopWatch.stop("GOOGLE_TO_LOCAL")
+        testResult = googleProvider.copy(sourcecloud, targetcloud, sourceFile,
+                                         targetFile)
+        Benchmark.Stop("GOOGLE_TO_LOCAL")
 
         assert testResult is not None
 
@@ -107,10 +113,11 @@ class TestStorageService():
         sourceFile = "test1.txt"
         targetFile = "text1copy.txt"
 
-        StopWatch.start("LOCAL_TO_GOOGLE")
+        Benchmark.Start("LOCAL_TO_GOOGLE")
         googleProvider = Provider(service="google")
-        testResult = googleProvider.copy(sourcecloud, targetcloud, sourceFile, targetFile)
-        StopWatch.stop("LOCAL_TO_GOOGLE")
+        testResult = googleProvider.copy(sourcecloud, targetcloud, sourceFile,
+                                         targetFile)
+        Benchmark.Stop("LOCAL_TO_GOOGLE")
 
         assert testResult is not None
 
@@ -120,26 +127,27 @@ class TestStorageService():
         sourceFile = "test1.txt"
         targetFile = "test1Copy.txt"
 
-        StopWatch.start("GOOGLE_TO_AWS")
+        Benchmark.Start("GOOGLE_TO_AWS")
         googleProvider = Provider(service=sourcecloud)
-        testResult = googleProvider.copy(sourcecloud, targetcloud, sourceFile, targetFile)
-        StopWatch.stop("GOOGLE_TO_AWS")
+        testResult = googleProvider.copy(sourcecloud, targetcloud, sourceFile,
+                                         targetFile)
+        Benchmark.Stop("GOOGLE_TO_AWS")
 
         assert testResult is not None
 
     def test_deletegoogle(self):
-        StopWatch.start("DELETE GOOGLE")
+        Benchmark.Start("DELETE GOOGLE")
         googleProvider = Provider(service="google")
         testResult = googleProvider.delete("text1copy.txt")
-        StopWatch.stop("DELETE GOOGLE")
+        Benchmark.Stop("DELETE GOOGLE")
         assert testResult is not None
 
     def test_deleteaws(self):
-        StopWatch.start("DELETE AWS")
+        Benchmark.Start("DELETE AWS")
         awsprovider = Provider(service="aws")
         testResult = awsprovider.delete("testLocalToAws.txt.txt")
-        StopWatch.stop("DELETE AWS")
+        Benchmark.Stop("DELETE AWS")
         assert testResult is not None
 
-    def test_results(self):
-        StopWatch.benchmark(csv=False)
+    def test_benchmark(self):
+        Benchmark.print(sysinfo=False, csv=True, tag=service)

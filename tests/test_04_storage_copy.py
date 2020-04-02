@@ -13,7 +13,6 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import banner
 from cloudmesh.common.util import path_expand
-from cloudmesh.common.variables import Variables
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
 
@@ -80,7 +79,7 @@ class TestStorage(object):
                     else:
                         dst = file
 
-                    print("0"*100)
+                    print("0" * 100)
                     provider = Provider(service=storage)
 
                     banner(f"copy {source}:{src} to {target}:{dst}")

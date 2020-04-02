@@ -29,7 +29,6 @@ class TestStorageOracle(object):
         Shell.mkdir(os.dirname(path_expand(location)))
         writefile(location, content)
 
-
     def setup(self):
         variables = Variables()
         print(variables['storage'])

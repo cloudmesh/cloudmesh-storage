@@ -84,9 +84,9 @@ class TestStorage(object):
 
         src = f"{tmp}/source/"
         dst = f"{tmp}/destination/"
-        StopWatch.start("put")
+        Benchmark.Start()
         test_file = provider.put(src, dst)
-        StopWatch.stop("put")
+        Benchmark.Stop()
 
         pprint(test_file)
 
@@ -96,9 +96,9 @@ class TestStorage(object):
         HEADING()
         src = f"{tmp}/source/1024.txt"
         dst = f"{tmp}/destination/new-1024.txt"
-        StopWatch.start("get")
+        Benchmark.Start("get")
         file = provider.get(src, dst)
-        StopWatch.stop("get")
+        Benchmark.Stop("get")
         pprint(file)
 
         assert file is not None
