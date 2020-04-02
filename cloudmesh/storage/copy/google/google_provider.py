@@ -1,15 +1,13 @@
-
-from cloudmesh.storage.StorageNewABC import StorageABC
-from cloudmesh.configuration.Config import Config
-#from cloudmesh.storage.provider.gdrive.Provider import Provider as GProv
-from cloudmesh.storage.provider.awss3.Provider import Provider as AWS_Provider
-from datetime import datetime
-
-from google.cloud import storage
-import os
-from pprint import pprint
-from cloudmesh.common.console import Console
 from pathlib import Path
+from pprint import pprint
+
+from cloudmesh.common.console import Console
+from cloudmesh.configuration.Config import Config
+from cloudmesh.storage.StorageNewABC import StorageABC
+# from cloudmesh.storage.provider.gdrive.Provider import Provider as GProv
+from cloudmesh.storage.provider.awss3.Provider import Provider as AWS_Provider
+from google.cloud import storage
+
 
 class Provider(StorageABC):
 

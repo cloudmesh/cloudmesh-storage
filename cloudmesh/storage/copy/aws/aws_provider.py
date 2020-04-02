@@ -1,12 +1,13 @@
-import boto3
-
-from cloudmesh.storage.StorageNewABC import StorageABC
-from cloudmesh.configuration.Config import Config
-from cloudmesh.storage.provider.awss3.Provider import Provider as AWSProv
-from cloudmesh.storage_service.providers.google.google_provider import Provider as Google_Provider
-from pprint import pprint
-from cloudmesh.common.console import Console
 from pathlib import Path
+from pprint import pprint
+
+import boto3
+from cloudmesh.common.console import Console
+from cloudmesh.configuration.Config import Config
+from cloudmesh.storage.StorageNewABC import StorageABC
+from cloudmesh.storage.provider.awss3.Provider import Provider as AWSProv
+from cloudmesh.storage_service.providers.google.google_provider import \
+    Provider as Google_Provider
 
 
 class Provider(StorageABC):

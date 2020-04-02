@@ -1,6 +1,9 @@
-from cloudmesh.storage_service.providers.aws.aws_provider import Provider as AWS_Provider
-from cloudmesh.storage_service.providers.google.google_provider import Provider as Google_Provider
 from cloudmesh.storage.StorageNewABC import StorageABC
+from cloudmesh.storage_service.providers.aws.aws_provider import \
+    Provider as AWS_Provider
+from cloudmesh.storage_service.providers.google.google_provider import \
+    Provider as Google_Provider
+
 
 class Provider(StorageABC):
 
