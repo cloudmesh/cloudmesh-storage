@@ -24,6 +24,8 @@ from cloudmesh.common.debug import VERBOSE
 #
 Benchmark.debug()
 
+location = "/tmp/cloudmesh/storage"
+
 user = Config()["cloudmesh.profile.user"]
 variables = Variables()
 VERBOSE(variables.dict())
@@ -56,10 +58,10 @@ class TestStorage(object):
     def test_create_local_source(self):
         HEADING()
         StopWatch.start("create source")
-        self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
-        self.create_local_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
-        self.create_local_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
-        self.create_local_file("~/.cloudmesh/storage/test/a/b/c/c.txt",
+        self.sourcedir = path_expand(f"{location}/storage/source/test/")
+        self.create_local_file(f"{location}/storage/source/test/a/a.txt", "content of a")
+        self.create_local_file(f"{location}/storage/source/test/a/b/b.txt", "content of b")
+        self.create_local_file(f"{location}/storage/source/test/a/b/c/c.txt",
                                "content of c")
         StopWatch.stop("create source")
 
@@ -69,7 +71,7 @@ class TestStorage(object):
     def test_put(self):
         HEADING()
 
-        # root="~/.cloudmesh"
+        # root=f"{location}"
         # src = "storage/test/a/a.txt"
 
         # src = f"local:{src}"
@@ -78,8 +80,8 @@ class TestStorage(object):
 
         # src = "storage_a:test/a/a.txt"
 
-        src = "~/.cloudmesh/storage/test/"
-        dst = '/'
+        src = f"{location}/storage/source/test/"
+        dst = f"{location}/storage/destination"
         StopWatch.start("put")
         test_file = provider.put(src, dst)
         StopWatch.stop("put")
@@ -91,7 +93,7 @@ class TestStorage(object):
     def test_put_recursive(self):
         HEADING()
 
-        # root="~/.cloudmesh"
+        # root=f"{location}"
         # src = "storage/test/a/a.txt"
 
         # source = f"local:{src}"
@@ -100,8 +102,8 @@ class TestStorage(object):
 
         # src = "storage_a:test/a/a.txt"
 
-        src = "~/.cloudmesh/storage/test/"
-        dst = '/'
+        src = f"{location}/storage/source/test/"
+        dst = f"{location}/storage/destination"
         StopWatch.start("put")
         test_file = provider.put(src, dst, True)
         StopWatch.stop("put")
@@ -112,8 +114,8 @@ class TestStorage(object):
 
     def test_get(self):
         HEADING()
-        src = "/a.txt"
-        dst = "~/.cloudmesh/storage/test"
+        src = f"{location}/storage/source/test/a.txt"
+        dst = f"{location}/storage/destination/a.txt"
         StopWatch.start("get")
         file = provider.get(src, dst)
         StopWatch.stop("get")
@@ -123,7 +125,7 @@ class TestStorage(object):
 
     def test_list(self):
         HEADING()
-        src = '/'
+        src = f"{location}/storage/source/test/"
         StopWatch.start("list")
         contents = provider.list(src)
         StopWatch.stop("list")
@@ -134,8 +136,7 @@ class TestStorage(object):
 
     def test_list_dir_only(self):
         HEADING()
-        src = '/'
-        dir = "a"
+        src = f"{location}/storage/source/test/a"
         StopWatch.start("list")
         contents = provider.list(src, dir, True)
         StopWatch.stop("list")
@@ -146,7 +147,7 @@ class TestStorage(object):
 
     def test_search(self):
         HEADING()
-        src = '/'
+        src = f"{location}/storage/source/test/"
         filename = "a.txt"
         StopWatch.start("search")
         search_files = provider.search(src, filename, True)
@@ -157,7 +158,7 @@ class TestStorage(object):
 
     def test_create_dir(self):
         HEADING()
-        src = 'created_dir'
+        src = f"{location}/storage/source/test/created_dir"
         StopWatch.start("create dir")
         directory = provider.create_dir(src)
         StopWatch.stop("create dir")
@@ -168,7 +169,7 @@ class TestStorage(object):
 
     def test_delete(self):
         HEADING()
-        src = '/created_dir'
+        src = f"{location}/storage/source/test/created_dir"
         StopWatch.start("delete")
         provider.delete(src)
         StopWatch.stop("delete")
