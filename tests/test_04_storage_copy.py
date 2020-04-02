@@ -20,8 +20,6 @@ from cloudmesh.storage.Provider import Provider
 Benchmark.debug()
 
 user = Config()["cloudmesh.profile.user"]
-variables = Variables()
-key = variables['key']
 
 benchmark_tag = "storage copy"
 

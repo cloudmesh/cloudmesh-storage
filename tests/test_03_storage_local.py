@@ -25,8 +25,6 @@ user = Config()["cloudmesh.profile.user"]
 variables = Variables()
 VERBOSE(variables.dict())
 
-key = variables['key']
-
 cloud = variables.parameter('storage')
 
 print(f"Test run for {cloud}")

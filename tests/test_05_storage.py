@@ -63,7 +63,6 @@ class TestStorage(object):
     def test_create_local_source(self):
         HEADING()
         Benchmark.Start()
-        self.sourcedir = path_expand(f"{location}/storage/source/test/")
 
         tree = [
             "a/a.txt",
@@ -72,7 +71,7 @@ class TestStorage(object):
         ]
 
         for file in tree:
-            self.create_file(f"{location}/test/file", f"content of {file}")
+            self.create_file(f"{location}/{file}", f"content of {file}")
 
         Benchmark.Stop()
 
@@ -82,8 +81,8 @@ class TestStorage(object):
     def test_put(self):
         HEADING()
 
-        src = f"{location}/storage/source/test/a.txt"
-        dst = f"{location}/storage/destination/a.txt"
+        src = f"{location}/source/a.txt"
+        dst = f"{location}/destination/a.txt"
         Benchmark.Start()
         test_file = provider.put(src, dst)
         Benchmark.Stop()
@@ -94,8 +93,8 @@ class TestStorage(object):
 
     def test_get(self):
         HEADING()
-        src = f"{location}/storage/source/test/a.txt"
-        dst = f"{location}/storage/destination/a.txt"
+        src = f"{location}/source/a.txt"
+        dst = f"{location}/destination/a.txt"
         Benchmark.Start()
         file = provider.get(src, dst)
         Benchmark.Stop()
@@ -106,8 +105,8 @@ class TestStorage(object):
     def test_put_recursive(self):
         HEADING()
 
-        src = f"{location}/storage/source/test/"
-        dst = f"{location}/storage/destination"
+        src = f"{location}/source/"
+        dst = f"{location}/destination"
 
         Benchmark.Start()
         test_file = provider.put(src, dst, True)
@@ -118,9 +117,8 @@ class TestStorage(object):
         assert test_file is not None
 
     def test_get_recursive(self):
-        home = self.sourcedir
-        src = f"{location}/storage/source/test/a"
-        dst = f"{location}/storage/destination/get"
+        src = f"{location}/source/a"
+        dst = f"{location}/destination/get"
         Benchmark.Start()
         test_files = self.p.get(src, dst, True)
         Benchmark.Stop()
@@ -130,7 +128,7 @@ class TestStorage(object):
 
     def test_list(self):
         HEADING()
-        src = f"{location}/storage/source/test/"
+        src = f"{location}/source/"
         Benchmark.Start()
         contents = provider.list(src)
         Benchmark.Stop()
@@ -141,7 +139,7 @@ class TestStorage(object):
 
     def test_list_dir_only(self):
         HEADING()
-        src = f"{location}/storage/source/test/a"
+        src = f"{location}/source/a"
         Benchmark.Start()
         contents = provider.list(src, dir, True)
         Benchmark.Stop()
@@ -152,7 +150,7 @@ class TestStorage(object):
 
     def test_search(self):
         HEADING()
-        src = f"{location}/storage/source/test/"
+        src = f"{location}/source/"
         filename = "a.txt"
         Benchmark.Start()
         search_files = provider.search(src, filename, True)
@@ -163,7 +161,7 @@ class TestStorage(object):
 
     def test_create_dir(self):
         HEADING()
-        src = f"{location}/storage/source/test/created_dir"
+        src = f"{location}/created_dir"
         Benchmark.Start()
         directory = provider.create_dir(src)
         Benchmark.Stop()
@@ -174,7 +172,7 @@ class TestStorage(object):
 
     def test_delete(self):
         HEADING()
-        src = f"{location}/storage/source/test/created_dir"
+        src = f"{location}/created_dir"
         Benchmark.Start()
         provider.delete(src)
         Benchmark.Stop()
