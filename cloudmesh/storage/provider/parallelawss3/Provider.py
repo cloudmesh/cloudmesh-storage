@@ -763,6 +763,75 @@ class Provider(StorageABC):
         specification['status'] = 'completed'
         return specification
 
+    # function to search a file or directory and list its attributes
+    def search_run(self, specification):
+
+        directory = specification['directory']
+        filename = specification['filename']
+        recursive = specification['recursive']
+
+        len_dir = len(self.massage_path(directory))
+        if len_dir > 0:
+            file_path = self.massage_path(directory) + '/' + filename
+        else:
+            file_path = filename
+
+        self.s3_resource = boto3.resource(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
+
+        info_list = []
+        objs = []
+
+        if (len_dir > 0) and recursive is False:
+            objs = list(
+                self.s3_resource.Bucket(self.container_name).objects.filter(
+                    Prefix=file_path))
+        elif (len_dir == 0) and recursive is False:
+            objs = list(
+                self.s3_resource.Bucket(self.container_name).objects.filter(
+                    Prefix=file_path))
+        elif (len_dir > 0) and recursive is True:
+            objs = list(
+                self.s3_resource.Bucket(self.container_name).objects.filter(
+                    Prefix=self.massage_path(directory)))
+        elif (len_dir == 0) and recursive is True:
+            objs = list(
+                self.s3_resource.Bucket(self.container_name).objects.all())
+
+        if len(objs) > 0:
+            for obj in objs:
+                if os.path.basename(obj.key) == filename:
+                    metadata = self.s3_client.head_object(
+                        Bucket=self.container_name, Key=obj.key)
+                    info = {
+                        "fileName": obj.key,
+                        "lastModificationDate":
+                            metadata['ResponseMetadata']['HTTPHeaders'][
+                                'last-modified'],
+                        "contentLength":
+                            metadata['ResponseMetadata']['HTTPHeaders'][
+                                'content-length']
+                    }
+                    info_list.append(info)
+
+        if len(info_list) == 0:
+            print("File not found")
+        else:
+            print("File found")
+
+        specification['status'] = 'completed'
+        return specification
+
     def cancel_run(self, specification):
         cm = CmDatabase()
         entries = cm.find(cloud=self.name,
@@ -822,11 +891,11 @@ class Provider(StorageABC):
         return entries
 
     @DatabaseUpdate()
-    def delete(self, path, recursive=True):
+    def delete(self, source, recursive=True):
         """
         adds a delete action to the queue
 
-        :param path:
+        :param source:
         :param recursive:
         :return:
         """
@@ -835,7 +904,7 @@ class Provider(StorageABC):
         specification = textwrap.dedent(f"""
                 cm:
                    number: {self.number}
-                   name: "{path}"
+                   name: "{source}"
                    kind: storage
                    id: {uuid_str}
                    cloud: {self.name}
@@ -843,10 +912,34 @@ class Provider(StorageABC):
                    created: {date}
                 action: delete
                 source:
-                  path: {path}
+                  path: {source}
                 recursive: {recursive}
                 status: waiting
                 """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+        return entries
+
+    @DatabaseUpdate()
+    def search(self, directory=None, filename=None, recursive=False):
+
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+                    cm:
+                       number: {self.number}
+                       name: "{directory}:{filename}"
+                       kind: storage
+                       id: {uuid_str}
+                       cloud: {self.name}
+                       collection: {self.collection}
+                       created: {date}
+                    action: search
+                    directory: {directory}
+                    filename: {filename}
+                    recursive: {recursive}
+                    status: waiting
+                    """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
         self.number = self.number + 1
         return entries
@@ -953,12 +1046,12 @@ class Provider(StorageABC):
         return entries
 
     @DatabaseUpdate()
-    def list(self, path, dir_only=False, recursive=False):
+    def list(self, source, dir_only=False, recursive=False):
         """
         adds a list action to the queue
 
         list the directory in the storage service
-        :param path:
+        :param source:
         :param dir_only:
         :param recursive:
         :return:
@@ -972,11 +1065,11 @@ class Provider(StorageABC):
                         kind: storage
                         id: {uuid_str}
                         cloud: {self.name}
-                        name: {path}
+                        name: {source}
                         collection: {self.collection}
                         created: {date}
                       action: list
-                      path: {path}
+                      path: {source}
                       status: waiting
                 """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
@@ -1022,6 +1115,9 @@ class Provider(StorageABC):
         elif action == "put":
             specification = self.put_run(specification)
             self.update_dict(elements=[specification])
+        elif action == "search":
+            specification = self.search_run(specification)
+            self.update_dict(elements=[specification])
 
     def get_actions(self):
         cm = CmDatabase()
@@ -1034,6 +1130,7 @@ class Provider(StorageABC):
         list_actions = []
         delete_actions = []
         cancel_actions = []
+        search_actions = []
 
         for entry in entries:
             pprint(entry)
@@ -1051,11 +1148,11 @@ class Provider(StorageABC):
                 delete_actions.append(entry)
             elif entry['action'] == 'cancel' and entry['status'] == 'waiting':
                 cancel_actions.append(entry)
+            elif entry['action'] == 'search' and entry['status'] == 'waiting':
+                search_actions.append(entry)
 
         return get_actions, put_actions, mkdir_actions, copy_actions, \
-               list_actions, \
-               delete_actions, \
-               cancel_actions
+               list_actions, delete_actions, cancel_actions, search_actions
 
     def run(self):
         """
@@ -1065,8 +1162,7 @@ class Provider(StorageABC):
         :return:
         """
         get_action, put_action, mkdir_action, copy_action, list_action, \
-        delete_action, \
-        cancel_action = self.get_actions()
+        delete_action, cancel_action, search_action = self.get_actions()
 
         pool = Pool(self.parallelism)
         # cancel the actions
@@ -1090,6 +1186,9 @@ class Provider(StorageABC):
         # LIST FILES
         pool.map(self.action, list_action)
 
+        # SEARCH FILES
+        pool.map(self.action, search_action)
+
         # Worker processes within a Pool typically live for the complete \
         # duration of the Pool’s work queue.
 
@@ -1100,79 +1199,6 @@ class Provider(StorageABC):
         # terminate() before using join().
         pool.join()
 
-
-
-    # function to search a file or directory and list its attributes
-    def search(self,
-               directory=None,
-               filename=None,
-               recursive=False):
-        """
-        gets the destination and copies it in source
-
-        :param directory: the directory which either can be a directory or file
-        :param filename: filename
-        :param recursive: in case of directory the recursive refers to all
-                          subdirectories in the specified source
-        :return: dict
-        """
-
-        self.storage_dict['search'] = 'search'
-        self.storage_dict['directory'] = directory
-        self.storage_dict['filename'] = filename
-        self.storage_dict['recursive'] = recursive
-
-        len_dir = len(self.massage_path(directory))
-        if len_dir > 0:
-            file_path = self.massage_path(directory) + '/' + filename
-        else:
-            file_path = filename
-
-        info_list = []
-        objs = []
-
-        if (len_dir > 0) and recursive is False:
-            objs = list(
-                self.s3_resource.Bucket(self.container_name).objects.filter(
-                    Prefix=file_path))
-        elif (len_dir == 0) and recursive is False:
-            objs = list(
-                self.s3_resource.Bucket(self.container_name).objects.filter(
-                    Prefix=file_path))
-        elif (len_dir > 0) and recursive is True:
-            objs = list(
-                self.s3_resource.Bucket(self.container_name).objects.filter(
-                    Prefix=self.massage_path(directory)))
-        elif (len_dir == 0) and recursive is True:
-            objs = list(
-                self.s3_resource.Bucket(self.container_name).objects.all())
-
-        if len(objs) > 0:
-            for obj in objs:
-                if os.path.basename(obj.key) == filename:
-                    metadata = self.s3_client.head_object(
-                        Bucket=self.container_name, Key=obj.key)
-                    info = {
-                        "fileName": obj.key,
-                        "lastModificationDate":
-                            metadata['ResponseMetadata']['HTTPHeaders'][
-                                'last-modified'],
-                        "contentLength":
-                            metadata['ResponseMetadata']['HTTPHeaders'][
-                                'content-length']
-                    }
-                    info_list.append(info)
-
-        self.storage_dict['objlist'] = info_list
-
-        if len(info_list) == 0:
-            self.storage_dict['message'] = 'File not found'
-        else:
-            self.storage_dict['message'] = 'File found'
-
-        pprint(self.storage_dict)
-        dict_obj = self.update_dict(self.storage_dict['objlist'])
-        return dict_obj
 
     # function to massage file path and do some transformations
     # for different scenarios of file inputs

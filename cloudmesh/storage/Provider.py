@@ -100,16 +100,16 @@ class Provider(StorageABC):
         return d
 
     @DatabaseUpdate()
-    def delete(self, source=None):
+    def delete(self, name=None):
         """
         deletes the source
 
-        :param source: The source
+        :param name: The source
         :return: The dict representing the source
         """
 
         service = self.service
-        d = self.provider.delete(source=source)
+        d = self.provider.delete(source=name)
         # raise ValueError("must return a value")
         return d
 
@@ -120,9 +120,9 @@ class Provider(StorageABC):
         return d
 
     @DatabaseUpdate()
-    def list(self, source=None, dir_only=False, recursive=False):
+    def list(self, name=None, dir_only=False, recursive=False):
 
-        d = self.provider.list(source=source, dir_only=dir_only,
+        d = self.provider.list(source=name, dir_only=dir_only,
                                recursive=recursive)
         return d
 
