@@ -145,7 +145,6 @@ class StorageCommand(PluginCommand):
         VERBOSE(arguments)
 
         arguments.storage = Parameter.expand(arguments.storage)
-
         if arguments["get"]:
             provider = Provider(arguments.storage[0])
 
@@ -240,23 +239,8 @@ class StorageCommand(PluginCommand):
             raise NotImplementedError
 
         elif arguments.copy:
-            VERBOSE(f"COPY: Executing Copy command from {arguments.SOURCE} to "
-                    f"{arguments.DESTINATION} providers")
-            print(f"DEBUG storage.py: INITIALIZE with {arguments.storage[0]} "
-                  "provider.")
-
-            provider = Provider(arguments.storage[0])
-
-            result = provider.copy(arguments.SOURCE,
-                                   arguments.DESTINATION,
-                                   arguments.recursive)
-
-
-        elif arguments.copy:
-            scloud, sbucket = source.split(":", 1) or None
-            tcloud, tbucket = target.split(":", 1) or None
-            # print(scloud + " " + tcloud + " " + sbucket + " " + tbucket)
-
+            scloud, sbucket = arguments.SOURCE.split(":", 1) or None
+            tcloud, tbucket = arguments.DESTINATION.split(":", 1) or None
             if scloud == "aws" or scloud == "google":
                 provider = Provider(service=scloud)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
@@ -264,6 +248,10 @@ class StorageCommand(PluginCommand):
                 scloud == "local" and tcloud == "google"):
                 provider = Provider(service=tcloud)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
+            elif (scloud == "local" and tcloud == "parallelawss3"):
+                provider = Provider(service=tcloud)
+                provider.copy(arguments.SOURCE, arguments.DESTINATION,
+                              arguments.recursive)
             else:
                 print("Not Implemented")
 

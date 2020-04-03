@@ -870,21 +870,19 @@ class Provider(StorageABC):
         date = DateTime.now()
         uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
-        cm:
-           number: {self.number}
-           name: "{sourcefile}:{destinationfile}"
-           kind: storage
-           id: {uuid_str}
-           cloud: {self.name}
-           collection: {self.collection}
-           created: {date}
-        action: copy
-        source:
-          path: {sourcefile}
-        destination:
-          path: {destinationfile}
-        recursive: {recursive}
-        status: waiting
+            cm:
+               number: {self.number}
+               name: "{sourcefile}:{destinationfile}"
+               kind: storage
+               id: {uuid_str}
+               cloud: {self.name}
+               collection: {self.collection}
+               created: {date}
+            action: copy
+            source: {sourcefile}
+            destination: {destinationfile}
+            recursive: {recursive}
+            status: waiting
         """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
         self.number = self.number + 1
