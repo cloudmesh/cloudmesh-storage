@@ -54,17 +54,17 @@ class Provider(StorageABC):
     output = {}  # "TODO: missing"
 
     def __init__(self,
-                 name=None,
+                 service=None,
                  config="~/.cloudmesh/cloudmesh.yaml",
                  parallelism=4):
         """
-        :param name: name of the service
+        :param service: service name
         :param config:
         """
-        super().__init__(service=name, config=config)
+        super().__init__(service=service, config=config)
         self.parallelism = parallelism
-        self.name = name
-        self.collection = f"storage-queue-{name}"
+        self.name = service
+        self.collection = f"storage-queue-{service}"
         self.number = 0
         self.container_name = self.credentials['bucket']
 
@@ -80,87 +80,13 @@ class Provider(StorageABC):
             d.append(entry)
         return d
 
-    def bucket_create(self, name=None):
-        """
-        gets the source name from the put function
-
-        :param name: the bucket name which needs to be created
-
-        :return: dict,Boolean
-
-        """
-        try:
-            self.s3_client.create_bucket(
-                ACL='private',
-                Bucket=name,
-            )
-            print("Bucket Created:", name)
-            file_content = ""
-            file_path = self.massage_path(name)
-            self.storage_dict['action'] = 'bucket_create'
-            self.storage_dict['bucket'] = name
-            dir_files_list = []
-            self.container_name = name
-            obj = list(self.s3_resource.Bucket(self.container_name)
-                       .objects.filter(Prefix=file_path + '/'))
-
-            if len(obj) == 0:
-                marker_object = self.s3_resource.Object(
-                    self.container_name, self.directory_marker_file_name
-                ).put(Body=file_content)
-
-                # make head call to extract meta data
-                # and derive obj dict
-                metadata = self.s3_client.head_object(
-                    Bucket=self.container_name,
-                    Key=self.directory_marker_file_name)
-                dir_files_list.append(self.extract_file_dict(
-                    self.massage_path(name),
-                    metadata)
-                )
-                self.storage_dict['message'] = 'Bucket created'
-            self.storage_dict['objlist'] = dir_files_list
-            pprint(self.storage_dict)
-            dict_obj = self.update_dict(self.storage_dict['objlist'])
-            return dict_obj
-
-        except botocore.exceptions.ClientError as e:
-            if e:
-                message = "One or more errors occurred while creating the  " \
-                          "bucket: {}".format(e)
-                raise Exception(message)
-
-    def bucket_exists(self, name=None):
-        """
-        gets the source from the put function
-
-        :param name: the bucket name which needs to be checked for exists
-
-        :return: Boolean
-
-        """
-        try:
-            self.s3_client.head_bucket(Bucket=name)
-            return True
-        except botocore.exceptions.ClientError as e:
-            # If a client error is thrown, then check that it was a 404 error.
-            # If it was a 404 error, then the bucket does not exist.
-            error_code = int(e.response['Error']['Code'])
-
-            if error_code == 403:
-                Console.error(f"Bucket {name} is private. Access forbidden!")
-                return True
-            elif error_code == 404:
-                Console.error(f"Bucket {name} does not exist")
-                return False
-
     # function to create a directory the function will
     # first check if the bucket  exists or not,
     # if the bucket doesn't exist it will create the bucket
     # and it will create the directory specified.
     # the name of the bucket will come from YAML specifications and the
     # directory name comes from the arguments.
-    def _mkdir(self, specification):
+    def mkdir_run(self, specification):
         #     cm:
         #     number: {self.number}
         #     kind: storage
@@ -761,7 +687,7 @@ class Provider(StorageABC):
         return entries
 
     @DatabaseUpdate()
-    def mkdir(self, path):
+    def create_dir(self, directory):
         """
         adds a mkdir action to the queue
 
@@ -778,16 +704,15 @@ class Provider(StorageABC):
                     kind: storage
                     id: {uuid_str}
                     cloud: {self.name}
-                    name: {path}
+                    name: {directory}
                     collection: {self.collection}
                     created: {date}
                   action: mkdir
-                  path: {path}
+                  path: {directory}
                   status: waiting
             """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
         self.number = self.number + 1
-
         return entries
 
     @DatabaseUpdate()
@@ -843,7 +768,7 @@ class Provider(StorageABC):
             self.update_dict(elements=[specification])
         elif action == "mkdir":
             # print("MKDIR", specification)
-            specification = self._mkdir(specification)
+            specification = self.mkdir_run(specification)
             # update status
             self.update_dict(elements=[specification])
         elif action == "list":
@@ -917,7 +842,7 @@ class Provider(StorageABC):
         pool.join()
 
     # function to download file or directory
-    def get(self, source=None, destination=None, recursive=False):
+    def _get(self, source=None, destination=None, recursive=False):
         """
        gets the source from the service
 
@@ -1214,18 +1139,93 @@ class Provider(StorageABC):
 
         return info
 
+    def bucket_create(self, name=None):
+        """
+        gets the source name from the put function
 
-if __name__ == "__main__":
-    p = Provider(name="aws")
+        :param name: the bucket name which needs to be created
 
-    p.mkdir(path="testdir1")
-    p.mkdir(path="testdir2")
-    p.mkdir(path="testdir3")
-    p.mkdir(path="testdir4")
-    p.list(path=".")
-    p.delete(path="testdir1")
-    p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
+        :return: dict,Boolean
 
-    p.run()
+        """
+        try:
+            self.s3_client.create_bucket(
+                ACL='private',
+                Bucket=name,
+            )
+            print("Bucket Created:", name)
+            file_content = ""
+            file_path = self.massage_path(name)
+            self.storage_dict['action'] = 'bucket_create'
+            self.storage_dict['bucket'] = name
+            dir_files_list = []
+            self.container_name = name
+            obj = list(self.s3_resource.Bucket(self.container_name)
+                       .objects.filter(Prefix=file_path + '/'))
+
+            if len(obj) == 0:
+                marker_object = self.s3_resource.Object(
+                    self.container_name, self.directory_marker_file_name
+                ).put(Body=file_content)
+
+                # make head call to extract meta data
+                # and derive obj dict
+                metadata = self.s3_client.head_object(
+                    Bucket=self.container_name,
+                    Key=self.directory_marker_file_name)
+                dir_files_list.append(self.extract_file_dict(
+                    self.massage_path(name),
+                    metadata)
+                )
+                self.storage_dict['message'] = 'Bucket created'
+            self.storage_dict['objlist'] = dir_files_list
+            pprint(self.storage_dict)
+            dict_obj = self.update_dict(self.storage_dict['objlist'])
+            return dict_obj
+
+        except botocore.exceptions.ClientError as e:
+            if e:
+                message = "One or more errors occurred while creating the  " \
+                          "bucket: {}".format(e)
+                raise Exception(message)
+
+    def bucket_exists(self, name=None):
+        """
+        gets the source from the put function
+
+        :param name: the bucket name which needs to be checked for exists
+
+        :return: Boolean
+
+        """
+        try:
+            self.s3_client.head_bucket(Bucket=name)
+            return True
+        except botocore.exceptions.ClientError as e:
+            # If a client error is thrown, then check that it was a 404 error.
+            # If it was a 404 error, then the bucket does not exist.
+            error_code = int(e.response['Error']['Code'])
+
+            if error_code == 403:
+                Console.error(f"Bucket {name} is private. Access forbidden!")
+                return True
+            elif error_code == 404:
+                Console.error(f"Bucket {name} does not exist")
+                return False
+
+
+
+# if __name__ == "__main__":
+#     p = Provider(service="parallelawss3")
+#
+#     p.create_dir(directory="testdir123")
+    # p.create_dir(directory="testdir2")
+    # p.create_dir(directory="testdir3")
+    # p.create_dir(directory="testdir4")
+    # p.list(directory=".")
+    # p.delete(path="testdir1")
+    # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
+
+    # p.run()
 
 

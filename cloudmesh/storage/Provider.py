@@ -40,7 +40,8 @@ class Provider(StorageABC):
         elif kind == "awss3":
             from cloudmesh.storage.provider.awss3.Provider import Provider as P
         elif kind == "parallelawss3":
-            from cloudmesh.storage.provider.awss3.Provider import Provider as P
+            from cloudmesh.storage.provider.parallelawss3.Provider import \
+                Provider as P
         elif kind == "parallelazureblob":
             from cloudmesh.storage.provider.parallelazureblob.Provider import \
                 Provider as P
@@ -96,7 +97,6 @@ class Provider(StorageABC):
     @DatabaseUpdate()
     def create_dir(self, directory=None):
 
-        service = self.service
         d = self.provider.create_dir(directory=directory)
         return d
 
