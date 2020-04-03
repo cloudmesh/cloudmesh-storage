@@ -1,30 +1,33 @@
 ###############################################################
-# pytest -v --capture=no tests/awss3/test_parallelaws3.py
-# pytest -v  tests/awss3/test_parallelaws3.py
-# pytest -v --capture=no tests/awss3/test_parallelaws3.py:::TestStorage::<METHIDNAME>
+# pytest -v --capture=no tests/parallelawss3/test_storage_parallelaws3.py
+# pytest -v  tests/parallelawss3/test_storage_parallelaws3.py
+# pytest -v --capture=no tests/parallelawss3/test_storage_parallelaws3.py
+# ::TestStorageParallelawss3::<METHIDNAME>
 ###############################################################
 import os
-import sys
 from pprint import pprint
-
+import pytest
 from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.common.Shell import Shell
 from cloudmesh.common.StopWatch import StopWatch
+from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 
-print("this seems to be the same as in test_05_storage")
-
-print("I sugget to delete all tests that are covered "
-      "by 05 and only include tests here that are unique")
-
-print("we exist now to makes usre this gets your attention")
-
-sys.exit()
+# print("this seems to be the same as in test_05_storage")
+#
+# print("I sugget to delete all tests that are covered "
+#       "by 05 and only include tests here that are unique")
+#
+# print("we exist now to makes this gets your attention")
+#
+# sys.exit()
 
 # cms set storage=parallelaws3
-
+from cloudmesh.common.variables import Variables
+from cloudmesh.configuration.Config import Config
+from cloudmesh.storage.provider.parallelawss3.Provider import Provider
 
 Benchmark.debug()
 
@@ -44,22 +47,21 @@ print('provider:', provider, provider.kind)
 
 
 @pytest.mark.incremental
-class TestStorageParallelaws3(object):
+class TestStorageParallelawss3(object):
 
-    def create_file(self, location, content):
-        Shell.mkdir(os.dirname(path_expand(location)))
+    @staticmethod
+    def create_file(location, content):
+        Shell.mkdir(os.path.dirname(path_expand(location)))
         writefile(location, content)
 
     def test_create_local_source(self):
         HEADING()
         StopWatch.start("create source")
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
-        self.create_local_file("~/.cloudmesh/storage/test/a/a.txt",
-                               "content of a")
-        self.create_local_file("~/.cloudmesh/storage/test/a/b/b.txt",
-                               "content of b")
-        self.create_local_file("~/.cloudmesh/storage/test/a/b/c/c.txt",
-                               "content of c")
+        self.create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
+        self.create_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
+        self.create_file(
+            "~/.cloudmesh/storage/test/a/b/c/c.txt", "content of c")
         StopWatch.stop("create source")
 
         # test if the files are ok

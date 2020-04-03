@@ -1068,6 +1068,7 @@ class Provider(StorageABC):
                         created: {date}
                       action: list
                       path: {source}
+                      dironly: {dir_only}
                       status: waiting
                 """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
