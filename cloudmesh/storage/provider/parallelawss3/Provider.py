@@ -145,7 +145,7 @@ class Provider(StorageABC):
 
         # function to list file  or directory
 
-    def _list(self, specification):
+    def list_run(self, specification):
         """
         lists the information as dict
         :return: dict
@@ -264,7 +264,7 @@ class Provider(StorageABC):
 
         # function to delete file or directory
 
-    def _delete(self, specificatioin):
+    def delete_run(self, specificatioin):
         """
         deletes the source
 
@@ -394,9 +394,200 @@ class Provider(StorageABC):
         specificatioin['status'] = 'completed'
         return specificatioin
 
+        # function to download file or directory
+    def get_run(self, specficiation):
+        """
+        gets the source from the service
+
+        :param source: the source which either can be a directory or file
+        :param destination: the destination which either can be directory/file
+        :param recursive: in case of directory the recursive refers to all
+                          subdirectories in the specified source
+        :return: dict
+        """
+
+        source = specficiation['source']
+        destination = specficiation['destination']
+        recursive = specficiation['recursive']
+        trimmed_source = self.massage_path(source)
+        trimmed_destination = self.massage_path(destination)
+
+        self.s3_resource = boto3.resource(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=self.credentials['access_key_id'],
+            aws_secret_access_key=self.credentials['secret_access_key'],
+            region_name=self.credentials['region']
+        )
+
+        file_obj = ''
+
+        try:
+            file_obj = self.s3_client.get_object(Bucket=self.container_name,
+                                                 Key=trimmed_source)
+        except botocore.exceptions.ClientError as e:
+            # object not found
+            print(e)
+        files_downloaded = []
+
+        is_target_file = os.path.isfile(trimmed_destination)
+        is_target_dir = os.path.isdir(trimmed_destination)
+
+        '''
+        print('is_target_file')
+        print(is_target_file)
+        print('is_target_dir')
+        print(is_target_dir)
+        '''
+
+        if file_obj:
+            try:
+                if is_target_dir:
+                    '''
+                    print('target is directory...')
+                    print('trimmed_destination : '+ trimmed_destination)
+                    print(trimmed_source)
+                    '''
+                    blob = self.s3_resource.Bucket(
+                        self.container_name).download_file(
+                        trimmed_source,
+                        trimmed_destination + '/' + os.path.basename(
+                            trimmed_source)
+                    )
+                else:
+                    blob = self.s3_resource.Bucket(
+                        self.container_name).download_file(
+                        trimmed_source, trimmed_destination)
+
+                # make head call since file download does not return
+                # obj dict to extract meta data
+                metadata = self.s3_client.head_object(
+                    Bucket=self.container_name, Key=trimmed_source)
+                files_downloaded.append(
+                    self.extract_file_dict(trimmed_source, metadata))
+
+                self.storage_dict['message'] = 'Source downloaded'
+            except FileNotFoundError as e:
+                self.storage_dict['message'] = 'Destination not found'
+                print(e)
+
+        else:
+            # Search for a directory
+            all_objs = list(
+                self.s3_resource.Bucket(self.container_name).objects.filter(
+                    Prefix=trimmed_source))
+
+            total_all_objs = len(all_objs)
+
+            if total_all_objs == 0:
+                self.storage_dict['message'] = 'Source Not Found'
+
+            elif total_all_objs > 0 and recursive is False:
+                for obj in all_objs:
+                    if os.path.basename(obj.key) != \
+                        self.directory_marker_file_name:
+                        if self.massage_path(
+                            obj.key.replace(trimmed_source, '')). \
+                            count('/') == 0:
+                            try:
+                                blob = self.s3_resource.Bucket(
+                                    self.container_name).download_file(
+                                    obj.key,
+                                    trimmed_destination + '/' +
+                                    os.path.basename(obj.key))
+
+                                # make head call since file download does not
+                                # return obj dict to extract meta data
+                                metadata = self.s3_client.head_object(
+                                    Bucket=self.container_name, Key=obj.key)
+                                files_downloaded.append(
+                                    self.extract_file_dict(obj.key,
+                                                           metadata))
+
+                                self.storage_dict[
+                                    'message'] = 'Source downloaded'
+                                # files_downloaded.append(obj.key)
+                            except FileNotFoundError as e:
+                                self.storage_dict[
+                                    'message'] = 'Destination not found'
+                                print(e)
+
+
+            elif total_all_objs > 0 and recursive is True:
+                files_downloaded = []
+                for obj in all_objs:
+                    if os.path.basename(obj.key) != \
+                        self.directory_marker_file_name \
+                        and obj.key[-1] != '/':
+                        if self.massage_path(
+                            obj.key.replace(trimmed_source, '')) \
+                            .count('/') == 0:
+                            try:
+                                blob = self.s3_resource.Bucket(
+                                    self.container_name).download_file(
+                                    obj.key,
+                                    trimmed_destination + '/'
+                                    + os.path.basename(obj.key))
+
+                                # make head call since file download does
+                                # not return obj dict to extract meta data
+                                metadata = self.s3_client.head_object(
+                                    Bucket=self.container_name, Key=obj.key)
+                                files_downloaded.append(
+                                    self.extract_file_dict(obj.key,
+                                                           metadata))
+
+                            except FileNotFoundError as e:
+                                print(e)
+                        else:
+
+                            folder_path = self.massage_path(
+                                obj.key.replace(trimmed_source, '').replace(
+                                    os.path.basename(obj.key), '')
+                            )
+                            try:
+                                os.makedirs(
+                                    trimmed_destination + '/' + folder_path,
+                                    0o777)
+                                print()
+                            except FileExistsError as e:
+                                os.chmod(
+                                    trimmed_destination + '/' + folder_path,
+                                    stat.S_IRWXO)
+                                print(e)
+
+                            try:
+                                blob = self.s3_resource.Bucket(
+                                    self.container_name).download_file(
+                                    # obj.key, trimmedDestination + '/'
+                                    # + os.path.basename(obj.key))
+                                    obj.key,
+                                    trimmed_destination + '/' + folder_path
+                                    + os.path.basename(obj.key))
+
+                                # make head call since file download
+                                # does not return obj dict to extract meta data
+                                metadata = self.s3_client.head_object(
+                                    Bucket=self.container_name, Key=obj.key)
+                                files_downloaded.append(
+                                    self.extract_file_dict(obj.key,
+                                                           metadata))
+
+                            except FileNotFoundError as e:
+                                print(e)
+
+        specficiation['status'] = 'completed'
+
+        return specficiation
+
         # function to upload file or directory
 
-    def _put(self, specification):
+    def put_run(self, specification):
         """
        puts the source on the service
         :return: dict
@@ -572,7 +763,7 @@ class Provider(StorageABC):
         specification['status'] = 'completed'
         return specification
 
-    def _cancel(self, specification):
+    def cancel_run(self, specification):
         cm = CmDatabase()
         entries = cm.find(cloud=self.name,
                           kind='storage')
@@ -687,6 +878,29 @@ class Provider(StorageABC):
         return entries
 
     @DatabaseUpdate()
+    def get(self, source, destination, recursive):
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+                          cm:
+                            number: {self.number}
+                            kind: storage
+                            id: {uuid_str}
+                            cloud: {self.name}
+                            name: {source}:{destination}
+                            collection: {self.collection}
+                            created: {date}
+                          action: get
+                          source: {source}
+                          destination: {destination}
+                          recursive: {recursive}
+                          status: waiting
+                    """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+        return entries
+
+    @DatabaseUpdate()
     def create_dir(self, directory):
         """
         adds a mkdir action to the queue
@@ -758,12 +972,12 @@ class Provider(StorageABC):
         action = specification["action"]
         if action == "copy":
             # print("COPY", specification)
-            specification = self._put(specification)
+            specification = self.put_run(specification)
             # update status
             self.update_dict(elements=[specification])
         elif action == "delete":
             # print("DELETE", specification)
-            specification = self._delete(specification)
+            specification = self.delete_run(specification)
             # update status
             self.update_dict(elements=[specification])
         elif action == "mkdir":
@@ -773,25 +987,32 @@ class Provider(StorageABC):
             self.update_dict(elements=[specification])
         elif action == "list":
             # print("LIST", specification)
-            specification = self._list(specification)
+            specification = self.list_run(specification)
             # update status
             self.update_dict(elements=[specification])
         elif action == "cancel":
-            specification = self._cancel(specification)
+            specification = self.cancel_run(specification)
+            self.update_dict(elements=[specification])
+        elif action == "get":
+            specification = self.get_run(specification)
             self.update_dict(elements=[specification])
 
     def get_actions(self):
         cm = CmDatabase()
         entries = cm.find(cloud=self.name,
                           kind='storage')
+        get_actions = []
         mkdir_actions = []
         copy_actions = []
         list_actions = []
         delete_actions = []
         cancel_actions = []
+
         for entry in entries:
             pprint(entry)
-            if entry['action'] == 'mkdir' and entry['status'] == 'waiting':
+            if entry['action'] == 'get' and entry['status'] == 'waiting':
+                get_actions.append(entry)
+            elif entry['action'] == 'mkdir' and entry['status'] == 'waiting':
                 mkdir_actions.append(entry)
             elif entry['action'] == 'copy' and entry['status'] == 'waiting':
                 copy_actions.append(entry)
@@ -802,7 +1023,8 @@ class Provider(StorageABC):
             elif entry['action'] == 'cancel' and entry['status'] == 'waiting':
                 cancel_actions.append(entry)
 
-        return mkdir_actions, copy_actions, list_actions, delete_actions, \
+        return get_actions, mkdir_actions, copy_actions, list_actions, \
+               delete_actions, \
                cancel_actions
 
     def run(self):
@@ -812,8 +1034,8 @@ class Provider(StorageABC):
 
         :return:
         """
-        mkdir_action, copy_action, list_action, delete_action, cancel_action \
-            = self.get_actions()
+        get_action, mkdir_action, copy_action, list_action, delete_action, \
+        cancel_action = self.get_actions()
 
         pool = Pool(self.parallelism)
         # cancel the actions
@@ -828,6 +1050,9 @@ class Provider(StorageABC):
         # COPY FILES
         pool.map(self.action, copy_action)
 
+        # GET FILES
+        pool.map(self.action, get_action)
+
         # LIST FILES
         pool.map(self.action, list_action)
 
@@ -841,193 +1066,7 @@ class Provider(StorageABC):
         # terminate() before using join().
         pool.join()
 
-    # function to download file or directory
-    def _get(self, source=None, destination=None, recursive=False):
-        """
-       gets the source from the service
 
-        :param source: the source which either can be a directory or file
-        :param destination: the destination which either can be directory/file
-        :param recursive: in case of directory the recursive refers to all
-                          subdirectories in the specified source
-        :return: dict
-        """
-        # self.storage_dict['service'] = service
-        self.storage_dict['action'] = 'get'
-        self.storage_dict['source'] = source
-        self.storage_dict['destination'] = destination
-        self.storage_dict['recursive'] = recursive
-
-        trimmed_source = self.massage_path(source)
-        trimmed_destination = self.massage_path(destination)
-
-        file_obj = ''
-
-        try:
-            file_obj = self.s3_client.get_object(Bucket=self.container_name,
-                                                 Key=trimmed_source)
-        except botocore.exceptions.ClientError as e:
-            # object not found
-            print(e)
-        files_downloaded = []
-
-        is_target_file = os.path.isfile(trimmed_destination)
-        is_target_dir = os.path.isdir(trimmed_destination)
-
-        '''
-        print('is_target_file')
-        print(is_target_file)
-        print('is_target_dir')
-        print(is_target_dir)
-        '''
-
-        if file_obj:
-            try:
-                if is_target_dir:
-                    '''
-                    print('target is directory...')
-                    print('trimmed_destination : '+ trimmed_destination)
-                    print(trimmed_source)
-                    '''
-                    blob = self.s3_resource.Bucket(
-                        self.container_name).download_file(
-                        trimmed_source,
-                        trimmed_destination + '/' + os.path.basename(
-                            trimmed_source)
-                    )
-                else:
-                    blob = self.s3_resource.Bucket(
-                        self.container_name).download_file(
-                        trimmed_source, trimmed_destination)
-
-                # make head call since file download does not return
-                # obj dict to extract meta data
-                metadata = self.s3_client.head_object(
-                    Bucket=self.container_name, Key=trimmed_source)
-                files_downloaded.append(
-                    self.extract_file_dict(trimmed_source, metadata))
-
-                self.storage_dict['message'] = 'Source downloaded'
-            except FileNotFoundError as e:
-                self.storage_dict['message'] = 'Destination not found'
-                print(e)
-
-        else:
-            # Search for a directory
-            all_objs = list(
-                self.s3_resource.Bucket(self.container_name).objects.filter(
-                    Prefix=trimmed_source))
-
-            total_all_objs = len(all_objs)
-
-            if total_all_objs == 0:
-                self.storage_dict['message'] = 'Source Not Found'
-
-            elif total_all_objs > 0 and recursive is False:
-                for obj in all_objs:
-                    if os.path.basename(obj.key) != \
-                        self.directory_marker_file_name:
-                        if self.massage_path(
-                            obj.key.replace(trimmed_source, '')). \
-                            count('/') == 0:
-                            try:
-                                blob = self.s3_resource.Bucket(
-                                    self.container_name).download_file(
-                                    obj.key,
-                                    trimmed_destination + '/' +
-                                    os.path.basename(obj.key))
-
-                                # make head call since file download does not
-                                # return obj dict to extract meta data
-                                metadata = self.s3_client.head_object(
-                                    Bucket=self.container_name, Key=obj.key)
-                                files_downloaded.append(
-                                    self.extract_file_dict(obj.key, metadata))
-
-                                self.storage_dict[
-                                    'message'] = 'Source downloaded'
-                                # files_downloaded.append(obj.key)
-                            except FileNotFoundError as e:
-                                self.storage_dict[
-                                    'message'] = 'Destination not found'
-                                print(e)
-
-                self.storage_dict['filesDownloaded'] = files_downloaded
-
-            elif total_all_objs > 0 and recursive is True:
-                files_downloaded = []
-                for obj in all_objs:
-                    if os.path.basename(obj.key) != \
-                        self.directory_marker_file_name \
-                        and obj.key[-1] != '/':
-                        if self.massage_path(
-                            obj.key.replace(trimmed_source, '')) \
-                            .count('/') == 0:
-                            try:
-                                blob = self.s3_resource.Bucket(
-                                    self.container_name).download_file(
-                                    obj.key,
-                                    trimmed_destination + '/'
-                                    + os.path.basename(obj.key))
-
-                                # make head call since file download does
-                                # not return obj dict to extract meta data
-                                metadata = self.s3_client.head_object(
-                                    Bucket=self.container_name, Key=obj.key)
-                                files_downloaded.append(
-                                    self.extract_file_dict(obj.key, metadata))
-
-                                self.storage_dict[
-                                    'message'] = 'Source downloaded'
-                            except FileNotFoundError as e:
-                                self.storage_dict[
-                                    'message'] = 'Destination not found'
-                                print(e)
-                        else:
-
-                            folder_path = self.massage_path(
-                                obj.key.replace(trimmed_source, '').replace(
-                                    os.path.basename(obj.key), '')
-                            )
-                            try:
-                                os.makedirs(
-                                    trimmed_destination + '/' + folder_path,
-                                    0o777)
-                                print()
-                            except FileExistsError as e:
-                                os.chmod(
-                                    trimmed_destination + '/' + folder_path,
-                                    stat.S_IRWXO)
-                                print(e)
-
-                            try:
-                                blob = self.s3_resource.Bucket(
-                                    self.container_name).download_file(
-                                    # obj.key, trimmedDestination + '/'
-                                    # + os.path.basename(obj.key))
-                                    obj.key,
-                                    trimmed_destination + '/' + folder_path
-                                    + os.path.basename(obj.key))
-
-                                # make head call since file download
-                                # does not return obj dict to extract meta data
-                                metadata = self.s3_client.head_object(
-                                    Bucket=self.container_name, Key=obj.key)
-                                files_downloaded.append(
-                                    self.extract_file_dict(obj.key, metadata))
-
-                                self.storage_dict[
-                                    'message'] = 'Source downloaded'
-                            except FileNotFoundError as e:
-                                self.storage_dict[
-                                    'message'] = 'Destination not found'
-                                print(e)
-
-        self.storage_dict['objlist'] = files_downloaded
-
-        pprint(self.storage_dict)
-        dict_obj = self.update_dict(self.storage_dict['objlist'])
-        return dict_obj
 
     # function to search a file or directory and list its attributes
     def search(self,
@@ -1215,10 +1254,10 @@ class Provider(StorageABC):
 
 
 
-# if __name__ == "__main__":
-#     p = Provider(service="parallelawss3")
-#
-#     p.create_dir(directory="testdir123")
+if __name__ == "__main__":
+    print()
+    p = Provider(service="parallelawss3")
+
     # p.create_dir(directory="testdir2")
     # p.create_dir(directory="testdir3")
     # p.create_dir(directory="testdir4")
