@@ -7,13 +7,13 @@ import sys
 from pathlib import Path
 
 import httplib2
-from apiclient import discovery
-from apiclient.http import MediaFileUpload
-from apiclient.http import MediaIoBaseDownload
+from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
 from cloudmesh.configuration.Config import Config
-from cloudmesh.abstract.StorageABC import StorageABC
+from googleapiclient import discovery
+from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseDownload
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
@@ -110,7 +110,7 @@ class Provider(StorageABC):
 
         return credentials
 
-    def put(self, service=None, source=None, destination=None, recursive=False):
+    def put(self, source=None, destination=None, recursive=False):
         if recursive:
             if os.path.isdir(source):
                 temp_res = []
@@ -190,7 +190,7 @@ class Provider(StorageABC):
                                        parent_it=file_parent_id)
                 return self.update_dict(res)
 
-    def get(self, service=None, source=None, destination=None, recursive=False):
+    def get(self, source=None, destination=None, recursive=False):
         if not os.path.exists(source):
             os.makedirs(source)
 
@@ -247,7 +247,7 @@ class Provider(StorageABC):
                 tempres.append(sourceid['files'][0])
             return self.update_dict(tempres)
 
-    def delete(self, service=None, filename=None,
+    def delete(self, filename=None,
                recursive=False):  # this is working
         file_id = ""
         file_rec = None
@@ -307,7 +307,7 @@ class Provider(StorageABC):
             id = file.get('id')
         return self.update_dict(files)
 
-    def list(self, service=None, source=None, recursive=False):
+    def list(self, source=None, recursive=False):
         if recursive:
             results = self.driveService.files().list(
                 pageSize=self.limitFiles,
@@ -338,7 +338,7 @@ class Provider(StorageABC):
             else:
                 return self.update_dict(items)
 
-    def search(self, service=None, directory=None, filename=None,
+    def search(self, directory=None, filename=None,
                recursive=False):
         if recursive:
             found = False

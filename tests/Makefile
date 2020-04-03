@@ -1,27 +1,39 @@
-all: azureblob box gdrive vdir awss3
+#
+# TODO: this may be outdated
+#
+
+PYTEST=pytest -v --capture=no
+
+
+all: local azure box google aws vdir
 	echo
 
+local:
+	$(PYTEST) test_01_storage_size.py
+	$(PYTEST) test_02_storage_installer.py
+	$(PYTEST) test_03_storage_local.py
+	$(PYTEST) test_04_storage_copy.py
 
-azureblob:
-	pytest -v --capture=no tests/test_storage_azure.py
+azure:
+	$(PYTEST) tests/azure/test_storage_azure.py
 	cms set storage=azureblob
-	pytest -v --capture=no tests/test_general_storage.py
+	$(PYTEST) tests/test_general_storage.py
 
 box:
-	pytest -v --capture=no tests/test_storage_box.py
+	$(PYTEST) tests/box/test_storage_box.py
 	cms set storage=box
-	pytest -v --capture=no tests/test_general_storage.py
+	$(PYTEST) tests/test_general_storage.py
 
-gdrive:
-	pytest -v --capture=no tests/test_storage_gdrive.py
+google:
+	$(PYTEST) tests/gdrive/test_storage_gdrive.py
 	cms set storage=gdrive
-	pytest -v --capture=no tests/test_general_storage.py
+	$(PYTEST) tests/test_general_storage.py
 
-awss3:
-	pytest -v --capture=no tests/test_storage_awss3.py
+aws:
+	$(PYTEST) tests/awss3/test_storage_awss3.py
 	cms set storage=awss3
-	pytest -v --capture=no tests/test_general_storage.py
+	$(PYTEST) tests/test_general_storage.py
 
 vdir:
- 	pytest -v --capture=no tests/test_vdir.py
+ 	$(PYTEST) tests/test_vdir.py
 

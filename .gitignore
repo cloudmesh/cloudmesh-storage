@@ -1,16 +1,22 @@
+<<<<<<< HEAD
 .pye
 .DS_Store
 .swp
 build/
 vagrant_workspace
+=======
+>>>>>>> from-fa19-516-152
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
+<<<<<<< HEAD
 cm4/api/specs/
 
 
+=======
+>>>>>>> from-fa19-516-152
 # C extensions
 *.so
 
@@ -54,7 +60,10 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+<<<<<<< HEAD
 .noseids
+=======
+>>>>>>> from-fa19-516-152
 
 # Translations
 *.mo
@@ -111,6 +120,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+<<<<<<< HEAD
 
 # Visual Studio Code workspace settings
 .vscode/
@@ -128,3 +138,5 @@ test/data/storage/*
 test/data/download/*
 !test/data/download/README.md
 /cm4/openstack/cloudmesh.yaml
+=======
+>>>>>>> from-fa19-516-152

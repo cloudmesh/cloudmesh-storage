@@ -5,27 +5,25 @@
 ###############################################################
 import os
 from pathlib import Path
-from pprint import pprint
 
 import pytest
+from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
-from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
-from cloudmesh.common.debug import VERBOSE
+
+# TODO: this uses ~ but we should use the test under ~/.cloudmesh
 
 Benchmark.debug()
 
 user = Config()["cloudmesh.profile.user"]
 variables = Variables()
 VERBOSE(variables.dict())
-
-key = variables['key']
 
 cloud = variables.parameter('storage')
 
@@ -48,6 +46,9 @@ def create_file(location, content):
     writefile(path_expand(location), content)
 
 
+location = "/tmp/cloudmesh/storage"
+
+
 @pytest.mark.incremental
 class TestLocal(object):
 
@@ -66,11 +67,11 @@ class TestLocal(object):
     def test_01_create_source(self):
         HEADING()
 
-        self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
-        create_file("~/.cloudmesh/storage/README.md", "content of a")
-        create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
-        create_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
-        create_file("~/.cloudmesh/storage/test/a/b/c/c.txt", "content of c")
+        self.sourcedir = path_expand(f"{location}/test/")
+        create_file(f"{location}/README.md", "content of a")
+        create_file(f"{location}/test/a/a.txt", "content of a")
+        create_file(f"{location}/test/a/b/b.txt", "content of b")
+        create_file(f"{location}/test/a/b/c/c.txt", "content of c")
 
         # test if the files are ok
         assert True
@@ -96,7 +97,7 @@ class TestLocal(object):
         # bug use named arguments
         #
         files = self.p.search(directory=src, filename=filename, recursive=True)
-        #pprint(files)
+        # pprint(files)
         StopWatch.stop("search")
 
         assert len(files) > 0
@@ -104,10 +105,10 @@ class TestLocal(object):
     def test_02_put(self):
         HEADING()
         StopWatch.start("put")
-        src = path_expand("~/.cloudmesh/storage/test/a/a.txt")
-        dst = "~/"
+        src = path_expand("{location}/test/a/a.txt")
+        dst = f"{location}/destination"
         test_file = self.p.put(src, dst)
-        #pprint(test_file)
+        # pprint(test_file)
         StopWatch.stop("put")
 
         assert test_file is not None
@@ -115,30 +116,32 @@ class TestLocal(object):
     def test_03_get(self):
         HEADING()
         StopWatch.start("get")
-        src = path_expand("~/a.txt")
-        dst = path_expand("~/test.txt")
+        src = path_expand(f"{location}/destination/a.txt")
+        dst = path_expand(f"{location}/destination/test.txt")
         file = self.p.get(src, dst)
-        #pprint(file)
+        # pprint(file)
         StopWatch.stop("get")
 
         assert file is not None
 
-        #assert len(content) > 0
+        # assert len(content) > 0
 
     def test_06_create_dir(self):
         HEADING()
+        dst = f"{location}/destination"
+        src = path_expand("{dst}/created_dir")
         StopWatch.start("create_dir")
-        src = path_expand("~/created_dir")
         directory = self.p.create_dir(src)
-        #pprint(directory)
+        # pprint(directory)
         StopWatch.stop("create_dir")
 
         assert directory is not None
 
     def test_07_delete(self):
         HEADING()
+        dst = f"{location}/destination"
+        src = path_expand("{dst}/created_dir")
         StopWatch.start("delete")
-        src = path_expand("~/created_dir")
         self.p.delete(src)
         StopWatch.stop("delete")
 

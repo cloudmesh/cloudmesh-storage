@@ -1,10 +1,11 @@
+from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.variables import Variables
 from cloudmesh.shell.command import PluginCommand
 from cloudmesh.shell.command import command, map_parameters
-from cloudmesh.common.variables import Variables
 from cloudmesh.storage.Provider import Provider
-from cloudmesh.common.debug import VERBOSE
-
+from cloudmesh.common.util import yn_choice
+from cloudmesh.common.console import Console
 
 # noinspection PyBroadException
 class StorageCommand(PluginCommand):
@@ -16,17 +17,17 @@ class StorageCommand(PluginCommand):
         ::
 
            Usage:
-             storage [--storage=SERVICE] [--parallel=N] create dir DIRECTORY
-             storage [--storage=SERVICE] [--parallel=N] get SOURCE DESTINATION [--recursive]
-             storage [--storage=SERVICE] [--parallel=N] put SOURCE DESTINATION [--recursive]
-             storage [--storage=SERVICE] [--parallel=N] list [SOURCE] [--recursive] [--output=OUTPUT]
-             storage [--storage=SERVICE] [--parallel=N] delete SOURCE
-             storage [--storage=SERVICE] search  DIRECTORY FILENAME [--recursive] [--output=OUTPUT]
-             storage [--storage=SERVICE] sync SOURCE DESTINATION [--name=NAME] [--async]
-             storage [--storage=SERVICE] sync status [--name=NAME]
+             storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N]
+             storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
+             storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
+             storage list [SOURCE] [--recursive] [--parallel=N] [--output=OUTPUT] [--dryrun]
+             storage delete SOURCE [--parallel=N] [--dryrun]
+             storage search  DIRECTORY FILENAME [--recursive] [--storage=SERVICE] [--parallel=N] [--output=OUTPUT]
+             storage sync SOURCE DESTINATION [--name=NAME] [--async] [--storage=SERVICE]
+             storage sync status [--name=NAME] [--storage=SERVICE]
              storage config list [--output=OUTPUT]
              storage [--parallel=N] copy SOURCE DESTINATION [--recursive]
-
+             storage copy --source=SOURCE:SOURCE_FILE_DIR --target=TARGET:TARGET_FILE_DIR
 
            This command does some useful things.
 
@@ -34,7 +35,8 @@ class StorageCommand(PluginCommand):
              SOURCE        SOURCE can be a directory or file
              DESTINATION   DESTINATION can be a directory or file
              DIRECTORY     DIRECTORY refers to a folder on the cloud service
-
+             SOURCE:SOURCE_FILE_DIR   source provider name: file or directory name
+             TARGET:SOURCE_FILE_DIR   destination provider name
 
            Options:
              --storage=SERVICE  specify the cloud service name like aws or
@@ -90,6 +92,32 @@ class StorageCommand(PluginCommand):
                SOURCE - awss3:source.txt
                DESTINATION - azure:target.txt
 
+           Description of the copy command:
+
+                Command enables to Copy files between different cloud service
+                providers, list and delete them. This command accepts `aws` ,
+                `google` and `local` as the SOURCE and TARGET provider.
+
+                cms storage copy --source=SERVICE:SOURCE --target=DEST:TARGET
+
+                    Command copies files or directories from Source provider to
+                    Target Provider.
+
+                cms storage slist --source=SERVICE:SOURCE
+                    Command lists all the files present in SOURCE provider's in
+                    the given SOURCE_FILE_DIR location This command accepts
+                    `aws` or `google` as the SOURCE provider
+
+                cms storage sdelete --source=SERVICE:SOURCE
+                    Command deletes the file or directory from the SOURCE
+                    provider's SOURCE_FILE_DIR location
+
+            Examples:
+                cms storage_service copy --source=local:test1.txt --target=aws:uploadtest1.txt
+                cms storage_service list --source=google:test
+                cms storage_service delete --source=aws:uploadtest1.txt
+
+
            Example:
               set storage=azureblob
               storage put SOURCE DESTINATION --recursive
@@ -102,24 +130,19 @@ class StorageCommand(PluginCommand):
         """
         # arguments.CONTAINER = arguments["--container"]
 
-        map_parameters(arguments,
-                       "recursive",
-                       "storage")
         VERBOSE(arguments)
+        map_parameters(arguments,
+                       "dryrun",
+                       "recursive",
+                       "storage",
+                       "source",
+                       "target")
 
-        if arguments.storage is None:
-            if arguments.copy is None:
-                try:
-                    v = Variables()
-                    arguments.storage = v['storage']
-                except Exception as e:
-                    arguments.storage = None
-                    raise ValueError("Storage provider is not defined")
-            else:
-                if arguments.DESTINATION.split(":")[0] == "local":
-                    arguments.storage = arguments.SOURCE.split(":")[0]
-                else:
-                    arguments.storage = arguments.DESTINATION.split(":")[0]
+        source = arguments.source
+        target = arguments.target
+        variables = Variables()
+
+        VERBOSE(arguments)
 
         arguments.storage = Parameter.expand(arguments.storage)
 
@@ -144,20 +167,64 @@ class StorageCommand(PluginCommand):
 
         elif arguments.list:
 
-            source = arguments.SOURCE or '.'
+            """
+            storage list SOURCE [--parallel=N]
+            """
+            sources = arguments.SOURCE or variables["storage"] or 'local:.'
+            sources = Parameter.expand(sources)
 
-            for storage in arguments.storage:
-                provider = Provider(storage)
+            deletes = []
+            for source in sources:
+                storage, entry = Parameter.separate(source)
 
-                result = provider.list(source,
-                                       arguments.recursive)
+                storage = storage or "local"
+                deletes.append((storage, entry))
+
+            _sources = ', '.join(sources)
+
+            for delete in deletes:
+                service, entry = delete
+                if arguments.dryrun:
+                    print(f"Dryrun: list {service}:{entry}")
+                else:
+                    provider = Provider(service=service)
+                    provider.list(name=entry)
+
+            return ""
 
         elif arguments.delete:
 
-            for storage in arguments.storage:
-                provider = Provider(storage)
+            """
+            storage delete SOURCE [--parallel=N]
+            """
+            sources = arguments.SOURCE or variables["storage"] or 'local:.'
+            sources = Parameter.expand(sources)
 
-                provider.delete(arguments.SOURCE)
+            deletes = []
+            for source in sources:
+                storage, entry = Parameter.separate(source)
+
+                storage = storage or "local"
+                deletes.append((storage, entry))
+
+            _sources = ', '.join(sources)
+
+            answer = yn_choice(f"Would you like to delete {_sources}?", default="no")
+
+            if answer:
+
+                for delete in deletes:
+                    service, entry = delete
+                    if arguments.dryrun:
+                        print(f"Dryrun: delete {service}:{entry}")
+                    else:
+                        provider = Provider(service=service)
+                        provider.delete(name=entry)
+
+            else:
+                Console.error("Deletion canceled")
+
+            return ""
 
         elif arguments.search:
 
@@ -183,3 +250,21 @@ class StorageCommand(PluginCommand):
             result = provider.copy(arguments.SOURCE,
                                    arguments.DESTINATION,
                                    arguments.recursive)
+
+
+        elif arguments.copy:
+            scloud, sbucket = source.split(":", 1) or None
+            tcloud, tbucket = target.split(":", 1) or None
+            # print(scloud + " " + tcloud + " " + sbucket + " " + tbucket)
+
+            if scloud == "aws" or scloud == "google":
+                provider = Provider(service=scloud)
+                provider.copy(scloud, tcloud, sbucket, tbucket)
+            elif (scloud == "local" and tcloud == "aws") or (
+                scloud == "local" and tcloud == "google"):
+                provider = Provider(service=tcloud)
+                provider.copy(scloud, tcloud, sbucket, tbucket)
+            else:
+                print("Not Implemented")
+
+        return ""

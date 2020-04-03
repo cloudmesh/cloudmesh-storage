@@ -1,9 +1,9 @@
-from cloudmesh.abstract.StorageABC import StorageABC
-from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-from cloudmesh.common.debug import VERBOSE
-from pprint import pprint
 from pathlib import Path
+from pprint import pprint
+
+from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.console import Console
+from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 
 
 class Provider(StorageABC):
@@ -16,6 +16,8 @@ class Provider(StorageABC):
                 "azureblob",
                 "awss3",
                 "parallelawss3",
+                'parallelgdrive',
+                'parallelazureblob',
                 "google",
                 "oracle"]
         return kind
@@ -39,6 +41,10 @@ class Provider(StorageABC):
             from cloudmesh.storage.provider.awss3.Provider import Provider as P
         elif kind == "parallelawss3":
             from cloudmesh.storage.provider.awss3.Provider import Provider as P
+        elif kind == "parallelazureblob":
+            from cloudmesh.storage.provider.parallelazureblob.Provider import \
+                Provider as P
+
         elif kind in ['google']:
             from cloudmesh.google.storage.Provider import Provider as P
         elif kind in ['oracle']:
