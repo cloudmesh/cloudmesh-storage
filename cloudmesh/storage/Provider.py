@@ -89,7 +89,6 @@ class Provider(StorageABC):
     @DatabaseUpdate()
     def put(self, source=None, destination=None, recursive=False):
 
-        service = self.service
         d = self.provider.put(source=source, destination=destination,
                               recursive=recursive)
         return d

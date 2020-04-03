@@ -594,8 +594,8 @@ class Provider(StorageABC):
 
         """
 
-        source = specification['source']['path']
-        destination = specification['destination']['path']
+        source = specification['source']
+        destination = specification['destination']
         recursive = specification['recursive']
         # src_service, src = source.split(":", 1)
         # dest_service, dest = destination.split(":", 1)
@@ -878,7 +878,7 @@ class Provider(StorageABC):
         return entries
 
     @DatabaseUpdate()
-    def get(self, source, destination, recursive):
+    def get(self, source, destination, recursive=False):
         date = DateTime.now()
         uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
@@ -896,6 +896,29 @@ class Provider(StorageABC):
                           recursive: {recursive}
                           status: waiting
                     """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+        return entries
+
+    @DatabaseUpdate()
+    def put(self, source, destination, recursive=False):
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+                              cm:
+                                number: {self.number}
+                                kind: storage
+                                id: {uuid_str}
+                                cloud: {self.name}
+                                name: {source}:{destination}
+                                collection: {self.collection}
+                                created: {date}
+                              action: put
+                              source: {source}
+                              destination: {destination}
+                              recursive: {recursive}
+                              status: waiting
+                        """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
         self.number = self.number + 1
         return entries
@@ -996,12 +1019,16 @@ class Provider(StorageABC):
         elif action == "get":
             specification = self.get_run(specification)
             self.update_dict(elements=[specification])
+        elif action == "put":
+            specification = self.put_run(specification)
+            self.update_dict(elements=[specification])
 
     def get_actions(self):
         cm = CmDatabase()
         entries = cm.find(cloud=self.name,
                           kind='storage')
         get_actions = []
+        put_actions = []
         mkdir_actions = []
         copy_actions = []
         list_actions = []
@@ -1012,6 +1039,8 @@ class Provider(StorageABC):
             pprint(entry)
             if entry['action'] == 'get' and entry['status'] == 'waiting':
                 get_actions.append(entry)
+            elif entry['action'] == 'put' and entry['status'] == 'waiting':
+                put_actions.append(entry)
             elif entry['action'] == 'mkdir' and entry['status'] == 'waiting':
                 mkdir_actions.append(entry)
             elif entry['action'] == 'copy' and entry['status'] == 'waiting':
@@ -1023,7 +1052,8 @@ class Provider(StorageABC):
             elif entry['action'] == 'cancel' and entry['status'] == 'waiting':
                 cancel_actions.append(entry)
 
-        return get_actions, mkdir_actions, copy_actions, list_actions, \
+        return get_actions, put_actions, mkdir_actions, copy_actions, \
+               list_actions, \
                delete_actions, \
                cancel_actions
 
@@ -1034,7 +1064,8 @@ class Provider(StorageABC):
 
         :return:
         """
-        get_action, mkdir_action, copy_action, list_action, delete_action, \
+        get_action, put_action, mkdir_action, copy_action, list_action, \
+        delete_action, \
         cancel_action = self.get_actions()
 
         pool = Pool(self.parallelism)
@@ -1049,6 +1080,9 @@ class Provider(StorageABC):
 
         # COPY FILES
         pool.map(self.action, copy_action)
+
+        # PUT FILES
+        pool.map(self.action, put_action)
 
         # GET FILES
         pool.map(self.action, get_action)
@@ -1264,7 +1298,7 @@ if __name__ == "__main__":
     # p.list(directory=".")
     # p.delete(path="testdir1")
     # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
-
+    # p.put(source="shihui.txt", destination="shihui123.txt", recursive=False)
     # p.run()
 
 
