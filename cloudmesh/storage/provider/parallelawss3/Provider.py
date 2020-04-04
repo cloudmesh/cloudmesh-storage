@@ -14,6 +14,8 @@ from cloudmesh.common.DateTime import DateTime
 from cloudmesh.common.console import Console
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
+from cloudmesh.storage.parallelawss3.path_manager import extract_file_dict
+from cloudmesh.storage.parallelawss3.path_manager import massage_path
 
 
 class Provider(StorageABC):
@@ -93,33 +95,6 @@ class Provider(StorageABC):
             d.append(entry)
         return d
 
-    def massage_path(self, file_name_path):
-        """
-        function to massage file path and do some transformations
-        for different scenarios of file inputs
-
-        :param file_name_path:
-        :return:
-        """
-        massaged_path = file_name_path
-        # pprint(massaged_path)
-
-        # convert possible windows style path to unix path
-        massaged_path = massaged_path.replace('\\', '/')
-
-        # remove leading slash symbol in path
-        if len(massaged_path) > 0 and massaged_path[0] == '/':
-            massaged_path = massaged_path[1:]
-
-        # expand home directory in path
-        massaged_path = massaged_path.replace('~', os.path.expanduser('~'))
-        # pprint(massaged_path)
-
-        # expand possible current directory reference in path
-        if massaged_path[0:2] == '.\\' or massaged_path[0:2] == './':
-            massaged_path = os.path.abspath(massaged_path)
-
-        return massaged_path
 
     def join_file_name_dir(self, filename, dirname):
         """
@@ -139,27 +114,6 @@ class Provider(StorageABC):
         else:
             full_file_path = self.massage_path(filename)
         return full_file_path
-
-    def extract_file_dict(self, filename, metadata):
-        """
-        Function to extract obj dict from metadata
-
-        :param filename:
-        :param metadata:
-        :return:
-        """
-        # print(metadata)
-        info = {
-            "fileName": filename,
-            # "creationDate":
-            #   metadata['ResponseMetadata']['HTTPHeaders']['date'],
-            "lastModificationDate":
-                metadata['ResponseMetadata']['HTTPHeaders']['last-modified'],
-            "contentLength":
-                metadata['ResponseMetadata']['HTTPHeaders']['content-length']
-        }
-
-        return info
 
     def bucket_create(self, name=None):
         """
@@ -196,7 +150,7 @@ class Provider(StorageABC):
                 metadata = self.s3_client.head_object(
                     Bucket=self.container_name,
                     Key=self.directory_marker_file_name)
-                dir_files_list.append(self.extract_file_dict(
+                dir_files_list.append(extract_file_dict(
                     self.massage_path(name),
                     metadata)
                 )
@@ -296,7 +250,7 @@ class Provider(StorageABC):
             metadata = self.s3_client.head_object(
                 Bucket=self.container_name, Key=self.massage_path(
                     directory) + '/' + self.directory_marker_file_name)
-            dir_files_list.append(self.extract_file_dict(
+            dir_files_list.append(extract_file_dict(
                 self.massage_path(directory) + '/', metadata)
             )
         else:
@@ -638,7 +592,7 @@ class Provider(StorageABC):
                             metadata = self.s3_client.head_object(
                                 Bucket=self.container_name, Key=file_name)
                             dir_files_list.append(
-                                self.extract_file_dict(file_name, metadata))
+                                extract_file_dict(file_name, metadata))
 
                         elif (trimmed_filename[0] == '/' and
                               trimmed_filename.count('/') == 1):
@@ -649,7 +603,7 @@ class Provider(StorageABC):
                             metadata = self.s3_client.head_object(
                                 Bucket=self.container_name, Key=file_name)
                             dir_files_list.append(
-                                self.extract_file_dict(file_name, metadata))
+                                extract_file_dict(file_name, metadata))
 
                         elif (trimmed_filename[0] != '/' and
                               trimmed_filename.count('/') == 0):
@@ -660,7 +614,7 @@ class Provider(StorageABC):
                             metadata = self.s3_client.head_object(
                                 Bucket=self.container_name, Key=file_name)
                             dir_files_list.append(
-                                self.extract_file_dict(file_name, metadata))
+                                extract_file_dict(file_name, metadata))
 
                     # print(fileName)
         else:
@@ -692,7 +646,7 @@ class Provider(StorageABC):
                         metadata = self.s3_client.head_object(
                             Bucket=self.container_name, Key=file_name)
                         dir_files_list.append(
-                            self.extract_file_dict(file_name, metadata))
+                            extract_file_dict(file_name, metadata))
                     # print(fileName)
         '''
         if len(dirFilesList) == 0:
@@ -754,7 +708,7 @@ class Provider(StorageABC):
             metadata = self.s3_client.head_object(
                 Bucket=self.container_name, Key=trimmed_source)
             dir_files_list.append(
-                self.extract_file_dict(trimmed_source, metadata))
+                extract_file_dict(trimmed_source, metadata))
 
             blob = self.s3_resource.Object(
                 self.container_name,
@@ -786,11 +740,11 @@ class Provider(StorageABC):
                         metadata = self.s3_client.head_object(
                             Bucket=self.container_name, Key=obj.key)
                         dir_files_list.append(
-                            self.extract_file_dict(obj.key, metadata))
+                            extract_file_dict(obj.key, metadata))
                     else:
                         metadata = self.s3_client.head_object(
                             Bucket=self.container_name, Key=obj.key)
-                        dir_files_list.append(self.extract_file_dict(
+                        dir_files_list.append(extract_file_dict(
                             obj.key.replace(os.path.basename(obj.key), ''),
                             metadata))
 
@@ -819,8 +773,8 @@ class Provider(StorageABC):
                         Key=trimmed_source +
                             '/' + self.directory_marker_file_name)
                     dir_files_list.append(
-                        self.extract_file_dict(trimmed_source + '/',
-                                               metadata))
+                        extract_file_dict(trimmed_source + '/',
+                                          metadata))
 
                     self.s3_resource.Object(
                         self.container_name,
@@ -919,7 +873,7 @@ class Provider(StorageABC):
                 metadata = self.s3_client.head_object(
                     Bucket=self.container_name, Key=trimmed_destination)
                 files_uploaded.append(
-                    self.extract_file_dict(trimmed_destination, metadata))
+                    extract_file_dict(trimmed_destination, metadata))
 
             else:
 
@@ -939,7 +893,7 @@ class Provider(StorageABC):
                 metadata = self.s3_client.head_object(
                     Bucket=self.container_name, Key=destination_key)
                 files_uploaded.append(
-                    self.extract_file_dict(destination_key, metadata))
+                    extract_file_dict(destination_key, metadata))
 
             # self.storage_dict['message'] = 'Source uploaded'
         elif is_source_dir is True:
@@ -975,8 +929,8 @@ class Provider(StorageABC):
                         Bucket=self.container_name,
                         Key=trimmed_destination + tgtfile)
                     files_uploaded.append(
-                        self.extract_file_dict(trimmed_destination + tgtfile,
-                                               metadata))
+                        extract_file_dict(trimmed_destination + tgtfile,
+                                          metadata))
 
             else:
                 # get the directories with in the folder as well and upload
@@ -1014,7 +968,7 @@ class Provider(StorageABC):
                             file.replace(trimmed_source, '')
                         )
                     )
-                    files_uploaded.append(self.extract_file_dict(
+                    files_uploaded.append(extract_file_dict(
                         trimmed_destination + self.massage_path(
                             file.replace(trimmed_source, '')
                         )
@@ -1072,8 +1026,8 @@ class Provider(StorageABC):
         self.storage_dict['destination'] = destination
         self.storage_dict['recursive'] = recursive
 
-        trimmed_source = self.massage_path(source)
-        trimmed_destination = self.massage_path(destination)
+        trimmed_source = massage_path(source)
+        trimmed_destination = massage_path(destination)
 
         file_obj = ''
 
@@ -1127,7 +1081,7 @@ class Provider(StorageABC):
                 metadata = self.s3_client.head_object(
                     Bucket=self.container_name, Key=trimmed_source)
                 files_downloaded.append(
-                    self.extract_file_dict(trimmed_source, metadata))
+                    extract_file_dict(trimmed_source, metadata))
 
                 self.storage_dict['message'] = 'Source downloaded'
             except FileNotFoundError as e:
@@ -1152,7 +1106,7 @@ class Provider(StorageABC):
                 for obj in all_objs:
                     if os.path.basename(obj.key) != \
                         self.directory_marker_file_name:
-                        if self.massage_path(
+                        if massage_path(
                             obj.key.replace(trimmed_source, '')).count(
                             '/') == 0:
                             try:
@@ -1169,7 +1123,7 @@ class Provider(StorageABC):
                                 metadata = self.s3_client.head_object(
                                     Bucket=self.container_name, Key=obj.key)
                                 files_downloaded.append(
-                                    self.extract_file_dict(obj.key, metadata))
+                                    extract_file_dict(obj.key, metadata))
 
                                 self.storage_dict[
                                     'message'] = 'Source downloaded'
@@ -1188,7 +1142,7 @@ class Provider(StorageABC):
                     if os.path.basename(
                         obj.key) != self.directory_marker_file_name and obj.key[
                         -1] != '/':
-                        if self.massage_path(
+                        if massage_path(
                             obj.key.replace(trimmed_source, '')).count(
                             '/') == 0:
                             try:
@@ -1205,7 +1159,7 @@ class Provider(StorageABC):
                                 metadata = self.s3_client.head_object(
                                     Bucket=self.container_name, Key=obj.key)
                                 files_downloaded.append(
-                                    self.extract_file_dict(obj.key, metadata))
+                                    extract_file_dict(obj.key, metadata))
 
                                 self.storage_dict[
                                     'message'] = 'Source downloaded'
@@ -1215,7 +1169,7 @@ class Provider(StorageABC):
                                     'message'] = 'Destination not found'
                         else:
 
-                            folder_path = self.massage_path(
+                            folder_path = massage_path(
                                 obj.key.replace(trimmed_source, '').replace(
                                     os.path.basename(obj.key), '')
                             )
@@ -1248,7 +1202,7 @@ class Provider(StorageABC):
                                 metadata = self.s3_client.head_object(
                                     Bucket=self.container_name, Key=obj.key)
                                 files_downloaded.append(
-                                    self.extract_file_dict(obj.key, metadata))
+                                    extract_file_dict(obj.key, metadata))
 
                                 self.storage_dict[
                                     'message'] = 'Source downloaded'
@@ -1288,9 +1242,9 @@ class Provider(StorageABC):
 
         # filePath = self.joinFileNameDir(filename, directory)
         file_path = ''
-        len_dir = len(self.massage_path(directory))
+        len_dir = len(massage_path(directory))
         if len_dir > 0:
-            file_path = self.massage_path(directory) + '/' + filename
+            file_path = massage_path(directory) + '/' + filename
         else:
             file_path = filename
 
@@ -1311,7 +1265,7 @@ class Provider(StorageABC):
         elif (len_dir > 0) and recursive is True:
             objs = list(
                 self.s3_resource.Bucket(self.container_name).objects.filter(
-                    Prefix=self.massage_path(directory)))
+                    Prefix=massage_path(directory)))
         elif (len_dir == 0) and recursive is True:
             objs = list(
                 self.s3_resource.Bucket(self.container_name).objects.all())
