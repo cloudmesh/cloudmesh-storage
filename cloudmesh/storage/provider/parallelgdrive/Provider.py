@@ -1,4 +1,3 @@
-# Sara's changes through line 87
 from __future__ import print_function
 import pickle
 import os.path
@@ -32,15 +31,27 @@ from oauth2client.file import Storage
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
-class Provider():
+class Provider(StorageABC):
 
-    #kind = "parallelgdrive"
+    kind = "parallelgdrive"
 
-    def __init__(self, service=None):
+    sample = "TODO: missing"
+
+    output = {}  # "TODO: missing"
+
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+        super().__init__(service=service, config=config)
+        self.config = Config()
+        self.storage_credentials = self.config.credentials("storage", "parallelgdrive")
+        self.credentials_json_path = self.storage_credentials['credentials_json_path']
+        self.token_path = self.storage_credentials['token_path']
         creds = None
-        # The file token.pickle stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
+        # Temporarily change directory to token_path specified in cloudmesh.yaml
+        # This is to use the credentials.json file and token.pickle
+        # Assuming credentials.json file and token.pickle will be in same directory in cloudmesh.yaml
+        # Get current working directory
+        cwd = os.getcwd()
+        os.chdir(self.token_path)
         if os.path.exists('token.pickle'):
             with open('token.pickle', 'rb') as token:
                 creds = pickle.load(token)
@@ -55,11 +66,13 @@ class Provider():
             # Save the credentials for the next run
             with open('token.pickle', 'wb') as token:
                 pickle.dump(creds, token)
+        # Change directory back to previous working directory
+        os.chdir(cwd)
 
         service = build('drive', 'v3', credentials=creds)
         self.service = service
 
-    def list(self, service=None):
+    def list(self):
         # Call the Drive v3 API
         results = self.service.files().list(
             pageSize=10, fields="nextPageToken, files(id, name)").execute()
