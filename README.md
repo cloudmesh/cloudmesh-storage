@@ -79,13 +79,13 @@ the old documentation.
 
 As we are developping multicloud environments we like to reuse and make
 some of the functionallity similar between clouds. for this reason we
-have implemented a provider concept that reads teh credentials for each
+have implemented a provider concept that reads the credentials for each
 storage location from a cloudmesh yaml file.
 
 Then based on the `cms.kind` of this storage location a Provider is
 picked and we can interact with the system.
 
-Thisis documented for the compute provider at
+This is documented for the compute provider at
 
 * [Provider concept](https://cloudmesh.github.io/cloudmesh-manual/concepts/providers.html)
 
@@ -105,6 +105,83 @@ Current architecture concepts: [Cloudmesh Storage Concepts](https://cloudmesh.gi
 * TODO: Link to the document with the parallel architetcture is missing
 
 * Parallel Queue
+
+### Parallel Queue Implementation 
+
+Parallel Cloud Provider: 
+
+* parallelawss3
+* parallelgdrive
+* parallelazureblob
+* parallelbox
+
+Supported Parallel Commands: 
+
+* get 
+
+  The get command downloads files from provider in parallel to
+ your local host.
+ 
+ ```
+ storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N]
+```
+
+* put
+
+  The put command uploads files from your local host to the provider in parallel
+  
+ ```
+ storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
+ ```
+
+* create_dir
+
+This command helps to create a new directory on the provider in parallel. 
+You must specify the full path of the new directory you would like to create.
+
+```
+storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N]
+```
+
+* list
+
+The list command lists all the contents of a cloud directory in parallel. If the
+ recursive option is specified, it will list the contents of all sub-directories
+ as well.
+
+```
+storage list [SOURCE] [--recursive] [--parallel=N] [--output=OUTPUT] [--dryrun]
+```
+
+* delete
+
+The delete command can delete files or folders from your cloud file storage in 
+parallel. Deleting a folder will delete its contents as well (including the 
+sub-directories).
+
+```
+storage delete SOURCE [--parallel=N] [--dryrun]
+```
+
+* search
+
+The search command helps to search for a particular file within a directory.
+If recursive options is specified, Cloudmesh will search for the file in all 
+sub-directories of the original directory as well.
+
+To search for a file at the root, pass an empty string or / as the target dir.
+
+```
+storage search  DIRECTORY FILENAME [--recursive] [--storage=SERVICE] [--parallel=N] [--output=OUTPUT]
+```
+
+* copy
+
+The copy command copies files from one provider to another in parallel. 
+
+``` 
+storage copy --source=SOURCE:SOURCE_FILE_DIR --target=TARGET:TARGET_FILE_DIR
+```
 
 ### Comamnds
 
