@@ -19,15 +19,25 @@ from oauth2client import tools
 from oauth2client.file import Storage
 
 
-class Provider(StorageABC):
+# TODO: MANY OF THE DOCSTRINGS SHOUDL BE DEFINED IN THE ABC CLASS, MAKE SURE TO
+#       FIX THEM THERE FIRST, THAN COPY AND ADAPT HERE
 
+class Provider(StorageABC):
     kind = "parallelgdrive"
 
+    # BUG: missing
     sample = "TODO: missing"
 
+    # BUG: missing
     output = {}  # "TODO: missing"
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+        """
+        TODO: missing, also define parameters
+
+        :param service:
+        :param config:
+        """
         super().__init__(service=service, config=config)
         self.config = Config()
         self.storage_credentials = self.config.credentials("storage", "gdrive")
@@ -60,34 +70,40 @@ class Provider(StorageABC):
         return args
 
     def generate_key_json(self):
+        """
+        TODO: missing, also define parameters
+
+        :return:
+        """
         config_path = self.storage_credentials['location_secret']
         path = Path(path_expand(config_path)).resolve()
         config_folder = os.path.dirname(path)
         if not os.path.exists(config_folder):
             os.makedirs(config_folder)
-        data = {"installed": {
-            "client_id": self.storage_credentials["client_id"],
-            "project_id": self.storage_credentials["project_id"],
-            "auth_uri": self.storage_credentials["auth_uri"],
-            "token_uri": self.storage_credentials["token_uri"],
-            "client_secret": self.storage_credentials["client_secret"],
-            "auth_provider_x509_cert_url": self.storage_credentials[
-                "auth_provider_x509_cert_url"],
-            "redirect_uris": self.storage_credentials["redirect_uris"]
-        }
+        data = {
+            "installed": {
+                "client_id": self.storage_credentials["client_id"],
+                "project_id": self.storage_credentials["project_id"],
+                "auth_uri": self.storage_credentials["auth_uri"],
+                "token_uri": self.storage_credentials["token_uri"],
+                "client_secret": self.storage_credentials["client_secret"],
+                "auth_provider_x509_cert_url": self.storage_credentials[
+                    "auth_provider_x509_cert_url"],
+                "redirect_uris": self.storage_credentials["redirect_uris"]
+            }
         }
         with open(self.clientSecretFile, 'w') as fp:
             json.dump(data, fp)
 
     def get_credentials(self):
-
         """
-            We have stored the credentials in ".credentials"
-            folder and there is a file named 'google-drive-credentials.json'
-            that has all the credentials required for our authentication
-            If there is nothing stored in it this program creates credentials
-            json file for future authentication
-            Here the authentication type is OAuth2
+        We have stored the credentials in ".credentials"
+        folder and there is a file named 'google-drive-credentials.json'
+        that has all the credentials required for our authentication
+        If there is nothing stored in it this program creates credentials
+        json file for future authentication
+        Here the authentication type is OAuth2
+
         :return:
         :rtype:
         """
@@ -111,6 +127,14 @@ class Provider(StorageABC):
         return credentials
 
     def put(self, source=None, destination=None, recursive=False):
+        """
+        TODO: missing, also define parameters
+
+        :param source:
+        :param destination:
+        :param recursive:
+        :return:
+        """
         if recursive:
             if os.path.isdir(source):
                 temp_res = []
@@ -191,6 +215,14 @@ class Provider(StorageABC):
                 return self.update_dict(res)
 
     def get(self, source=None, destination=None, recursive=False):
+        """
+        TODO: missing, also define parameters
+
+        :param source:
+        :param destination:
+        :param recursive:
+        :return:
+        """
         if not os.path.exists(source):
             os.makedirs(source)
 
@@ -249,6 +281,13 @@ class Provider(StorageABC):
 
     def delete(self, filename=None,
                recursive=False):  # this is working
+        """
+        TODO: missing, also define parameters
+
+        :param filename:
+        :param recursive:
+        :return:
+        """
         file_id = ""
         file_rec = None
         if recursive:
@@ -284,6 +323,13 @@ class Provider(StorageABC):
         return self.update_dict(file_rec)
 
     def create_dir(self, service=None, directory=None):
+        """
+        TODO: missing, also define parameters
+
+        :param service:
+        :param directory:
+        :return:
+        """
         folders, filename = self.cloud_path(directory)
         id = None
         files = []
@@ -308,6 +354,13 @@ class Provider(StorageABC):
         return self.update_dict(files)
 
     def list(self, source=None, recursive=False):
+        """
+        TODO: missing, also define parameters
+
+        :param source:
+        :param recursive:
+        :return:
+        """
         if recursive:
             results = self.driveService.files().list(
                 pageSize=self.limitFiles,
@@ -340,6 +393,14 @@ class Provider(StorageABC):
 
     def search(self, directory=None, filename=None,
                recursive=False):
+        """
+        TODO: missing, also define parameters
+
+        :param directory:
+        :param filename:
+        :param recursive:
+        :return:
+        """
         if recursive:
             found = False
             res_file = None
@@ -371,6 +432,14 @@ class Provider(StorageABC):
             return self.update_dict(res_file)
 
     def upload_file(self, source, filename, parent_it):
+        """
+        TODO: missing
+
+        :param source:
+        :param filename:
+        :param parent_it:
+        :return:
+        """
         file_metadata = {'name': filename, 'parents': [parent_it]}
         self.driveService = self.driveService
         if source is None:
@@ -386,6 +455,15 @@ class Provider(StorageABC):
         return file
 
     def download_file(self, source, file_id, file_name, mime_type):
+        """
+        TODO: missing, also define parameters
+
+        :param source:
+        :param file_id:
+        :param file_name:
+        :param mime_type:
+        :return:
+        """
         filepath = source + '/' + file_name + mimetypes.guess_extension(
             mime_type)
         request = self.driveService.files().get_media(fileId=file_id)
@@ -401,7 +479,16 @@ class Provider(StorageABC):
         return filepath
 
     def cloud_path(self, srv_path):
-        # Internal function to determine if the cloud path specified is file or folder or mix
+        """
+        Internal function to determine if the cloud path specified is file or
+        folder or mix
+
+        TODO: missing, also define parameters
+
+        :param srv_path:
+        :return:
+        """
+
         b_folder = []
         b_file = None
         src_file = srv_path
@@ -414,6 +501,12 @@ class Provider(StorageABC):
             return arr_folders, None
 
     def update_dict(self, elements):
+        """
+        TODO: missing, also define parameters
+
+        :param elements:
+        :return:
+        """
         if elements is None:
             return None
         elif type(elements) is list:
