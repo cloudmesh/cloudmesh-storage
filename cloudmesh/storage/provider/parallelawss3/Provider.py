@@ -22,6 +22,38 @@ from cloudmesh.storage.parallelawss3.path_manager import massage_path
 # TODO: use Console.error, Console.msg, Console.ok instead of print
 #
 
+#
+# TODO: develop a general monitor not just for your storage provider in monitor.py
+#
+# This will list all actions in the collection and list the status
+#
+# you should be able to see this dynamically
+#
+# we should be able just as we do in cloudmesh-pi-cluster with a parameter --rate=5.0
+#
+# refresh the status every 5 seconds
+#
+# cms storage monitor [SERVICES] (--status=all | status=STATUS)[--output=output] [--clear]
+#
+# SERVICES and status are Parameter.expand entries, e.g. dicts after the expand
+#
+# table would look like:
+#
+# status, action, source, destination, start,
+#
+#
+#        for True:
+#
+#            ... get File
+#            ... if clear: os.system('clear')
+#            ... display info
+#
+#            time.sleep(rate)
+#            interrupt if we press q
+#
+
+
+
 class Provider(StorageABC):
     kind = "parallelawss3"
 
