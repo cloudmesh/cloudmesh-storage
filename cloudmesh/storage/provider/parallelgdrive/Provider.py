@@ -22,6 +22,8 @@ from oauth2client.file import Storage
 # TODO: MANY OF THE DOCSTRINGS SHOUDL BE DEFINED IN THE ABC CLASS, MAKE SURE TO
 #       FIX THEM THERE FIRST, THAN COPY AND ADAPT HERE
 
+# TODO: simplify some string concatenation with f strings
+#       Example: f"name='{destination}' and trashed=false"
 class Provider(StorageABC):
     kind = "parallelgdrive"
 
@@ -137,8 +139,12 @@ class Provider(StorageABC):
         """
         if recursive:
             if os.path.isdir(source):
+                #
+                # TODO: large portion of the code is duplicated, when not use a
+                #       function for things that are the same
+                #
                 temp_res = []
-                query_params = "name='" + destination + "' and trashed=false"
+                query_params = f"name='{destination}' and trashed=false"
                 sourceid = self.driveService.files().list(
                     q=query_params,
                     fields="nextPageToken, files(id, name, mimeType)").execute()
@@ -175,6 +181,31 @@ class Provider(StorageABC):
                                        parent_it=file_parent_id)
                 return self.update_dict(res)
         else:
+            #
+            # TODO: large portion of the code is duplicated, when not use a
+            #       function for things that are the same
+            #
+
+            #
+            # TODO: evaluate Gregors suggestion and reuse/improve
+            #
+            def get_parent_id(destination,
+                              fields="nextPageToken, files(id, name, mimeType)"):
+                query_params = f"name='{destination}' and trashed=false"
+                sourceid = self.driveService.files().list(
+                    q=query_params,
+                    fields=fields).execute()
+                file_parent_id = None
+                temp_res = []
+                print(sourceid)
+                if len(sourceid['files']) == 0:
+                    parent_file = self.create_dir(directory=destination)
+                    file_parent_id = parent_file['id']
+                else:
+                    print(sourceid['files'][0]['id'])
+                    file_parent_id = sourceid['files'][0]['id']
+                return file_parent_id
+
             if os.path.isdir(source):
                 query_params = "name='" + destination + "' and trashed=false"
                 sourceid = self.driveService.files().list(
@@ -225,6 +256,11 @@ class Provider(StorageABC):
         """
         if not os.path.exists(source):
             os.makedirs(source)
+
+        #
+        # TODO: large portion of the code is duplicated, when not use a
+        #       function for things that are the same
+        #
 
         if recursive:
             query_params = "name='" + destination + "' and trashed=false"
@@ -290,6 +326,11 @@ class Provider(StorageABC):
         """
         file_id = ""
         file_rec = None
+        #
+        # TODO: large portion of the code is duplicated, when not use a
+        #       function for things that are the same
+        #
+
         if recursive:
             items = self.driveService.files().list(
                 pageSize=self.limitFiles,
@@ -361,6 +402,11 @@ class Provider(StorageABC):
         :param recursive:
         :return:
         """
+        #
+        # TODO: large portion of the code is duplicated, when not use a
+        #       function for things that are the same
+        #
+
         if recursive:
             results = self.driveService.files().list(
                 pageSize=self.limitFiles,
@@ -401,6 +447,16 @@ class Provider(StorageABC):
         :param recursive:
         :return:
         """
+        #
+        # TODO: BUG: ??? I do not see the difference between if recursive
+        #            and non recursive. please explain
+        #
+        #
+
+        # TODO: large portion of the code is duplicated, when not use a
+        #       function for things that are the same
+        #
+
         if recursive:
             found = False
             res_file = None
