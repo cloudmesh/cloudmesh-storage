@@ -18,6 +18,10 @@ from cloudmesh.storage.parallelawss3.path_manager import extract_file_dict
 from cloudmesh.storage.parallelawss3.path_manager import massage_path
 
 
+#
+# TODO: use Console.error, Console.msg, Console.ok instead of print
+#
+
 class Provider(StorageABC):
     kind = "parallelawss3"
 
@@ -53,7 +57,8 @@ class Provider(StorageABC):
         'canceled'
     ]
 
-    output = {}  # "TODO: missing"
+    # TODO: BUG: missing we need that as the table printer requires it
+    output = {}
 
     def __init__(self,
                  name=None,
@@ -95,7 +100,9 @@ class Provider(StorageABC):
             d.append(entry)
         return d
 
-
+    #
+    # TODO: make static and move to path_manager.py
+    #
     def join_file_name_dir(self, filename, dirname):
         """
         Function to join file name dir to get full file path
@@ -130,7 +137,7 @@ class Provider(StorageABC):
                 ACL='private',
                 Bucket=name,
             )
-            print("Bucket Created:", name)
+            Console.ok(f"Bucket Created: {name}")
             file_content = ""
             file_path = self.massage_path(name)
             self.storage_dict['action'] = 'bucket_create'
@@ -215,6 +222,10 @@ class Provider(StorageABC):
         # path: {path}
         # status: waiting
         directory = specification['path']
+        #
+        # TODO: put the parameter litst into a dict _credentials and use
+        #       self.s3_resource = boto3.resource(**_credentials)
+        #       self.s3_resource = boto3.client(**_credentials)
         self.s3_resource = boto3.resource(
             's3',
             aws_access_key_id=self.credentials['access_key_id'],
@@ -239,6 +250,7 @@ class Provider(StorageABC):
             self.s3_resource.Bucket(self.container_name)
                 .objects.filter(Prefix=file_path + '/'))
 
+        # TODO: simplify adding strings with f"" strings
         if len(obj) == 0:
             self.s3_resource.Object(
                 self.container_name, self.massage_path(
@@ -259,6 +271,18 @@ class Provider(StorageABC):
         specification['status'] = 'completed'
         return specification
 
+    def _add_cm(self, spec, kwargs):
+        textwrap.dedent(f"""
+            cm:
+               number: {self.number}
+               name: "{sourcefile}:{destinationfile}"
+               kind: storage
+               id: {uuid_str}
+               cloud: {self.name}
+               collection: {self.collection}
+               created: {date}
+        """).format(**kwargs).strip()
+
     @DatabaseUpdate()
     def copy(self, sourcefile, destinationfile, recursive=False):
         """
@@ -278,26 +302,49 @@ class Provider(StorageABC):
         date = DateTime.now()
         uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
-        cm:
-           number: {self.number}
-           name: "{sourcefile}:{destinationfile}"
-           kind: storage
-           id: {uuid_str}
-           cloud: {self.name}
-           collection: {self.collection}
-           created: {date}
-        action: copy
-        source: 
-          path: {sourcefile}
-        destination: 
-          path: {destinationfile}
-        recursive: {recursive}
-        status: waiting
+            cm:
+               number: {self.number}
+               name: "{sourcefile}:{destinationfile}"
+               kind: storage
+               id: {uuid_str}
+               cloud: {self.name}
+               collection: {self.collection}
+               created: {date}
+            action: copy
+            source: 
+              path: {sourcefile}
+            destination: 
+              path: {destinationfile}
+            recursive: {recursive}
+            status: waiting
         """)
+        #
+        # TODO: consider
+        #
+        # removing cm from the specification and using
+        #
+        # specification = textwrap.dedent(f"""
+        #             action: copy
+        #             source:
+        #               path: {sourcefile}
+        #             destination:
+        #               path: {destinationfile}
+        #             recursive: {recursive}
+        #             status: waiting
+        #         """)
+        #
+        # specification = self._add_cm(**locals()) + specification.strip() + "\n"
+        #
+        # EVALUATE and adapt
+        #
+
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
         self.number = self.number + 1
         return entries
 
+    #
+    # TODO: make indentations of the yaml uniform, see delete, do this for all
+    #
     @DatabaseUpdate()
     def delete(self, path, recursive=True):
         """
@@ -311,20 +358,20 @@ class Provider(StorageABC):
         date = DateTime.now()
         uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
-                cm:
-                   number: {self.number}
-                   name: "{path}"
-                   kind: storage
-                   id: {uuid_str}
-                   cloud: {self.name}
-                   collection: {self.collection}
-                   created: {date}
-                action: delete
-                source: 
-                  path: {path}
-                recursive: {recursive}
-                status: waiting
-                """)
+            cm:
+               number: {self.number}
+               name: "{path}"
+               kind: storage
+               id: {uuid_str}
+               cloud: {self.name}
+               collection: {self.collection}
+               created: {date}
+            action: delete
+            source: 
+              path: {path}
+            recursive: {recursive}
+            status: waiting
+        """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
         self.number = self.number + 1
         return entries
@@ -345,17 +392,17 @@ class Provider(StorageABC):
         date = DateTime.now()
         uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
-                        cm:
-                           number: {self.number}
-                           name: "{id}"
-                           kind: storage
-                           id: {uuid_str}
-                           cloud: {self.name}
-                           collection: {self.collection}
-                           created: {date}
-                        action: cancel
-                        status: waiting
-                        """)
+            cm:
+               number: {self.number}
+               name: "{id}"
+               kind: storage
+               id: {uuid_str}
+               cloud: {self.name}
+               collection: {self.collection}
+               created: {date}
+            action: cancel
+            status: waiting
+        """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
         self.number = self.number + 1
         return entries
@@ -406,20 +453,20 @@ class Provider(StorageABC):
         date = DateTime.now()
         uuid_str = str(uuid.uuid1())
         specification = textwrap.dedent(f"""
-                      cm:
-                        number: {self.number}
-                        kind: storage
-                        id: {uuid_str}
-                        cloud: {self.name}
-                        name: {path}
-                        collection: {self.collection}
-                        created: {date}
-                      action: list
-                      path: {path}
-                      dir_only:{dir_only}
-                      recursive:{recursive}
-                      status: waiting
-                """)
+              cm:
+                number: {self.number}
+                kind: storage
+                id: {uuid_str}
+                cloud: {self.name}
+                name: {path}
+                collection: {self.collection}
+                created: {date}
+              action: list
+              path: {path}
+              dir_only:{dir_only}
+              recursive:{recursive}
+              status: waiting
+        """)
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
         self.number = self.number + 1
 
@@ -459,6 +506,11 @@ class Provider(StorageABC):
             self.update_dict(elements=[specification])
 
     def get_actions(self):
+        """
+        TODO: missing
+
+        :return:
+        """
         cm = CmDatabase()
         entries = cm.find(cloud=self.name,
                           kind='storage')
@@ -542,6 +594,10 @@ class Provider(StorageABC):
         source = specification['path']
         dir_only = specification['dir_only']
         recursive = specification['recursive']
+        #
+        # TODO: create function as yo used this before in mkdir
+        #
+
         self.s3_resource = boto3.resource(
             's3',
             aws_access_key_id=self.credentials['access_key_id'],
@@ -680,6 +736,9 @@ class Provider(StorageABC):
 
         # setting recursive as True for all delete cases
         # recursive = True
+        #
+        # TODO: create function as yo used this before in mkdir
+        #
 
         self.s3_resource = boto3.resource(
             's3',
@@ -737,13 +796,29 @@ class Provider(StorageABC):
                     # and derive obj dict
                     if os.path.basename(obj.key) != \
                         self.directory_marker_file_name:
+
+                        #
+                        # TODO: consider moving this before if to redux=ce redundancy
+                        #       evaluate other such things in your rest of the code
+                        #
                         metadata = self.s3_client.head_object(
                             Bucket=self.container_name, Key=obj.key)
+                        #
+                        # TODO: ^^^^^^
+                        #
                         dir_files_list.append(
                             extract_file_dict(obj.key, metadata))
                     else:
+                        #
+                        # TODO: consider moving this before if to redux=ce redundancy
+                        #
+
                         metadata = self.s3_client.head_object(
                             Bucket=self.container_name, Key=obj.key)
+                        #
+                        # TODO: ^^^^^^
+                        #
+
                         dir_files_list.append(extract_file_dict(
                             obj.key.replace(os.path.basename(obj.key), ''),
                             metadata))
@@ -831,6 +906,9 @@ class Provider(StorageABC):
         is_source_dir = os.path.isdir(trimmed_source)
 
         files_uploaded = []
+        #
+        # TODO: create function as yo used this before in mkdir
+        #
 
         self.s3_resource = boto3.resource(
             's3',
@@ -848,6 +926,10 @@ class Provider(StorageABC):
         if not self.bucket_exists(name=bucket):
             self.bucket_create(name=bucket)
 
+        #
+        # TODO: large portion of the code is duplicated, when not use a
+        #       function for things that are the same
+        #
         if is_source_file is True:
             # print('file flow')
             # Its a file and need to be uploaded to the destination
@@ -870,6 +952,11 @@ class Provider(StorageABC):
 
                 # make head call since file upload does not return
                 # obj dict to extract meta data
+
+                #
+                # TODO: move similar code after the if condition
+                #       consider for the rest of the code also elsewhere
+                #
                 metadata = self.s3_client.head_object(
                     Bucket=self.container_name, Key=trimmed_destination)
                 files_uploaded.append(
@@ -900,6 +987,7 @@ class Provider(StorageABC):
             # Look if its a directory
             # print('dir flow')
             # files_uploaded = []
+
             if recursive is False:
                 # get files in the directory and upload to destination dir
                 files_to_upload = []
@@ -1103,6 +1191,11 @@ class Provider(StorageABC):
             elif total_all_objs > 0 and recursive is False:
                 # print('directory found and recursive is false')
                 # files_downloaded = []
+
+                #
+                # TODO: large portion of the code is duplicated, when not use a
+                #       function for things that are the same
+                #
                 for obj in all_objs:
                     if os.path.basename(obj.key) != \
                         self.directory_marker_file_name:
@@ -1253,6 +1346,11 @@ class Provider(StorageABC):
         info_list = []
         objs = []
 
+        # TODO: consider thi strick to make code more readable
+        # filter = self.s3_resource.Bucket(self.container_name).objects.filter
+        #
+        # objs = list(filter(Prefix=file_path)))
+
         if (len_dir > 0) and recursive is False:
             objs = list(
                 self.s3_resource.Bucket(self.container_name).objects.filter(
@@ -1278,6 +1376,9 @@ class Provider(StorageABC):
                     metadata = self.s3_client.head_object(
                         Bucket=self.container_name, Key=obj.key)
                     # print(metadata)
+                    #
+                    # TODO: see path_manager.py
+                    #
                     info = {
                         "fileName": obj.key,
                         # "creationDate" : metadata['ResponseMetadata']['HTTPHeaders']['date'],
