@@ -1,19 +1,17 @@
 import os
+import platform
 import stat
+import textwrap
+import uuid
+from multiprocessing import Pool
 from pprint import pprint
 
 import boto3
 import botocore
-from cloudmesh.abstract.StorageABC import StorageABC
-from cloudmesh.common.console import Console
-
-import platform
-import textwrap
-import uuid
 import oyaml as yaml
-from multiprocessing import Pool
-
+from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.DateTime import DateTime
+from cloudmesh.common.console import Console
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 
@@ -78,7 +76,13 @@ class Provider(StorageABC):
 
     @DatabaseUpdate()
     def update_dict(self, elements, kind=None):
-        # this is an internal function for building dict object
+        """
+        this is an internal function for building dict object
+
+        :param elements:
+        :param kind:
+        :return:
+        """
         d = []
         for element in elements:
             # entry = element.__dict__
@@ -89,9 +93,14 @@ class Provider(StorageABC):
             d.append(entry)
         return d
 
-    # function to massage file path and do some transformations
-    # for different scenarios of file inputs
     def massage_path(self, file_name_path):
+        """
+        function to massage file path and do some transformations
+        for different scenarios of file inputs
+
+        :param file_name_path:
+        :return:
+        """
         massaged_path = file_name_path
         # pprint(massaged_path)
 
@@ -112,8 +121,14 @@ class Provider(StorageABC):
 
         return massaged_path
 
-    # Function to join file name dir to get full file path
     def join_file_name_dir(self, filename, dirname):
+        """
+        Function to join file name dir to get full file path
+
+        :param filename:
+        :param dirname:
+        :return:
+        """
         full_file_path = ''
         if len(self.massage_path(dirname)) > 0:
             # fullFilePath = self.massage_path(dirName) + '/' + \
@@ -125,12 +140,19 @@ class Provider(StorageABC):
             full_file_path = self.massage_path(filename)
         return full_file_path
 
-    # Function to extract obj dict from metadata
     def extract_file_dict(self, filename, metadata):
+        """
+        Function to extract obj dict from metadata
+
+        :param filename:
+        :param metadata:
+        :return:
+        """
         # print(metadata)
         info = {
             "fileName": filename,
-            # "creationDate" : metadata['ResponseMetadata']['HTTPHeaders']['date'],
+            # "creationDate":
+            #   metadata['ResponseMetadata']['HTTPHeaders']['date'],
             "lastModificationDate":
                 metadata['ResponseMetadata']['HTTPHeaders']['last-modified'],
             "contentLength":
@@ -184,14 +206,12 @@ class Provider(StorageABC):
             dict_obj = self.update_dict(self.storage_dict['objlist'])
             # return self.storage_dict
             return dict_obj
-            return True
 
         except botocore.exceptions.ClientError as e:
             if e:
-                message = "One or more errors occurred while creating the bucket: {}".format(
-                    e)
+                message = "One or more errors occurred while " \
+                          "creating the bucket: {}".format(e)
                 raise Exception(message)
-                return True
 
     def bucket_exists(self, name=None):
         """
@@ -205,7 +225,6 @@ class Provider(StorageABC):
         try:
             self.s3_client.head_bucket(Bucket=name)
             return True
-            return name
         except botocore.exceptions.ClientError as e:
             # If a client error is thrown, then check that it was a 404 error.
             # If it was a 404 error, then the bucket does not exist.
@@ -218,10 +237,17 @@ class Provider(StorageABC):
                 Console.error(f"Bucket {name} does not exist")
                 return False
 
-    # function to create a directory the function will first check if the bucket exists or not,if the bucket doesn't exist it will create the bucket and it will create the directory specified.
-    # the name of the bucket will come from YAML specifications and the directory name comes from the arguments.
-
     def _mkdir(self, specification):
+        """
+        function to create a directory the function will first check if the
+        bucket exists or not,if the bucket doesn't exist it will create the
+        bucket and it will create the directory specified. the name of the
+        bucket will come from YAML specifications and the directory name comes
+        from the arguments.
+
+        :param specification:
+        :return:
+        """
         #     cm:
         #     number: {self.number}
         #     kind: storage
@@ -255,8 +281,9 @@ class Provider(StorageABC):
         if not self.bucket_exists(name=bucket):
             self.bucket_create(name=bucket)
 
-        obj = list(self.s3_resource.Bucket(self.container_name) \
-                   .objects.filter(Prefix=file_path + '/'))
+        obj = list(
+            self.s3_resource.Bucket(self.container_name)
+                .objects.filter(Prefix=file_path + '/'))
 
         if len(obj) == 0:
             self.s3_resource.Object(
@@ -291,6 +318,7 @@ class Provider(StorageABC):
 
         :param sourcefile:
         :param destinationfile:
+        :param recursive:
         :return:
         """
         date = DateTime.now()
@@ -322,6 +350,8 @@ class Provider(StorageABC):
         adds a delete action to the queue
 
         :param path:
+        :param recursive:
+
         :return:
         """
         date = DateTime.now()
@@ -345,6 +375,11 @@ class Provider(StorageABC):
         self.number = self.number + 1
         return entries
 
+    #
+    # BUG: THis should ideally be name and not id. THis has impact on all
+    # providers as there may be a bug in the cancel methods including the ABC
+    # class.
+    #
     @DatabaseUpdate()
     def cancel(self, id=None):
         """
@@ -377,7 +412,6 @@ class Provider(StorageABC):
         adds a mkdir action to the queue
 
         create the directory in the storage service
-        :param service: service must be either source or destination
         :param path:
         :return:
         """
@@ -408,8 +442,10 @@ class Provider(StorageABC):
         adds a list action to the queue
 
         list the directory in the storage service
-        :param service: service must be either source or destination
         :param path:
+        :param dir_only:
+        :param recursive:
+
         :return:
         """
 
@@ -472,25 +508,25 @@ class Provider(StorageABC):
         cm = CmDatabase()
         entries = cm.find(cloud=self.name,
                           kind='storage')
-        mkdir = []
-        copy = []
-        list = []
-        delete = []
-        cancel = []
+        _mkdir = []
+        _copy = []
+        _list = []
+        _delete = []
+        _cancel = []
         for entry in entries:
             pprint(entry)
             if entry['action'] == 'mkdir' and entry['status'] == 'waiting':
-                mkdir.append(entry)
+                _mkdir.append(entry)
             elif entry['action'] == 'copy' and entry['status'] == 'waiting':
-                copy.append(entry)
+                _copy.append(entry)
             elif entry['action'] == 'list' and entry['status'] == 'waiting':
-                list.append(entry)
+                _list.append(entry)
             elif entry['action'] == 'delete' and entry['status'] == 'waiting':
-                delete.append(entry)
+                _delete.append(entry)
             elif entry['action'] == 'cancel' and entry['status'] == 'waiting':
-                cancel.append(entry)
+                _cancel.append(entry)
 
-        return mkdir, copy, list, delete, cancel
+        return _mkdir, _copy, _list, _delete, _cancel
 
     def run(self):
         """
@@ -499,7 +535,11 @@ class Provider(StorageABC):
 
         :return:
         """
-        mkdir_action, copy_action, list_action, delete_action, cancel_action = self.get_actions()
+        mkdir_action, \
+        copy_action, \
+        list_action, \
+        delete_action, \
+        cancel_action = self.get_actions()
 
         # cancel the actions
         #
@@ -568,7 +608,10 @@ class Provider(StorageABC):
         pprint(trimmed_source)
 
         if not recursive:
-            # call will not be recursive and need to look only in the specified directory
+
+            # call will not be recursive and need to look only in the specified
+            # directory
+
             for obj in objs:
                 if obj.key.startswith(self.massage_path(trimmed_source)):
                     pprint(obj.key)
@@ -586,7 +629,8 @@ class Provider(StorageABC):
                         x = 1
                     else:
                         # Its a file
-                        if len(file_name.replace(trimmed_source, '')) == 0:
+                        trimmed_filename = file_name.replace(trimmed_source, '')
+                        if len(trimmed_filename) == 0:
                             # dir_files_list.append(file_name)
 
                             # make head call to extract meta data
@@ -596,10 +640,8 @@ class Provider(StorageABC):
                             dir_files_list.append(
                                 self.extract_file_dict(file_name, metadata))
 
-                        elif (file_name.replace(trimmed_source, '')[
-                                  0] == '/' and file_name.replace(
-                            trimmed_source,
-                            '').count('/') == 1):
+                        elif (trimmed_filename[0] == '/' and
+                              trimmed_filename.count('/') == 1):
                             # dir_files_list.append(file_name)
 
                             # make head call to extract meta data
@@ -609,10 +651,8 @@ class Provider(StorageABC):
                             dir_files_list.append(
                                 self.extract_file_dict(file_name, metadata))
 
-                        elif (file_name.replace(trimmed_source, '')[
-                                  0] != '/' and file_name.replace(
-                            trimmed_source,
-                            '').count('/') == 0):
+                        elif (trimmed_filename[0] != '/' and
+                              trimmed_filename.count('/') == 0):
                             # dir_files_list.append(file_name)
 
                             # make head call to extract meta data
@@ -624,13 +664,18 @@ class Provider(StorageABC):
 
                     # print(fileName)
         else:
-            # call will be recursive and need to look recursively in the specified directory as well
+
+            # call will be recursive and need to look recursively in the
+            # specified directory as well
+
             for obj in objs:
                 if obj.key.startswith(self.massage_path(trimmed_source)):
                     # print(obj.key)
                     file_name = obj.key
-                    # file_name = obj.key.replace(self.directory_marker_file_name,
-                    #                            '')
+
+                    # file_name = obj.key.replace(
+                    #     self.directory_marker_file_name, '')
+
                     if file_name[-1] == '/':
                         # Its a directory
                         '''
@@ -662,17 +707,17 @@ class Provider(StorageABC):
         return specification
 
     # function to delete file or directory
-    def _delete(self, specificatioin):
+    def _delete(self, specification):
         """
         deletes the source
 
-        :param specificatioin:
+        :param specification:
 
         :return: dict
 
         """
-        source = specificatioin['source']['path']
-        recursive = specificatioin['recursive']
+        source = specification['source']['path']
+        recursive = specification['recursive']
 
         trimmed_source = self.massage_path(source)
 
@@ -736,8 +781,8 @@ class Provider(StorageABC):
 
                     # make head call to extract meta data
                     # and derive obj dict
-                    if os.path.basename(
-                        obj.key) != self.directory_marker_file_name:
+                    if os.path.basename(obj.key) != \
+                        self.directory_marker_file_name:
                         metadata = self.s3_client.head_object(
                             Bucket=self.container_name, Key=obj.key)
                         dir_files_list.append(
@@ -771,7 +816,8 @@ class Provider(StorageABC):
 
                     metadata = self.s3_client.head_object(
                         Bucket=self.container_name,
-                        Key=trimmed_source + '/' + self.directory_marker_file_name)
+                        Key=trimmed_source +
+                            '/' + self.directory_marker_file_name)
                     dir_files_list.append(
                         self.extract_file_dict(trimmed_source + '/',
                                                metadata))
@@ -792,16 +838,17 @@ class Provider(StorageABC):
         # dict_obj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
         # return dict_obj
-        specificatioin['status'] = 'completed'
-        return specificatioin
+        specification['status'] = 'completed'
+        return specification
 
-    # function to upload file or directory
     def _put(self, specification):
         """
-       puts the source on the service
+        function to upload file or directory
+        puts the source on the service
 
         :param source: the source which either can be a directory or file
-        :param destination: the destination which either can be a directory or file
+        :param destination: the destination which either can be a directory
+                            or file
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
@@ -854,7 +901,7 @@ class Provider(StorageABC):
             # check if trimmed_destination is file or a directory
             is_trimmed_destination_file = False
             dot_operator = '.'
-            # print('destination base : '+ os.path.basename(trimmed_destination))
+            # print('destination base:', os.path.basename(trimmed_destination))
             if dot_operator in os.path.basename(trimmed_destination):
                 is_trimmed_destination_file = True
                 # print('dot_operator found')
@@ -880,8 +927,8 @@ class Provider(StorageABC):
                 if len(trimmed_destination) == 0:
                     destination_key = os.path.basename(trimmed_source)
                 else:
-                    destination_key = trimmed_destination + '/' + os.path.basename(
-                        trimmed_source)
+                    destination_key = trimmed_destination + '/' + \
+                                      os.path.basename(trimmed_source)
 
                 blob_obj = self.s3_client.upload_file(trimmed_source,
                                                       self.container_name,
@@ -947,11 +994,11 @@ class Provider(StorageABC):
                                     dirpath) + '/' + fileName)
 
                 for file in files_to_upload:
-                    self.s3_client.upload_file(file,
-                                               self.container_name,
-                                               trimmed_destination + self.massage_path(
-                                                   file.replace(trimmed_source,
-                                                                '')))
+                    self.s3_client.upload_file(
+                        file,
+                        self.container_name,
+                        trimmed_destination +
+                        self.massage_path(file.replace(trimmed_source, '')))
 
                     '''
                     files_uploaded.append(
@@ -992,14 +1039,14 @@ class Provider(StorageABC):
         cm = CmDatabase()
         entries = cm.find(cloud=self.name,
                           kind='storage')
-        id = specification['cm']['name']
-        if id == 'None':
+        name = specification['cm']['name']
+        if name == 'None':
             for entry in entries:
                 if entry['status'] == 'waiting':
                     entry['status'] = "cancelled"
         else:
             for entry in entries:
-                if entry['cm']['id'] == id and entry['status'] == 'waiting':
+                if entry['cm']['id'] == name and entry['status'] == 'waiting':
                     entry['status'] = "cancelled"
                     break
         cm.update(entries)
@@ -1007,13 +1054,14 @@ class Provider(StorageABC):
         specification['status'] = 'completed'
         return specification
 
-    # function to download file or directory
     def get(self, source=None, destination=None, recursive=False):
         """
-       gets the source from the service
+        function to download file or directory
+        gets the source from the service
 
         :param source: the source which either can be a directory or file
-        :param destination: the destination which either can be a directory or file
+        :param destination: the destination which either can be a directory
+                            or file
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
         :return: dict
@@ -1030,8 +1078,8 @@ class Provider(StorageABC):
         file_obj = ''
 
         try:
-            file_obj = self.s3_client.get_object(Bucket=self.container_name,
-                                                 Key=trimmed_source)
+            file_obj = self.s3_client.get_object(
+                Bucket=self.container_name, Key=trimmed_source)
             # print(file_obj)
         except botocore.exceptions.ClientError as e:
             # object not found
@@ -1070,7 +1118,8 @@ class Provider(StorageABC):
                     blob = self.s3_resource.Bucket(
                         self.container_name).download_file(
                         trimmed_source, trimmed_destination)
-                # trimmedSource, trimmedDestination + '/' + os.path.basename(trimmedSource))
+                # trimmedSource, trimmedDestination + '/' +
+                # os.path.basename(trimmedSource))
                 # print('File downloaded')
 
                 # make head call since file download does not return
@@ -1216,12 +1265,12 @@ class Provider(StorageABC):
         # return self.storage_dict
         return dict_obj
 
-    # function to search a file or directory and list its attributes
     def search(self,
                directory=None,
                filename=None,
                recursive=False):
         """
+        function to search a file or directory and list its attributes
         gets the destination and copies it in source
 
         :param directory: the directory which either can be a directory or file
