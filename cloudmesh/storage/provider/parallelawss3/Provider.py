@@ -4,7 +4,6 @@ import stat
 import textwrap
 import uuid
 from multiprocessing import Pool
-from pprint import pprint
 
 import boto3
 import botocore
@@ -12,6 +11,7 @@ import oyaml as yaml
 from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.DateTime import DateTime
 from cloudmesh.common.console import Console
+from cloudmesh.common.debug import VERBOSE
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.storage.parallelawss3.path_manager import extract_file_dict
@@ -163,7 +163,7 @@ class Provider(StorageABC):
                 )
                 self.storage_dict['message'] = 'Bucket created'
             self.storage_dict['objlist'] = dir_files_list
-            pprint(self.storage_dict)
+            VERBOSE(self.storage_dict)
             dict_obj = self.update_dict(self.storage_dict['objlist'])
             # return self.storage_dict
             return dict_obj
@@ -266,7 +266,7 @@ class Provider(StorageABC):
                 self.massage_path(directory) + '/', metadata)
             )
         else:
-            print('Directory already present')
+            Console.error('Directory already present')
 
         specification['status'] = 'completed'
         return specification
@@ -520,7 +520,7 @@ class Provider(StorageABC):
         _delete = []
         _cancel = []
         for entry in entries:
-            pprint(entry)
+            VERBOSE(entry)
             if entry['action'] == 'mkdir' and entry['status'] == 'waiting':
                 _mkdir.append(entry)
             elif entry['action'] == 'copy' and entry['status'] == 'waiting':
@@ -615,7 +615,7 @@ class Provider(StorageABC):
         dir_files_list = []
         trimmed_source = self.massage_path(source)
         # trimmed_source = source
-        pprint(trimmed_source)
+        VERBOSE(trimmed_source)
 
         if not recursive:
 
@@ -624,7 +624,7 @@ class Provider(StorageABC):
 
             for obj in objs:
                 if obj.key.startswith(self.massage_path(trimmed_source)):
-                    pprint(obj.key)
+                    VERBOSE(obj.key)
                     file_name = obj.key
                     # obj.key.replace(self.directory_marker_file_name,
                     #                            '')
@@ -712,7 +712,7 @@ class Provider(StorageABC):
             self.storage_dict['message'] = dirFilesList
         '''
 
-        pprint(self.storage_dict)
+        VERBOSE(self.storage_dict)
         specification['status'] = 'completed'
         return specification
 
@@ -1307,7 +1307,7 @@ class Provider(StorageABC):
         self.storage_dict['objlist'] = files_downloaded
 
         # print(self.storage_dict['message'])
-        pprint(self.storage_dict)
+        VERBOSE(self.storage_dict)
         dict_obj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
         return dict_obj
@@ -1399,7 +1399,7 @@ class Provider(StorageABC):
         else:
             self.storage_dict['message'] = 'File found'
 
-        pprint(self.storage_dict)
+        VERBOSE(self.storage_dict)
         dict_obj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
         return dict_obj
