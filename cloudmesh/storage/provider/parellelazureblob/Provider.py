@@ -131,6 +131,11 @@ class Provider(StorageABC):
             obj_list = []
             if blob_folder is None:
                 # file only specified
+                #
+                # TODO: large portion of the code is duplicated, when not use a
+                #       function for things that are the same
+                #
+
                 if not recursive:
                     if self.storage_service.exists(self.container, blob_file):
                         if rename == 'Y':
@@ -281,6 +286,11 @@ class Provider(StorageABC):
                                                              upl_file))
             else:
                 # Folder only specified - Upload all files from folder
+                #
+                # TODO: large portion of the code is duplicated, when not use a
+                #       function for things that are the same
+                #
+
                 if recursive:
                     ctr = 1
                     old_root = ""
@@ -348,6 +358,11 @@ class Provider(StorageABC):
 
         obj_list = []
         if blob_folder is None:
+            #
+            # TODO: large portion of the code is duplicated, when not use a
+            #       function for things that are the same
+            #
+
             # SOURCE specified is File only
             if self.storage_service.exists(self.container, blob_file):
                 blob_prop = self.storage_service.get_blob_properties(
@@ -521,6 +536,11 @@ class Provider(StorageABC):
         file_list = []
         if blob_folder is None:
             # SOURCE specified is File only
+            #
+            # TODO: large portion of the code is duplicated, when not use a
+            #       function for things that are the same
+            #
+
             if not recursive:
                 if self.storage_service.exists(self.container, blob_file):
                     blob_prop = self.storage_service.get_blob_properties(
