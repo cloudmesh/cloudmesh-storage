@@ -72,35 +72,46 @@ class Provider(StorageABC):
         service = build('drive', 'v3', credentials=creds)
         self.service = service
 
-    def list(self):
-        # Call the Drive v3 API
-        results = self.service.files().list(
-            pageSize=10, fields="nextPageToken, files(id, name)").execute()
-        items = results.get('files', [])
-        if not items:
-            print('No files found.')
+    def list(self, source=None, dir_only=False, recursive=False):
+        if recursive:
+            results = self.service.files().list(
+                # pageSize=self.limitFiles,
+                pageSize=10,
+                fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
+            items = results.get('files', [])
+            if not items:
+                Console.error('No files found')
+                print('No files found.')
+            else:
+                return self.update_dict(items)
         else:
-            print('Files:')
-            for item in items:
-                print(u'{0} ({1})'.format(item['name'], item['id']))
-
-    def upload2(self, service=None):
-        # Upload 'google.jpg'
-
-        file_metadata = {'name': 'google.jpg'}
-        media = MediaFileUpload('google.jpg',
-                                mimetype='image/jpeg')
-        file = self.service.files().create(body=file_metadata,
-                                      media_body=media,
-                                      fields='id').execute()
-        print('File ID: %s' % file.get('id'))
+            query_params = "name='" + source + "' and trashed=false"
+            sourceid = self.service.files().list(
+                q=query_params,
+                # pageSize=self.limitFiles,
+                pageSize=10,
+                fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
+            file_id = sourceid['files'][0]['id']
+            query_params = "'" + file_id + "' in parents"
+            results = self.service.files().list(
+                q=query_params,
+                # pageSize=self.limitFiles,
+                pageSize=10,
+                fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
+            items = results.get('files', [])
+            print(items)
+            if not items:
+                Console.error('No files found')
+                print('No files found.')
+            else:
+                return self.update_dict(items)
 
     def put(self, service=None, source=None, destination=None, recursive=False):
         if recursive:
             if os.path.isdir(source):
                 temp_res = []
                 query_params = "name='" + destination + "' and trashed=false"
-                sourceid = self.driveService.files().list(
+                sourceid = self.service.files().list(
                     q=query_params,
                     fields="nextPageToken, files(id, name, mimeType)").execute()
                 file_parent_id = None
@@ -120,7 +131,7 @@ class Provider(StorageABC):
                 return self.update_dict(temp_res)
             else:
                 query_params = "name='" + destination + "' and trashed=false"
-                sourceid = self.driveService.files().list(
+                sourceid = self.service.files().list(
                     q=query_params,
                     fields="nextPageToken, files(id, name, mimeType)").execute()
                 file_parent_id = None
@@ -138,7 +149,7 @@ class Provider(StorageABC):
         else:
             if os.path.isdir(source):
                 query_params = "name='" + destination + "' and trashed=false"
-                sourceid = self.driveService.files().list(
+                sourceid = self.service.files().list(
                     q=query_params,
                     fields="nextPageToken, files(id, name, mimeType)").execute()
                 file_parent_id = None
@@ -159,7 +170,7 @@ class Provider(StorageABC):
                 return self.update_dict(temp_res)
             else:
                 query_params = "name='" + destination + "' and trashed=false"
-                sourceid = self.driveService.files().list(
+                sourceid = self.service.files().list(
                     q=query_params,
                     fields="nextPageToken, files(id, name, mimeType)").execute()
                 file_parent_id = None
@@ -181,7 +192,7 @@ class Provider(StorageABC):
 
         if recursive:
             query_params = "name='" + destination + "' and trashed=false"
-            sourceid = self.driveService.files().list(
+            sourceid = self.service.files().list(
                 q=query_params,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             print(sourceid)
@@ -193,7 +204,7 @@ class Provider(StorageABC):
             mime_type = sourceid['files'][0]['mimeType']
             tempres = []
             if mime_type == 'application/vnd.google-apps.folder':
-                items = self.driveService.files().list(
+                items = self.service.files().list(
                     pageSize=self.limitFiles,
                     fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
                 for item in items:
@@ -207,7 +218,7 @@ class Provider(StorageABC):
             return self.update_dict(tempres)
         else:
             query_params = "name='" + destination + "' and trashed=false"
-            sourceid = self.driveService.files().list(
+            sourceid = self.service.files().list(
                 q=query_params,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             print(sourceid)
@@ -219,7 +230,7 @@ class Provider(StorageABC):
             mime_type = sourceid['files'][0]['mimeType']
             tempres = []
             if mime_type == 'application/vnd.google-apps.folder':
-                items = self.driveService.files().list(
+                items = self.service.files().list(
                     pageSize=self.limitFiles,
                     fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
                 for item in items:
@@ -237,7 +248,7 @@ class Provider(StorageABC):
         file_id = ""
         file_rec = None
         if recursive:
-            items = self.driveService.files().list(
+            items = self.service.files().list(
                 pageSize=self.limitFiles,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             items = items['files']
@@ -247,12 +258,12 @@ class Provider(StorageABC):
                     file_id = items[i]['id']
 
             try:
-                self.driveService.files().delete(fileId=file_id).execute()
+                self.service.files().delete(fileId=file_id).execute()
             except:  # errors.HttpError, error:
                 Console.error('No file found')
                 return 'No file found'
         else:
-            items = self.driveService.files().list(
+            items = self.service.files().list(
                 pageSize=self.limitFiles,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             items = items['files']
@@ -261,7 +272,7 @@ class Provider(StorageABC):
                     file_rec = items[i]
                     file_id = items[i]['id']
             try:
-                self.driveService.files().delete(fileId=file_id).execute()
+                self.service.files().delete(fileId=file_id).execute()
             except:  # errors.HttpError, error:
                 Console.error('No file found')
                 return 'No file found'
@@ -284,7 +295,7 @@ class Provider(StorageABC):
                     'mimeType': 'application/vnd.google-apps.folder',
                     'parents': [id]
                 }
-            file = self.driveService.files().create(
+            file = self.service.files().create(
                 body=file_metadata,
                 fields='id, name, mimeType, parents, size, modifiedTime, createdTime').execute()
             files.append(file)
@@ -297,7 +308,7 @@ class Provider(StorageABC):
         if recursive:
             found = False
             res_file = None
-            list_of_files = self.driveService.files().list(
+            list_of_files = self.service.files().list(
                 pageSize=self.limitFiles,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             for file in list_of_files['files']:
@@ -311,7 +322,7 @@ class Provider(StorageABC):
             return self.update_dict(res_file)
         else:
             found = False
-            list_of_files = self.driveService.files().list(
+            list_of_files = self.service.files().list(
                 pageSize=self.limitFiles,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime, createdTime)").execute()
             for file in list_of_files['files']:
@@ -326,14 +337,14 @@ class Provider(StorageABC):
 
     def upload_file(self, source, filename, parent_it):
         file_metadata = {'name': filename, 'parents': [parent_it]}
-        self.driveService = self.driveService
+        self.service = self.service
         if source is None:
             filepath = filename
         else:
             filepath = source + '/' + filename
         media = MediaFileUpload(filepath,
                                 mimetype=mimetypes.guess_type(filename)[0])
-        file = self.driveService.files().create(
+        file = self.service.files().create(
             body=file_metadata,
             media_body=media,
             fields='id, name, mimeType, parents,size,modifiedTime,createdTime').execute()
@@ -342,7 +353,7 @@ class Provider(StorageABC):
     def download_file(self, source, file_id, file_name, mime_type):
         filepath = source + '/' + file_name + mimetypes.guess_extension(
             mime_type)
-        request = self.driveService.files().get_media(fileId=file_id)
+        request = self.service.files().get_media(fileId=file_id)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
         done = False
