@@ -264,7 +264,7 @@ class Provider(StorageABC):
                 return 'No file found'
         else:
             items = self.service.files().list(
-                pageSize=self.limitFiles,
+                pageSize=100,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             items = items['files']
             for i in range(len(items)):
