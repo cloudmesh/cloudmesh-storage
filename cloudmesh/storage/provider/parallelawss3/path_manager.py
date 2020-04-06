@@ -1,7 +1,23 @@
 import os
 
 
-def massage_path(self, file_name_path):
+def join_file_name_dir(filename, dirname):
+    """
+    Function to join file name dir to get full file path
+
+    :param filename:
+    :param dirname:
+    :return:
+    """
+    if len(massage_path(dirname)) > 0:
+        full_file_path = massage_path(
+            dirname) + '/' + massage_path(
+            filename)
+    else:
+        full_file_path = massage_path(filename)
+    return full_file_path
+
+def massage_path(file_name_path):
     """
     function to massage file path and do some transformations
     for different scenarios of file inputs
@@ -30,7 +46,7 @@ def massage_path(self, file_name_path):
     return massaged_path
 
 
-def extract_file_dict(self, filename, metadata):
+def extract_file_dict(filename, metadata):
     """
     Function to extract obj dict from metadata
 

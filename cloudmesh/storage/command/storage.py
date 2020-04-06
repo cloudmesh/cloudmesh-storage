@@ -239,8 +239,8 @@ class StorageCommand(PluginCommand):
             raise NotImplementedError
 
         elif arguments.copy:
-            scloud, sbucket = arguments.SOURCE.split(":", 1) or None
-            tcloud, tbucket = arguments.DESTINATION.split(":", 1) or None
+            scloud, sbucket = arguments['--source'].split(":", 1) or None
+            tcloud, tbucket = arguments['--target'].split(":", 1) or None
             if scloud == "aws" or scloud == "google":
                 provider = Provider(service=scloud)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
@@ -250,7 +250,7 @@ class StorageCommand(PluginCommand):
                 provider.copy(scloud, tcloud, sbucket, tbucket)
             elif (scloud == "local" and tcloud == "parallelawss3"):
                 provider = Provider(service=tcloud)
-                provider.copy(arguments.SOURCE, arguments.DESTINATION,
+                provider.copy(arguments['--source'], arguments['--target'],
                               arguments.recursive)
             else:
                 print("Not Implemented")
