@@ -10,14 +10,15 @@ from cloudmesh.common.util import path_expand
 from cloudmesh.abstract.StorageABC import StorageABC
 from pathlib import Path
 
+
 class Provider(StorageABC):
-    kind = "azureblob"
+    kind = "azure"
 
     sample = "TODO: missing"
 
     output = {}  # "TODO: missing"
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+    def __init__(self, service= None, config="~/.cloudmesh/cloudmesh.yaml"):
         super().__init__(service=service, config=config)
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
@@ -57,7 +58,7 @@ class Provider(StorageABC):
                 del element.properties["deleted_time"]
             d.append(entry)
         return d
-
+    
     def cloud_path(self, srv_path):
         # Internal function to determine if the cloud path specified is file or folder or mix
         b_folder = None
@@ -396,6 +397,7 @@ class Provider(StorageABC):
 
         """
 
+
         HEADING()
         banner("Please note: Directory in Azure is a virtual folder, "
                "hence creating it with a uni-byte file - dummy.txt")
@@ -629,3 +631,4 @@ class Provider(StorageABC):
             trl = '#' * 90
             Console.cprint("BLUE", "", trl)
         return dict_obj
+
