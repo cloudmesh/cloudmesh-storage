@@ -76,7 +76,7 @@ class Provider(StorageABC):
         if recursive:
             results = self.service.files().list(
                 # pageSize=self.limitFiles,
-                pageSize=10,
+                pageSize=100,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             items = results.get('files', [])
             if not items:
@@ -89,14 +89,14 @@ class Provider(StorageABC):
             sourceid = self.service.files().list(
                 q=query_params,
                 # pageSize=self.limitFiles,
-                pageSize=10,
+                pageSize=100,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             file_id = sourceid['files'][0]['id']
             query_params = "'" + file_id + "' in parents"
             results = self.service.files().list(
                 q=query_params,
                 # pageSize=self.limitFiles,
-                pageSize=10,
+                pageSize=100,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             items = results.get('files', [])
             print(items)
@@ -205,18 +205,19 @@ class Provider(StorageABC):
             tempres = []
             if mime_type == 'application/vnd.google-apps.folder':
                 items = self.service.files().list(
-                    pageSize=self.limitFiles,
+                    pageSize=100,
                     fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
                 for item in items:
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
-                        self.download_file(source, item['id'], item['name'],
-                                           item['mimeType'])
+                        # self.download_file(source, item['id'], item['name'],
+                        #                    item['mimeType']) # Sara removed
+                        self.download_file(source, file_id, file_name, mime_type) # Sara changed
                         tempres.append(item)
             else:
                 self.download_file(source, file_id, file_name, mime_type)
                 tempres.append(sourceid['files'][0])
             return self.update_dict(tempres)
-        else:
+        else: # recursive=False
             query_params = "name='" + destination + "' and trashed=false"
             sourceid = self.service.files().list(
                 q=query_params,
@@ -225,18 +226,23 @@ class Provider(StorageABC):
             if len(sourceid) == 0:
                 Console.error('No files found')
                 sys.exit(1)
-            file_id = sourceid['files'][0]['id']
-            file_name = sourceid['files'][0]['name']
-            mime_type = sourceid['files'][0]['mimeType']
-            tempres = []
+            else:
+                file_id = sourceid['files'][0]['id']
+                file_name = sourceid['files'][0]['name']
+                mime_type = sourceid['files'][0]['mimeType']
+                tempres = []
             if mime_type == 'application/vnd.google-apps.folder':
-                items = self.service.files().list(
-                    pageSize=self.limitFiles,
-                    fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
-                for item in items:
-                    if item['mimeType'] != 'application/vnd.google-apps.folder':
-                        self.download_file(source, item['id'], item['name'],
-                                           item['mimeType'])
+                # items = self.service.files().list(
+                #     pageSize=100,
+                #     fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
+                #items = sourceid
+                items = sourceid['files'] # Sara changed
+                print(items[0]['name'])
+                for item in range(len(items)): # Sara changed
+                    print(items[item]['mimeType'])
+                    if items[item]['mimeType'] != 'application/vnd.google-apps.folder': # Sara changed
+                        self.download_file(source, items[item]['id'], items[item]['name'],
+                                           items[item]['mimeType']) # Sara changed
                         tempres.append(item)
             else:
                 self.download_file(source, file_id, file_name, mime_type)
@@ -249,7 +255,7 @@ class Provider(StorageABC):
         file_rec = None
         if recursive:
             items = self.service.files().list(
-                pageSize=self.limitFiles,
+                pageSize=100,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             items = items['files']
             for i in range(len(items)):
@@ -309,11 +315,12 @@ class Provider(StorageABC):
             found = False
             res_file = None
             list_of_files = self.service.files().list(
-                pageSize=self.limitFiles,
+                pageSize=100,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             for file in list_of_files['files']:
-                print(file)
+                # print(file)
                 if file['name'] == filename:
+                    print(file)
                     res_file = file
                     found = True
                     break
@@ -323,11 +330,12 @@ class Provider(StorageABC):
         else:
             found = False
             list_of_files = self.service.files().list(
-                pageSize=self.limitFiles,
+                pageSize=100,
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime, createdTime)").execute()
             for file in list_of_files['files']:
-                print(file)
+                # print(file)
                 if file['name'] == filename:
+                    print(file)
                     res_file = file
                     found = True
                     break
@@ -351,8 +359,7 @@ class Provider(StorageABC):
         return file
 
     def download_file(self, source, file_id, file_name, mime_type):
-        filepath = source + '/' + file_name + mimetypes.guess_extension(
-            mime_type)
+        filepath = source + '/' + file_name
         request = self.service.files().get_media(fileId=file_id)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
