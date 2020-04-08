@@ -359,7 +359,7 @@ class Provider(StorageABC):
         return file
 
     def download_file(self, source, file_id, file_name, mime_type):
-        filepath = source + '/' + file_name
+        filepath = source + '/' + file_name # removed mime_type
         request = self.service.files().get_media(fileId=file_id)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
