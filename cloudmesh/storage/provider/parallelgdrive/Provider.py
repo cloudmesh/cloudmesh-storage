@@ -209,15 +209,14 @@ class Provider(StorageABC):
                     fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
                 for item in items:
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
-                        # self.download_file(source, item['id'], item['name'],
-                        #                    item['mimeType']) # Sara removed
-                        self.download_file(source, file_id, file_name, mime_type) # Sara changed
+                        self.download_file(source, item['id'], item['name'],
+                                           item['mimeType'])
                         tempres.append(item)
             else:
                 self.download_file(source, file_id, file_name, mime_type)
                 tempres.append(sourceid['files'][0])
             return self.update_dict(tempres)
-        else: # recursive=False
+        else:
             query_params = "name='" + destination + "' and trashed=false"
             sourceid = self.service.files().list(
                 q=query_params,
@@ -226,23 +225,24 @@ class Provider(StorageABC):
             if len(sourceid) == 0:
                 Console.error('No files found')
                 sys.exit(1)
-            else:
-                file_id = sourceid['files'][0]['id']
-                file_name = sourceid['files'][0]['name']
-                mime_type = sourceid['files'][0]['mimeType']
-                tempres = []
+            file_id = sourceid['files'][0]['id']
+            file_name = sourceid['files'][0]['name']
+            mime_type = sourceid['files'][0]['mimeType']
+            tempres = []
             if mime_type == 'application/vnd.google-apps.folder':
-                # items = self.service.files().list(
-                #     pageSize=100,
-                #     fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
-                #items = sourceid
-                items = sourceid['files'] # Sara changed
-                print(items[0]['name'])
-                for item in range(len(items)): # Sara changed
-                    print(items[item]['mimeType'])
-                    if items[item]['mimeType'] != 'application/vnd.google-apps.folder': # Sara changed
-                        self.download_file(source, items[item]['id'], items[item]['name'],
-                                           items[item]['mimeType']) # Sara changed
+                query_params = "'" + file_id + "' in parents"
+                results = self.service.files().list(
+                    q=query_params,
+                    pageSize=100,
+                    fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
+                items = results.get('files', [])
+                print("Items in directory to get: ",items)
+                for item in items:
+                    print("Type of item", type(item))
+                    print("Item is:",item)
+                    if item['mimeType'] != 'application/vnd.google-apps.folder':
+                        self.download_file(source, item['id'], item['name'],
+                                           item['mimeType'])
                         tempres.append(item)
             else:
                 self.download_file(source, file_id, file_name, mime_type)
