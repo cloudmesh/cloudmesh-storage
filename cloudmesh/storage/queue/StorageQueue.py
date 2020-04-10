@@ -71,6 +71,25 @@ class StorageQueue:
         'canceled'
     ]
 
+    #def register(self):
+    #    # find the inheritor of StorageQueue and register the methd from
+    #    # self._put = parent._put
+
+    def redgister_actions(self,
+                          put=None,
+                          get=None,
+                          delete=None,
+                          mkdir=None,
+                          list=None,
+                          cancel=None):
+
+        self._put = put
+        self._get = get
+        self._delete = delete
+        self._mkdir = mkdir
+        self._list = list # attention list
+        self._cancel = cancel
+
     def __init__(self,
                  source,
                  destination,
@@ -416,7 +435,7 @@ class StorageQueue:
         return mkdir, copy, list, delete, cancel
 
 
-def run(self):
+    def run(self):
         """
         runs the copy process for all jobs in the queue and completes when all
         actions are completed
