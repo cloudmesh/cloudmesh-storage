@@ -65,7 +65,7 @@ class TestLocal(object):
         HEADING()
 
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
-        create_file("~/.cloudmesh/storage/README-old.md", "content of a")
+        create_file("~/.cloudmesh/storage/README.md", "content of a")
         create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
         create_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
         create_file("~/.cloudmesh/storage/test/a/b/c/c.txt", "content of c")
