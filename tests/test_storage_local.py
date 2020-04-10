@@ -5,19 +5,17 @@
 ###############################################################
 import os
 from pathlib import Path
-from pprint import pprint
 
 import pytest
+from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
-from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
-from cloudmesh.common.debug import VERBOSE
 
 Benchmark.debug()
 
@@ -67,7 +65,7 @@ class TestLocal(object):
         HEADING()
 
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
-        create_file("~/.cloudmesh/storage/README.md", "content of a")
+        create_file("~/.cloudmesh/storage/README-old.md", "content of a")
         create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
         create_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
         create_file("~/.cloudmesh/storage/test/a/b/c/c.txt", "content of c")
