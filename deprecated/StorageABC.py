@@ -8,7 +8,7 @@ class StorageDeprecatedABC(metaclass=ABCMeta):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
         try:
-            self.config = Config(config_path=config)
+            self.config = Config()
 
             spec = self.config["cloudmesh.storage"]
             self.credentials = spec[service]['credentials']
