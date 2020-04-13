@@ -9,6 +9,7 @@ import boto3
 import botocore
 import oyaml as yaml
 from cloudmesh.abstract.StorageABC import StorageABC
+from cloudmesh.storage.provider.StorageQueue import StorageQueue
 from cloudmesh.common.DateTime import DateTime
 from cloudmesh.common.console import Console
 from cloudmesh.common.debug import VERBOSE
@@ -55,7 +56,8 @@ from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
 #       reuse instead
 #
 
-class Provider(StorageABC):
+
+class Provider(StorageQueue):
     kind = "parallelawss3"
 
     sample = textwrap.dedent(
@@ -101,29 +103,10 @@ class Provider(StorageABC):
         :param service: service name
         :param config:
         """
-        super().__init__(service=service, config=config)
-        self.parallelism = parallelism
-        self.name = service
-        self.collection = f"storage-queue-{service}"
-        self.number = 0
+        super().__init__(service=service, config=config, parallelism=parallelism)
         self.container_name = self.credentials['bucket']
-
         self.dir_marker_file_name = 'marker.txt'
-        self.storage_dict = {}
 
-    @DatabaseUpdate()
-    def update_dict(self, elements, kind=None):
-        """
-        this is an internal function for building dict object
-        :param elements:
-        :param kind:
-        :return:
-        """
-        d = []
-        for element in elements:
-            entry = element
-            d.append(entry)
-        return d
 
     def mkdir_run(self, specification):
         """
@@ -636,9 +619,6 @@ class Provider(StorageABC):
             if dot_operator in os.path.basename(trimmed_destination):
                 is_trimmed_destination_file = True
 
-            metadata = self.s3_client.head_object(
-                Bucket=self.container_name, Key=trimmed_destination)
-
             if not is_trimmed_destination_file:
                 if len(trimmed_destination) == 0:
                     trimmed_destination = os.path.basename(trimmed_source)
@@ -651,6 +631,8 @@ class Provider(StorageABC):
                                                   trimmed_destination)
             # make head call since file upload does not return
             # obj dict to extract meta data
+            metadata = self.s3_client.head_object(
+                Bucket=self.container_name, Key=trimmed_destination)
             files_uploaded.append(
                 extract_file_dict(trimmed_destination, metadata))
             # self.storage_dict['message'] = 'Source uploaded'
@@ -781,7 +763,7 @@ class Provider(StorageABC):
         if len(info_list) == 0:
             Console.error("File not found")
         else:
-            Console.error("File found")
+            Console.msg("File found")
 
         specification['status'] = 'completed'
         return specification
@@ -804,327 +786,6 @@ class Provider(StorageABC):
 
         specification['status'] = 'completed'
         return specification
-
-    def add_cm(self, cm_name):
-        date = DateTime.now()
-        uuid_str = str(uuid.uuid1())
-
-        spec = textwrap.dedent(
-            f"""
-            cm:
-               number: {self.number}
-               name: "{cm_name}"
-               kind: storage
-               id: {uuid_str}
-               cloud: {self.name}
-               collection: {self.collection}
-               created: {date}
-            """
-        ).strip() + "\n"
-        return spec
-
-    @DatabaseUpdate()
-    def copy(self, sourcefile, destinationfile, recursive=False):
-        """
-        adds a copy action to the queue
-        copies the file from the source service to the destination service using
-        the file located in the path and storing it into the remote. If remote
-        is not specified path is used for it.
-        The copy will not be performed if the files are the same.
-        :param sourcefile: The source file to copy
-        :param destinationfile: The destination file path
-        :param recursive: whether or not copy the file/dir recursively
-        :return:
-        """
-        specification = textwrap.dedent(
-            f"""
-            action: copy
-            source: {sourcefile}
-            destination: {destinationfile}
-            recursive: {recursive}
-            status: waiting
-            """
-        )
-        common_cm = self.add_cm(cm_name=f"{sourcefile}:{destinationfile}")
-        specification = common_cm + specification.strip() + "\n"
-
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-        return entries
-
-    @DatabaseUpdate()
-    def delete(self, source, recursive=True):
-        """
-        adds a delete action to the queue
-
-        :param source:
-        :param recursive:
-        :return:
-        """
-        specification = textwrap.dedent(
-            f"""
-            action: delete
-            source: 
-              path: {source}
-            recursive: {recursive}
-            status: waiting
-            """
-        )
-        common_cm = self.add_cm(cm_name=f"{source}")
-        specification = common_cm + specification.strip() + "\n"
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-        return entries
-
-    @DatabaseUpdate()
-    def search(self, directory=None, filename=None, recursive=False):
-        specification = textwrap.dedent(
-            f"""
-            action: search
-            directory: {directory}
-            filename: {filename}
-            recursive: {recursive}
-            status: waiting
-            """
-        )
-        common_cm = self.add_cm(cm_name=f"{directory}:{filename}")
-        specification = common_cm + specification.strip() + "\n"
-
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-        return entries
-
-    #
-    # BUG: THis should ideally be name and not id. THis has impact on all
-    # providers as there may be a bug in the cancel methods including the ABC
-    # class.
-    #
-    @DatabaseUpdate()
-    def cancel(self, name=None):
-        """
-        cancels a job with a specific id
-        :param name:
-        :return:
-        """
-        # if None all are canceled
-        specification = textwrap.dedent(
-            f"""
-            action: cancel
-            status: waiting
-            """
-        )
-        common_cm = self.add_cm(cm_name=f"{name}")
-        specification = common_cm + specification.strip() + "\n"
-
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-        return entries
-
-    @DatabaseUpdate()
-    def get(self, source, destination, recursive=False):
-        specification = textwrap.dedent(
-            f"""
-            action: get
-            source: {source}
-            destination: {destination}
-            recursive: {recursive}
-            status: waiting
-            """
-        )
-        common_cm = self.add_cm(cm_name=f"{source}:{destination}")
-        specification = common_cm + specification.strip() + "\n"
-
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-        return entries
-
-    @DatabaseUpdate()
-    def put(self, source, destination, recursive=False):
-        specification = textwrap.dedent(
-            f"""
-            action: put
-            source: {source}
-            destination: {destination}
-            recursive: {recursive}
-            status: waiting
-            """
-        )
-        common_cm = self.add_cm(cm_name=f"{source}:{destination}")
-        specification = common_cm + specification.strip() + "\n"
-
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-        return entries
-
-    @DatabaseUpdate()
-    def create_dir(self, directory):
-        """
-        adds a mkdir action to the queue
-        create the directory in the storage service
-        :param path:
-        :return:
-        """
-        specification = textwrap.dedent(
-            f"""
-            action: mkdir
-            path: {directory}
-            status: waiting
-            """
-        )
-        common_cm = self.add_cm(cm_name=f"{directory}")
-        specification = common_cm + specification.strip() + "\n"
-
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-        return entries
-
-    @DatabaseUpdate()
-    def list(self, source, dir_only=False, recursive=False):
-        """
-        adds a list action to the queue
-        list the directory in the storage service
-        :param source:
-        :param dir_only:
-        :param recursive:
-        :return:
-        """
-        specification = textwrap.dedent(
-            f"""
-            action: list
-            path: {source}
-            dir_only: {dir_only}
-            recursive: {recursive}
-            status: waiting
-            """
-        )
-        common_cm = self.add_cm(cm_name=f"{source}")
-        specification = common_cm + specification.strip() + "\n"
-
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-
-        return entries
-
-    def action(self, specification):
-        """
-        executes the action identified by the specification. This is used by the
-        run command.
-        :param specification:
-        :return:
-        """
-        action = specification["action"]
-        if action == "copy":
-            specification = self.put_run(specification)
-            # update status
-            self.update_dict(elements=[specification])
-        elif action == "delete":
-            specification = self.delete_run(specification)
-            # update status
-            self.update_dict(elements=[specification])
-        elif action == "mkdir":
-            specification = self.mkdir_run(specification)
-            # update status
-            self.update_dict(elements=[specification])
-        elif action == "list":
-            specification = self.list_run(specification)
-            # update status
-            self.update_dict(elements=[specification])
-        elif action == "cancel":
-            specification = self.cancel_run(specification)
-            self.update_dict(elements=[specification])
-        elif action == "get":
-            specification = self.get_run(specification)
-            self.update_dict(elements=[specification])
-        elif action == "put":
-            specification = self.put_run(specification)
-            self.update_dict(elements=[specification])
-        elif action == "search":
-            specification = self.search_run(specification)
-            self.update_dict(elements=[specification])
-
-    def get_actions(self):
-        """
-        get all the actions from database
-        param:
-        :return lists of actions from database
-        """
-        cm = CmDatabase()
-        entries = cm.find(cloud=self.name,
-                          kind='storage')
-        get_actions = []
-        put_actions = []
-        mkdir_actions = []
-        copy_actions = []
-        list_actions = []
-        delete_actions = []
-        cancel_actions = []
-        search_actions = []
-
-        for entry in entries:
-            VERBOSE(entry)
-            if entry['action'] == 'get' and entry['status'] == 'waiting':
-                get_actions.append(entry)
-            elif entry['action'] == 'put' and entry['status'] == 'waiting':
-                put_actions.append(entry)
-            elif entry['action'] == 'mkdir' and entry['status'] == 'waiting':
-                mkdir_actions.append(entry)
-            elif entry['action'] == 'copy' and entry['status'] == 'waiting':
-                copy_actions.append(entry)
-            elif entry['action'] == 'list' and entry['status'] == 'waiting':
-                list_actions.append(entry)
-            elif entry['action'] == 'delete' and entry['status'] == 'waiting':
-                delete_actions.append(entry)
-            elif entry['action'] == 'cancel' and entry['status'] == 'waiting':
-                cancel_actions.append(entry)
-            elif entry['action'] == 'search' and entry['status'] == 'waiting':
-                search_actions.append(entry)
-
-        return get_actions, put_actions, mkdir_actions, copy_actions, \
-               list_actions, delete_actions, cancel_actions, search_actions
-
-    def run(self):
-        """
-        runs the copy process for all jobs in the queue and completes when all
-        actions are completed
-        :return:
-        """
-        get_action, put_action, mkdir_action, copy_action, list_action, \
-        delete_action, cancel_action, search_action = self.get_actions()
-
-        pool = Pool(self.parallelism)
-        # cancel the actions
-        pool.map(self.action, cancel_action)
-
-        # delete files/directories
-        pool.map(self.action, delete_action)
-
-        # create directories
-        pool.map(self.action, mkdir_action)
-
-        # COPY FILES
-        pool.map(self.action, copy_action)
-
-        # PUT FILES
-        pool.map(self.action, put_action)
-
-        # GET FILES
-        pool.map(self.action, get_action)
-
-        # LIST FILES
-        pool.map(self.action, list_action)
-
-        # SEARCH FILES
-        pool.map(self.action, search_action)
-
-        # Worker processes within a Pool typically live for the complete \
-        # duration of the Pool’s work queue.
-
-        # Prevents any more tasks from being submitted to the pool.Once all
-        # the tasks have been completed the worker processes will exit.
-        pool.close()
-        # Wait for the worker processes to exit.One must call close() or \
-        # terminate() before using join().
-        pool.join()
 
     def bucket_create(self, name=None):
         """
@@ -1206,6 +867,7 @@ if __name__ == "__main__":
     # p.put(source="shihui.txt", destination="shihui123.txt", recursive=False)
     # p.search(directory="/", filename="testABC.txt")
     # p.copy(sourcefile="path_manager.py", destinationfile="problem.txt")
+
     # p.run()
 
 
