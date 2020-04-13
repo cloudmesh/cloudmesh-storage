@@ -1,7 +1,7 @@
 from azure.storage.blob import BlockBlobService
 import os
 from cloudmesh.storage.provider.parellelazureblob.Provider import Provider
-
+'''
 Class
 Azure:
 
@@ -31,22 +31,29 @@ def delete(self, specification):
 
 
 if __name__ == "__main__":
-
+'''
     # provider = Azure()
     # provider._mkdir(...)
 
-    p = Provider(service="azure")
-    # from Provider import Provider
-    # p=Provider(service="azure", config="c:/users/hp/.cloudmesh/cloudmesh.yaml")
-    print(p.credentials)
-    # p.list(source='containerone', dir_only=False, recursive=False)
+#p = Provider(service="azure")
+from Provider import Provider
+p=Provider(service="azure", config="c:/users/hp/.cloudmesh/cloudmesh.yaml")
+#print(p.credentials)
+#p.list(source=' containerone', dir_only='*.txt', recursive=False)
+#p.create_dir(directory='newcontainer')#works
+#p.put(source='c:/users/hp/.cloudmesh/storage/test/a/a1.txt', destination='containerone', recursive=False)#works
+p.search(directory=' containerone\ ontainerone',filename='a1.txt',recursive=False)
+#p.get(source=' containerone', destination='a1.txt', recursive=False)
 
+
+
+'''
     block_blob_service = BlockBlobService(p.credentials['account_name'],
                                           p.credentials['account_key'])
     # Create Directory/Container
     container_name = "mynewcontainer1"
     block_blob_service.create_container(container_name)
-    print(' Create a container  - ' + container_name)
+    print(' Create a container  - ' + container_name) 
 
     # Create blobs in the Container and put a file in the blobs
 
@@ -78,6 +85,8 @@ if __name__ == "__main__":
 
     # Deleting the container
     '''
+'''
     if block_blob_service.exists(container_name):
         block_blob_service.delete_container(container_name)
-    '''
+  
+'''
