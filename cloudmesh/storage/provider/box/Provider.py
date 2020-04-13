@@ -4,7 +4,7 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
 from os.path import basename, join, dirname
 import os
-from cloudmesh.abstract.StorageDeprecatedABC import StorageABC
+from cloudmesh.abstract.StorageABC import StorageABC
 
 
 def get_id(source, results, source_type):
@@ -153,7 +153,7 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def get(self, service=None, source=None, destination=None, recursive=False):
+    def get(self, source=None, destination=None, recursive=False):
         """
         downloads file from Box, if recursive is true and source is directory downloads all files in directory
 
@@ -210,7 +210,7 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def search(self, service=None, directory=None, filename=None, recursive=False):
+    def search(self, directory=None, filename=None, recursive=False):
         """
         searches directory for file, if recursive searches all subdirectories
 
@@ -258,7 +258,7 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def create_dir(self, service=None, directory=None):
+    def create_dir(self, directory=None):
         """
         creates a new directory
 
@@ -288,7 +288,7 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def list(self, service=None, source=None, recursive=False):
+    def list(self, ource=None, recursive=False):
         """
         lists all contents of directory, if recursive lists contents of subdirectories as well
 
@@ -331,7 +331,7 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def delete(self, service=None, source=None, recursive=False):
+    def delete(self, source=None, recursive=False):
         """
         deletes file or directory
 

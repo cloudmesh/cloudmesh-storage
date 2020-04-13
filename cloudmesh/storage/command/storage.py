@@ -129,6 +129,8 @@ class StorageCommand(PluginCommand):
             result = provider.get(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
+            # result = provider.run()
+
 
         elif arguments.put:
             provider = Provider(arguments.storage[0])
