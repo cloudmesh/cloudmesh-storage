@@ -1,5 +1,5 @@
 ###############################################################
-# pytest -v --capture=no tests/parallelawss3/test_storage_parallelaws3.py
+# pytest -v --capture=no tests/parallelawss3/test_storage_parallelawss3.py
 # pytest -v  tests/parallelawss3/test_storage_parallelaws3.py
 # pytest -v --capture=no tests/parallelawss3/test_storage_parallelaws3.py
 # ::TestStorageParallelawss3::<METHIDNAME>
@@ -28,6 +28,9 @@ from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.provider.parallelawss3.Provider import Provider
+
+
+# cms set storage=parallelawss3
 
 Benchmark.debug()
 
@@ -173,6 +176,3 @@ class TestStorageParallelawss3(object):
         StopWatch.start("delete")
         provider.delete(src)
         StopWatch.stop("delete")
-
-    def test_benchmark(self):
-        Benchmark.print(sysinfo=False, csv=True, tag=service)

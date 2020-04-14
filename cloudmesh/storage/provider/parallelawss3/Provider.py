@@ -311,7 +311,8 @@ class Provider(StorageQueue):
         except botocore.exceptions.ClientError as e:
             # object not found
             # Console.error(e)
-            Console.error(e)
+            # Console.error(e)
+            x=1
 
         if file_obj:
             # Its a file and can be deleted
@@ -853,15 +854,16 @@ class Provider(StorageQueue):
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelawss3")
-    # p.create_dir(directory="testdir3")
-    # p.list(source=".")
-    # p.delete(source="testdir3")
-    # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
-    # p.get(source="testABC.txt", destination="shihui.txt", recursive=False)
-    # p.put(source="shihui.txt", destination="shihui123.txt", recursive=False)
-    # p.search(directory="/", filename="testABC.txt")
-    # p.copy(sourcefile="path_manager.py", destinationfile="problem.txt")
+    p.create_dir(directory="testdir3")
+    p.create_dir(directory="testdir")
+    p.list(source=".")
+    p.delete(source="testdir3")
 
-    # p.run()
+    p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
+    p.get(source="myProvider.py", destination="shihui.py", recursive=False)
+
+    p.search(directory="/", filename="myProvider.py")
+
+    p.run()
 
 
