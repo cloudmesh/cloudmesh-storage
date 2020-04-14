@@ -144,7 +144,8 @@ class StorageCommand(PluginCommand):
 
         VERBOSE(arguments)
 
-        arguments.storage = Parameter.expand(arguments.storage)
+        arguments.storage = Parameter.expand(arguments.storage or variables[
+            'storage'])
         if arguments["get"]:
             provider = Provider(arguments.storage[0])
 
