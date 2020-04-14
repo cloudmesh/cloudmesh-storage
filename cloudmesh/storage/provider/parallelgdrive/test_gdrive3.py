@@ -27,7 +27,7 @@ p.list(source='sub_cloud2', dir_only=False, recursive=False)
 # p.search(filename='schools3.xlsx', recursive=False) # works now.  Fixed issue of printing other files or folders too
 
 # p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud/gifts.docx', recursive=False) # created dir but not put files
-# p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud', recursive=False) # works for recursive=False
+# p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud', recursive=False) # fixed now, works for recursive=False
 
 # Not working for recursive=True
 # p.put(source='C:/Users/sara/new_emp', destination='sub_cloud3', recursive=True) # not getting subdir when recursive=True
