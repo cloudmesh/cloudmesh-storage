@@ -67,6 +67,14 @@ class Provider(StorageABC):
                 f"Storage provider '{self.service}'"
                 f"' not yet supported")
 
+    def monitor(self, status="all"):
+        """
+        get the status of all the actions in status
+        :param status:
+        :return
+        """
+        self.provider.monitor(status=status)
+
     @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):
         """

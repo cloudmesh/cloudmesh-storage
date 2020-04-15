@@ -17,6 +17,7 @@ class StorageCommand(PluginCommand):
         ::
 
            Usage:
+             storage monitor [--storage=SERVICES] [--status=all | --status=STATUS] [--output=output] [--clear]
              storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N]
              storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
              storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
@@ -137,7 +138,8 @@ class StorageCommand(PluginCommand):
                        "storage",
                        "source",
                        "target",
-                       "parallel")
+                       "parallel",
+                       "status")
 
         source = arguments.source
         target = arguments.target
@@ -147,7 +149,11 @@ class StorageCommand(PluginCommand):
 
         arguments.storage = Parameter.expand(arguments.storage or variables[
             'storage'])
-        if arguments["get"]:
+        if arguments["monitor"]:
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
+            status = arguments.status or "all"
+            result = provider.monitor(status=status)
+        elif arguments["get"]:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
 
             result = provider.get(arguments.SOURCE,

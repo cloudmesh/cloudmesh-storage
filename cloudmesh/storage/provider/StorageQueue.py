@@ -1,5 +1,6 @@
 import os
 import textwrap
+import time
 import uuid
 from multiprocessing import Pool
 
@@ -384,11 +385,19 @@ class StorageQueue(StorageABC):
         # terminate() before using join().
         pool.join()
 
-    def monitor(self, rate):
+    def monitor(self, status, rate=5):
         cm = CmDatabase()
-        while True:
-            entries = cm.find(cloud=self.name,
-                              kind='storage')
-            os.system("clear")
-            print(entries)  # use a pretty table
-            # sleep (rate)
+        try:
+            while True:
+                if status == "all":
+                    entries = cm.find(cloud=self.name,
+                                      kind='storage')
+                else:
+                    entries = cm.find(cloud=self.name, kind='storage',
+                                      status=status)
+                os.system("clear")
+                print(entries)  # use a pretty table
+                print("--------------Press Ctrl+C to quit.--------------")
+                time.sleep(rate)
+        except KeyboardInterrupt:
+            pass

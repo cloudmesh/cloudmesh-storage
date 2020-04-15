@@ -42,13 +42,6 @@ from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
 #
 #            time.sleep(rate)
 #            interrupt if we press q
-#
-#
-# TODO: generalizing the parallel executor
-#       looks to me like that the parallel executor can be generalized to all
-#       providers so we do not have to copy that into all code, but we could
-#       reuse instead
-#
 
 
 class Provider(StorageQueue):
