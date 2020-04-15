@@ -55,11 +55,13 @@ class Provider(StorageABC):
                 f"Storage provider '{kind}' not supported")
         return P
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml",
+                 parallelism=4):
 
         super(Provider, self).__init__(service=service, config=config)
         P = Provider.get_provider(self.kind)
-        self.provider = P(service=service, config=config)
+        self.provider = P(service=service, config=config,
+                          parallelism=parallelism)
         if self.provider is None:
             raise ValueError(
                 f"Storage provider '{self.service}'"

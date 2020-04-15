@@ -101,7 +101,6 @@ class Provider(StorageQueue):
         self.container_name = self.credentials['bucket']
         self.dir_marker_file_name = 'marker.txt'
 
-
     def mkdir_run(self, specification):
         """
         function to create a directory the function will

@@ -136,32 +136,33 @@ class StorageCommand(PluginCommand):
                        "recursive",
                        "storage",
                        "source",
-                       "target")
+                       "target",
+                       "parallel")
 
         source = arguments.source
         target = arguments.target
         variables = Variables()
 
-        VERBOSE(arguments)
+        parallelism = arguments.parallel or 4
 
         arguments.storage = Parameter.expand(arguments.storage or variables[
             'storage'])
         if arguments["get"]:
-            provider = Provider(arguments.storage[0])
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
 
             result = provider.get(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
 
         elif arguments.put:
-            provider = Provider(arguments.storage[0])
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
 
             result = provider.put(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
 
         elif arguments.create and arguments.dir:
-            provider = Provider(arguments.storage[0])
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
 
             result = provider.create_dir(arguments.DIRECTORY)
 
@@ -187,7 +188,7 @@ class StorageCommand(PluginCommand):
                 if arguments.dryrun:
                     print(f"Dryrun: list {service}:{entry}")
                 else:
-                    provider = Provider(service=service)
+                    provider = Provider(service=service, parallelism=parallelism)
                     provider.list(name=entry)
 
             return ""
@@ -218,7 +219,7 @@ class StorageCommand(PluginCommand):
                     if arguments.dryrun:
                         print(f"Dryrun: delete {service}:{entry}")
                     else:
-                        provider = Provider(service=service)
+                        provider = Provider(service=service, parallelism=parallelism)
                         provider.delete(name=entry)
 
             else:
@@ -229,7 +230,7 @@ class StorageCommand(PluginCommand):
         elif arguments.search:
 
             for storage in arguments.storage:
-                provider = Provider(storage)
+                provider = Provider(storage, parallelism=parallelism)
 
                 provider.search(arguments.DIRECTORY,
                                 arguments.FILENAME,
@@ -243,14 +244,14 @@ class StorageCommand(PluginCommand):
             scloud, sbucket = arguments['--source'].split(":", 1) or None
             tcloud, tbucket = arguments['--target'].split(":", 1) or None
             if scloud == "aws" or scloud == "google":
-                provider = Provider(service=scloud)
+                provider = Provider(service=scloud, parallelism=parallelism)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
             elif (scloud == "local" and tcloud == "aws") or (
                 scloud == "local" and tcloud == "google"):
-                provider = Provider(service=tcloud)
+                provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
             elif (scloud == "local" and tcloud == "parallelawss3"):
-                provider = Provider(service=tcloud)
+                provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(arguments['--source'], arguments['--target'],
                               arguments.recursive)
             else:
