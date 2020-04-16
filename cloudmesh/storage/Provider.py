@@ -75,6 +75,12 @@ class Provider(StorageABC):
         """
         self.provider.monitor(status=status, output=output)
 
+    def run(self):
+        """
+        Execute the actions in the database/queue
+        """
+        self.provider.run()
+
     @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):
         """
@@ -123,6 +129,7 @@ class Provider(StorageABC):
         # raise ValueError("must return a value")
         return d
 
+    @DatabaseUpdate()
     def search(self, directory=None, filename=None, recursive=False):
 
         d = self.provider.search(directory=directory, filename=filename,
