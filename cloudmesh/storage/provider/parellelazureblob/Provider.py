@@ -60,7 +60,23 @@ class Provider(StorageABC):
 
     output = {}  # "TODO: missing"
 
+    def __init__(self,
+                 name=None,config="~/.cloudmesh/cloudmesh.yaml",
+                 parallelism=4):
+        """
+        TBD
 
+        :param service: TBD
+        :param config: TBD
+        """
+        # pprint(service)
+        super().__init__(service=name, config=config)
+        self.parallelism = parallelism
+        self.name = name
+        self.collection = f"storage-queue-{name}"
+        self.number = 0
+        self.storage_dict = {}
+    '''
     def __init__(self, service= None, config="~/.cloudmesh/cloudmesh.yaml"):
         super().__init__(service=service)
         self.storage_service = BlockBlobService(
@@ -69,9 +85,10 @@ class Provider(StorageABC):
         self.container = self.credentials['container']
         self.cloud = service
         self.service = service
-
+    '''
 
     @DatabaseUpdate()
+
     def update_dict(self, elements, func=None):
         # this is an internal function for building dict object
         d = []
@@ -83,6 +100,7 @@ class Provider(StorageABC):
                 "cloud": self.cloud,
                 "name": element.name
             }
+
             element.properties = element.properties.__dict__
             entry["cm"]["created"] = \
                 element.properties["create"].isoformat()[0]
@@ -998,7 +1016,7 @@ class Provider(StorageABC):
 
 
 if __name__ == "__main__":
-    p = Provider(service ="azure")
+    p = Provider(name ="azure")
     # p.mkdir("/abcworking2")
     # p.mkdir("/abcworking3")
     # p.mkdir("/abcworking4")
