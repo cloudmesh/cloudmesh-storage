@@ -64,6 +64,32 @@ class StorageQueue:
 
     """
 
+    status = [
+        'completed',
+        'waiting',
+        'inprogress',
+        'canceled'
+    ]
+
+    #def register(self):
+    #    # find the inheritor of StorageQueue and register the methd from
+    #    # self._put = parent._put
+
+    def redgister_actions(self,
+                          put=None,
+                          get=None,
+                          delete=None,
+                          mkdir=None,
+                          list=None,
+                          cancel=None):
+
+        self._put = put
+        self._get = get
+        self._delete = delete
+        self._mkdir = mkdir
+        self._list = list # attention list
+        self._cancel = cancel
+
     def __init__(self,
                  source,
                  destination,
@@ -97,9 +123,6 @@ class StorageQueue:
         # TODO: create collection in mongodb
         #
         Console.ok(f"Collection: {self.name}")
-
-
-
 
     def _copy_file(self, sourcefile, destinationfile):
         """
@@ -138,23 +161,6 @@ class StorageQueue:
         entries = yaml.load(specification, Loader=yaml.SafeLoader)
         self.number = self.number + 1
         return entries
-
-    @DatabaseUpdate()
-    def copy_file(self, sourcefile, destinationfile):
-        """
-        adds a copy action to the queue
-
-        copies the file from the source service to the destination service using
-        the file located in the path and storing it into the remote. If remote
-        is not specified path is used for it.
-
-        The copy will not be performed if the files are the same.
-
-        :param sourcefile:
-        :param destinationfile:
-        :return:
-        """
-        self._copy_file(sourcefile, destinationfile)
 
     @DatabaseUpdate()
     def copy_tree(self, sourcetree, destinationtree):
@@ -235,6 +241,7 @@ class StorageQueue:
 
         return entries
 
+
     def delete(self, service, path):
         """
         adds a deleta action to the queue
@@ -264,6 +271,36 @@ class StorageQueue:
         self.number = self.number + 1
         return entries
 
+    @DatabaseUpdate()
+    def delete(self, path, recursive=True):
+        """
+        adds a delete action to the queue
+
+        :param path:
+        :return:
+        """
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+                cm:
+                   number: {self.number}
+                   name: "{path}"
+                   kind: storage
+                   id: {uuid_str}
+                   cloud: {self.name}
+                   collection: {self.collection}
+                   created: {date}
+                action: delete
+                source: 
+                  service: {service}
+                  path: {path}
+                recursive: {recursive}
+                status: waiting
+                """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+        return entries
+
     def status(self):
         """
         provides that status of the queue
@@ -280,6 +317,7 @@ class StorageQueue:
         # find all teh values from within the MongoDB
         raise NotImplementedError
 
+    @DatabaseUpdate()
     def cancel(self, id=None):
         """
         cancels a job with a specific id
@@ -287,12 +325,59 @@ class StorageQueue:
         :return:
         """
         # if None all are canceled
-        raise NotImplementedError
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+                        cm:
+                           number: {self.number}
+                           name: "{id}"
+                           kind: storage
+                           id: {uuid_str}
+                           cloud: {self.name}
+                           collection: {self.collection}
+                           created: {date}
+                        action: cancel
+                        status: waiting
+                        """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+        return entries
 
+    @DatabaseUpdate()
+    def list(self, path, dir_only=False, recursive=False):
+        """
+        adds a list action to the queue
+
+        list the directory in the storage service
+        :param service: service must be either source or destination
+        :param path:
+        :return:
+        """
+
+        date = DateTime.now()
+        uuid_str = str(uuid.uuid1())
+        specification = textwrap.dedent(f"""
+              cm:
+                number: {self.number}
+                kind: storage
+                id: {uuid_str}
+                cloud: {self.name}
+                name: {path}
+                collection: {self.collection}
+                created: {date}
+              action: list
+              path: {path}
+              dir_only:{dir_only}
+              recursive:{recursive}
+              status: waiting
+        """)
+        entries = yaml.load(specification, Loader=yaml.SafeLoader)
+        self.number = self.number + 1
+
+        return entries
 
     def action(self, specification):
         """
-
         executes the action identified by the specification. This is used by the
         run command.
 
@@ -301,28 +386,54 @@ class StorageQueue:
         """
         action = specification["action"]
         if action == "copy":
-            print ("COPY", specification)
+            # print("COPY", specification)
+            specification = self._put(specification)
             # update status
+            self.update_dict(elements=[specification])
         elif action == "delete":
-            print ("DELETE", specification)
+            # print("DELETE", specification)
+            specification = self._delete(specification)
             # update status
+            self.update_dict(elements=[specification])
         elif action == "mkdir":
-            print ("MKDIR", specification)
+            # print("MKDIR", specification)
+            specification = self._mkdir(specification)
             # update status
+            self.update_dict(elements=[specification])
+        elif action == "list":
+            # print("LIST", specification)
+            specification = self._list(specification)
+            # update status
+            self.update_dict(elements=[specification])
+        elif action == "cancel":
+            specification = self._cancel(specification)
+            self.update_dict(elements=[specification])
+
 
     def get_actions(self):
         cm = CmDatabase()
-        entries = cm.find(cloud=self.collection,
+        entries = cm.find(cloud=self.name,
                           kind='storage')
         mkdir = []
         copy = []
+        list = []
+        delete = []
+        cancel = []
         for entry in entries:
-            pprint (entry)
-            if entry['action'] == 'mkdir':
+            pprint(entry)
+            if entry['action'] == 'mkdir' and entry['status'] == 'waiting':
                 mkdir.append(entry)
-            elif entry['action'] == 'copy':
+            elif entry['action'] == 'copy' and entry['status'] == 'waiting':
                 copy.append(entry)
-        return mkdir, copy
+            elif entry['action'] == 'list' and entry['status'] == 'waiting':
+                list.append(entry)
+            elif entry['action'] == 'delete' and entry['status'] == 'waiting':
+                delete.append(entry)
+            elif entry['action'] == 'cancel' and entry['status'] == 'waiting':
+                cancel.append(entry)
+
+        return mkdir, copy, list, delete, cancel
+
 
     def run(self):
         """
@@ -331,16 +442,34 @@ class StorageQueue:
 
         :return:
         """
-        mkdir, copy = self.get_actions()
+        mkdir_action, copy_action, list_action, delete_action, cancel_action = self.get_actions()
+
+        # cancel the actions
+        #
+        p = Pool(self.parallelism)
+        #
+        p.map(self.action, cancel_action)
+
+        # delete files/directories
+        #
+        p = Pool(self.parallelism)
+        #
+        p.map(self.action, delete_action)
 
         # create directories
         #
         p = Pool(self.parallelism)
         #
-        p.map(self.action, mkdir)
+        p.map(self.action, mkdir_action)
 
         # COPY FILES
         #
         p = Pool(self.parallelism)
         #
-        p.map(self.action, copy)
+        p.map(self.action, copy_action)
+
+        # LIST FILES
+        p = Pool(self.parallelism)
+        p.map(self.action, list_action)
+
+        # function to list file  or directory
