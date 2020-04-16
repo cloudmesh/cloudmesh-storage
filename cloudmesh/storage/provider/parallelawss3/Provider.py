@@ -8,6 +8,7 @@ import botocore
 from cloudmesh.storage.provider.StorageQueue import StorageQueue
 from cloudmesh.common.console import Console
 from cloudmesh.common.debug import VERBOSE
+from cloudmesh.common.Printer import Printer
 from cloudmesh.mongo.CmDatabase import CmDatabase
 
 from cloudmesh.storage.provider.parallelawss3.path_manager import \
@@ -50,7 +51,6 @@ class Provider(StorageQueue):
         'canceled'
     ]
 
-    # TODO: BUG: missing we need that as the table printer requires it
     output = {
         "monitor_status": {
             "sort_keys": ["cm.number"],
@@ -76,6 +76,19 @@ class Provider(StorageQueue):
                        "Destination",
                        "Recursive",
                        ]
+        },
+        "files": {
+            "sort_keys":["fileName"],
+            "order":[
+                "fileName",
+                "contentLength",
+                "lastModificationDate",
+            ],
+            "header":[
+                "FileName",
+                "Size",
+                "LastModified",
+            ]
         }
     }
 
@@ -90,6 +103,21 @@ class Provider(StorageQueue):
         super().__init__(service=service, config=config, parallelism=parallelism)
         self.container_name = self.credentials['bucket']
         self.dir_marker_file_name = 'marker.txt'
+
+    def Print(self, data, output=None):
+        if output == "table":
+            order = self.output['files']['order']  # not pretty
+            header = self.output['files']['header']  # not pretty
+            sort_keys = self.output['files']['sort_keys']
+            print(Printer.flatwrite(data,
+                                    sort_keys=sort_keys,
+                                    order=order,
+                                    header=header,
+                                    output=output,
+                                    )
+                  )
+        else:
+            print(Printer.write(data, output=output))
 
     def mkdir_run(self, specification):
         """
@@ -184,18 +212,13 @@ class Provider(StorageQueue):
 
         dir_files_list = []
         trimmed_source = massage_path(source)
-        # trimmed_source = source
-        VERBOSE(trimmed_source)
 
         if not recursive:
             # call will not be recursive and need to look only in the
             # specified directory
             for obj in objs:
                 if obj.key.startswith(massage_path(trimmed_source)):
-                    VERBOSE(obj.key)
                     file_name = obj.key
-                    # obj.key.replace(self.directory_marker_file_name,
-                    #                            '')
                     if file_name[-1] == '/':
 
                         # Its a directory
@@ -263,15 +286,8 @@ class Provider(StorageQueue):
                             Bucket=self.container_name, Key=file_name)
                         dir_files_list.append(
                             extract_file_dict(file_name, metadata))
-        '''
-        if len(dirFilesList) == 0:
-            #print("No files found in directory")
-            self.storage_dict['message'] = ''
-        else:
-            self.storage_dict['message'] = dirFilesList
-        '''
 
-        VERBOSE(self.storage_dict)
+        self.Print(data=dir_files_list, output="table")
         specification['status'] = 'completed'
         return specification
 
@@ -749,6 +765,7 @@ class Provider(StorageQueue):
         else:
             Console.msg("File found")
 
+        self.Print(data=info_list, output="table")
         specification['status'] = 'completed'
         return specification
 
@@ -843,16 +860,16 @@ class Provider(StorageQueue):
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelawss3")
-    p.create_dir(directory="testdir3")
-    p.create_dir(directory="testdir")
-    p.list(source=".")
-    p.delete(source="testdir3")
-
-    p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
-    p.get(source="myProvider.py", destination="shihui.py", recursive=False)
-
+    # p.create_dir(directory="testdir3")
+    # p.create_dir(directory="testdir")
+    # p.list(source="/", recursive=True)
+    # p.delete(source="testdir3")
+    #
+    # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
+    # p.get(source="myProvider.py", destination="shihui.py", recursive=False)
+    #
     p.search(directory="/", filename="myProvider.py")
-
-    # p.run()
+    #
+    p.run()
 
 
