@@ -204,10 +204,16 @@ class Provider(StorageABC):
             mime_type = sourceid['files'][0]['mimeType']
             tempres = []
             if mime_type == 'application/vnd.google-apps.folder':
-                items = self.service.files().list(
+                query_params = "'" + file_id + "' in parents"
+                results = self.service.files().list(
+                    q=query_params,
                     pageSize=100,
                     fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
+                items = results.get('files', [])
+                print("Items in directory to get: ",items)
                 for item in items:
+                    print("Type of item", type(item))
+                    print("Item is:",item)
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         self.download_file(source, item['id'], item['name'],
                                            item['mimeType'])
