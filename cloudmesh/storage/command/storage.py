@@ -192,7 +192,7 @@ class StorageCommand(PluginCommand):
             for source in sources:
                 storage, entry = Parameter.separate(source)
 
-                storage = storage or "local"
+                storage = storage or source or "local"
                 deletes.append((storage, entry))
 
             _sources = ', '.join(sources)

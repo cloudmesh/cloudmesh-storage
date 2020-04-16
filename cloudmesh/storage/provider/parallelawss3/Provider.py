@@ -52,7 +52,7 @@ class Provider(StorageQueue):
     ]
 
     output = {
-        "monitor_status": {
+        "monitor": {
             "sort_keys": ["cm.number"],
             "order": ["cm.number",
                       "cm.name",
@@ -103,21 +103,6 @@ class Provider(StorageQueue):
         super().__init__(service=service, config=config, parallelism=parallelism)
         self.container_name = self.credentials['bucket']
         self.dir_marker_file_name = 'marker.txt'
-
-    def Print(self, data, output=None):
-        if output == "table":
-            order = self.output['files']['order']  # not pretty
-            header = self.output['files']['header']  # not pretty
-            sort_keys = self.output['files']['sort_keys']
-            print(Printer.flatwrite(data,
-                                    sort_keys=sort_keys,
-                                    order=order,
-                                    header=header,
-                                    output=output,
-                                    )
-                  )
-        else:
-            print(Printer.write(data, output=output))
 
     def mkdir_run(self, specification):
         """
@@ -287,7 +272,7 @@ class Provider(StorageQueue):
                         dir_files_list.append(
                             extract_file_dict(file_name, metadata))
 
-        self.Print(data=dir_files_list, output="table")
+        self.Print(data=dir_files_list, type="files", output="table")
         specification['status'] = 'completed'
         return specification
 
@@ -765,7 +750,7 @@ class Provider(StorageQueue):
         else:
             Console.msg("File found")
 
-        self.Print(data=info_list, output="table")
+        self.Print(data=info_list, type="files", output="table")
         specification['status'] = 'completed'
         return specification
 
@@ -861,15 +846,15 @@ if __name__ == "__main__":
     print()
     p = Provider(service="parallelawss3")
     # p.create_dir(directory="testdir3")
-    # p.create_dir(directory="testdir")
+    p.create_dir(directory="testdir")
     # p.list(source="/", recursive=True)
     # p.delete(source="testdir3")
     #
-    # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
+    p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
     # p.get(source="myProvider.py", destination="shihui.py", recursive=False)
     #
-    p.search(directory="/", filename="myProvider.py")
+    # p.search(directory="/", filename="myProvider.py")
     #
-    p.run()
+    # p.run()
 
 

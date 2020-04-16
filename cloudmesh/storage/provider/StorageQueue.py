@@ -26,11 +26,11 @@ class StorageQueue(StorageABC):
         self.number = 0
         self.storage_dict = {}
 
-    def Print(self, data, output=None):
+    def Print(self, data, type, output=None):
         if output == "table":
-            order = self.output['monitor_status']['order']  # not pretty
-            header = self.output['monitor_status']['header']  # not pretty
-            sort_keys = self.output['monitor_status']['sort_keys']
+            order = self.output[type]['order']  # not pretty
+            header = self.output[type]['header']  # not pretty
+            sort_keys = self.output[type]['sort_keys']
             print(Printer.flatwrite(data,
                                     sort_keys=sort_keys,
                                     order=order,
@@ -405,14 +405,13 @@ class StorageQueue(StorageABC):
         cm = CmDatabase()
         try:
             while True:
-                if status == "all":
-                    entries = cm.find(cloud=self.name,
-                                      kind='storage')
-                else:
-                    entries = cm.find(cloud=self.name, kind='storage',
-                                      status=status)
+                entries = cm.find(cloud=self.name, kind='storage')
+                print(entries)
+                if status != "all":
+                    entries = list(filter(lambda entry: entry['status'] ==
+                                                              status, entries))
                 # os.system("clear")
-                self.Print(data=entries, output=output)
+                self.Print(data=entries, type="monitor", output=output)
                 print("--------------Press Ctrl+C to quit.--------------")
                 time.sleep(rate)
         except KeyboardInterrupt:
