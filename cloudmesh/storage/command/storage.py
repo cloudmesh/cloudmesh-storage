@@ -185,7 +185,11 @@ class StorageCommand(PluginCommand):
             """
             storage list SOURCE [--parallel=N]
             """
-            sources = arguments.SOURCE or variables["storage"] or 'local:.'
+            if variables['storage']:
+                default_source = f"{variables['storage']}:/"
+            else:
+                default_source = "local:/"
+            sources = arguments.SOURCE or default_source
             sources = Parameter.expand(sources)
 
             deletes = []
@@ -212,14 +216,18 @@ class StorageCommand(PluginCommand):
             """
             storage delete SOURCE [--parallel=N]
             """
-            sources = arguments.SOURCE or variables["storage"] or 'local:.'
+            if variables['storage']:
+                default_source = f"{variables['storage']}:/"
+            else:
+                default_source = "local:/"
+            sources = arguments.SOURCE or default_source
             sources = Parameter.expand(sources)
 
             deletes = []
             for source in sources:
                 storage, entry = Parameter.separate(source)
 
-                storage = storage or "local"
+                storage = storage or source or "local"
                 deletes.append((storage, entry))
 
             _sources = ', '.join(sources)
