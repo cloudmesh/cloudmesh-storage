@@ -61,7 +61,7 @@ class Provider(StorageQueue):
     output = {}  # "TODO: missing"
 
     def __init__(self,
-                 name=None,config="~/.cloudmesh/cloudmesh.yaml",
+                 service=None,config="~/.cloudmesh/cloudmesh.yaml",
                  parallelism=4):
         """
         TBD
@@ -70,12 +70,15 @@ class Provider(StorageQueue):
         :param config: TBD
         """
         # pprint(service)
-        super().__init__(service=name, config=config)
-        self.parallelism = parallelism
-        self.name = name
-        self.collection = f"storage-queue-{name}"
-        self.number = 0
-        self.storage_dict = {}
+        super().__init__(service=service, config=config, parallelism=parallelism)
+        self.container = self.credentials['container']
+        self.cloud = service
+        self.service = service
+        #self.parallelism = parallelism
+        #self.name = name
+        #self.collection = f"storage-queue-{name}"
+        #self.number = 0
+        #self.storage_dict = {}
     '''
     def __init__(self, service= None, config="~/.cloudmesh/cloudmesh.yaml"):
         super().__init__(service=service)
@@ -87,7 +90,7 @@ class Provider(StorageQueue):
         self.service = service
     '''
 
-    @DatabaseUpdate()
+
 
     def update_dict(self, elements, func=None):
         # this is an internal function for building dict object
@@ -152,7 +155,7 @@ class Provider(StorageQueue):
         return src_path
 
     
-    def _mkdir(self, specification):
+    def mkdir_run(self, specification):
         #     cm:
         #     number: {self.number}
         #     kind: storage
@@ -213,276 +216,22 @@ class Provider(StorageQueue):
 
         # dict_obj = self.update_dict(blob_cre)
         # pprint(dict_obj[0])
-        return blob_cre
+        #return blob_cre
+        specification['status'] = 'completed'
+        return specification
 
 
-    @DatabaseUpdate()
-    def copy(self, sourcefile, destinationfile, recursive=False):
+    def list_run(self, specification):
         """
-        adds a copy action to the queue
+        lists all files specified in the source
 
-        copies the file from the source service to the destination service using
-        the file located in the path and storing it into the remote. If remote
-        is not specified path is used for it.
-
-        The copy will not be performed if the files are the same.
-
-        :param sourcefile:
-        :param destinationfile:
-        :return:
-        """
-        date = DateTime.now()
-        uuid_str = str(uuid.uuid1())
-        specification = textwrap.dedent(f"""
-        cm:
-           number: {self.number}
-           name: "{sourcefile}:{destinationfile}"
-           kind: storage
-           id: {uuid_str}
-           cloud: {self.name}
-           collection: {self.collection}
-           created: {date}
-        action: copy
-        source: 
-          path: {sourcefile}
-        destination: 
-          path: {destinationfile}
-        recursive: {recursive}
-        status: waiting
-        """)
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-        return entries
-
-    @DatabaseUpdate()
-    def delete(self, path, recursive=True):
-        """
-        adds a delete action to the queue
-
-        :param path:
-        :return:
-        """
-        date = DateTime.now()
-        uuid_str = str(uuid.uuid1())
-        specification = textwrap.dedent(f"""
-                cm:
-                   number: {self.number}
-                   name: "{path}"
-                   kind: storage
-                   id: {uuid_str}
-                   cloud: {self.name}
-                   collection: {self.collection}
-                   created: {date}
-                action: delete
-                source: 
-                  path: {path}
-                recursive: {recursive}
-                status: waiting
-                """)
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-        return entries
-
-    @DatabaseUpdate()
-    def cancel(self, id=None):
-        """
-        cancels a job with a specific id
-        :param id:
-        :return:
-        """
-        # if None all are canceled
-        date = DateTime.now()
-        uuid_str = str(uuid.uuid1())
-        specification = textwrap.dedent(f"""
-                        cm:
-                           number: {self.number}
-                           name: "{id}"
-                           kind: storage
-                           id: {uuid_str}
-                           cloud: {self.name}
-                           collection: {self.collection}
-                           created: {date}
-                        action: cancel
-                        status: waiting
-                        """)
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-        return entries
-
-    @DatabaseUpdate()
-    def mkdir(self, path):
-        """
-        adds a mkdir action to the queue
-
-        create the directory in the storage service
-        :param service: service must be either source or destination
-        :param path:
-        :return:
-        """
-
-        date = DateTime.now()
-        uuid_str = str(uuid.uuid1())
-        specification = textwrap.dedent(f"""
-                  cm:
-                    number: {self.number}
-                    kind: storage
-                    id: {uuid_str}
-                    cloud: {self.name}
-                    name: {path}
-                    collection: {self.collection}
-                    created: {date}
-                  action: mkdir
-                  path: {path}
-                  status: waiting
-            """)
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-
-        return entries
-
-    @DatabaseUpdate()
-    def list(self, path, dir_only=False, recursive=False):
-        """
-        adds a list action to the queue
-
-        list the directory in the storage service
-        :param service: service must be either source or destination
-        :param path:
-        :return:
-        """
-
-        date = DateTime.now()
-        uuid_str = str(uuid.uuid1())
-        specification = textwrap.dedent(f"""
-                      cm:
-                        number: {self.number}
-                        kind: storage
-                        id: {uuid_str}
-                        cloud: {self.name}
-                        name: {path}
-                        collection: {self.collection}
-                        created: {date}
-                      action: list
-                      path: {path}
-                      dir_only:{dir_only}
-                      recursive:{recursive}
-                      status: waiting
-                """)
-        entries = yaml.load(specification, Loader=yaml.SafeLoader)
-        self.number = self.number + 1
-
-        return entries
-
-    def action(self, specification):
-        """
-        executes the action identified by the specification. This is used by the
-        run command.
-
-        :param specification:
-        :return:
-        """
-        action = specification["action"]
-        if action == "copy":
-            # print("COPY", specification)
-            specification = self._put(specification)
-            # update status
-            self.update_dict(elements=[specification])
-        elif action == "delete":
-            # print("DELETE", specification)
-            specification = self._delete(specification)
-            # update status
-            self.update_dict(elements=[specification])
-        elif action == "mkdir":
-            # print("MKDIR", specification)
-            specification = self._mkdir(specification)
-            # update status
-            self.update_dict(elements=[specification])
-        elif action == "list":
-            # print("LIST", specification)
-            specification = self._list(specification)
-            # update status
-            self.update_dict(elements=[specification])
-        elif action == "cancel":
-            specification = self._cancel(specification)
-            self.update_dict(elements=[specification])
-
-    def get_actions(self):
-        cm = CmDatabase()
-        entries = cm.find(cloud=self.name,
-                          kind='storage')
-        mkdir = []
-        copy = []
-        list = []
-        delete = []
-        cancel = []
-        for entry in entries:
-            pprint(entry)
-            if entry['action'] == 'mkdir' and entry['status'] == 'waiting':
-                mkdir.append(entry)
-            elif entry['action'] == 'copy' and entry['status'] == 'waiting':
-                copy.append(entry)
-            elif entry['action'] == 'list' and entry['status'] == 'waiting':
-                list.append(entry)
-            elif entry['action'] == 'delete' and entry['status'] == 'waiting':
-                delete.append(entry)
-            elif entry['action'] == 'cancel' and entry['status'] == 'waiting':
-                cancel.append(entry)
-
-        return mkdir, copy, list, delete, cancel
-
-    def run(self):
-        """
-        runs the copy process for all jobs in the queue and completes when all
-        actions are completed
-
-        :return:
-        """
-        mkdir_action, copy_action, list_action, delete_action, cancel_action = self.get_actions()
-
-        # cancel the actions
-        #
-        p = Pool(self.parallelism)
-        #
-        p.map(self.action, cancel_action)
-
-        # delete files/directories
-        #
-        p = Pool(self.parallelism)
-        #
-        p.map(self.action, delete_action)
-
-        # create directories
-        #
-        p = Pool(self.parallelism)
-        #
-        p.map(self.action, mkdir_action)
-
-        # COPY FILES
-        #
-        p = Pool(self.parallelism)
-        #
-        p.map(self.action, copy_action)
-
-        # LIST FILES
-        p = Pool(self.parallelism)
-        p.map(self.action, list_action)
-
-        # function to list file  or directory
-
-    def _list(self, specification):
-        """
-        lists the information as dict
-
-        :param source: the source which either can be a directory or file
-        :param dir_only: Only the directory names
+        :param source: this can be a file or directory
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified source
-
+        :param dir_only: boolean, enlist only directories
         :return: dict
 
         """
-        # if dir_only:
-        #    raise NotImplementedError
         source = specification['path']
         dir_only = specification['dir_only']
         recursive = specification['recursive']
@@ -595,9 +344,7 @@ class Provider(StorageQueue):
                     return Console.error(
                         "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
-        pprint(dict_obj)
-        return dict_obj
-
+        # pprint(dict_obj)
         if len(file_list) > 0:
             hdr = '#' * 90 + '\n' + 'List of files in the folder ' + '/' + blob_folder + ':'
             Console.cprint("BLUE", "", hdr)
@@ -612,9 +359,17 @@ class Provider(StorageQueue):
             print(fold_list)
             trl = '#' * 90
             Console.cprint("BLUE", "", trl)
-        return dict_obj
-    # function to delete file or directory
-    def _delete(self, specificatioin):
+        #return dict_obj
+        #return obj_list
+
+        VERBOSE(self.storage_dict)
+        specification['status'] = 'completed'
+        return specification
+
+
+
+         # function to delete file or directory
+    def delete_run(self, specificatioin):
         """
         deletes the source
 
@@ -677,12 +432,14 @@ class Provider(StorageQueue):
                 else:
                     return Console.error(
                         "File does not exist: {file}".format(file=blob_file))
-        dict_obj = self.update_dict(obj_list, func='delete')
-        pprint(dict_obj)
-        return dict_obj
+        #dict_obj = self.update_dict(obj_list, func='delete')
+        #pprint(dict_obj)
+        #return dict_obj
+        specification['status'] = 'completed'
+        return specification
 
     # function to upload file or directory
-    def _put(self, specification):
+    def put_run(self, specification):
         """
        puts the source on the service
 
@@ -694,8 +451,8 @@ class Provider(StorageQueue):
 
         """
 
-        source = specification['source']['path']
-        destination = specification['destination']['path']
+        source = specification['source']
+        destination = specification['destination']
         recursive = specification['recursive']
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
@@ -779,26 +536,13 @@ class Provider(StorageQueue):
         # dict_obj = self.update_dict(obj_list)
         # pprint(dict_obj)
         # return dict_obj
-        return obj_list
-    def _cancel(self, specification):
-        cm = CmDatabase()
-        entries = cm.find(cloud=self.name,
-                          kind='storage')
-        id = specification['cm']['name']
-        if id == 'None':
-            for entry in entries:
-                if entry['status'] == 'waiting':
-                    entry['status'] = "cancelled"
-        else:
-            for entry in entries:
-                if entry['cm']['id'] == id and entry['status'] == 'waiting':
-                    entry['status'] = "cancelled"
-                    break
-        cm.update(entries)
-
+        #return obj_list
         specification['status'] = 'completed'
         return specification
-    def get(self,source=None, destination=None, recursive=False):
+
+
+
+    def get_run(self,specification):
         """
         Downloads file from Destination(Service) to Source(local)
 
@@ -809,6 +553,12 @@ class Provider(StorageQueue):
         :return: dict
 
         """
+        source = specficiation['source']
+        destination = specficiation['destination']
+        recursive = specficiation['recursive']
+        self.storage_service = BlockBlobService(
+            account_name=self.credentials['account_name'],
+            account_key=self.credentials['account_key'])
 
         HEADING()
         # Determine service path - file or folder
@@ -949,12 +699,14 @@ class Provider(StorageQueue):
                         return Console.error(
                             "Invalid arguments, recursive not applicable")
 
-        dict_obj = self.update_dict(obj_list)
-        pprint(dict_obj)
-        return dict_obj
+        #dict_obj = self.update_dict(obj_list)
+        #pprint(dict_obj)
+        #return dict_obj
         #return obj_list
+        specficiation['status'] = 'completed'
 
-    def search(self, directory=None, filename=None,recursive=False):
+        return specficiation
+    def search_run(self, specification):
         """
         searches the filename in the directory
 
@@ -965,7 +717,12 @@ class Provider(StorageQueue):
         :return: dict
 
         """
-
+        directory = specification['directory']
+        filename = specification['filename']
+        recursive = specification['recursive']
+        self.storage_service = BlockBlobService(
+            account_name=self.credentials['account_name'],
+            account_key=self.credentials['account_key'])
 
         HEADING()
 
@@ -1007,26 +764,45 @@ class Provider(StorageQueue):
                 return Console.error(
                     "File does not exist: {file}".format(file=filename))
 
-        dict_obj = self.update_dict(obj_list)
-        pprint(dict_obj)
-        return dict_obj
+       # dict_obj = self.update_dict(obj_list)
+       # pprint(dict_obj)
+       # return dict_obj
         #return obj_list
+        specification['status'] = 'completed'
+        return specification
 
-    # function to download file or directory
+    def cancel_run(self, specification):
+        cm = CmDatabase()
+        entries = cm.find(cloud=self.name,
+                          kind='storage')
+        name = specification['cm']['name']
+        if name == 'None':
+            for entry in entries:
+                if entry['status'] == 'waiting':
+                    entry['status'] = "cancelled"
+        else:
+            for entry in entries:
+                if entry['cm']['id'] == name and entry['status'] == 'waiting':
+                    entry['status'] = "cancelled"
+                    break
+        cm.update(entries)
+
+        specification['status'] = 'completed'
+        return specification
 
 
 if __name__ == "__main__":
-    p = Provider(name ="azure")
-    # p.mkdir("/abcworking2")
-    # p.mkdir("/abcworking3")
-    # p.mkdir("/abcworking4")
-    # p.mkdir("/abcworking5")
-    # p.mkdir("/abcworking6")
+    print()
+    p = Provider(service ="parallellazureblob")
+    p.create_dir(directory="dir")
+    p.create_dir(directory="dir1")
+    '''
+    p.list(source=".")
+    p.delete(source="mynewcontainer")
 
-    # p.list('/')
-    # p.run()
-    # p.cancel()
-    # p.delete(path="testABC")
-    # p.copy(sourcefile="./Provider.py", destinationfile="testABC.txt")
+    p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
+    p.get(source="myProvider.py", destination="shihui.py", recursive=False)
+
+    p.search(directory="/", filename="myProvider.py")
+    '''
     p.run()
-
