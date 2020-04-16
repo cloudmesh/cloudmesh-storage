@@ -18,7 +18,8 @@ class Provider(StorageABC):
     output = {}  # "TODO: missing"
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
-        super().__init__(service=service, config=config)
+    #def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+        super().__init__(service=service,config=config)
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
@@ -238,9 +239,10 @@ class Provider(StorageABC):
                             "Invalid arguments, recursive not applicable")
         dict_obj = self.update_dict(obj_list)
         # pprint(dict_obj)
-        return dict_obj
+        return obj_list
 
-    def put(self, service=None, source=None, destination=None, recursive=False):
+    #def put(self, service=None, source=None, destination=None, recursive=False):
+    def put(self,source=None, destination=None, recursive=False):
         """
         Uploads file from Source(local) to Destination(Service)
 
@@ -327,10 +329,10 @@ class Provider(StorageABC):
             return Console.error(
                 "Directory or File does not exist: {directory}".format(
                     directory=src_path))
-        dict_obj = self.update_dict(obj_list)
-        pprint(dict_obj)
-        return dict_obj
-
+        #dict_obj = self.update_dict(obj_list)
+        #pprint(dict_obj)
+        #return dict_obj
+        return obj_list
     def delete(self, service=None, source=None, recursive=False):
         """
         Deletes the source from cloud service
@@ -437,9 +439,10 @@ class Provider(StorageABC):
                             self.storage_service.get_blob_to_bytes(
                                 self.container, blob_name))
 
-        dict_obj = self.update_dict(blob_cre)
-        pprint(dict_obj[0])
-        return dict_obj[0]
+        #dict_obj = self.update_dict(blob_cre)
+        #pprint(dict_obj[0])
+        #return dict_obj[0]
+        return blob_cre
 
     def search(self, service=None, directory=None, filename=None,
                recursive=False):
@@ -628,4 +631,5 @@ class Provider(StorageABC):
             print(fold_list)
             trl = '#' * 90
             Console.cprint("BLUE", "", trl)
-        return dict_obj
+        #return dict_obj
+        return obj_list
