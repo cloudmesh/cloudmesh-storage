@@ -101,7 +101,7 @@ class TestAzureStorage(object):
         HEADING()
         src = '/a/created_dir'
         StopWatch.start("CREATE DIR")
-        directory = self.p.createdir(self.p.service, src)
+        directory = self.p.create_dir(self.p.service, src)
         StopWatch.stop("CREATE DIR")
         pprint(directory)
 
