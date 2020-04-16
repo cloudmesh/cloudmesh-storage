@@ -1,13 +1,14 @@
 ###############################################################
-# pytest -v --capture=no tests/test_storage_box.py
-# pytest -v  tests/test_storage_box.py
-# pytest -v --capture=no tests/test_storage_box..py::TestBoxtorage::<METHODNAME>
+# pytest -v --capture=no tests/awss3/test_storage_awss3.py
+# pytest -v  tests/awss3/test_storage_awss3.py
+# pytest -v --capture=no tests/awss3/test_storage_awss3..py::TestStorageAwss3::<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path
 from pprint import pprint
 
 import pytest
+from cloudmesh.common.Shell import Shell
 from cloudmesh.common.StopWatch import StopWatch
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import HEADING
@@ -20,18 +21,14 @@ from cloudmesh.storage.Provider import Provider
 
 
 #
-# cms set storage=box
+# cms set storage=awss3
 #
 @pytest.mark.incremental
-class TestBoxStorage(object):
-
-    def create_dir(self, location):
-        d = Path(os.path.dirname(path_expand(location)))
-        d.mkdir(parents=True, exist_ok=True)
+class TestStorageAwss3(object):
 
     def create_file(self, location, content):
-        self.create_dir(location)
-        writefile(path_expand(location), content)
+        Shell.mkdir(os.dirname(path_expand(location)))
+        writefile(location, content)
 
     def setup(self):
         variables = Variables()
@@ -105,7 +102,7 @@ class TestBoxStorage(object):
         pprint(directory)
 
         assert dir is not None
-        assert "a/created_dir" in directory[0]["name"]
+        assert "a/created_dir/" in directory[0]['cm']['name']
 
     def test_search(self):
         HEADING()
@@ -116,7 +113,7 @@ class TestBoxStorage(object):
         StopWatch.stop("SEARCH file")
         pprint(search_files)
         assert len(search_files) > 0
-        assert search_files[0]["name"] == filename
+        assert filename in search_files[0]['cm']["name"]
 
     def test_delete(self):
         HEADING()
@@ -126,9 +123,9 @@ class TestBoxStorage(object):
         StopWatch.stop("DELETE Directory")
         deleted = False
         for entry in contents:
-            if "created_dir" in entry["cm"]["name"]:
-                if entry["cm"]["status"] == "deleted":
-                    deleted = True
+            if 'a/created_dir/' == entry['cm']["name"]:
+                # if entry["cm"]["status"] == "deleted":
+                deleted = True
         assert deleted
 
     def test_recursive_put(self):
@@ -215,7 +212,20 @@ class TestBoxStorage(object):
         search_files = self.p.search(self.p.service, src, filename, True)
         StopWatch.stop("SEARCH file under root dir --r")
 
-        assert len(search_files) == 2
+        assert len(search_files) == 4
+
+        # this pytest is specifically for AWS,AZURE and Google only
+
+    # def test_create_bucket(self):
+    #    HEADING()
+    #    src = 'cloudmeshtest2'
+    #    StopWatch.start("create bucket")
+    #    bucket = self.aws.bucket_create(src)
+    #    StopWatch.stop("create bucket")
+
+    #    pprint(bucket)
+
+    #   assert bucket is not None
 
     def test_results(self):
         HEADING()

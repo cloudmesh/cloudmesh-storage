@@ -1,6 +1,10 @@
-import cloudmesh.storage.provider.parellelazureblob.Provider as Provider
-from azure.storage.blob import BlockBlobService
 from Provider import Provider
-p=Provider(service="azure", config="c:/users/hp/.cloudmesh/cloudmesh.yaml")
+from cloudmesh.common.util import path_expand
+
+#
+# TODO
+#
+location = path_expand(".cloudmesh/cloudmesh.yaml")
+p = Provider(service="azure", config=location)
 print(p.credentials)
 

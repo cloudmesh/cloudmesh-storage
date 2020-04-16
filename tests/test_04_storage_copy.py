@@ -5,28 +5,20 @@
 ###############################################################
 import os
 from pathlib import Path
-from pprint import pprint
 
 import pytest
-from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.parameter import Parameter
-from cloudmesh.common.util import HEADING
-from cloudmesh.common.util import path_expand
-from cloudmesh.common.util import writefile
-from cloudmesh.common.variables import Variables
 from cloudmesh.common.Benchmark import Benchmark
+from cloudmesh.common.StopWatch import StopWatch
+from cloudmesh.common.console import Console
+from cloudmesh.common.util import HEADING
+from cloudmesh.common.util import banner
+from cloudmesh.common.util import path_expand
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
-from cloudmesh.common.debug import VERBOSE
-from cloudmesh.common.util import banner
-from cloudmesh.common.console import Console
-
 
 Benchmark.debug()
 
 user = Config()["cloudmesh.profile.user"]
-variables = Variables()
-key = variables['key']
 
 benchmark_tag = "storage copy"
 
@@ -87,7 +79,7 @@ class TestStorage(object):
                     else:
                         dst = file
 
-                    print("0"*100)
+                    print("0" * 100)
                     provider = Provider(service=storage)
 
                     banner(f"copy {source}:{src} to {target}:{dst}")

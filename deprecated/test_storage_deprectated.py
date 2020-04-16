@@ -1,13 +1,14 @@
 ###############################################################
-# pytest -v --capture=no tests/test_storage_azure.py
-# pytest -v  tests/test_storage_azure.py
-# pytest -v --capture=no tests/test_storage_azure..py::TestAzureStorage::<METHODNAME>
+# pytest -v --capture=no tests/test_storage_box.py
+# pytest -v  tests/test_storage_box.py
+# pytest -v --capture=no tests/test_storage_box..py::TestStorage::<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path
 from pprint import pprint
 
 import pytest
+from cloudmesh.common.Shell import Shell
 from cloudmesh.common.StopWatch import StopWatch
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import HEADING
@@ -20,18 +21,14 @@ from cloudmesh.storage.Provider import Provider
 
 
 #
-# cms set storage=azure
+# cms set storage=box
 #
 @pytest.mark.incremental
-class TestAzureStorage(object):
-
-    def create_dir(self, location):
-        d = Path(os.path.dirname(path_expand(location)))
-        d.mkdir(parents=True, exist_ok=True)
+class TestStorage(object):
 
     def create_file(self, location, content):
-        self.create_dir(location)
-        writefile(path_expand(location), content)
+        Shell.mkdir(os.dirname(path_expand(location)))
+        writefile(location, content)
 
     def setup(self):
         variables = Variables()
@@ -84,7 +81,6 @@ class TestAzureStorage(object):
     def test_list(self):
         HEADING()
         StopWatch.start("LIST Directory")
-        banner(self.p.service)
         contents = self.p.list(self.p.service, "/")
         StopWatch.stop("LIST Directory")
         for c in contents:
@@ -222,5 +218,5 @@ class TestAzureStorage(object):
         HEADING()
         # storage = self.p.service
         service = self.service
-        banner(f"Benchmark results for '{service}' Storage")
+        banner(f"Benchmark results for {service} Storage")
         StopWatch.benchmark()
