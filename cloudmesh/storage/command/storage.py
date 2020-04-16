@@ -149,10 +149,12 @@ class StorageCommand(PluginCommand):
 
         arguments.storage = Parameter.expand(arguments.storage or variables[
             'storage'])
+
         if arguments["monitor"]:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
             status = arguments.status or "all"
-            result = provider.monitor(status=status)
+            output = arguments['--output']
+            result = provider.monitor(status=status, output=output)
         elif arguments["get"]:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
 

@@ -14,35 +14,6 @@ from cloudmesh.storage.provider.parallelawss3.path_manager import \
     extract_file_dict
 from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
 
-#
-# TODO: develop a general monitor not just for your storage provider in monitor.py
-#
-# This will list all actions in the collection and list the status
-#
-# you should be able to see this dynamically
-#
-# we should be able just as we do in cloudmesh-pi-cluster with a parameter --rate=5.0
-#
-# refresh the status every 5 seconds
-#
-# cms storage monitor [SERVICES] (--status=all | status=STATUS)[--output=output] [--clear]
-#
-# SERVICES and status are Parameter.expand entries, e.g. dicts after the expand
-#
-# table would look like:
-#
-# status, action, source, destination, start,
-#
-#
-#        for True:
-#
-#            ... get File
-#            ... if clear: os.system('clear')
-#            ... display info
-#
-#            time.sleep(rate)
-#            interrupt if we press q
-
 
 class Provider(StorageQueue):
     kind = "parallelawss3"
@@ -80,7 +51,33 @@ class Provider(StorageQueue):
     ]
 
     # TODO: BUG: missing we need that as the table printer requires it
-    output = {}
+    output = {
+        "monitor_status": {
+            "sort_keys": ["cm.number"],
+            "order": ["cm.number",
+                      "cm.name",
+                      "cm.kind",
+                      "cm.cloud",
+                      "action",
+                      "status",
+                      "path",
+                      "source",
+                      "destination",
+                      "recursive",
+                      ],
+            "header": ["Number",
+                       "Name",
+                       "Kind",
+                       "Cloud",
+                       "Action",
+                       "Status",
+                       "Path",
+                       "Source",
+                       "Destination",
+                       "Recursive",
+                       ]
+        }
+    }
 
     def __init__(self,
                  service=None,
@@ -285,7 +282,7 @@ class Provider(StorageQueue):
         :param specification:
         :return: dict
         """
-        source = specification['source']['path']
+        source = specification['path']
         recursive = specification['recursive']
 
         trimmed_source = massage_path(source)
@@ -700,7 +697,7 @@ class Provider(StorageQueue):
     # function to search a file or directory and list its attributes
     def search_run(self, specification):
 
-        directory = specification['directory']
+        directory = specification['path']
         filename = specification['filename']
         recursive = specification['recursive']
 
@@ -856,6 +853,6 @@ if __name__ == "__main__":
 
     p.search(directory="/", filename="myProvider.py")
 
-    p.run()
+    # p.run()
 
 

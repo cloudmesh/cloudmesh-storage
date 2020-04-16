@@ -7,6 +7,7 @@ from multiprocessing import Pool
 import oyaml as yaml
 from cloudmesh.common.DateTime import DateTime
 from cloudmesh.common.debug import VERBOSE
+from cloudmesh.common.Printer import Printer
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.abstract.StorageABC import StorageABC
@@ -24,6 +25,22 @@ class StorageQueue(StorageABC):
         self.collection = f"storage-queue-{service}"
         self.number = 0
         self.storage_dict = {}
+
+    def Print(self, data, output=None):
+        if output == "table":
+            order = self.output['monitor_status']['order']  # not pretty
+            header = self.output['monitor_status']['header']  # not pretty
+            sort_keys = self.output['monitor_status']['sort_keys']
+            print(Printer.flatwrite(data,
+                                    sort_keys=sort_keys,
+                                    order=order,
+                                    header=header,
+                                    output=output,
+                                    )
+                  )
+        else:
+            print(Printer.write(data, output=output))
+
 
     @DatabaseUpdate()
     def update_dict(self, elements, kind=None):
@@ -123,8 +140,7 @@ class StorageQueue(StorageABC):
         specification = textwrap.dedent(
             f"""
                action: delete
-               source: 
-                 path: {source}
+               path: {source}
                recursive: {recursive}
                status: waiting
                """
@@ -140,7 +156,7 @@ class StorageQueue(StorageABC):
         specification = textwrap.dedent(
             f"""
                 action: search
-                directory: {directory}
+                path: {directory}
                 filename: {filename}
                 recursive: {recursive}
                 status: waiting
@@ -385,7 +401,7 @@ class StorageQueue(StorageABC):
         # terminate() before using join().
         pool.join()
 
-    def monitor(self, status, rate=5):
+    def monitor(self, status, rate=5, output="table"):
         cm = CmDatabase()
         try:
             while True:
@@ -395,8 +411,8 @@ class StorageQueue(StorageABC):
                 else:
                     entries = cm.find(cloud=self.name, kind='storage',
                                       status=status)
-                os.system("clear")
-                print(entries)  # use a pretty table
+                # os.system("clear")
+                self.Print(data=entries, output=output)
                 print("--------------Press Ctrl+C to quit.--------------")
                 time.sleep(rate)
         except KeyboardInterrupt:
