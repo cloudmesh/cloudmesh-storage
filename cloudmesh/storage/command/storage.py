@@ -260,11 +260,9 @@ class StorageCommand(PluginCommand):
                 scloud == "local" and tcloud == "google"):
                 provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
-            elif (scloud == "local" and tcloud == "parallelawss3"):
+            else:
                 provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(arguments['--source'], arguments['--target'],
                               arguments.recursive)
-            else:
-                print("Not Implemented")
 
         return ""
