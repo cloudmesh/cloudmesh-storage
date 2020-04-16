@@ -8,24 +8,27 @@ from pathlib import Path
 from pprint import pprint
 
 import pytest
+from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
-from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
-from cloudmesh.common.debug import VERBOSE
+
+#
+# TODO: all asserts are incomplete
+#
 
 Benchmark.debug()
+
+tmp = "/tmp/cloudmesh/storage"
 
 user = Config()["cloudmesh.profile.user"]
 variables = Variables()
 VERBOSE(variables.dict())
-
-key = variables['key']
 
 cloud = variables.parameter('storage')
 
@@ -52,7 +55,7 @@ class TestStorage(object):
 
     def create_local_source(self, size=1024):
         StopWatch.start(f"create source {size}")
-        source = path_expand(f"~/.cloudmesh/storage/temp/{size}.txt")
+        source = path_expand(f"{tmp}/source/{size}.txt")
         Benchmark.file(source, size)
         StopWatch.stop(f"create source {size}")
 
@@ -79,11 +82,11 @@ class TestStorage(object):
 
         # src = "storage_a:test/a/a.txt"
 
-        src = "~/.cloudmesh/storage/temp/"
-        dst = '/'
-        StopWatch.start("put")
+        src = f"{tmp}/source/"
+        dst = f"{tmp}/destination/"
+        Benchmark.Start()
         test_file = provider.put(src, dst)
-        StopWatch.stop("put")
+        Benchmark.Stop()
 
         pprint(test_file)
 
@@ -91,11 +94,11 @@ class TestStorage(object):
 
     def test_get(self):
         HEADING()
-        src = "/1024.txt"
-        dst = "~/.cloudmesh/storage/temp/"
-        StopWatch.start("get")
+        src = f"{tmp}/source/1024.txt"
+        dst = f"{tmp}/destination/new-1024.txt"
+        Benchmark.Start("get")
         file = provider.get(src, dst)
-        StopWatch.stop("get")
+        Benchmark.Stop("get")
         pprint(file)
 
         assert file is not None

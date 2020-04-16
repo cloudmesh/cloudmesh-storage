@@ -1,9 +1,9 @@
-from cloudmesh.abstract.StorageABC import StorageABC
-from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-from cloudmesh.common.debug import VERBOSE
-from pprint import pprint
 from pathlib import Path
+from pprint import pprint
+
+from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.console import Console
+from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 
 
 class Provider(StorageABC):
@@ -13,10 +13,11 @@ class Provider(StorageABC):
         kind = ["local",
                 "box",
                 "gdrive",
-                "parallelgdrive",
                 "azureblob",
                 "awss3",
                 "parallelawss3",
+                'parallelgdrive',
+                'parallelazureblob',
                 "google",
                 "oracle"]
         return kind
@@ -39,7 +40,12 @@ class Provider(StorageABC):
         elif kind == "awss3":
             from cloudmesh.storage.provider.awss3.Provider import Provider as P
         elif kind == "parallelawss3":
-            from cloudmesh.storage.provider.awss3.Provider import Provider as P
+            from cloudmesh.storage.provider.parallelawss3.Provider import \
+                Provider as P
+        elif kind == "parallelazureblob":
+            from cloudmesh.storage.provider.parallelazureblob.Provider import \
+                Provider as P
+
         elif kind in ['google']:
             from cloudmesh.google.storage.Provider import Provider as P
         elif kind in ['oracle']:
@@ -49,15 +55,25 @@ class Provider(StorageABC):
                 f"Storage provider '{kind}' not supported")
         return P
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml",
+                 parallelism=4):
 
         super(Provider, self).__init__(service=service, config=config)
         P = Provider.get_provider(self.kind)
-        self.provider = P(service=service, config=config)
+        self.provider = P(service=service, config=config,
+                          parallelism=parallelism)
         if self.provider is None:
             raise ValueError(
                 f"Storage provider '{self.service}'"
                 f"' not yet supported")
+
+    def monitor(self, status="all"):
+        """
+        get the status of all the actions in status
+        :param status:
+        :return
+        """
+        self.provider.monitor(status=status)
 
     @DatabaseUpdate()
     def get(self, source=None, destination=None, recursive=False):
@@ -83,7 +99,6 @@ class Provider(StorageABC):
     @DatabaseUpdate()
     def put(self, source=None, destination=None, recursive=False):
 
-        service = self.service
         d = self.provider.put(source=source, destination=destination,
                               recursive=recursive)
         return d
@@ -91,21 +106,20 @@ class Provider(StorageABC):
     @DatabaseUpdate()
     def create_dir(self, directory=None):
 
-        service = self.service
         d = self.provider.create_dir(directory=directory)
         return d
 
     @DatabaseUpdate()
-    def delete(self, source=None):
+    def delete(self, name=None):
         """
         deletes the source
 
-        :param source: The source
+        :param name: The source
         :return: The dict representing the source
         """
 
         service = self.service
-        d = self.provider.delete(source=source)
+        d = self.provider.delete(source=name)
         # raise ValueError("must return a value")
         return d
 
@@ -116,9 +130,9 @@ class Provider(StorageABC):
         return d
 
     @DatabaseUpdate()
-    def list(self, source=None, dir_only=False, recursive=False):
+    def list(self, name=None, dir_only=False, recursive=False):
 
-        d = self.provider.list(source=source, dir_only=dir_only,
+        d = self.provider.list(source=name, dir_only=dir_only,
                                recursive=recursive)
         return d
 

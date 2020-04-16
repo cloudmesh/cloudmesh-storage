@@ -1,13 +1,14 @@
 ###############################################################
-# pytest -v --capture=no tests/test_storage_box.py
-# pytest -v  tests/test_storage_box.py
-# pytest -v --capture=no tests/test_storage_box..py::TestBoxtorage::<METHODNAME>
+# pytest -v --capture=no tests/test_storage_gdrive.py
+# pytest -v  tests/test_storage_gdrive.py
+# pytest -v --capture=no tests/test_storage_gdrive..py::TestGdriveStorage::<METHODNAME>
 ###############################################################
 import os
 from pathlib import Path
 from pprint import pprint
 
 import pytest
+from cloudmesh.common.Shell import Shell
 from cloudmesh.common.StopWatch import StopWatch
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import HEADING
@@ -20,18 +21,14 @@ from cloudmesh.storage.Provider import Provider
 
 
 #
-# cms set storage=box
+# cms set storage=gdrive
 #
 @pytest.mark.incremental
-class TestBoxStorage(object):
-
-    def create_dir(self, location):
-        d = Path(os.path.dirname(path_expand(location)))
-        d.mkdir(parents=True, exist_ok=True)
+class TestGdriveStorage(object):
 
     def create_file(self, location, content):
-        self.create_dir(location)
-        writefile(path_expand(location), content)
+        Shell.mkdir(os.dirname(path_expand(location)))
+        writefile(location, content)
 
     def setup(self):
         variables = Variables()

@@ -1,13 +1,13 @@
 ###############################################################
-# pytest -v --capture=no tests/test_storage_azure.py
-# pytest -v  tests/test_storage_azure.py
-# pytest -v --capture=no tests/test_storage_azure..py::TestAzureStorage::<METHODNAME>
+# pytest -v --capture=no tests/oracle/test_storage_oracle.py
+# pytest -v  tests/oracle/test_storage_oracle.py
 ###############################################################
 import os
 from pathlib import Path
 from pprint import pprint
 
 import pytest
+from cloudmesh.common.Shell import Shell
 from cloudmesh.common.StopWatch import StopWatch
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import HEADING
@@ -20,21 +20,18 @@ from cloudmesh.storage.Provider import Provider
 
 
 #
-# cms set storage=azure
+# cms set storage=oracle
 #
 @pytest.mark.incremental
-class TestAzureStorage(object):
-
-    def create_dir(self, location):
-        d = Path(os.path.dirname(path_expand(location)))
-        d.mkdir(parents=True, exist_ok=True)
+class TestStorageOracle(object):
 
     def create_file(self, location, content):
-        self.create_dir(location)
-        writefile(path_expand(location), content)
+        Shell.mkdir(os.dirname(path_expand(location)))
+        writefile(location, content)
 
     def setup(self):
         variables = Variables()
+        print(variables['storage'])
         self.service = Parameter.expand(variables['storage'])[0]
         self.p = Provider(service=self.service)
         self.sourcedir = path_expand("~/.cloudmesh/storage/test")
@@ -69,12 +66,12 @@ class TestAzureStorage(object):
         HEADING()
         home = self.sourcedir
         StopWatch.start("PUT file")
-        test_file = self.p.put(self.p.service, f"{home}/a/a1.txt", "/")
+        test_file = self.p.put(f"{home}/a/a1.txt", "a1.txt")
         StopWatch.stop("PUT file")
         assert test_file is not None
 
         StopWatch.start("GET file")
-        test_file = self.p.get(self.p.service, f"/a1.txt", f"{home}/hello.txt")
+        test_file = self.p.get(f"a1.txt", f"{home}/hello.txt")
         StopWatch.stop("GET file")
         assert test_file is not None
 
@@ -84,8 +81,7 @@ class TestAzureStorage(object):
     def test_list(self):
         HEADING()
         StopWatch.start("LIST Directory")
-        banner(self.p.service)
-        contents = self.p.list(self.p.service, "/")
+        contents = self.p.list()
         StopWatch.stop("LIST Directory")
         for c in contents:
             pprint(c)
@@ -99,37 +95,34 @@ class TestAzureStorage(object):
 
     def test_create_dir(self):
         HEADING()
-        src = '/a/created_dir'
+        src = 'a/created_dir'
         StopWatch.start("CREATE DIR")
-        directory = self.p.create_dir(self.p.service, src)
+        directory = self.p.create_dir(src)
         StopWatch.stop("CREATE DIR")
-        pprint(directory)
-
-        assert dir is not None
-        assert "a/created_dir" in directory[0]["name"]
+        assert not directory or directory is None
 
     def test_search(self):
         HEADING()
-        src = '/'
         filename = "a1.txt"
         StopWatch.start("SEARCH file")
-        search_files = self.p.search(self.p.service, src, filename, True)
+        search_files = self.p.search(None, filename, True)
         StopWatch.stop("SEARCH file")
         pprint(search_files)
         assert len(search_files) > 0
-        assert search_files[0]["name"] == filename
+        assert filename in search_files[0]['cm']["name"]
 
     def test_delete(self):
         HEADING()
-        src = "/a/created_dir"
+        home = self.sourcedir
+        src = "a/created_dir"
+        self.p.put(f"{home}/a/a1.txt", f"{src}/a1.txt")
         StopWatch.start("DELETE Directory")
-        contents = self.p.delete(self.p.service, src)
+        contents = self.p.delete(src)
         StopWatch.stop("DELETE Directory")
         deleted = False
         for entry in contents:
-            if "created_dir" in entry["cm"]["name"]:
-                if entry["cm"]["status"] == "deleted":
-                    deleted = True
+            if Path('a/created_dir/a1.txt') == Path(entry['cm']["name"]):
+                deleted = True
         assert deleted
 
     def test_recursive_put(self):
@@ -138,43 +131,33 @@ class TestAzureStorage(object):
         # all files
         home = self.sourcedir
         StopWatch.start("PUT Directory --recursive")
-        upl_files = self.p.put(self.p.service, f"{home}", "/a", True)
+        upl_files = self.p.put(f"{home}", "a", True)
         StopWatch.stop("PUT Directory --recursive")
         pprint(upl_files)
-
         assert upl_files is not None
 
     def test_recursive_get(self):
-        # must be implemented by student into ~/.cloudmesh/storage/test/get
-        # see self.content which contains all files but you must add get/
         home = self.sourcedir
         d2 = Path(path_expand(f"{home}/get"))
         d2.mkdir(parents=True, exist_ok=True)
         StopWatch.start("GET Directory --recursive")
-        dnld_files = self.p.get(self.p.service, "/a", f"{home}/get", True)
+        dnld_files = self.p.get(f"a", f"{home}/get", True)
         StopWatch.stop("GET Directory --recursive")
         pprint(dnld_files)
-
         assert dnld_files is not None
 
     def test_recursive_delete(self):
-        # must be implemented by student into ~/.cloudmesh/storage/test/get
-        # see self.content which contains all files but you must add get/
-        src = "/a/a/b/c"
+        home = self.sourcedir
+        src = f"a/a/b/c"
         StopWatch.start("DELETE Sub-directory")
-        del_files = self.p.delete(self.p.service, src)
+        del_files = self.p.delete(src)
         StopWatch.stop("DELETE Sub-directory")
-
         assert len(del_files) > 0
 
     def test_exhaustive_list(self):
-        # must be implemented by student into ~/.cloudmesh/storage/test/
-        # see self.content which contains all files that you can test against
-        # in the list return. all of them must be in there
         StopWatch.start("LIST Directory --recursive")
-        contents = self.p.list(self.p.service, "/a", True)
+        contents = self.p.list("a", True)
         StopWatch.stop("LIST Directory --recursive")
-
         assert len(contents) > 0
 
     def test_selective_list(self):
@@ -184,43 +167,39 @@ class TestAzureStorage(object):
         # I am unsure if we implemented a secive list. If not let us know
         # full list for now is fine
         StopWatch.start("LIST Sub-directory --recursive")
-        contents = self.p.list(self.p.service, "/a/a/b", True)
+        contents = self.p.list("a/a/b", True)
         StopWatch.stop("LIST Sub-directory --recursive")
-
         assert len(contents) > 0
 
     def test_search_b1(self):
         # search for b1.txt
-        src = '/a'
+        src = 'a'
         filename = 'b1.txt'
         StopWatch.start("SEARCH file --recursive")
-        search_files = self.p.search(self.p.service, src, filename, True)
+        search_files = self.p.search(src, filename, True)
         StopWatch.stop("SEARCH file --recursive")
-
         assert search_files is not None
 
     def test_search_b1_dir(self):
         # search for b/b2.txt see that this one has even the dir in the search
-        src = '/a'
-        filename = '/b/b1.txt'
+        src = 'a'
+        filename = 'b/b1.txt'
         StopWatch.start("SEARCH file under a sub-dir --r")
-        search_files = self.p.search(self.p.service, src, filename, True)
+        search_files = self.p.search(src, filename, True)
         StopWatch.stop("SEARCH file under a sub-dir --r")
         assert search_files is not None
 
     def test_search_a1(self):
-        # search for a1.txt which shold return 2 entries
-        src = '/a'
+        # search for a1.txt which should return some entries
+        src = 'a'
         filename = 'a1.txt'
         StopWatch.start("SEARCH file under root dir --r")
-        search_files = self.p.search(self.p.service, src, filename, True)
+        search_files = self.p.search(src, filename, True)
         StopWatch.stop("SEARCH file under root dir --r")
-
-        assert len(search_files) == 2
+        assert len(search_files) > 0
 
     def test_results(self):
         HEADING()
-        # storage = self.p.service
         service = self.service
-        banner(f"Benchmark results for '{service}' Storage")
+        banner(f"Benchmark results for {service} Storage")
         StopWatch.benchmark()

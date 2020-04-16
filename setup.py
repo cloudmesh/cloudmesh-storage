@@ -15,10 +15,11 @@
 # limitations under the License.                                          #
 # ------------------------------------------------------------------------#
 
-from setuptools import find_packages, setup
 import io
-import sys
 import os
+import sys
+
+from setuptools import find_packages, setup
 
 v = sys.version_info
 if v.major != 3 and v.minor != 7 and v.micro < 3:
@@ -55,6 +56,7 @@ cloudmesh-common
 cloudmesh-cmd5
 cloudmesh-abstract
 cloudmesh-configuration
+cloudmesh-admin
 """.splitlines()
 
 if "TESTING" not in os.environ:
