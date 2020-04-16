@@ -801,7 +801,7 @@ if __name__ == "__main__":
     p.delete(source="mynewcontainer")
 
     p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
-    p.get(source="myProvider.py", destination="shihui.py", recursive=False)
+    p.get(source="myProvider.py", destination="seema.py", recursive=False)
 
     p.search(directory="/", filename="myProvider.py")
     '''
