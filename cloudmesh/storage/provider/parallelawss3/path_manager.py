@@ -17,6 +17,7 @@ def join_file_name_dir(filename, dirname):
         full_file_path = massage_path(filename)
     return full_file_path
 
+
 def massage_path(file_name_path):
     """
     function to massage file path and do some transformations

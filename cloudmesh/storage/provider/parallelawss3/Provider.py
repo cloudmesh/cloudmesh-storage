@@ -8,7 +8,6 @@ import botocore
 from cloudmesh.storage.provider.StorageQueue import StorageQueue
 from cloudmesh.common.console import Console
 from cloudmesh.common.debug import VERBOSE
-from cloudmesh.common.Printer import Printer
 from cloudmesh.mongo.CmDatabase import CmDatabase
 
 from cloudmesh.storage.provider.parallelawss3.path_manager import \
@@ -78,13 +77,13 @@ class Provider(StorageQueue):
                        ]
         },
         "files": {
-            "sort_keys":["fileName"],
-            "order":[
+            "sort_keys": ["fileName"],
+            "order": [
                 "fileName",
                 "contentLength",
                 "lastModificationDate",
             ],
-            "header":[
+            "header": [
                 "FileName",
                 "Size",
                 "LastModified",
@@ -100,7 +99,8 @@ class Provider(StorageQueue):
         :param service: service name
         :param config:
         """
-        super().__init__(service=service, config=config, parallelism=parallelism)
+        super().__init__(service=service,
+                         config=config, parallelism=parallelism)
         self.container_name = self.credentials['bucket']
         self.dir_marker_file_name = 'marker.txt'
 
@@ -272,7 +272,8 @@ class Provider(StorageQueue):
                         dir_files_list.append(
                             extract_file_dict(file_name, metadata))
 
-        self.Print(data=dir_files_list, type="files", output="table")
+        self.pretty_print(data=dir_files_list, data_type="files",
+                          output="table")
         specification['status'] = 'completed'
         return specification
 
@@ -302,7 +303,7 @@ class Provider(StorageQueue):
             # object not found
             # Console.error(e)
             # Console.error(e)
-            x=1
+            x = 1
 
         if file_obj:
             # Its a file and can be deleted
@@ -387,7 +388,7 @@ class Provider(StorageQueue):
         specification['status'] = 'completed'
         return specification
 
-    def get_run(self, specficiation):
+    def get_run(self, specification):
         """
         function to download file or directory
         gets the source from the service
@@ -395,9 +396,9 @@ class Provider(StorageQueue):
         :return: dict
         """
 
-        source = specficiation['source']
-        destination = specficiation['destination']
-        recursive = specficiation['recursive']
+        source = specification['source']
+        destination = specification['destination']
+        recursive = specification['recursive']
         trimmed_source = massage_path(source)
         trimed_dest = massage_path(destination)
 
@@ -467,11 +468,10 @@ class Provider(StorageQueue):
 
             elif total_all_objs > 0 and recursive is False:
                 for obj in all_objs:
-                    if os.path.basename(obj.key) != \
-                        self.dir_marker_file_name:
+                    if os.path.basename(obj.key) != self.dir_marker_file_name:
                         if massage_path(
-                            obj.key.replace(trimmed_source, '')). \
-                            count('/') == 0:
+                            obj.key.replace(trimmed_source, '')).count('/') \
+                            == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
                                     self.container_name).download_file(
@@ -484,8 +484,7 @@ class Provider(StorageQueue):
                                 metadata = self.s3_client.head_object(
                                     Bucket=self.container_name, Key=obj.key)
                                 files_downloaded.append(
-                                    extract_file_dict(obj.key,
-                                                           metadata))
+                                    extract_file_dict(obj.key, metadata))
 
                                 self.storage_dict[
                                     'message'] = 'Source downloaded'
@@ -495,15 +494,13 @@ class Provider(StorageQueue):
                                     'message'] = 'Destination not found'
                                 Console.error(e)
 
-
             elif total_all_objs > 0 and recursive is True:
                 files_downloaded = []
                 for obj in all_objs:
                     if os.path.basename(obj.key) != \
                         self.dir_marker_file_name \
                         and obj.key[-1] != '/':
-                        if massage_path(
-                            obj.key.replace(trimmed_source, '')) \
+                        if massage_path(obj.key.replace(trimmed_source, '')) \
                             .count('/') == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
@@ -517,8 +514,7 @@ class Provider(StorageQueue):
                                 metadata = self.s3_client.head_object(
                                     Bucket=self.container_name, Key=obj.key)
                                 files_downloaded.append(
-                                    extract_file_dict(obj.key,
-                                                           metadata))
+                                    extract_file_dict(obj.key, metadata))
 
                             except FileNotFoundError as e:
                                 Console.error(e)
@@ -530,7 +526,7 @@ class Provider(StorageQueue):
                             )
                             dest_path = f"{trimed_dest}/{folder_path}"
                             try:
-                                os.makedirs(dest_path,0o777)
+                                os.makedirs(dest_path, 0o777)
                                 Console.msg()
                             except FileExistsError as e:
                                 os.chmod(dest_path, stat.S_IRWXO)
@@ -549,15 +545,14 @@ class Provider(StorageQueue):
                                 metadata = self.s3_client.head_object(
                                     Bucket=self.container_name, Key=obj.key)
                                 files_downloaded.append(
-                                    extract_file_dict(obj.key,
-                                                           metadata))
+                                    extract_file_dict(obj.key, metadata))
 
                             except FileNotFoundError as e:
                                 Console.error(e)
 
-        specficiation['status'] = 'completed'
+        specification['status'] = 'completed'
 
-        return specficiation
+        return specification
 
     def put_run(self, specification):
         """
@@ -648,7 +643,7 @@ class Provider(StorageQueue):
                         Key=trimmed_destination + tgtfile)
                     files_uploaded.append(
                         extract_file_dict(trimmed_destination + tgtfile,
-                                               metadata))
+                                          metadata))
             else:
                 # get the directories with in the folder as well and upload
                 files_to_upload = []
@@ -750,7 +745,7 @@ class Provider(StorageQueue):
         else:
             Console.msg("File found")
 
-        self.Print(data=info_list, type="files", output="table")
+        self.pretty_print(data=info_list, data_type="files", output="table")
         specification['status'] = 'completed'
         return specification
 
@@ -856,5 +851,3 @@ if __name__ == "__main__":
     # p.search(directory="/", filename="myProvider.py")
     #
     # p.run()
-
-
