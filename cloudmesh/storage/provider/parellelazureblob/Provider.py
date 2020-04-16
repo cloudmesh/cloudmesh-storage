@@ -19,9 +19,9 @@ from multiprocessing import Pool
 from cloudmesh.common.DateTime import DateTime
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
+from cloudmesh.storage.provider.StorageQueue import StorageQueue
 
-
-class Provider(StorageABC):
+class Provider(StorageQueue):
     kind = "parallelazureblob"
 
     sample = textwrap.dedent(
