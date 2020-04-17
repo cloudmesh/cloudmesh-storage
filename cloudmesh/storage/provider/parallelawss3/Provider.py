@@ -14,35 +14,6 @@ from cloudmesh.storage.provider.parallelawss3.path_manager import \
     extract_file_dict
 from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
 
-#
-# TODO: develop a general monitor not just for your storage provider in monitor.py
-#
-# This will list all actions in the collection and list the status
-#
-# you should be able to see this dynamically
-#
-# we should be able just as we do in cloudmesh-pi-cluster with a parameter --rate=5.0
-#
-# refresh the status every 5 seconds
-#
-# cms storage monitor [SERVICES] (--status=all | status=STATUS)[--output=output] [--clear]
-#
-# SERVICES and status are Parameter.expand entries, e.g. dicts after the expand
-#
-# table would look like:
-#
-# status, action, source, destination, start,
-#
-#
-#        for True:
-#
-#            ... get File
-#            ... if clear: os.system('clear')
-#            ... display info
-#
-#            time.sleep(rate)
-#            interrupt if we press q
-
 
 class Provider(StorageQueue):
     kind = "parallelawss3"
@@ -79,8 +50,46 @@ class Provider(StorageQueue):
         'canceled'
     ]
 
-    # TODO: BUG: missing we need that as the table printer requires it
-    output = {}
+    output = {
+        "monitor": {
+            "sort_keys": ["cm.number"],
+            "order": ["cm.number",
+                      "cm.name",
+                      "cm.kind",
+                      "cm.cloud",
+                      "action",
+                      "status",
+                      "path",
+                      "source",
+                      "destination",
+                      "recursive",
+                      ],
+            "header": ["Number",
+                       "Name",
+                       "Kind",
+                       "Cloud",
+                       "Action",
+                       "Status",
+                       "Path",
+                       "Source",
+                       "Destination",
+                       "Recursive",
+                       ]
+        },
+        "files": {
+            "sort_keys": ["fileName"],
+            "order": [
+                "fileName",
+                "contentLength",
+                "lastModificationDate",
+            ],
+            "header": [
+                "FileName",
+                "Size",
+                "LastModified",
+            ]
+        }
+    }
 
     def __init__(self,
                  service=None,
@@ -90,7 +99,8 @@ class Provider(StorageQueue):
         :param service: service name
         :param config:
         """
-        super().__init__(service=service, config=config, parallelism=parallelism)
+        super().__init__(service=service,
+                         config=config, parallelism=parallelism)
         self.container_name = self.credentials['bucket']
         self.dir_marker_file_name = 'marker.txt'
 
@@ -187,18 +197,13 @@ class Provider(StorageQueue):
 
         dir_files_list = []
         trimmed_source = massage_path(source)
-        # trimmed_source = source
-        VERBOSE(trimmed_source)
 
         if not recursive:
             # call will not be recursive and need to look only in the
             # specified directory
             for obj in objs:
                 if obj.key.startswith(massage_path(trimmed_source)):
-                    VERBOSE(obj.key)
                     file_name = obj.key
-                    # obj.key.replace(self.directory_marker_file_name,
-                    #                            '')
                     if file_name[-1] == '/':
 
                         # Its a directory
@@ -266,15 +271,9 @@ class Provider(StorageQueue):
                             Bucket=self.container_name, Key=file_name)
                         dir_files_list.append(
                             extract_file_dict(file_name, metadata))
-        '''
-        if len(dirFilesList) == 0:
-            #print("No files found in directory")
-            self.storage_dict['message'] = ''
-        else:
-            self.storage_dict['message'] = dirFilesList
-        '''
 
-        VERBOSE(self.storage_dict)
+        self.pretty_print(data=dir_files_list, data_type="files",
+                          output="table")
         specification['status'] = 'completed'
         return specification
 
@@ -285,7 +284,7 @@ class Provider(StorageQueue):
         :param specification:
         :return: dict
         """
-        source = specification['source']['path']
+        source = specification['path']
         recursive = specification['recursive']
 
         trimmed_source = massage_path(source)
@@ -304,7 +303,7 @@ class Provider(StorageQueue):
             # object not found
             # Console.error(e)
             # Console.error(e)
-            x=1
+            x = 1
 
         if file_obj:
             # Its a file and can be deleted
@@ -389,7 +388,7 @@ class Provider(StorageQueue):
         specification['status'] = 'completed'
         return specification
 
-    def get_run(self, specficiation):
+    def get_run(self, specification):
         """
         function to download file or directory
         gets the source from the service
@@ -397,9 +396,9 @@ class Provider(StorageQueue):
         :return: dict
         """
 
-        source = specficiation['source']
-        destination = specficiation['destination']
-        recursive = specficiation['recursive']
+        source = specification['source']
+        destination = specification['destination']
+        recursive = specification['recursive']
         trimmed_source = massage_path(source)
         trimed_dest = massage_path(destination)
 
@@ -469,11 +468,10 @@ class Provider(StorageQueue):
 
             elif total_all_objs > 0 and recursive is False:
                 for obj in all_objs:
-                    if os.path.basename(obj.key) != \
-                        self.dir_marker_file_name:
+                    if os.path.basename(obj.key) != self.dir_marker_file_name:
                         if massage_path(
-                            obj.key.replace(trimmed_source, '')). \
-                            count('/') == 0:
+                            obj.key.replace(trimmed_source, '')).count('/') \
+                            == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
                                     self.container_name).download_file(
@@ -486,8 +484,7 @@ class Provider(StorageQueue):
                                 metadata = self.s3_client.head_object(
                                     Bucket=self.container_name, Key=obj.key)
                                 files_downloaded.append(
-                                    extract_file_dict(obj.key,
-                                                           metadata))
+                                    extract_file_dict(obj.key, metadata))
 
                                 self.storage_dict[
                                     'message'] = 'Source downloaded'
@@ -497,15 +494,13 @@ class Provider(StorageQueue):
                                     'message'] = 'Destination not found'
                                 Console.error(e)
 
-
             elif total_all_objs > 0 and recursive is True:
                 files_downloaded = []
                 for obj in all_objs:
                     if os.path.basename(obj.key) != \
                         self.dir_marker_file_name \
                         and obj.key[-1] != '/':
-                        if massage_path(
-                            obj.key.replace(trimmed_source, '')) \
+                        if massage_path(obj.key.replace(trimmed_source, '')) \
                             .count('/') == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
@@ -519,8 +514,7 @@ class Provider(StorageQueue):
                                 metadata = self.s3_client.head_object(
                                     Bucket=self.container_name, Key=obj.key)
                                 files_downloaded.append(
-                                    extract_file_dict(obj.key,
-                                                           metadata))
+                                    extract_file_dict(obj.key, metadata))
 
                             except FileNotFoundError as e:
                                 Console.error(e)
@@ -532,7 +526,7 @@ class Provider(StorageQueue):
                             )
                             dest_path = f"{trimed_dest}/{folder_path}"
                             try:
-                                os.makedirs(dest_path,0o777)
+                                os.makedirs(dest_path, 0o777)
                                 Console.msg()
                             except FileExistsError as e:
                                 os.chmod(dest_path, stat.S_IRWXO)
@@ -551,15 +545,14 @@ class Provider(StorageQueue):
                                 metadata = self.s3_client.head_object(
                                     Bucket=self.container_name, Key=obj.key)
                                 files_downloaded.append(
-                                    extract_file_dict(obj.key,
-                                                           metadata))
+                                    extract_file_dict(obj.key, metadata))
 
                             except FileNotFoundError as e:
                                 Console.error(e)
 
-        specficiation['status'] = 'completed'
+        specification['status'] = 'completed'
 
-        return specficiation
+        return specification
 
     def put_run(self, specification):
         """
@@ -650,7 +643,7 @@ class Provider(StorageQueue):
                         Key=trimmed_destination + tgtfile)
                     files_uploaded.append(
                         extract_file_dict(trimmed_destination + tgtfile,
-                                               metadata))
+                                          metadata))
             else:
                 # get the directories with in the folder as well and upload
                 files_to_upload = []
@@ -700,7 +693,7 @@ class Provider(StorageQueue):
     # function to search a file or directory and list its attributes
     def search_run(self, specification):
 
-        directory = specification['directory']
+        directory = specification['path']
         filename = specification['filename']
         recursive = specification['recursive']
 
@@ -752,6 +745,7 @@ class Provider(StorageQueue):
         else:
             Console.msg("File found")
 
+        self.pretty_print(data=info_list, data_type="files", output="table")
         specification['status'] = 'completed'
         return specification
 
@@ -846,16 +840,14 @@ class Provider(StorageQueue):
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelawss3")
-    p.create_dir(directory="testdir3")
+    # p.create_dir(directory="testdir3")
     p.create_dir(directory="testdir")
-    p.list(source=".")
-    p.delete(source="testdir3")
-
+    # p.list(source="/", recursive=True)
+    # p.delete(source="testdir3")
+    #
     p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
-    p.get(source="myProvider.py", destination="shihui.py", recursive=False)
-
-    p.search(directory="/", filename="myProvider.py")
-
-    p.run()
-
-
+    # p.get(source="myProvider.py", destination="shihui.py", recursive=False)
+    #
+    # p.search(directory="/", filename="myProvider.py")
+    #
+    # p.run()

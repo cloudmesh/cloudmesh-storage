@@ -17,6 +17,7 @@ class StorageCommand(PluginCommand):
         ::
 
            Usage:
+             storage run
              storage monitor [--storage=SERVICES] [--status=all | --status=STATUS] [--output=output] [--clear]
              storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N]
              storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
@@ -145,15 +146,20 @@ class StorageCommand(PluginCommand):
         target = arguments.target
         variables = Variables()
 
-        parallelism = arguments.parallel or 4
+        parallelism = arguments.parallel or 1
 
         arguments.storage = Parameter.expand(arguments.storage or variables[
             'storage'])
-        if arguments["monitor"]:
+
+        if arguments.monitor:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
             status = arguments.status or "all"
-            result = provider.monitor(status=status)
-        elif arguments["get"]:
+            output = arguments['--output'] or "table"
+            result = provider.monitor(status=status, output=output)
+        elif arguments.run:
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
+            result = provider.run()
+        elif arguments['get']:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
 
             result = provider.get(arguments.SOURCE,
@@ -179,14 +185,18 @@ class StorageCommand(PluginCommand):
             """
             storage list SOURCE [--parallel=N]
             """
-            sources = arguments.SOURCE or variables["storage"] or 'local:.'
+            if variables['storage']:
+                default_source = f"{variables['storage']}:/"
+            else:
+                default_source = "local:/"
+            sources = arguments.SOURCE or default_source
             sources = Parameter.expand(sources)
 
             deletes = []
             for source in sources:
                 storage, entry = Parameter.separate(source)
 
-                storage = storage or "local"
+                storage = storage or source or "local"
                 deletes.append((storage, entry))
 
             _sources = ', '.join(sources)
@@ -206,14 +216,18 @@ class StorageCommand(PluginCommand):
             """
             storage delete SOURCE [--parallel=N]
             """
-            sources = arguments.SOURCE or variables["storage"] or 'local:.'
+            if variables['storage']:
+                default_source = f"{variables['storage']}:/"
+            else:
+                default_source = "local:/"
+            sources = arguments.SOURCE or default_source
             sources = Parameter.expand(sources)
 
             deletes = []
             for source in sources:
                 storage, entry = Parameter.separate(source)
 
-                storage = storage or "local"
+                storage = storage or source or "local"
                 deletes.append((storage, entry))
 
             _sources = ', '.join(sources)
@@ -258,11 +272,9 @@ class StorageCommand(PluginCommand):
                 scloud == "local" and tcloud == "google"):
                 provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
-            elif (scloud == "local" and tcloud == "parallelawss3"):
+            else:
                 provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(arguments['--source'], arguments['--target'],
                               arguments.recursive)
-            else:
-                print("Not Implemented")
 
         return ""

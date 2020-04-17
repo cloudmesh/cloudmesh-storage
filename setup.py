@@ -45,7 +45,7 @@ google-auth
 google-auth-httplib2
 python-magic
 oauth2client
-azure
+azure==4.0.0
 azure-storage-common
 azure-storage-nspkg
 azure-storage-blob
