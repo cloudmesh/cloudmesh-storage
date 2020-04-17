@@ -1,11 +1,10 @@
-import os
-from os.path import basename, join, dirname
-
-from boxsdk import Client
 from boxsdk import JWTAuth
-from cloudmesh.abstract.StorageDeprecatedABC import StorageABC
+from boxsdk import Client
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
+from os.path import basename, join, dirname
+import os
+from cloudmesh.abstract.StorageABC import StorageABC
 
 
 def get_id(source, results, source_type):
@@ -78,11 +77,12 @@ class Provider(StorageABC):
         self.sdk = JWTAuth.from_settings_file(self.credentials['config_path'])
         self.client = Client(self.sdk)
 
-    def put(self, source=None, destination=None, recursive=False):
+    def put(self, service=None, source=None, destination=None, recursive=False):
         """
         uploads file to Box, if source is directory and recursive is true
         uploads all files in source directory
 
+        :param service: the name of the service in the yaml file
         :param source: local file or directory to be uploaded
         :param destination: cloud directory to upload to
         :param recursive: if true upload all files in source directory,
@@ -157,6 +157,7 @@ class Provider(StorageABC):
         """
         downloads file from Box, if recursive is true and source is directory downloads all files in directory
 
+        :param service: the name of the service in the yaml file
         :param source: cloud file or directory to download
         :param destination: local directory to be downloaded into
         :param recursive: if true download all files in source directory, source must be directory
@@ -213,6 +214,7 @@ class Provider(StorageABC):
         """
         searches directory for file, if recursive searches all subdirectories
 
+        :param service: the name of the service in the yaml file
         :param directory: cloud directory to search in
         :param filename: name of file to search for
         :param recursive: if true search all child directories of original directory
@@ -260,6 +262,7 @@ class Provider(StorageABC):
         """
         creates a new directory
 
+        :param service: the name of the service in the yaml file
         :param directory: path for new directory
         :return: dict of new directory
         """
@@ -274,8 +277,7 @@ class Provider(StorageABC):
                     folder = self.client.folder('0').create_subfolder(new_dir)
                     folder_dict = update_dict(folder)
                     return folder_dict
-                folders = [item for item in
-                           self.client.search().query(parent, type='folder')]
+                folders = [item for item in self.client.search().query(parent, type='folder')]
                 if len(folders) > 0:
                     parent = folders[0].id
                     folder = self.client.folder(parent).create_subfolder(new_dir)
@@ -286,10 +288,11 @@ class Provider(StorageABC):
         except Exception as e:
             Console.error(e)
 
-    def list(self, source=None, recursive=False):
+    def list(self, ource=None, recursive=False):
         """
         lists all contents of directory, if recursive lists contents of subdirectories as well
 
+        :param service: the name of the service in the yaml file
         :param source: cloud directory to list all contents of
         :param recursive: if true list contents of all child directories
         :return: dict(s) of files and directories
@@ -299,19 +302,16 @@ class Provider(StorageABC):
             subfolders = []
             path = basename(source)
             if path == '':
-                contents = [item for item in
-                            self.client.folder('0').get_items()]
+                contents = [item for item in self.client.folder('0').get_items()]
                 for c in contents:
                     if c.type == 'folder':
                         subfolders.append(c)
                     result_list.append(c)
             else:
-                folders = [item for item in
-                           self.client.search().query(path, type='folder')]
+                folders = [item for item in self.client.search().query(path, type='folder')]
                 folder_id = get_id(path, folders, 'folder')
                 if folder_id:
-                    contents = [result for result in
-                                self.client.folder(folder_id).get_items()]
+                    contents = [result for result in self.client.folder(folder_id).get_items()]
                     for c in contents:
                         if c.type == 'folder':
                             subfolders.append(c)
@@ -320,9 +320,7 @@ class Provider(StorageABC):
                     Console.error("Directory " + path + " not found.")
             if recursive:
                 while len(subfolders) > 0:
-                    contents = [item for item in
-                                self.client.folder(
-                                    subfolders[0].id).get_items()]
+                    contents = [item for item in self.client.folder(subfolders[0].id).get_items()]
                     for c in contents:
                         if c.type == 'folder':
                             subfolders.append(c)
@@ -337,6 +335,7 @@ class Provider(StorageABC):
         """
         deletes file or directory
 
+        :param service: the name of the service in the yaml file
         :param source: file or directory to be deleted
         :param recursive: copy the directory recurseively
         :return: None
@@ -353,9 +352,7 @@ class Provider(StorageABC):
             if not any(result.name == name for result in results):
                 Console.error("Source not found.")
             else:
-                item_ind = next((index for (index, result) in
-                                 enumerate(results) if (result.name == name)),
-                                None)
+                item_ind = next((index for (index, result) in enumerate(results) if (result.name == name)), None)
                 item_id = results[item_ind].id
                 item_type = results[item_ind].type
                 deleted.append(results[item_ind])

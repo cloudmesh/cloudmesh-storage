@@ -1,4 +1,3 @@
-import os
 import textwrap
 import time
 import uuid
@@ -7,6 +6,7 @@ from multiprocessing import Pool
 import oyaml as yaml
 from cloudmesh.common.DateTime import DateTime
 from cloudmesh.common.debug import VERBOSE
+from cloudmesh.common.Printer import Printer
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.abstract.StorageABC import StorageABC
@@ -25,12 +25,26 @@ class StorageQueue(StorageABC):
         self.number = 0
         self.storage_dict = {}
 
+    def pretty_print(self, data, data_type, output=None):
+        if output == "table":
+            order = self.output[data_type]['order']  # not pretty
+            header = self.output[data_type]['header']  # not pretty
+            sort_keys = self.output[data_type]['sort_keys']
+            print(Printer.flatwrite(data,
+                                    sort_keys=sort_keys,
+                                    order=order,
+                                    header=header,
+                                    output=output,
+                                    )
+                  )
+        else:
+            print(Printer.write(data, output=output))
+
     @DatabaseUpdate()
-    def update_dict(self, elements, kind=None):
+    def update_dict(self, elements):
         """
         this is an internal function for building dict object
         :param elements:
-        :param kind:
         :return:
         """
         d = []
@@ -123,8 +137,7 @@ class StorageQueue(StorageABC):
         specification = textwrap.dedent(
             f"""
                action: delete
-               source: 
-                 path: {source}
+               path: {source}
                recursive: {recursive}
                status: waiting
                """
@@ -140,7 +153,7 @@ class StorageQueue(StorageABC):
         specification = textwrap.dedent(
             f"""
                 action: search
-                directory: {directory}
+                path: {directory}
                 filename: {filename}
                 recursive: {recursive}
                 status: waiting
@@ -339,7 +352,7 @@ class StorageQueue(StorageABC):
                 search_actions.append(entry)
 
         return get_actions, put_actions, mkdir_actions, copy_actions, \
-            list_actions, delete_actions, cancel_actions, search_actions
+               list_actions, delete_actions, cancel_actions, search_actions
 
     def run(self):
         """
@@ -348,7 +361,7 @@ class StorageQueue(StorageABC):
         :return:
         """
         get_action, put_action, mkdir_action, copy_action, list_action, \
-            delete_action, cancel_action, search_action = self.get_actions()
+        delete_action, cancel_action, search_action = self.get_actions()
 
         pool = Pool(self.parallelism)
         # cancel the actions
@@ -385,18 +398,18 @@ class StorageQueue(StorageABC):
         # terminate() before using join().
         pool.join()
 
-    def monitor(self, status, rate=5):
+    def monitor(self, status, rate=5, output="table"):
         cm = CmDatabase()
         try:
             while True:
-                if status == "all":
-                    entries = cm.find(cloud=self.name,
-                                      kind='storage')
-                else:
-                    entries = cm.find(cloud=self.name, kind='storage',
-                                      status=status)
-                os.system("clear")
-                print(entries)  # use a pretty table
+                entries = cm.find(cloud=self.name, kind='storage')
+                print(entries)
+                if status != "all":
+                    entries = list(filter(lambda entry: entry['status'] ==
+                                                        status, entries))
+                # os.system("clear")
+                self.pretty_print(data=entries, data_type="monitor",
+                                  output=output)
                 print("--------------Press Ctrl+C to quit.--------------")
                 time.sleep(rate)
         except KeyboardInterrupt:
