@@ -286,8 +286,7 @@ class Provider(StorageABC):
                     Console.info("\nRemoving local intermediate file.")
                     from cloudmesh.storage.provider.local.Provider import \
                         Provider as LocalProvider
-                    local_provider = LocalProvider(service="local",
-                                                   config=config)
+                    local_provider = LocalProvider(service="local")
                     try:
                         local_provider.delete(source_obj, recursive=recursive)
                     except Exception as e:
