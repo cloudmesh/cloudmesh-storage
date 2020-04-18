@@ -14,11 +14,8 @@ from cloudmesh.abstract.StorageABC import StorageABC
 
 class StorageQueue(StorageABC):
 
-    def __init__(self,
-                 service=None,
-                 config="~/.cloudmesh/cloudmesh.yaml",
-                 parallelism=4):
-        super().__init__(service=service, config=config)
+    def __init__(self, service=None, parallelism=4):
+        super().__init__(service=service)
         self.parallelism = parallelism
         self.name = service
         self.collection = f"storage-queue-{service}"

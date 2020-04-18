@@ -42,7 +42,7 @@ class Provider(StorageABC):
     output = {} # "TODO: missing"
 
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+    def __init__(self, service=None):
         """
         TBD
 
@@ -50,7 +50,7 @@ class Provider(StorageABC):
         :param config: TBD
         """
         # pprint(service)
-        super().__init__(service=service, config=config)
+        super().__init__(service=service)
         self.container_name = self.credentials['bucket']
         self.s3_resource = boto3.resource(
             's3',

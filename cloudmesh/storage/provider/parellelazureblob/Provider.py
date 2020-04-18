@@ -60,9 +60,7 @@ class Provider(StorageABC):
 
     output = {}  # "TODO: missing"
 
-    def __init__(self,
-                 name=None,config="~/.cloudmesh/cloudmesh.yaml",
-                 parallelism=4):
+    def __init__(self, name=None, parallelism=4):
         """
         TBD
 
@@ -70,14 +68,14 @@ class Provider(StorageABC):
         :param config: TBD
         """
         # pprint(service)
-        super().__init__(service=name, config=config)
+        super().__init__(service=name)
         self.parallelism = parallelism
         self.name = name
         self.collection = f"storage-queue-{name}"
         self.number = 0
         self.storage_dict = {}
     '''
-    def __init__(self, service= None, config="~/.cloudmesh/cloudmesh.yaml"):
+    def __init__(self, service= None):
         super().__init__(service=service)
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
