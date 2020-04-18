@@ -6,9 +6,9 @@ from cloudmesh.configuration.Config import Config
 # noinspection PyUnusedLocal
 class StorageABC(metaclass=ABCMeta):
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
+    def __init__(self, service=None):
         try:
-            self.config = Config(config_path=config)
+            self.config = Config()
 
             spec = self.config["cloudmesh.storage"]
             self.credentials = self.config[f"cloudmesh.storage.{service}.credentials"]

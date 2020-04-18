@@ -17,7 +17,6 @@ from cloudmesh.common.variables import Variables
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
 
-# TODO: this uses ~ but we should use the test under ~/.cloudmesh
 
 Benchmark.debug()
 

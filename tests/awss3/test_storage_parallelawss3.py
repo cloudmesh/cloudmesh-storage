@@ -1,10 +1,10 @@
 ###############################################################
-# pytest -v --capture=no tests/awss3/test_parallelaws3.py
-# pytest -v  tests/awss3/test_parallelaws3.py
-# pytest -v --capture=no tests/awss3/test_parallelaws3.py:::TestStorage::<METHIDNAME>
+# pytest -v --capture=no tests/test_storage_azure.py
+# pytest -v  tests/test_storage_azure.py
+# pytest -v --capture=no tests/test_storage_azure..py::TestAzureStorage::<METHODNAME>
 ###############################################################
 import os
-import sys
+from pathlib import Path
 from pprint import pprint
 
 from cloudmesh.common.Benchmark import Benchmark
@@ -50,6 +50,9 @@ class TestStorageParallelaws3(object):
         Shell.mkdir(os.dirname(path_expand(location)))
         writefile(location, content)
 
+    #
+    # BUG: Please use location /tmp just like in 03 test
+    #
     def test_create_local_source(self):
         HEADING()
         StopWatch.start("create source")

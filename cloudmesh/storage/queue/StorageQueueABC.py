@@ -20,7 +20,6 @@ class StorageQueue(metaclass=ABCMeta):
 
     def __init__(self,
                  name=None,
-                 config="~/.cloudmesh/cloudmesh.yaml",
                  parallelism=4):
         """
         TBD

@@ -1,6 +1,5 @@
 import os
-import re
-from pathlib import Path
+import stat
 from pprint import pprint
 
 from azure.storage.blob import BlockBlobService
@@ -9,34 +8,96 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import banner
 from cloudmesh.common.util import path_expand
+from pathlib import Path
+import platform
+import textwrap
+import uuid
+import oyaml as yaml
+from multiprocessing import Pool
+
+from cloudmesh.common.DateTime import DateTime
+from cloudmesh.mongo.CmDatabase import CmDatabase
+from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 
 
 class Provider(StorageABC):
-    kind = "azureblob"
+    kind = "parallelazureblob"
 
-    sample = "TODO: missing"
+    sample = textwrap.dedent(
+        """
+        cloudmesh:
+          storage:
+            {name}:
+              cm:
+                active: false
+                heading: Azure
+                host: azure.microsoft.com
+                label: azure_blob
+                kind: parallelazureblob
+                version: TBD
+                service: storage
+              default:
+                resource_group: cloudmesh
+                location: Central US
+              credentials:
+                account_name: {account_name}
+                account_key: {account_key}
+                container: {container}
+                AZURE_TENANT_ID: {azure_tenant_id}
+                AZURE_SUBSCRIPTION_ID: {azure_subscription_id}
+                AZURE_APPLICATION_ID: {azure_application_id}
+                AZURE_SECRET_KEY: {azure_secret_key}
+                AZURE_REGION: Central US
+             """
+    )
+    status = [
+        'completed',
+        'waiting',
+        'inprogress',
+        'canceled'
+    ]
 
     output = {}  # "TODO: missing"
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
-        super().__init__(service=service, config=config)
+    def __init__(self, name=None, parallelism=4):
+        """
+        TBD
+
+        :param service: TBD
+        :param config: TBD
+        """
+        # pprint(service)
+        super().__init__(service=name)
+        self.parallelism = parallelism
+        self.name = name
+        self.collection = f"storage-queue-{name}"
+        self.number = 0
+        self.storage_dict = {}
+    '''
+    def __init__(self, service= None):
+        super().__init__(service=service)
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
         self.container = self.credentials['container']
         self.cloud = service
         self.service = service
+    '''
+
+    @DatabaseUpdate()
 
     def update_dict(self, elements, func=None):
         # this is an internal function for building dict object
         d = []
         for element in elements:
+
             entry = element.__dict__
             entry["cm"] = {
                 "kind": "storage",
                 "cloud": self.cloud,
                 "name": element.name
             }
+
             element.properties = element.properties.__dict__
             entry["cm"]["created"] = \
                 element.properties["create"].isoformat()[0]
@@ -56,6 +117,7 @@ class Provider(StorageABC):
                 entry["cm"]["deleted"] = element.properties[
                     "deleted_time"].isoformat()
                 del element.properties["deleted_time"]
+
             d.append(entry)
         return d
 
@@ -453,12 +515,7 @@ class Provider(StorageABC):
                             self.storage_service.get_blob_to_bytes(
                                 self.container, blob_name))
 
-        dict_obj = self.update_dict(blob_cre)
-        pprint(dict_obj[0])
-        return dict_obj[0]
-
-    def search(self, directory=None, filename=None,
-               recursive=False):
+    def search(self, directory=None, filename=None,recursive=False):
         """
         searches the filename in the directory
 
@@ -470,10 +527,13 @@ class Provider(StorageABC):
 
         """
 
+
         HEADING()
+
         srch_gen = self.storage_service.list_blobs(self.container)
         obj_list = []
         if not recursive:
+
             srch_file = os.path.join(directory[1:], filename)
             file_found = False
             for blob in srch_gen:
@@ -500,12 +560,14 @@ class Provider(StorageABC):
                                     obj_list.append(blob)
                                     file_found = True
                 else:
+
                     if blob.name == os.path.join(directory[1:], filename):
                         obj_list.append(blob)
                         file_found = True
             if not file_found:
                 return Console.error(
                     "File does not exist: {file}".format(file=filename))
+
         dict_obj = self.update_dict(obj_list)
         pprint(dict_obj)
         return dict_obj
