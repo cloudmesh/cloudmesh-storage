@@ -79,13 +79,13 @@ the old documentation.
 
 As we are developping multicloud environments we like to reuse and make
 some of the functionallity similar between clouds. for this reason we
-have implemented a provider concept that reads teh credentials for each
+have implemented a provider concept that reads the credentials for each
 storage location from a cloudmesh yaml file.
 
 Then based on the `cms.kind` of this storage location a Provider is
 picked and we can interact with the system.
 
-Thisis documented for the compute provider at
+This is documented for the compute provider at
 
 * [Provider concept](https://cloudmesh.github.io/cloudmesh-manual/concepts/providers.html)
 
