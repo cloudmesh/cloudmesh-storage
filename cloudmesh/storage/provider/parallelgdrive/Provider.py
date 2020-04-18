@@ -65,7 +65,7 @@ class Provider(StorageQueue):
     output = {}  # "TODO: missing"
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml", parallelism=4):
-        super().__init__(service=service, config=config, parallelism=parallelism)
+        super().__init__(service=service, parallelism=parallelism)
         self.config = Config()
         self.storage_credentials = self.config.credentials("storage", "parallelgdrive")
         self.credentials_json_path = self.storage_credentials['credentials_json_path']
@@ -97,7 +97,10 @@ class Provider(StorageQueue):
         service = build('drive', 'v3', credentials=creds)
         self.service = service
 
-    def list(self, source=None, dir_only=False, recursive=False):
+    def list_run(self, specification):
+        source = specification['path']
+        dir_only = specification['dir_only']
+        recursive = specification['recursive']
         if recursive:
             results = self.service.files().list(
                 # pageSize=self.limitFiles,
@@ -442,3 +445,18 @@ class Provider(StorageQueue):
                 del (entry[p])
         d.append(entry)
         return d
+
+if __name__ == "__main__":
+    print()
+    p = Provider(service="parallelgdrive")
+    # p.create_dir(directory="testdir3")
+    # p.create_dir(directory="testdir")
+    p.list(source="/", recursive=False)
+    # p.delete(source="testdir3")
+    #
+    # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
+    # p.get(source="myProvider.py", destination="shihui.py", recursive=False)
+    #
+    # p.search(directory="/", filename="myProvider.py")
+    #
+    # p.run()
