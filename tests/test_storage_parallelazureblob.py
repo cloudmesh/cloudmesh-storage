@@ -17,9 +17,10 @@ from cloudmesh.common.variables import Variables
 from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
+from cloudmesh.storage.provider.parellelazureblob.Provider import Provider
 from cloudmesh.common.debug import VERBOSE
 
-# cms set storage=parellelazureblob
+# cms set storage=parallelazureblob
 
 Benchmark.debug()
 
