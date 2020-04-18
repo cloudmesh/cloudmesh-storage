@@ -7,7 +7,6 @@ import botocore
 from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.console import Console
 
-
 import platform
 import textwrap
 
