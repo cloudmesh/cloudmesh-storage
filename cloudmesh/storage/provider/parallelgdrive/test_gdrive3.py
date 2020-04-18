@@ -2,7 +2,7 @@
 from cloudmesh.storage.provider.parallelgdrive.Provider import Provider
 p = Provider(service='gdrive')
 # p.list(source='pictures', dir_only=False, recursive=False) # works only for recursive=False)
-p.list(source='sub_cloud2', dir_only=False, recursive=False)
+# p.list(source='sub_cloud2', dir_only=False, recursive=False)
 
 # p.delete(filename='sub_cloud2', recursive=True) # works for recursive=True.  Delete subdir even when recursive=False
 
@@ -40,4 +40,4 @@ p.list(source='sub_cloud2', dir_only=False, recursive=False)
 
 # p.get(source='C:/Users/sara/new_emp', destination='sub_cloud2', recursive=False) # recursive=True not working
 
-p.search(filename='schools2.xlsx', recursive=False) # works now.  Fixed issue of printing other files or folders too
+# p.search(filename='schools2.xlsx', recursive=False) # works now.  Fixed issue of printing other files or folders too
