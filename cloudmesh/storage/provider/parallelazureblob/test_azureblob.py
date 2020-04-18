@@ -1,6 +1,7 @@
 from azure.storage.blob import BlockBlobService
 import os
-from cloudmesh.storage.provider.parellelazureblob.Provider import Provider
+from cloudmesh.storage.provider.parallelazureblob.Provider import Provider
+from cloudmesh.storage.provider.azureblob.Provider import Provider
 '''
 Class
 Azure:
@@ -35,13 +36,13 @@ if __name__ == "__main__":
     # provider = Azure()
     # provider._mkdir(...)
 
-#p = Provider(service="azure")
+p = Provider(service="azure")
 from Provider import Provider
 p=Provider(service="azure", config="c:/users/hp/.cloudmesh/cloudmesh.yaml")
 print(p.credentials)
-#p.list(source=' containerone', dir_only='*.txt', recursive=False)
-p.create_dir(directory='newcontainer2')#works
-#p.put(source='c:/users/hp/.cloudmesh/storage/test/a/a2.txt', destination='containerone', recursive=False)#works
+p.list(source=' containerone', dir_only='a1.txt', recursive=False)
+p.create_dir(directory='newcontainer3')#works
+p.put(source='c:/users/hp/.cloudmesh/storage/test/a/a3.txt', destination='containerone', recursive=False)#works
 #p.search(directory=' containerone\ ontainerone',filename='a1.txt',recursive=False)
 #p.get(source=' containerone', destination='a1.txt', recursive=False)
 
