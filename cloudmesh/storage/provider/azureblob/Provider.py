@@ -18,8 +18,8 @@ class Provider(StorageABC):
 
     output = {}  # "TODO: missing"
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
-        super().__init__(service=service, config=config)
+    def __init__(self, service=None):
+        super().__init__(service=service)
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])

@@ -91,16 +91,12 @@ class Provider(StorageQueue):
         }
     }
 
-    def __init__(self,
-                 service=None,
-                 config="~/.cloudmesh/cloudmesh.yaml",
-                 parallelism=4):
+    def __init__(self, service=None, parallelism=4):
         """
         :param service: service name
         :param config:
         """
-        super().__init__(service=service,
-                         config=config, parallelism=parallelism)
+        super().__init__(service=service, parallelism=parallelism)
         self.container_name = self.credentials['bucket']
         self.dir_marker_file_name = 'marker.txt'
 

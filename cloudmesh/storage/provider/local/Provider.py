@@ -61,8 +61,8 @@ class Provider(StorageABC):
 
     output = {}  # "TODO: missing"
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
-        super(Provider, self).__init__(service=service, config=config)
+    def __init__(self, service=None):
+        super(Provider, self).__init__(service=service)
 
         self.credentials["directory"] = path_expand(
             self.credentials["directory"])

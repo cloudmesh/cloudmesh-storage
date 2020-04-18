@@ -6,24 +6,24 @@ def setup(kind):
     if kind == "local":
         from cloudmesh.storage.provider.local.Provider import \
             Provider as LocalProvider
-        provider = LocalProvider(service=kind, config=config)
+        provider = LocalProvider(service=kind)
     elif kind == "box":
         from cloudmesh.storage.provider.box.Provider import \
             Provider as BoxProvider
-        provider = BoxProvider(service=kind, config=config)
+        provider = BoxProvider(service=kind)
     elif kind == "gdrive":
         from cloudmesh.storage.provider.gdrive.Provider import \
             Provider as GdriveProvider
-        provider = GdriveProvider(service=kind, config=config)
+        provider = GdriveProvider(service=kind)
     elif kind == "azureblob":
         from cloudmesh.storage.provider.azureblob.Provider import \
             Provider as AzureblobProvider
-        provider = AzureblobProvider(service=kind, config=config)
+        provider = AzureblobProvider(service=kind)
     elif kind == "awss3":
         from cloudmesh.storage.provider.awss3.Provider import \
             Provider as AwsProvider
 
-        provider = AwsProvider(service=kind, config=config)
+        provider = AwsProvider(service=kind)
     else:
         Console.error(f"Storage Provider is not supported: {kind}")
     return provider

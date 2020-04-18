@@ -69,11 +69,9 @@ class Provider(StorageABC):
 
     output = {}  # "TODO: missing"
 
-    def __init__(self,
-                 service=None,
-                 config="~/.cloudmesh/cloudmesh.yaml"):
+    def __init__(self, service=None):
 
-        super().__init__(service=service, config=config)
+        super().__init__(service=service)
         self.sdk = JWTAuth.from_settings_file(self.credentials['config_path'])
         self.client = Client(self.sdk)
 

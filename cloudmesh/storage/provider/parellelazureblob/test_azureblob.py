@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
 #p = Provider(service="azure")
 from Provider import Provider
-p=Provider(service="azure", config="c:/users/hp/.cloudmesh/cloudmesh.yaml")
+p=Provider(service="azure")
 print(p.credentials)
 #p.list(source=' containerone', dir_only='*.txt', recursive=False)
 p.create_dir(directory='newcontainer2')#works
