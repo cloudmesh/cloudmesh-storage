@@ -7,19 +7,24 @@ import os
 from pathlib import Path
 from pprint import pprint
 
-import pytest
+from cloudmesh.common.Benchmark import Benchmark
+from cloudmesh.common.Shell import Shell
 from cloudmesh.common.StopWatch import StopWatch
-from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
-from cloudmesh.common.variables import Variables
-from cloudmesh.common.Benchmark import Benchmark
-from cloudmesh.configuration.Config import Config
-from cloudmesh.storage.Provider import Provider
-from cloudmesh.common.debug import VERBOSE
 
-# cms set storage=parellelazureblob
+print("this seems to be the same as in test_05_storage")
+
+print("I sugget to delete all tests that are covered "
+      "by 05 and only include tests here that are unique")
+
+print("we exist now to makes usre this gets your attention")
+
+sys.exit()
+
+# cms set storage=parallelaws3
+
 
 Benchmark.debug()
 
@@ -27,37 +32,35 @@ user = Config()["cloudmesh.profile.user"]
 variables = Variables()
 VERBOSE(variables.dict())
 
-key = variables['key']
+service = variables.parameter('storage')
 
-cloud = variables.parameter('storage')
+print(f"Test run for {service}")
 
-print(f"Test run for {cloud}")
-
-if cloud is None:
+if service is None:
     raise ValueError("storage is not set")
 
-provider = Provider(service=cloud)
+provider = Provider(service=service)
 print('provider:', provider, provider.kind)
 
 
 @pytest.mark.incremental
-class TestStorage(object):
+class TestStorageParallelaws3(object):
 
-    def create_local_file(self, location, content):
-        d = Path(os.path.dirname(path_expand(location)))
-        print()
-        print("TESTDIR:", d)
+    def create_file(self, location, content):
+        Shell.mkdir(os.dirname(path_expand(location)))
+        writefile(location, content)
 
-        d.mkdir(parents=True, exist_ok=True)
-
-        writefile(path_expand(location), content)
-
+    #
+    # BUG: Please use location /tmp just like in 03 test
+    #
     def test_create_local_source(self):
         HEADING()
         StopWatch.start("create source")
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
-        self.create_local_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
-        self.create_local_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
+        self.create_local_file("~/.cloudmesh/storage/test/a/a.txt",
+                               "content of a")
+        self.create_local_file("~/.cloudmesh/storage/test/a/b/b.txt",
+                               "content of b")
         self.create_local_file("~/.cloudmesh/storage/test/a/b/c/c.txt",
                                "content of c")
         StopWatch.stop("create source")
@@ -173,4 +176,4 @@ class TestStorage(object):
         StopWatch.stop("delete")
 
     def test_benchmark(self):
-        Benchmark.print(sysinfo=False, csv=True, tag=cloud)
+        Benchmark.print(sysinfo=False, csv=True, tag=service)
