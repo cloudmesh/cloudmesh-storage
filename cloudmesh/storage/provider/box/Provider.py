@@ -1,11 +1,10 @@
-import os
-from os.path import basename, join, dirname
-
-from boxsdk import Client
 from boxsdk import JWTAuth
-from cloudmesh.abstract.StorageDeprecatedABC import StorageABC
+from boxsdk import Client
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
+from os.path import basename, join, dirname
+import os
+from cloudmesh.abstract.StorageABC import StorageABC
 
 
 def get_id(source, results, source_type):
@@ -70,11 +69,9 @@ class Provider(StorageABC):
 
     output = {}  # "TODO: missing"
 
-    def __init__(self,
-                 service=None,
-                 config="~/.cloudmesh/cloudmesh.yaml"):
+    def __init__(self, service=None):
 
-        super().__init__(service=service, config=config)
+        super().__init__(service=service)
         self.sdk = JWTAuth.from_settings_file(self.credentials['config_path'])
         self.client = Client(self.sdk)
 
