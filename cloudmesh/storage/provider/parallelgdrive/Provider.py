@@ -28,19 +28,44 @@ from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 
+# Below import statement are from parallelawss3 Provider.py
+import os
+import platform
+import stat
+import textwrap
+
+import boto3
+import botocore
+from cloudmesh.storage.provider.StorageQueue import StorageQueue
+from cloudmesh.common.console import Console
+from cloudmesh.common.debug import VERBOSE
+from cloudmesh.mongo.CmDatabase import CmDatabase
+
+from cloudmesh.storage.provider.parallelawss3.path_manager import \
+    extract_file_dict
+from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
+
+
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
-class Provider(StorageABC):
+class Provider(StorageQueue):
 
     kind = "parallelgdrive"
 
     sample = "TODO: missing"
 
+    status = [
+        'completed',
+        'waiting',
+        'inprogress',
+        'canceled'
+    ]
+
     output = {}  # "TODO: missing"
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
-        super().__init__(service=service, config=config)
+    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml", parallelism=4):
+        super().__init__(service=service, config=config, parallelism=parallelism)
         self.config = Config()
         self.storage_credentials = self.config.credentials("storage", "parallelgdrive")
         self.credentials_json_path = self.storage_credentials['credentials_json_path']
