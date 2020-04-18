@@ -17,6 +17,8 @@ class StorageCommand(PluginCommand):
         ::
 
            Usage:
+             storage run
+             storage monitor [--storage=SERVICES] [--status=all | --status=STATUS] [--output=output] [--clear]
              storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N]
              storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
              storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
@@ -136,32 +138,45 @@ class StorageCommand(PluginCommand):
                        "recursive",
                        "storage",
                        "source",
-                       "target")
+                       "target",
+                       "parallel",
+                       "status")
 
         source = arguments.source
         target = arguments.target
         variables = Variables()
 
-        VERBOSE(arguments)
+        parallelism = arguments.parallel or 1
 
-        arguments.storage = Parameter.expand(arguments.storage)
+        arguments.storage = Parameter.expand(arguments.storage or variables[
+            'storage'])
 
-        if arguments["get"]:
-            provider = Provider(arguments.storage[0])
+        if arguments.monitor:
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
+            status = arguments.status or "all"
+            output = arguments['--output'] or "table"
+            result = provider.monitor(status=status, output=output)
+        elif arguments.run:
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
+            result = provider.run()
+        elif arguments['get']:
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
 
             result = provider.get(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
+            # result = provider.run()
+
 
         elif arguments.put:
-            provider = Provider(arguments.storage[0])
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
 
             result = provider.put(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
 
         elif arguments.create and arguments.dir:
-            provider = Provider(arguments.storage[0])
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
 
             result = provider.create_dir(arguments.DIRECTORY)
 
@@ -170,14 +185,18 @@ class StorageCommand(PluginCommand):
             """
             storage list SOURCE [--parallel=N]
             """
-            sources = arguments.SOURCE or variables["storage"] or 'local:.'
+            if variables['storage']:
+                default_source = f"{variables['storage']}:/"
+            else:
+                default_source = "local:/"
+            sources = arguments.SOURCE or default_source
             sources = Parameter.expand(sources)
 
             deletes = []
             for source in sources:
                 storage, entry = Parameter.separate(source)
 
-                storage = storage or "local"
+                storage = storage or source or "local"
                 deletes.append((storage, entry))
 
             _sources = ', '.join(sources)
@@ -187,7 +206,7 @@ class StorageCommand(PluginCommand):
                 if arguments.dryrun:
                     print(f"Dryrun: list {service}:{entry}")
                 else:
-                    provider = Provider(service=service)
+                    provider = Provider(service=service, parallelism=parallelism)
                     provider.list(name=entry)
 
             return ""
@@ -197,14 +216,18 @@ class StorageCommand(PluginCommand):
             """
             storage delete SOURCE [--parallel=N]
             """
-            sources = arguments.SOURCE or variables["storage"] or 'local:.'
+            if variables['storage']:
+                default_source = f"{variables['storage']}:/"
+            else:
+                default_source = "local:/"
+            sources = arguments.SOURCE or default_source
             sources = Parameter.expand(sources)
 
             deletes = []
             for source in sources:
                 storage, entry = Parameter.separate(source)
 
-                storage = storage or "local"
+                storage = storage or source or "local"
                 deletes.append((storage, entry))
 
             _sources = ', '.join(sources)
@@ -218,7 +241,7 @@ class StorageCommand(PluginCommand):
                     if arguments.dryrun:
                         print(f"Dryrun: delete {service}:{entry}")
                     else:
-                        provider = Provider(service=service)
+                        provider = Provider(service=service, parallelism=parallelism)
                         provider.delete(name=entry)
 
             else:
@@ -229,7 +252,7 @@ class StorageCommand(PluginCommand):
         elif arguments.search:
 
             for storage in arguments.storage:
-                provider = Provider(storage)
+                provider = Provider(storage, parallelism=parallelism)
 
                 provider.search(arguments.DIRECTORY,
                                 arguments.FILENAME,
@@ -240,31 +263,18 @@ class StorageCommand(PluginCommand):
             raise NotImplementedError
 
         elif arguments.copy:
-            VERBOSE(f"COPY: Executing Copy command from {arguments.SOURCE} to "
-                    f"{arguments.DESTINATION} providers")
-            print(f"DEBUG storage.py: INITIALIZE with {arguments.storage[0]} "
-                  "provider.")
-
-            provider = Provider(arguments.storage[0])
-
-            result = provider.copy(arguments.SOURCE,
-                                   arguments.DESTINATION,
-                                   arguments.recursive)
-
-
-        elif arguments.copy:
-            scloud, sbucket = source.split(":", 1) or None
-            tcloud, tbucket = target.split(":", 1) or None
-            # print(scloud + " " + tcloud + " " + sbucket + " " + tbucket)
-
+            scloud, sbucket = arguments['--source'].split(":", 1) or None
+            tcloud, tbucket = arguments['--target'].split(":", 1) or None
             if scloud == "aws" or scloud == "google":
-                provider = Provider(service=scloud)
+                provider = Provider(service=scloud, parallelism=parallelism)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
             elif (scloud == "local" and tcloud == "aws") or (
                 scloud == "local" and tcloud == "google"):
-                provider = Provider(service=tcloud)
+                provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
             else:
-                print("Not Implemented")
+                provider = Provider(service=tcloud, parallelism=parallelism)
+                provider.copy(arguments['--source'], arguments['--target'],
+                              arguments.recursive)
 
         return ""
