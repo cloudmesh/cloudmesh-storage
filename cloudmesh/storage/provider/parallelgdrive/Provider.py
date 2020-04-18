@@ -97,7 +97,7 @@ class Provider(StorageQueue):
         service = build('drive', 'v3', credentials=creds)
         self.service = service
 
-    def list_run(self, specification):
+    def list_run(self, specification): # in mongdb, but can't run
         source = specification['path']
         dir_only = specification['dir_only']
         recursive = specification['recursive']
@@ -283,8 +283,10 @@ class Provider(StorageQueue):
                 tempres.append(sourceid['files'][0])
             return self.update_dict(tempres)
 
-    def delete(self, service=None, filename=None,
-               recursive=False):  # this is working
+    def delete_run(self, specification): # works, deleted dir and sub-dirs in gdrive, seen in mongodb too
+        source = specification['path']
+        recursive = specification['recursive']
+
         file_id = ""
         file_rec = None
         if recursive:
@@ -293,7 +295,7 @@ class Provider(StorageQueue):
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             items = items['files']
             for i in range(len(items)):
-                if items[i]['name'] == filename:
+                if items[i]['name'] == source:
                     file_rec = items[i]
                     file_id = items[i]['id']
 
@@ -308,7 +310,7 @@ class Provider(StorageQueue):
                 fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
             items = items['files']
             for i in range(len(items)):
-                if items[i]['name'] == filename:
+                if items[i]['name'] == source:
                     file_rec = items[i]
                     file_id = items[i]['id']
             try:
@@ -451,12 +453,9 @@ if __name__ == "__main__":
     p = Provider(service="parallelgdrive")
     # p.create_dir(directory="testdir3")
     # p.create_dir(directory="testdir")
-    p.list(source="/", recursive=False)
-    # p.delete(source="testdir3")
-    #
+    # p.list(source='sub_cloud2', dir_only=False, recursive=False) # only puts in mongodb, but can't run
     # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
     # p.get(source="myProvider.py", destination="shihui.py", recursive=False)
-    #
     # p.search(directory="/", filename="myProvider.py")
-    #
-    # p.run()
+    # p.delete(source='sub_cloud', recursive=True) # works
+    p.run()
