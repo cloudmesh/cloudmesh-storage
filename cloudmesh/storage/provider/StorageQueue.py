@@ -355,10 +355,14 @@ class StorageQueue(StorageABC):
         """
         runs the copy process for all jobs in the queue and completes when all
         actions are completed
+
         :return:
         """
-        get_action, put_action, mkdir_action, copy_action, list_action, \
-        delete_action, cancel_action, search_action = self.get_actions()
+        mkdir_action, \
+        copy_action, \
+        list_action, \
+        delete_action, \
+        cancel_action = self.get_actions()
 
         pool = Pool(self.parallelism)
         # cancel the actions

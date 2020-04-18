@@ -1,4 +1,3 @@
-
 import os
 import stat
 from pprint import pprint
@@ -727,6 +726,11 @@ class Provider(StorageABC):
                                                              upl_file))
             else:
                 # Folder only specified - Upload all files from folder
+                #
+                # TODO: large portion of the code is duplicated, when not use a
+                #       function for things that are the same
+                #
+
                 if recursive:
                     ctr = 1
                     old_root = ""

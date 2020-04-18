@@ -163,6 +163,23 @@ class StorageQueue:
         return entries
 
     @DatabaseUpdate()
+    def copy_file(self, sourcefile, destinationfile):
+        """
+        adds a copy action to the queue
+
+        copies the file from the source service to the destination service using
+        the file located in the path and storing it into the remote. If remote
+        is not specified path is used for it.
+
+        The copy will not be performed if the files are the same.
+
+        :param sourcefile:
+        :param destinationfile:
+        :return:
+        """
+        self._copy_file(sourcefile, destinationfile)
+
+    @DatabaseUpdate()
     def copy_tree(self, sourcetree, destinationtree):
         """
         adds a tree to be copied to the queue
