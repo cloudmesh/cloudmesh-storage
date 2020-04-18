@@ -11,9 +11,9 @@ from cloudmesh.configuration.Config import Config
 
 class Provider(object):
 
-    def __init__(self, service=None, config="~/.cloudmesh/.cloudmesh.yaml"):
+    def __init__(self, service=None):
 
-        super(Provider, self).__init__(service=service, config=config)
+        super(Provider, self).__init__(service=service)
 
         self.config = Config()
         self.kind = config[f"cloudmesh.storage.{service}.cm.kind"]
@@ -26,45 +26,38 @@ class Provider(object):
             from cloudmesh.storage.provider.awss3 import \
                 Provider as AwsStorageProvider
             self.p = AwsStorageProvider(
-                service=service,
-                config=config)
+                service=service)
         elif self.kind in ["parallelawsS3"]:
             from cloudmesh.storage.provider.parallelawss3 import \
                 Provider as ParallelAwsStorageProvider
             self.p = ParallelAwsStorageProvider(
-                service=service,
-                config=config)
+                service=service)
 
         elif self.kind in ["box"]:
             from cloudmesh.storage.provider.box import \
                 Provider as BoxStorageProvider
             self.p = BoxStorageProvider(
-                service=service,
-                config=config)
+                service=service)
         elif self.kind in ["gcpbucket"]:
             from cloudmesh.google.storage.Provider import \
                 Provider as GCPStorageProvider
             self.p = GCPStorageProvider(
-                service=service,
-                config=config)
+                service=service)
         elif self.kind in ["gdrive"]:
             from cloudmesh.storage.provider.gdrive import \
                 Provider as GdriveStorageProvider
             self.p = GdriveStorageProvider(
-                service=service,
-                config=config)
+                service=service)
         elif self.kind in ["azureblob"]:
             from cloudmesh.storage.provider.azureblob import \
                 Provider as AzureblobStorageProvider
             self.p = AzureblobStorageProvider(
-                service=service,
-                config=config)
+                service=service)
         elif self.kind in ["oracle"]:
             from cloudmesh.oracle.storage.Provider import \
                 Provider as OracleStorageProvider
             self.p = OracleStorageProvider(
-                service=service,
-                config=config)
+                service=service)
         else:
             raise NotImplementedError
 
