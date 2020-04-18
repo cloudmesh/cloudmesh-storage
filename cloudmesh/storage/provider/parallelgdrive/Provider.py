@@ -134,7 +134,11 @@ class Provider(StorageQueue):
             else:
                 return self.update_dict(items)
 
-    def put(self, service=None, source=None, destination=None, recursive=False):
+    # def put(self, service=None, source=None, destination=None, recursive=False):
+    def put_run(self, specification):
+        source = specification['source']
+        destination = specification['destination']
+        recursive = specification['recursive']
         if recursive:
             if os.path.isdir(source):
                 temp_res = []
@@ -345,8 +349,12 @@ class Provider(StorageQueue):
             id = file.get('id')
         return self.update_dict(files)
 
-    def search(self, service=None, directory=None, filename=None,
-               recursive=False):
+    # def search(self, service=None, directory=None, filename=None,
+    #            recursive=False):
+    def search_run(self, specification):
+        directory = specification['path']
+        filename = specification['filename']
+        recursive = specification['recursive']
         if recursive:
             found = False
             res_file = None
@@ -458,4 +466,6 @@ if __name__ == "__main__":
     # p.get(source="myProvider.py", destination="shihui.py", recursive=False)
     # p.search(directory="/", filename="myProvider.py")
     # p.delete(source='sub_cloud', recursive=True) # works
+    # p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud', recursive=False) # error, no file found, issue with update_dict
+    p.search(filename='schools2.xlsx', recursive=False) # error, issue with update_dict
     p.run()
