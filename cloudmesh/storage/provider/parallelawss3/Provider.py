@@ -838,11 +838,11 @@ if __name__ == "__main__":
     print()
     p = Provider(service="parallelawss3")
     # p.create_dir(directory="testdir3")
-    p.create_dir(directory="testdir")
+    # p.create_dir(directory="testdir")
     # p.list(source="/", recursive=True)
     # p.delete(source="testdir3")
     #
-    p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
+    # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
     # p.get(source="myProvider.py", destination="shihui.py", recursive=False)
     #
     # p.search(directory="/", filename="myProvider.py")
