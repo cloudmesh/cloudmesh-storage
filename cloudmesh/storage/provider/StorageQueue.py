@@ -18,7 +18,7 @@ class StorageQueue(StorageABC):
                  service=None,
                  config="~/.cloudmesh/cloudmesh.yaml",
                  parallelism=4):
-        super().__init__(service=service, config=config)
+        super().__init__(service=service,config=config)
         self.parallelism = parallelism
         self.name = service
         self.collection = f"storage-queue-{service}"
