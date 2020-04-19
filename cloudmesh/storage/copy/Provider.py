@@ -10,8 +10,7 @@ from cloudmesh.storage.Provider import Provider
 
 class Provider(object):
 
-    def __init__(self,
-                 config="~/.cloudmesh/cloudmesh.yaml"):
+    def __init__(self):
 
         self.config = Config()
 
@@ -22,10 +21,8 @@ class Provider(object):
              target,
              local_dir=None):
 
-        self.provider_source = Provider(service=source_cloud,
-                                        config=self.config)
-        self.provider_target = Provider(service=target_cloud,
-                                        config=self.config)
+        self.provider_source = Provider(service=source_cloud)
+        self.provider_target = Provider(service=target_cloud)
 
         if local_dir is None:
             unique = uuid.uuid4()

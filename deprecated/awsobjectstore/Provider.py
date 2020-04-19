@@ -11,8 +11,8 @@ from cloudmesh.storage.StorageABC import StorageABC
 #
 class Provider(StorageABC):
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
-        super().__init__(service=service, config=config)
+    def __init__(self, service=None):
+        super().__init__(service=service)
         # self.container_name = self.credentials['container']
 
         credential = {

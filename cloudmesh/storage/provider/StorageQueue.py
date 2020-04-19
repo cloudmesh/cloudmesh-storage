@@ -14,11 +14,8 @@ from cloudmesh.abstract.StorageABC import StorageABC
 
 class StorageQueue(StorageABC):
 
-    def __init__(self,
-                 service=None,
-                 config="~/.cloudmesh/cloudmesh.yaml",
-                 parallelism=4):
-        super().__init__(service=service,config=config)
+    def __init__(self, service=None, parallelism=4):
+        super().__init__(service=service)
         self.parallelism = parallelism
         self.name = service
         self.collection = f"storage-queue-{service}"
@@ -358,10 +355,14 @@ class StorageQueue(StorageABC):
         """
         runs the copy process for all jobs in the queue and completes when all
         actions are completed
+
         :return:
         """
-        get_action, put_action, mkdir_action, copy_action, list_action, \
-        delete_action, cancel_action, search_action = self.get_actions()
+        mkdir_action, \
+        copy_action, \
+        list_action, \
+        delete_action, \
+        cancel_action = self.get_actions()
 
         pool = Pool(self.parallelism)
         # cancel the actions

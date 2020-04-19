@@ -27,8 +27,8 @@ class Provider(StorageABC):
 
     output = {}  # "TODO: missing"
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
-        super().__init__(service=service, config=config)
+    def __init__(self, service=None):
+        super().__init__(service=service)
         self.config = Config()
         self.storage_credentials = self.config.credentials("storage", "gdrive")
         if self.storage_credentials['maxfiles'] > 1000:

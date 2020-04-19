@@ -55,13 +55,11 @@ class Provider(StorageABC):
                 f"Storage provider '{kind}' not supported")
         return P
 
-    def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml",
-                 parallelism=4):
+    def __init__(self, service=None, parallelism=4):
 
-        super(Provider, self).__init__(service=service, config=config)
+        super(Provider, self).__init__(service=service)
         P = Provider.get_provider(self.kind)
-        self.provider = P(service=service, config=config,
-                          parallelism=parallelism)
+        self.provider = P(service=service, parallelism=parallelism)
         if self.provider is None:
             raise ValueError(
                 f"Storage provider '{self.service}'"
@@ -166,22 +164,19 @@ class Provider(StorageABC):
         if source_kind == "azureblob":
             from cloudmesh.storage.provider.azureblob.Provider import \
                 Provider as AzureblobProvider
-            source_provider = AzureblobProvider(service=source,
-                                                config=config)
+            source_provider = AzureblobProvider(service=source)
         elif source_kind == "awss3":
             from cloudmesh.storage.provider.awss3.Provider import \
                 Provider as AwsProvider
-            source_provider = AwsProvider(service=source, config=config)
+            source_provider = AwsProvider(service=source)
         elif source_kind == "oracle":
             from cloudmesh.oracle.storage.Provider import \
                 Provider as OracleStorageProvider
-            source_provider = OracleStorageProvider(service=source,
-                                                    config=config)
+            source_provider = OracleStorageProvider(service=source)
         elif source_kind == "google":
             from cloudmesh.google.storage.Provider import \
                 Provider as GoogleStorageProvider
-            source_provider = GoogleStorageProvider(service=source,
-                                                    config=config)
+            source_provider = GoogleStorageProvider(service=source)
         else:
             return Console.error(f"Provider for {source_kind} is not "
                                  f"yet implemented.")
@@ -247,13 +242,13 @@ class Provider(StorageABC):
             config = "~/.cloudmesh/cloudmesh.yaml"
 
             if source:
-                super().__init__(service=source, config=config)
+                super().__init__(service=source)
                 source_kind = self.kind
                 source_provider = self.get_source_provider(source_kind,
                                                            source, config)
 
             # get local storage directory
-            super().__init__(service="local", config=config)
+            super().__init__(service="local")
             local_storage = self.config[
                 "cloudmesh.storage.local.default.directory"]
 
@@ -291,8 +286,7 @@ class Provider(StorageABC):
                     Console.info("\nRemoving local intermediate file.")
                     from cloudmesh.storage.provider.local.Provider import \
                         Provider as LocalProvider
-                    local_provider = LocalProvider(service="local",
-                                                   config=config)
+                    local_provider = LocalProvider(service="local")
                     try:
                         local_provider.delete(source_obj, recursive=recursive)
                     except Exception as e:
