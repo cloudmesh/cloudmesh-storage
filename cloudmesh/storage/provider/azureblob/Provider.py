@@ -19,7 +19,7 @@ class Provider(StorageABC):
 
     def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
     #def __init__(self, service=None, config="~/.cloudmesh/cloudmesh.yaml"):
-        super().__init__(service=service)
+        super().__init__(service=service, config=config)
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
