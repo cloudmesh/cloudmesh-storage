@@ -1,5 +1,4 @@
 import os
-import stat
 from pprint import pprint
 
 from azure.storage.blob import BlockBlobService
@@ -9,7 +8,6 @@ from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import banner
 from cloudmesh.common.util import path_expand
 from pathlib import Path
-import platform
 import textwrap
 import uuid
 import oyaml as yaml
