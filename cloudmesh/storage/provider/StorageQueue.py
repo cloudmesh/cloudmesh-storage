@@ -358,11 +358,8 @@ class StorageQueue(StorageABC):
 
         :return:
         """
-        mkdir_action, \
-        copy_action, \
-        list_action, \
-        delete_action, \
-        cancel_action = self.get_actions()
+        get_action, put_action, mkdir_action, copy_action, list_action, \
+        delete_action, cancel_action, search_action = self.get_actions()
 
         pool = Pool(self.parallelism)
         # cancel the actions

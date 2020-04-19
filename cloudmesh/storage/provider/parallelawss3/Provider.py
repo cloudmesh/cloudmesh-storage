@@ -2,21 +2,13 @@ import os
 import platform
 import stat
 import textwrap
-import uuid
-from multiprocessing import Pool
 
 import boto3
 import botocore
-import oyaml as yaml
-from cloudmesh.abstract.StorageABC import StorageABC
-from cloudmesh.common.DateTime import DateTime
+from cloudmesh.storage.provider.StorageQueue import StorageQueue
 from cloudmesh.common.console import Console
 from cloudmesh.common.debug import VERBOSE
 from cloudmesh.mongo.CmDatabase import CmDatabase
-from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-from cloudmesh.storage.parallelawss3.path_manager import extract_file_dict
-from cloudmesh.storage.parallelawss3.path_manager import massage_path
-
 
 from cloudmesh.storage.provider.parallelawss3.path_manager import \
     extract_file_dict
@@ -24,7 +16,7 @@ from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
 
 
 
-class Provider(StorageABC):
+class Provider(StorageQueue):
     kind = "parallelawss3"
 
     sample = textwrap.dedent(
@@ -856,8 +848,3 @@ if __name__ == "__main__":
     # p.search(directory="/", filename="myProvider.py")
     #
     # p.run()
-    # p.cancel()
-    # p.delete(path="testABC")
-    # p.copy(sourcefile="./Provider.py", destinationfile="testABC.txt")
-
-    p.run()
