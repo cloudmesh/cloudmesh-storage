@@ -20,6 +20,7 @@ from cloudmesh.common.DateTime import DateTime
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.storage.provider.StorageQueue import StorageQueue
+from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
 
 class Provider(StorageQueue):
     kind = "parallelazureblob"
@@ -95,8 +96,8 @@ class Provider(StorageQueue):
         self.cloud = service
         self.service = service
         self.storage_dict = {}
-
 '''
+
 
 
     def update_dict(self, elements, func=None):
@@ -175,7 +176,9 @@ class Provider(StorageQueue):
         :return: dict
 
         """
-
+        self.storage_service = BlockBlobService(
+            account_name=self.credentials['account_name'],
+            account_key=self.credentials['account_key'])
         HEADING()
         # Determine service path - file or folder
         # blob_file, blob_folder = self.cloud_path(destination)
@@ -320,7 +323,8 @@ class Provider(StorageQueue):
         return obj_list
 
     # def put(self, service=None, source=None, destination=None, recursive=False):
-    def put(self, source=None, destination=None, recursive=False):
+    #def put(self, source=None, destination=None, recursive=False):
+    def put_run(self, specification):
         """
         Uploads file from Source(local) to Destination(Service)
 
@@ -331,9 +335,13 @@ class Provider(StorageQueue):
         :return: dict
 
         """
+        source = specification['source']
+        destination = specification['destination']
+        recursive = specification['recursive']
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
+        self.container = self.credentials['container']
         HEADING()
         # Determine service path - file or folder
         if self.storage_service.exists(self.container, destination[1:]):
@@ -417,9 +425,11 @@ class Provider(StorageQueue):
         # dict_obj = self.update_dict(obj_list)
         # pprint(dict_obj)
         # return dict_obj
-        return obj_list
-
-    def delete(self, service=None, source=None, recursive=False):
+        #return obj_list
+        specification['status'] = 'completed'
+        return specification
+    #def delete(self, service=None, source=None, recursive=False):
+    def delete_run(self, specification):
         """
         Deletes the source from cloud service
 
@@ -427,6 +437,9 @@ class Provider(StorageQueue):
         :return: None
 
         """
+        source = specification['path']
+        recursive = specification['recursive']
+
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
@@ -479,7 +492,10 @@ class Provider(StorageQueue):
         pprint(dict_obj)
         return dict_obj
         #return obj_list
-    def create_dir(self, service=None, directory=None):
+
+
+    #def create_dir(self, service=None, directory=None):
+    def mkdir_run(self, specification):
         """
         Creates a directory in the cloud service
 
@@ -487,6 +503,7 @@ class Provider(StorageQueue):
         :return: dict
 
         """
+        directory = specification['path']
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
@@ -588,11 +605,11 @@ class Provider(StorageQueue):
             if not file_found:
                 return Console.error(
                     "File does not exist: {file}".format(file=filename))
-        #dict_obj = self.update_dict(obj_list)
-        #pprint(dict_obj)
-        #return dict_obj
+        dict_obj = self.update_dict(obj_list)
+        pprint(dict_obj)
+        return dict_obj
         #pprint(obj_list)
-        return obj_list
+        #return obj_list
     # TODO code change:
     # def list(self, service=None, source=None, recursive=False):
     def list(self, source=None, dir_only=False, recursive=False):
@@ -733,5 +750,11 @@ class Provider(StorageQueue):
             Console.cprint("BLUE", "", trl)
         return dict_obj
         #return obj_list
-
-
+if __name__ == "__main__":
+    print()
+    p = Provider(service="parallelazureblob")
+    #p.create_dir(directory='newcontainer5') #works
+    #p.put(source="'c:/users/hp/.cloudmesh/storage/test/hello.txt'", destination="containerone")
+    #p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
+    #p.delete(source=" newcontainer5")
+    p.run()
