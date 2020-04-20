@@ -215,8 +215,8 @@ class Provider(StorageQueue):
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
 
-                res = self.upload_file(source=None, filename=source,
-                                       parent_it=file_parent_id)
+                # res = self.upload_file(source=None, filename=source,
+                #                        parent_it=file_parent_id)
                 # return self.update_dict(res)
         specification['status'] = 'completed'
         return specification
@@ -358,7 +358,7 @@ class Provider(StorageQueue):
             files.append(file)
             print('Folder ID: %s' % file.get('id'))
             id = file.get('id')
-        return self.update_dict(files)
+        # return self.update_dict(files)
 
     # def search(self, service=None, directory=None, filename=None,
     #            recursive=False):
@@ -442,42 +442,14 @@ class Provider(StorageQueue):
         else:
             return arr_folders, None
 
-    # def update_dict(self, elements):
-    #     if elements is None:
-    #         return None
-    #     elif type(elements) is list:
-    #         _elements = elements
-    #     else:
-    #         _elements = [elements]
-    #     d = []
-    #     for element in _elements:
-    #         entry = element
-    #         entry["cm"] = {
-    #             "kind": "storage",
-    #             "cloud": 'gdrive',
-    #             "name": element['name'],
-    #         }
-    #     for c in ['modifiedTime', 'createdTime', 'size']:
-    #         if c in entry.keys():
-    #             entry['cm'][c] = entry[c]
-    #         else:
-    #             entry['cm'][c] = None
-    #     for p in ['id', 'name', 'mimeType', 'parents', 'createdTime',
-    #               'size', 'modifiedTime']:
-    #         if p in entry.keys():
-    #             del (entry[p])
-    #     d.append(entry)
-    #     return d
-
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelgdrive")
-    # p.create_dir(directory="testdir3") # created dir in gdrive, but has errors
+    # p.create_dir(directory="testdir4") # works
     # p.list(source='gdrive_kids', dir_only=False, recursive=False) # works
-    # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
-    p.search(directory="/", filename="gifts_on_cloud.docx")
+    # p.search(directory="/", filename="gifts_on_cloud.docx") # works
     # p.delete(source='gdrive_cloud2', recursive=True) # works
-    # p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud', recursive=False) # error, no file found, issue with update_dict
     # p.search(filename='gifts_at_1st_level', recursive=False) # no error, but no output
     # p.get(source='C:/Users/sara/new_emp', destination='gifts_on_cloud.docx', recursive=False) # works
+    # p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud4', recursive=True)  # works for either create_dir or upload file, but not both at once
     p.run()
