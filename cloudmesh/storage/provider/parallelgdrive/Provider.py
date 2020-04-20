@@ -466,12 +466,12 @@ if __name__ == "__main__":
     p = Provider(service="parallelgdrive")
     # p.create_dir(directory="testdir3")
     # p.create_dir(directory="testdir")
-    # p.list(source='sub_cloud2', dir_only=False, recursive=False) # only puts in mongodb, but can't run
+    p.list(source='gdrive_kids', dir_only=False, recursive=False) # only puts in mongodb, but can't run
     # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
     # p.get(source="myProvider.py", destination="shihui.py", recursive=False)
     # p.search(directory="/", filename="myProvider.py")
     # p.delete(source='gift_dir', recursive=True) # works
     # p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud', recursive=False) # error, no file found, issue with update_dict
     # p.search(filename='schools2.xlsx', recursive=False) # error, issue with update_dict
-    p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=False)
-    # p.run()
+    # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=False) # not working
+    p.run()
