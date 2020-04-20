@@ -109,8 +109,8 @@ class Provider(StorageQueue):
             if not items:
                 Console.error('No files found')
                 print('No files found.')
-            else:
-                return self.update_dict(items)
+            # else:
+                # return self.update_dict(items)
         else:
             query_params = "name='" + source + "' and trashed=false"
             sourceid = self.service.files().list(
@@ -130,8 +130,10 @@ class Provider(StorageQueue):
             if not items:
                 Console.error('No files found')
                 print('No files found.')
-            else:
-                return self.update_dict(items)
+            #else:
+                # return self.update_dict(items)
+        specification['status'] = 'completed'
+        return specification
 
     # def put(self, service=None, source=None, destination=None, recursive=False):
     def put_run(self, specification):
@@ -159,7 +161,7 @@ class Provider(StorageQueue):
                         temp_res.append(
                             self.upload_file(source=source, filename=f,
                                              parent_it=file_parent_id))
-                return self.update_dict(temp_res)
+                # return self.update_dict(temp_res)
             else:
                 query_params = "name='" + destination + "' and trashed=false"
                 sourceid = self.service.files().list(
@@ -176,7 +178,7 @@ class Provider(StorageQueue):
 
                 res = self.upload_file(source=None, filename=source,
                                        parent_it=file_parent_id)
-                return self.update_dict(res)
+                # return self.update_dict(res)
         else:
             if os.path.isdir(source):
                 query_params = "name='" + destination + "' and trashed=false"
@@ -198,7 +200,7 @@ class Provider(StorageQueue):
                         temp_res.append(
                             self.upload_file(source=source, filename=f,
                                              parent_it=file_parent_id))
-                return self.update_dict(temp_res)
+                # return self.update_dict(temp_res)
             else:
                 query_params = "name='" + destination + "' and trashed=false"
                 sourceid = self.service.files().list(
@@ -215,7 +217,9 @@ class Provider(StorageQueue):
 
                 res = self.upload_file(source=None, filename=source,
                                        parent_it=file_parent_id)
-                return self.update_dict(res)
+                # return self.update_dict(res)
+        specification['status'] = 'completed'
+        return specification
 
     # def get(self, service=None, source=None, destination=None, recursive=False):
     def get_run(self, specification):
@@ -258,7 +262,7 @@ class Provider(StorageQueue):
             else:
                 self.download_file(source, file_id, file_name, mime_type)
                 tempres.append(sourceid['files'][0])
-            return self.update_dict(tempres)
+            # return self.update_dict(tempres)
         else:
             query_params = "name='" + destination + "' and trashed=false"
             sourceid = self.service.files().list(
@@ -290,7 +294,9 @@ class Provider(StorageQueue):
             else:
                 self.download_file(source, file_id, file_name, mime_type)
                 tempres.append(sourceid['files'][0])
-            return self.update_dict(tempres)
+            # return self.update_dict(tempres)
+        specification['status'] = 'completed'
+        return specification
 
     def delete_run(self, specification): # works, deleted dir and sub-dirs in gdrive, seen in mongodb too
         source = specification['path']
@@ -375,7 +381,7 @@ class Provider(StorageQueue):
                     break
                 else:
                     continue
-            return self.update_dict(res_file)
+            # return self.update_dict(res_file)
         else:
             found = False
             list_of_files = self.service.files().list(
@@ -390,7 +396,9 @@ class Provider(StorageQueue):
                     break
                 else:
                     continue
-            return self.update_dict(res_file)
+            # return self.update_dict(res_file)
+        specification['status'] = 'completed'
+        return specification
 
     def upload_file(self, source, filename, parent_it):
         file_metadata = {'name': filename, 'parents': [parent_it]}
@@ -434,44 +442,42 @@ class Provider(StorageQueue):
         else:
             return arr_folders, None
 
-    def update_dict(self, elements):
-        if elements is None:
-            return None
-        elif type(elements) is list:
-            _elements = elements
-        else:
-            _elements = [elements]
-        d = []
-        for element in _elements:
-            entry = element
-            entry["cm"] = {
-                "kind": "storage",
-                "cloud": 'gdrive',
-                "name": element['name'],
-            }
-        for c in ['modifiedTime', 'createdTime', 'size']:
-            if c in entry.keys():
-                entry['cm'][c] = entry[c]
-            else:
-                entry['cm'][c] = None
-        for p in ['id', 'name', 'mimeType', 'parents', 'createdTime',
-                  'size', 'modifiedTime']:
-            if p in entry.keys():
-                del (entry[p])
-        d.append(entry)
-        return d
+    # def update_dict(self, elements):
+    #     if elements is None:
+    #         return None
+    #     elif type(elements) is list:
+    #         _elements = elements
+    #     else:
+    #         _elements = [elements]
+    #     d = []
+    #     for element in _elements:
+    #         entry = element
+    #         entry["cm"] = {
+    #             "kind": "storage",
+    #             "cloud": 'gdrive',
+    #             "name": element['name'],
+    #         }
+    #     for c in ['modifiedTime', 'createdTime', 'size']:
+    #         if c in entry.keys():
+    #             entry['cm'][c] = entry[c]
+    #         else:
+    #             entry['cm'][c] = None
+    #     for p in ['id', 'name', 'mimeType', 'parents', 'createdTime',
+    #               'size', 'modifiedTime']:
+    #         if p in entry.keys():
+    #             del (entry[p])
+    #     d.append(entry)
+    #     return d
 
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelgdrive")
-    # p.create_dir(directory="testdir3")
-    # p.create_dir(directory="testdir")
-    p.list(source='gdrive_kids', dir_only=False, recursive=False) # only puts in mongodb, but can't run
+    # p.create_dir(directory="testdir3") # created dir in gdrive, but has errors
+    # p.list(source='gdrive_kids', dir_only=False, recursive=False) # works
     # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
-    # p.get(source="myProvider.py", destination="shihui.py", recursive=False)
-    # p.search(directory="/", filename="myProvider.py")
-    # p.delete(source='gift_dir', recursive=True) # works
+    p.search(directory="/", filename="gifts_on_cloud.docx")
+    # p.delete(source='gdrive_cloud2', recursive=True) # works
     # p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud', recursive=False) # error, no file found, issue with update_dict
-    # p.search(filename='schools2.xlsx', recursive=False) # error, issue with update_dict
-    # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=False) # not working
+    # p.search(filename='gifts_at_1st_level', recursive=False) # no error, but no output
+    # p.get(source='C:/Users/sara/new_emp', destination='gifts_on_cloud.docx', recursive=False) # works
     p.run()
