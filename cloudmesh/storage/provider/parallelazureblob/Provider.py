@@ -594,8 +594,9 @@ class Provider(StorageQueue):
                     obj_list.append(blob)
                     file_found = True
             if not file_found:
-                 Console.error(
+                Console.error(
                     "File does not exist: {file}".format(file=srch_file))
+
         else:
             file_found = False
             for blob in srch_gen:
@@ -778,11 +779,11 @@ class Provider(StorageQueue):
         #return obj_list
 if __name__ == "__main__":
     print()
-    p = Provider(service="parallelazureblob")
-    p.create_dir(directory=' newcontainer1') #works
-    p.copy(sourcefile="./Provider1.py", destinationfile=" myProvider1.py")#works
-    p.delete(source="a2.txt")#works
-    p.list(source='/a', dir_only=False, recursive=False)#works
-    #p.search(directory="/a", filename="dummy.txt")#error
-    #p.get(source='a.txt', destination="seema.txt", recursive=False)#slight error
+    #p = Provider(service="parallelazureblob")
+    #p.create_dir(directory=' newcontainer2') #works
+    #p.copy(sourcefile="./Provider.py", destinationfile=" myProvider.py")#works
+    #p.delete(source="a1.txt")#works
+    #p.list(source='/a', dir_only=False, recursive=False)#works
+    #p.search(directory="/", filename="a.txt")#error
+    #p.get(source='a.txt', destination="seema1.txt", recursive=False)#works
     p.run()
