@@ -114,8 +114,9 @@ class StorageCommand(PluginCommand):
                     Command deletes the file or directory from the SOURCE
                     provider's SOURCE_FILE_DIR location
 
-            Examples:
-                cms storage_service copy --source=local:test1.txt --target=aws:uploadtest1.txt
+           Examples:
+           >     cms storage_service copy --source=local:test1.txt
+           >                              --target=aws:uploadtest1.txt
                 cms storage_service list --source=google:test
                 cms storage_service delete --source=aws:uploadtest1.txt
 
