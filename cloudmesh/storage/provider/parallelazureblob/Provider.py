@@ -20,7 +20,7 @@ from cloudmesh.common.DateTime import DateTime
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.storage.provider.StorageQueue import StorageQueue
-from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
+from cloudmesh.storage.provider.awss3.path_manager import massage_path
 
 class Provider(StorageQueue):
     kind = "parallelazureblob"

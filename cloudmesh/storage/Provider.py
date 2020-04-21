@@ -15,7 +15,6 @@ class Provider(StorageABC):
                 "gdrive",
                 "azureblob",
                 "awss3",
-                "parallelawss3",
                 'parallelgdrive',
                 'parallelazureblob',
                 "google",
@@ -35,17 +34,12 @@ class Provider(StorageABC):
         elif kind == "parallelgdrive":
             from cloudmesh.storage.provider.parallelgdrive.Provider import Provider as P
         elif kind == "azureblob":
-            from cloudmesh.storage.provider.azureblob.Provider import \
-                Provider as P
+            from cloudmesh.storage.provider.azureblob.Provider import Provider as P
         elif kind == "awss3":
             from cloudmesh.storage.provider.awss3.Provider import Provider as P
-        elif kind == "parallelawss3":
-            from cloudmesh.storage.provider.parallelawss3.Provider import \
-                Provider as P
         elif kind == "parallelazureblob":
             from cloudmesh.storage.provider.parallelazureblob.Provider import \
                 Provider as P
-
         elif kind in ['google']:
             from cloudmesh.google.storage.Provider import Provider as P
         elif kind in ['oracle']:

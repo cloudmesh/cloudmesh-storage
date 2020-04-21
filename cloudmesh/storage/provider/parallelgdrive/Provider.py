@@ -28,7 +28,7 @@ from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 
-# Below import statement are from parallelawss3 Provider.py
+# Below import statement are from awss3 Provider.py
 import os
 import platform
 import stat
@@ -41,9 +41,9 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.debug import VERBOSE
 from cloudmesh.mongo.CmDatabase import CmDatabase
 
-from cloudmesh.storage.provider.parallelawss3.path_manager import \
+from cloudmesh.storage.provider.awss3.path_manager import \
     extract_file_dict
-from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
+from cloudmesh.storage.provider.awss3.path_manager import massage_path
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
