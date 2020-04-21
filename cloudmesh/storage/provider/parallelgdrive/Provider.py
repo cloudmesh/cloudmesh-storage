@@ -449,10 +449,10 @@ if __name__ == "__main__":
     # p.create_dir(directory="testdir4") # works
     # p.list(source='gdrive_kids', dir_only=False, recursive=False) # works
     # p.search(directory="/", filename="gift_on_sub_dir.docx") # works
-    # p.delete(source='gdrive_cloud', recursive=True) # worked on 4/19, but on 4/20, it deletes correctly, but gives errors, then it stops working
+    # p.delete(source='gdrive_cloud4', recursive=True) # worked on 4/19 no errors, but on 4/20, it deletes correctly, but gives errors
     # p.search(filename='gifts_at_1st_level.docx', recursive=False) # works
     # p.get(source='C:/Users/sara/new_emp', destination='gift_on_sub_dir.docx', recursive=False) # works
     # p.get(source='C:/Users/sara/new_emp', destination='sub_gdrive_cloud', recursive=False) # works
     # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # doesn't get files in subdir
-    # p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud2', recursive=False)  # create-dir, but not put
+    # p.put(source='C:/Users/sara/gdrive_dir', destination='gdrive_cloud2', recursive=True)  # works for either step, but not both
     p.run()
