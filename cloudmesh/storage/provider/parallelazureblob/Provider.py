@@ -61,80 +61,20 @@ class Provider(StorageQueue):
 
     output = {}  # "TODO: missing"
 
-#<<<<<<< HEAD:cloudmesh/storage/provider/parallelazureblob/Provider.py
+
     def __init__(self,
                  service=None,config="~/.cloudmesh/cloudmesh.yaml",
                  parallelism=4):
-#=======
-    #def __init__(self, name=None, parallelism=4):
-#>>>>>>> ba63ccfc7cbb33aae7c82d4c67ccc799fae0b4ab:cloudmesh/storage/provider/parallelazureblob/Provider.py
-        """
-        TBD
 
-        :param service: TBD
-        :param config: TBD
-        """
+        #:param service: TBD
+        #:param config: TBD
         # pprint(service)
-#<<<<<<< HEAD:cloudmesh/storage/provider/parallelazureblob/Provider.py
         super().__init__(service=service,  parallelism=parallelism)
-#=======
-        #super().__init__(service=name)
         self.parallelism = parallelism
-        #self.name = name
-        #self.collection = f"storage-queue-{name}"
         self.container = self.credentials['container']
         self.number = 0
         self.storage_dict = {}
-    '''
-    def __init__(self, service= None):
-        super().__init__(service=service)
->>>>>>> ba63ccfc7cbb33aae7c82d4c67ccc799fae0b4ab:cloudmesh/storage/provider/parallelazureblob/Provider.py
-        self.storage_service = BlockBlobService(
-            account_name=self.credentials['account_name'],
-            account_key=self.credentials['account_key'])
-        self.container = self.credentials['container']
-        self.cloud = service
-        self.service = service
-        self.storage_dict = {}
 
-
-
-
-    def update_dict(self, elements, func=None):
-        # this is an internal function for building dict object
-        d = []
-        for element in elements:
-
-            entry = element.__dict__
-            entry["cm"] = {
-                "kind": "storage",
-                "cloud": self.cloud,
-                "name": element.name
-            }
-
-            element.properties = element.properties.__dict__
-            entry["cm"]["created"] = \
-                element.properties["create"].isoformat()[0]
-            entry["cm"]["updated"] = \
-                element.properties["last_modified"].isoformat()[0]
-            entry["cm"]["size"] = element.properties["content_length"]
-            del element.properties["copy"]
-            del element.properties["lease"]
-            del element.properties["content_settings"]
-            del element.properties["create"]
-            del element.properties["last_modified"]
-            if func == 'delete':
-                entry["cm"]["status"] = "deleted"
-            else:
-                entry["cm"]["status"] = "exists"
-            if element.properties["deleted_time"] is not None:
-                entry["cm"]["deleted"] = element.properties[
-                    "deleted_time"].isoformat()
-                del element.properties["deleted_time"]
-
-            d.append(entry)
-        return d
-'''
     def cloud_path(self, srv_path):
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
@@ -165,7 +105,7 @@ class Provider(StorageQueue):
                 src_path = os.path.join(os.getcwd(), source_path)
         return src_path
 
-    #def get(self, service=None, source=None, destination=None, recursive=False):
+
     def get_run(self, specification):
         """
         Downloads file from Destination(Service) to Source(local)
@@ -328,8 +268,7 @@ class Provider(StorageQueue):
         specification['status'] = 'completed'
         return specification
 
-    # def put(self, service=None, source=None, destination=None, recursive=False):
-    #def put(self, source=None, destination=None, recursive=False):
+
     def put_run(self, specification):
         """
         Uploads file from Source(local) to Destination(Service)
@@ -376,10 +315,6 @@ class Provider(StorageQueue):
                                                              upl_file))
             else:
                 # Folder only specified - Upload all files from folder
-                #
-                # TODO: large portion of the code is duplicated, when not use a
-                #       function for things that are the same
-                #
 
                 if recursive:
                     ctr = 1
@@ -434,7 +369,7 @@ class Provider(StorageQueue):
         #return obj_list
         specification['status'] = 'completed'
         return specification
-    #def delete(self, service=None, source=None, recursive=False):
+
     def delete_run(self, specification):
         """
         Deletes the source from cloud service
@@ -501,7 +436,7 @@ class Provider(StorageQueue):
         specification['status'] = 'completed'
         return specification
 
-    #def create_dir(self, service=None, directory=None):
+
     def mkdir_run(self, specification):
         """
         Creates a directory in the cloud service
@@ -562,10 +497,9 @@ class Provider(StorageQueue):
         specification['status'] = 'completed'
         return specification
 
-    #def search(self, directory=None, filename=None,
-               #recursive=False):
+
     def search_run(self, specification):
-        """
+        '''
         searches the filename in the directory
 
         :param directory: directory on cloud service
@@ -573,8 +507,8 @@ class Provider(StorageQueue):
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified directory
         :return: dict
-
-        """
+        '''
+        
         directory = specification['path']
         filename = specification['filename']
         recursive = specification['recursive']
@@ -586,13 +520,14 @@ class Provider(StorageQueue):
         srch_gen = self.storage_service.list_blobs(self.container)
         obj_list = []
         if not recursive:
-            srch_file = os.path.join(directory[0:], filename)
+            srch_file = os.path.join(directory[1:], filename)
             print(srch_file)
             file_found = False
             for blob in srch_gen:
                 if blob.name == srch_file:
                     obj_list.append(blob)
                     file_found = True
+                    Console.msg("File exists: {file}".format(file=srch_file))
             if not file_found:
                 Console.error(
                     "File does not exist: {file}".format(file=srch_file))
@@ -604,32 +539,36 @@ class Provider(StorageQueue):
                     if os.path.basename(blob.name) == os.path.basename(
                         filename):
                         if os.path.commonpath(
-                            [blob.name, directory[0:]]) == directory[0:]:
+                            [blob.name, directory[1:]]) == directory[1:]:
                             if filename.startswith('/'):
-                                if filename[0:] in blob.name:
+                                if filename[1:] in blob.name:
                                     obj_list.append(blob)
                                     file_found = True
                             else:
                                 if filename in blob.name:
                                     obj_list.append(blob)
                                     file_found = True
+                                    Console.msg("File does exist: {file}".format(file=filename))
                 else:
-                    if blob.name == os.path.join(directory[0:], filename):
+                    if blob.name == os.path.join(directory[1:], filename):
                         obj_list.append(blob)
                         file_found = True
+                        Console.msg("File does exist: {file}".format(file=filename))
             if not file_found:
                  Console.error(
                     "File does not exist: {file}".format(file=filename))
-        #dict_obj = self.update_dict(obj_list)
+        # dict_obj = self.update_dict(obj_list)
         #pprint(dict_obj)
         #return dict_obj
         #pprint(obj_list)
-        #return obj_list
+
         specification['status'] = 'completed'
         return specification
+
+
+
     # TODO code change:
-    # def list(self, service=None, source=None, recursive=False):
-    #def list(self, source=None, dir_only=False, recursive=False):
+
     def list_run(self, specification):
         """
         lists all files specified in the source
@@ -756,8 +695,7 @@ class Provider(StorageQueue):
         #dict_obj = self.update_dict(obj_list)
         #pprint(dict_obj)
         #return obj_list
-        #specification['status'] = 'completed'
-        #return specification
+
 
         if len(file_list) > 0:
             hdr = '#' * 90 + '\n' + 'List of files in the folder ' + '/' + blob_folder + ':'
@@ -775,15 +713,16 @@ class Provider(StorageQueue):
             Console.cprint("BLUE", "", trl)
         specification['status'] = 'completed'
         return specification
-
         #return obj_list
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelazureblob")
-    #p.create_dir(directory=' newcontainer2') #works
-    #p.copy(sourcefile="./Provider.py", destinationfile=" myProvider.py")#works
-    #p.delete(source="a1.txt")#works
+    #p.create_dir(directory='-newcontainer') #works
+    #p.copy(sourcefile="./Provider.py", destinationfile="-myProvider1")#works
+    #p.delete(source="/ewcontainer4/dummy.txt")#works-deleting directory
+    #p.delete(source="a3.txt")  # works deleting files
     #p.list(source='/a', dir_only=False, recursive=False)#works
-    p.search(directory="/", filename="a.txt")#error
-    #p.get(source='a.txt', destination="seema1.txt", recursive=False)#works
+    #p.search(directory="/", filename="a.txt")#works
+    #p.search(directory="/a", filename="a.txt",recursive=True)#works
+    #p.get(source='a.txt', destination="seema.txt", recursive=False)#works
     p.run()
