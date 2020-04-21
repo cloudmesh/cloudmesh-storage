@@ -135,7 +135,6 @@ class Provider(StorageQueue):
         specification['status'] = 'completed'
         return specification
 
-    # def put(self, service=None, source=None, destination=None, recursive=False):
     def put_run(self, specification):
         source = specification['source']
         destination = specification['destination']
@@ -171,13 +170,13 @@ class Provider(StorageQueue):
                 print(sourceid)
                 if len(sourceid['files']) == 0:
                     parent_file = self.create_dir(directory=destination)
-                    file_parent_id = parent_file['id']
+                    # file_parent_id = parent_file['id']
                 else:
                     print(sourceid['files'][0]['id'])
-                    file_parent_id = sourceid['files'][0]['id']
+                    # file_parent_id = sourceid['files'][0]['id']
 
-                res = self.upload_file(source=None, filename=source,
-                                       parent_it=file_parent_id)
+                # res = self.upload_file(source=None, filename=source,
+                #                        parent_it=file_parent_id)
                 # return self.update_dict(res)
         else:
             if os.path.isdir(source):
@@ -210,7 +209,7 @@ class Provider(StorageQueue):
                 print(sourceid)
                 if len(sourceid['files']) == 0:
                     parent_file = self.create_dir(directory=destination)
-                    file_parent_id = parent_file['id']
+                    # file_parent_id = parent_file['id']
                 else:
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
@@ -334,7 +333,9 @@ class Provider(StorageQueue):
                 Console.error('No file found')
                 return 'No file found'
 
-        return self.update_dict(file_rec)
+        # return self.update_dict(file_rec)
+        specification['status'] = 'completed'
+        return specification
 
     def create_dir(self, service=None, directory=None):
         folders, filename = self.cloud_path(directory)
@@ -447,9 +448,11 @@ if __name__ == "__main__":
     p = Provider(service="parallelgdrive")
     # p.create_dir(directory="testdir4") # works
     # p.list(source='gdrive_kids', dir_only=False, recursive=False) # works
-    # p.search(directory="/", filename="gifts_on_cloud.docx") # works
-    # p.delete(source='gdrive_cloud2', recursive=True) # works
-    p.search(filename='gifts_at_1st_level.docx', recursive=False) # no error, but no output to console
-    # p.get(source='C:/Users/sara/new_emp', destination='gifts_on_cloud.docx', recursive=False) # works
-    # p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud4', recursive=True)  # works for either create_dir or upload file, but not both at once
+    # p.search(directory="/", filename="gift_on_sub_dir.docx") # works
+    # p.delete(source='gdrive_cloud', recursive=True) # worked on 4/19, but on 4/20, it deletes correctly, but gives errors, then it stops working
+    # p.search(filename='gifts_at_1st_level.docx', recursive=False) # works
+    # p.get(source='C:/Users/sara/new_emp', destination='gift_on_sub_dir.docx', recursive=False) # works
+    # p.get(source='C:/Users/sara/new_emp', destination='sub_gdrive_cloud', recursive=False) # works
+    # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # doesn't get files in subdir
+    # p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud2', recursive=False)  # create-dir, but not put
     p.run()
