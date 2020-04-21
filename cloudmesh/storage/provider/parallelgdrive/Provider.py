@@ -28,7 +28,7 @@ from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 
-# Below import statements are from parallelawss3 Provider.py
+# Below import statements are from awss3 Provider.py
 import os
 import platform
 import stat
@@ -41,9 +41,9 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.debug import VERBOSE
 from cloudmesh.mongo.CmDatabase import CmDatabase
 
-from cloudmesh.storage.provider.parallelawss3.path_manager import \
+from cloudmesh.storage.provider.awss3.path_manager import \
     extract_file_dict
-from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
+from cloudmesh.storage.provider.awss3.path_manager import massage_path
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -449,7 +449,7 @@ if __name__ == "__main__":
     # p.list(source='gdrive_kids', dir_only=False, recursive=False) # works
     # p.search(directory="/", filename="gifts_on_cloud.docx") # works
     # p.delete(source='gdrive_cloud2', recursive=True) # works
-    # p.search(filename='gifts_at_1st_level', recursive=False) # no error, but no output to console
+    p.search(filename='gifts_at_1st_level.docx', recursive=False) # no error, but no output to console
     # p.get(source='C:/Users/sara/new_emp', destination='gifts_on_cloud.docx', recursive=False) # works
     # p.put(source='C:/Users/sara/gdrive_dir/gifts.docx', destination='gdrive_cloud4', recursive=True)  # works for either create_dir or upload file, but not both at once
     p.run()
