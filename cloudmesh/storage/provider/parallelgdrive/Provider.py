@@ -453,6 +453,6 @@ if __name__ == "__main__":
     # p.search(filename='gifts_at_1st_level.docx', recursive=False) # works
     # p.get(source='C:/Users/sara/new_emp', destination='gift_on_sub_dir.docx', recursive=False) # works
     # p.get(source='C:/Users/sara/new_emp', destination='sub_gdrive_cloud', recursive=False) # works
-    # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # doesn't get files in subdir
+    # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # recursive=True not working
     # p.put(source='C:/Users/sara/gdrive_dir', destination='gdrive_cloud2', recursive=True)  # works for either step, but not both
     p.run()
