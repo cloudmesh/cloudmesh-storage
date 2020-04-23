@@ -289,11 +289,11 @@ class Provider(StorageQueue):
         self.container = self.credentials['container']
         HEADING()
         # Determine service path - file or folder
-        if self.storage_service.exists(self.container, destination[1:]):
+        if self.storage_service.exists(self.container, destination[0:]):
             return Console.error("Directory does not exist: {directory}".format(
                 directory=destination))
         else:
-            blob_folder = destination[1:]
+            blob_folder = destination[0:]
             blob_file = None
 
         # Determine local path i.e. upload-from-folder
@@ -456,19 +456,19 @@ class Provider(StorageQueue):
         marker_file = 'dummy.txt'
         blob_cre = []
 
-        if re.search('/', directory[1:]) is None:
+        if re.search('/', directory[0:]) is None:
             data = b' '
-            blob_name = directory[1:] + '/' + marker_file
+            blob_name = directory[0:] + '/' + marker_file
             self.storage_service.create_blob_from_bytes(self.container,
                                                         blob_name, data)
             blob_cre.append(
                 self.storage_service.get_blob_to_bytes(self.container,
                                                        blob_name))
         else:
-            dir_list = directory[1:].split('/')
+            dir_list = directory[0:].split('/')
             path_list = []
-            path_list.append(directory[1:])
-            old_path = directory[1:]
+            path_list.append(directory[0:])
+            old_path = directory[0:]
             for i in range(len(dir_list) - 1):
                 new_path = os.path.dirname(old_path)
                 path_list.append(new_path)
@@ -485,7 +485,7 @@ class Provider(StorageQueue):
                     blob_name = path + '/' + marker_file
                     self.storage_service.create_blob_from_bytes(self.container,
                                                                 blob_name, data)
-                    if path == directory[1:]:
+                    if path == directory[0:]:
                         blob_cre.append(
                             self.storage_service.get_blob_to_bytes(
                                 self.container, blob_name))
@@ -717,12 +717,12 @@ class Provider(StorageQueue):
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelazureblob")
-    #p.create_dir(directory='-newcontainer') #works
-    #p.copy(sourcefile="./Provider.py", destinationfile="-myProvider1")#works
+    p.create_dir(directory='newcontainer2') #works
+    p.copy(sourcefile="./Provider.py", destinationfile="myProvider1")#works
     #p.delete(source="/ewcontainer4/dummy.txt")#works-deleting directory
-    #p.delete(source="a3.txt")  # works deleting files
-    #p.list(source='/a', dir_only=False, recursive=False)#works
+    p.delete(source="a2.txt")  # works deleting files
+    p.list(source='/a', dir_only=False, recursive=False)#works
     #p.search(directory="/", filename="a.txt")#works
-    #p.search(directory="/a", filename="a.txt",recursive=True)#works
-    #p.get(source='a.txt', destination="seema.txt", recursive=False)#works
+    p.search(directory="/a", filename="a.txt",recursive=True)#works
+    p.get(source='a.txt', destination="seema.txt", recursive=False)#works
     p.run()
