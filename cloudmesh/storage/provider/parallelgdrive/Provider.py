@@ -149,8 +149,8 @@ class Provider(StorageQueue):
                 file_parent_id = None
                 print(sourceid)
                 if len(sourceid['files']) == 0:
-                    parent_file = self.create_dir(directory=destination)
-                    file_parent_id = parent_file['id']
+                    parent_file = self.create_dir_helper(directory=destination)
+                    # file_parent_id = parent_file['id']
                 else:
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
@@ -169,7 +169,7 @@ class Provider(StorageQueue):
                 file_parent_id = None
                 print(sourceid)
                 if len(sourceid['files']) == 0:
-                    parent_file = self.create_dir(directory=destination)
+                    parent_file = self.create_dir_helper(directory=destination)
                     # file_parent_id = parent_file['id']
                 else:
                     print(sourceid['files'][0]['id'])
@@ -188,8 +188,8 @@ class Provider(StorageQueue):
                 temp_res = []
                 print(sourceid)
                 if len(sourceid['files']) == 0:
-                    parent_file = self.create_dir(directory=destination)
-                    file_parent_id = parent_file['id']
+                    parent_file = self.create_dir_helper(directory=destination)
+                    file_parent_id = parent_file[0].get('id')
                 else:
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
@@ -208,7 +208,7 @@ class Provider(StorageQueue):
                 file_parent_id = None
                 print(sourceid)
                 if len(sourceid['files']) == 0:
-                    parent_file = self.create_dir(directory=destination)
+                    parent_file = self.create_dir_helper(directory=destination)
                     # file_parent_id = parent_file['id']
                 else:
                     print(sourceid['files'][0]['id'])
@@ -337,7 +337,8 @@ class Provider(StorageQueue):
         specification['status'] = 'completed'
         return specification
 
-    def create_dir(self, service=None, directory=None):
+    def mkdir_run(self, specification):
+        directory = specification['path']
         folders, filename = self.cloud_path(directory)
         id = None
         files = []
@@ -359,7 +360,31 @@ class Provider(StorageQueue):
             files.append(file)
             print('Folder ID: %s' % file.get('id'))
             id = file.get('id')
-        # return self.update_dict(files)
+        return files
+
+    def create_dir_helper(self, service=None, directory=None):
+        folders, filename = self.cloud_path(directory)
+        id = None
+        files = []
+        for folder in folders:
+            if id is None:
+                file_metadata = {
+                    'name': folder,
+                    'mimeType': 'application/vnd.google-apps.folder'
+                }
+            else:
+                file_metadata = {
+                    'name': folder,
+                    'mimeType': 'application/vnd.google-apps.folder',
+                    'parents': [id]
+                }
+            file = self.service.files().create(
+                body=file_metadata,
+                fields='id, name, mimeType, parents, size, modifiedTime, createdTime').execute()
+            files.append(file)
+            print('Folder ID: %s' % file.get('id'))
+            id = file.get('id')
+        return files
 
     # def search(self, service=None, directory=None, filename=None,
     #            recursive=False):
@@ -446,13 +471,13 @@ class Provider(StorageQueue):
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelgdrive")
-    # p.create_dir(directory="testdir4") # works
+    # p.create_dir(directory="gdrive_cloud4") # works
     # p.list(source='gdrive_kids', dir_only=False, recursive=False) # works
     # p.search(directory="/", filename="gift_on_sub_dir.docx") # works
-    # p.delete(source='gdrive_cloud4', recursive=True) # worked on 4/19 no errors, but on 4/20, it deletes correctly, but gives errors
+    # p.delete(source='gdrive_cloud4', recursive=True) # works.  The other day gave errors, but now works w/o chgs
     # p.search(filename='gifts_at_1st_level.docx', recursive=False) # works
     # p.get(source='C:/Users/sara/new_emp', destination='gift_on_sub_dir.docx', recursive=False) # works
     # p.get(source='C:/Users/sara/new_emp', destination='sub_gdrive_cloud', recursive=False) # works
     # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # recursive=True not working
-    # p.put(source='C:/Users/sara/gdrive_dir', destination='gdrive_cloud2', recursive=True)  # works for either step, but not both
+    p.put(source='C:/Users/sara/gdrive_dir', destination='gdrive_cloud2', recursive=False)  # works for either step, but not both
     p.run()
