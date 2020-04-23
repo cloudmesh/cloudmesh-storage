@@ -61,79 +61,19 @@ class Provider(StorageQueue):
 
     output = {}  # "TODO: missing"
 
-#<<<<<<< HEAD:cloudmesh/storage/provider/parallelazureblob/Provider.py
+
     def __init__(self,
                  service=None,config="~/.cloudmesh/cloudmesh.yaml",
                  parallelism=4):
-#=======
-    #def __init__(self, name=None, parallelism=4):
-#>>>>>>> ba63ccfc7cbb33aae7c82d4c67ccc799fae0b4ab:cloudmesh/storage/provider/parallelazureblob/Provider.py
-        """
-        TBD
 
-        :param service: TBD
-        :param config: TBD
-        """
+        #:param service: TBD
+        #:param config: TBD
         # pprint(service)
-#<<<<<<< HEAD:cloudmesh/storage/provider/parallelazureblob/Provider.py
         super().__init__(service=service,  parallelism=parallelism)
-#=======
-        #super().__init__(service=name)
         self.parallelism = parallelism
-        #self.name = name
-        #self.collection = f"storage-queue-{name}"
         self.container = self.credentials['container']
         self.number = 0
         self.storage_dict = {}
-    '''
-    def __init__(self, service= None):
-        super().__init__(service=service)
->>>>>>> ba63ccfc7cbb33aae7c82d4c67ccc799fae0b4ab:cloudmesh/storage/provider/parallelazureblob/Provider.py
-        self.storage_service = BlockBlobService(
-            account_name=self.credentials['account_name'],
-            account_key=self.credentials['account_key'])
-        self.container = self.credentials['container']
-        self.cloud = service
-        self.service = service
-        self.storage_dict = {}
-'''
-
-
-
-    def update_dict(self, elements, func=None):
-        # this is an internal function for building dict object
-        d = []
-        for element in elements:
-
-            entry = element.__dict__
-            entry["cm"] = {
-                "kind": "storage",
-                "cloud": self.cloud,
-                "name": element.name
-            }
-
-            element.properties = element.properties.__dict__
-            entry["cm"]["created"] = \
-                element.properties["create"].isoformat()[0]
-            entry["cm"]["updated"] = \
-                element.properties["last_modified"].isoformat()[0]
-            entry["cm"]["size"] = element.properties["content_length"]
-            del element.properties["copy"]
-            del element.properties["lease"]
-            del element.properties["content_settings"]
-            del element.properties["create"]
-            del element.properties["last_modified"]
-            if func == 'delete':
-                entry["cm"]["status"] = "deleted"
-            else:
-                entry["cm"]["status"] = "exists"
-            if element.properties["deleted_time"] is not None:
-                entry["cm"]["deleted"] = element.properties[
-                    "deleted_time"].isoformat()
-                del element.properties["deleted_time"]
-
-            d.append(entry)
-        return d
 
     def cloud_path(self, srv_path):
         self.storage_service = BlockBlobService(
@@ -165,7 +105,8 @@ class Provider(StorageQueue):
                 src_path = os.path.join(os.getcwd(), source_path)
         return src_path
 
-    def get(self, service=None, source=None, destination=None, recursive=False):
+
+    def get_run(self, specification):
         """
         Downloads file from Destination(Service) to Source(local)
 
@@ -176,6 +117,9 @@ class Provider(StorageQueue):
         :return: dict
 
         """
+        source = specification['source']
+        destination = specification['destination']
+        recursive = specification['recursive']
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
@@ -206,7 +150,7 @@ class Provider(StorageQueue):
 
         if err_flag == 'Y':
 
-            return Console.error(
+             Console.error(
                 "Local directory not found or file already exists: {""src_path}")
         else:
             obj_list = []
@@ -229,7 +173,7 @@ class Provider(StorageQueue):
                             rename_path = src_path
                             os.rename(download_path, rename_path)
                     else:
-                        return Console.error(
+                         Console.error(
                             f"File does not exist: {blob_file}")
                 else:
                     file_found = False
@@ -244,7 +188,7 @@ class Provider(StorageQueue):
                                     download_path))
                             file_found = True
                     if not file_found:
-                        return Console.error(
+                         Console.error(
                             "File does not exist: {file}".format(
                                 file=blob_file))
             else:
@@ -265,7 +209,7 @@ class Provider(StorageQueue):
                                         download_path))
                                 file_found = True
                         if not file_found:
-                            return Console.error(
+                             Console.error(
                                 "Directory does not exist: {directory}".format(
                                     directory=blob_folder))
                     else:
@@ -289,7 +233,7 @@ class Provider(StorageQueue):
                                         download_path))
                                 file_found = True
                         if not file_found:
-                            return Console.error(
+                             Console.error(
                                 "Directory does not exist: {directory}".format(
                                     directory=blob_folder))
                 else:
@@ -312,18 +256,19 @@ class Provider(StorageQueue):
                                 rename_path = src_path
                                 os.rename(download_path, rename_path)
                         else:
-                            return Console.error(
+                             Console.error(
                                 "File does not exist: {file}".format(
                                     file=source[1:]))
                     else:
-                        return Console.error(
+                         Console.error(
                             "Invalid arguments, recursive not applicable")
-        dict_obj = self.update_dict(obj_list)
+        #dict_obj = self.update_dict(obj_list)
         # pprint(dict_obj)
-        return obj_list
+        #return obj_list
+        specification['status'] = 'completed'
+        return specification
 
-    # def put(self, service=None, source=None, destination=None, recursive=False):
-    #def put(self, source=None, destination=None, recursive=False):
+
     def put_run(self, specification):
         """
         Uploads file from Source(local) to Destination(Service)
@@ -370,10 +315,6 @@ class Provider(StorageQueue):
                                                              upl_file))
             else:
                 # Folder only specified - Upload all files from folder
-                #
-                # TODO: large portion of the code is duplicated, when not use a
-                #       function for things that are the same
-                #
 
                 if recursive:
                     ctr = 1
@@ -416,10 +357,10 @@ class Provider(StorageQueue):
                             old_root = root
                         ctr += 1
                 else:
-                    return Console.error(
+                     Console.error(
                         "Source is a folder, recursive expected in arguments")
         else:
-            return Console.error(
+             Console.error(
                 "Directory or File does not exist: {directory}".format(
                     directory=src_path))
         # dict_obj = self.update_dict(obj_list)
@@ -428,7 +369,7 @@ class Provider(StorageQueue):
         #return obj_list
         specification['status'] = 'completed'
         return specification
-    #def delete(self, service=None, source=None, recursive=False):
+
     def delete_run(self, specification):
         """
         Deletes the source from cloud service
@@ -460,7 +401,7 @@ class Provider(StorageQueue):
                 obj_list.append(blob_prop)
                 self.storage_service.delete_blob(self.container, blob_file)
             else:
-                return Console.error(
+                 Console.error(
                     "File does not exist: {file}".format(file=blob_file))
         else:
             if blob_file is None:
@@ -475,7 +416,7 @@ class Provider(StorageQueue):
                                                          blob.name)
                         file_del = True
                 if not file_del:
-                    return Console.error(
+                     Console.error(
                         "File does not exist: {file}".format(file=blob_folder))
             else:
                 # Source specified is both file and directory
@@ -486,15 +427,16 @@ class Provider(StorageQueue):
                     obj_list.append(blob_prop)
                     self.storage_service.delete_blob(self.container, source[1:])
                 else:
-                    return Console.error(
+                     Console.error(
                         "File does not exist: {file}".format(file=blob_file))
-        dict_obj = self.update_dict(obj_list, func='delete')
-        pprint(dict_obj)
-        return dict_obj
+        #dict_obj = self.update_dict(obj_list, func='delete')
+        #pprint(dict_obj)
+        #return dict_obj
         #return obj_list
+        specification['status'] = 'completed'
+        return specification
 
 
-    #def create_dir(self, service=None, directory=None):
     def mkdir_run(self, specification):
         """
         Creates a directory in the cloud service
@@ -551,11 +493,13 @@ class Provider(StorageQueue):
         # dict_obj = self.update_dict(blob_cre)
         # pprint(dict_obj[0])
         # return dict_obj[0]
-        return blob_cre
+        #return blob_cre
+        specification['status'] = 'completed'
+        return specification
 
-    def search(self, directory=None, filename=None,
-               recursive=False):
-        """
+
+    def search_run(self, specification):
+        '''
         searches the filename in the directory
 
         :param directory: directory on cloud service
@@ -563,8 +507,11 @@ class Provider(StorageQueue):
         :param recursive: in case of directory the recursive refers to all
                           subdirectories in the specified directory
         :return: dict
-
-        """
+        '''
+        
+        directory = specification['path']
+        filename = specification['filename']
+        recursive = specification['recursive']
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
@@ -574,14 +521,17 @@ class Provider(StorageQueue):
         obj_list = []
         if not recursive:
             srch_file = os.path.join(directory[1:], filename)
+            print(srch_file)
             file_found = False
             for blob in srch_gen:
                 if blob.name == srch_file:
                     obj_list.append(blob)
                     file_found = True
+                    Console.msg("File exists: {file}".format(file=srch_file))
             if not file_found:
-                return Console.error(
+                Console.error(
                     "File does not exist: {file}".format(file=srch_file))
+
         else:
             file_found = False
             for blob in srch_gen:
@@ -598,21 +548,28 @@ class Provider(StorageQueue):
                                 if filename in blob.name:
                                     obj_list.append(blob)
                                     file_found = True
+                                    Console.msg("File does exist: {file}".format(file=filename))
                 else:
                     if blob.name == os.path.join(directory[1:], filename):
                         obj_list.append(blob)
                         file_found = True
+                        Console.msg("File does exist: {file}".format(file=filename))
             if not file_found:
-                return Console.error(
+                 Console.error(
                     "File does not exist: {file}".format(file=filename))
-        dict_obj = self.update_dict(obj_list)
-        pprint(dict_obj)
-        return dict_obj
+        # dict_obj = self.update_dict(obj_list)
+        #pprint(dict_obj)
+        #return dict_obj
         #pprint(obj_list)
-        #return obj_list
+
+        specification['status'] = 'completed'
+        return specification
+
+
+
     # TODO code change:
-    # def list(self, service=None, source=None, recursive=False):
-    def list(self, source=None, dir_only=False, recursive=False):
+
+    def list_run(self, specification):
         """
         lists all files specified in the source
 
@@ -623,6 +580,9 @@ class Provider(StorageQueue):
         :return: dict
 
         """
+        source = specification['path']
+        dir_only = specification['dir_only']
+        recursive = specification['recursive']
         self.storage_service = BlockBlobService(
             account_name=self.credentials['account_name'],
             account_key=self.credentials['account_key'])
@@ -649,7 +609,7 @@ class Provider(StorageQueue):
                         blob_file).properties.content_length
                     obj_list.append(blob_prop)
                 else:
-                    return Console.error(
+                     Console.error(
                         "File does not exist: {file}".format(file=blob_file))
             else:
                 file_found = False
@@ -659,7 +619,7 @@ class Provider(StorageQueue):
                         obj_list.append(blob)
                         file_found = True
                 if not file_found:
-                    return Console.error(
+                     Console.error(
                         "File does not exist: {file}".format(file=blob_file))
         else:
             if blob_file is None:
@@ -697,7 +657,7 @@ class Provider(StorageQueue):
                                         if srch_fold not in fold_list:
                                             fold_list.append(srch_fold)
                     if not file_found:
-                        return Console.error(
+                         Console.error(
                             "Directory does not exist: {directory}".format(
                                 directory=blob_folder))
                 else:
@@ -711,7 +671,7 @@ class Provider(StorageQueue):
                             file_list.append(blob.name)
                             file_found = True
                     if not file_found:
-                        return Console.error(
+                         Console.error(
                             "Directory does not exist: {directory}".format(
                                 directory=blob_folder))
             else:
@@ -725,15 +685,18 @@ class Provider(StorageQueue):
                             source[1:]).properties.content_length
                         obj_list.append(blob_prop)
                     else:
-                        return Console.error(
+                         Console.error(
                             "File does not exist: {file}".format(
                                 file=source[1:]))
-                else:
-                    return Console.error(
-                        "Invalid arguments, recursive not applicable")
-        dict_obj = self.update_dict(obj_list)
-        pprint(dict_obj)
+
+                #else:
+                    #return Console.error(
+                        #"Invalid arguments, recursive not applicable")
+        #dict_obj = self.update_dict(obj_list)
+        #pprint(dict_obj)
         #return obj_list
+
+
         if len(file_list) > 0:
             hdr = '#' * 90 + '\n' + 'List of files in the folder ' + '/' + blob_folder + ':'
             Console.cprint("BLUE", "", hdr)
@@ -748,13 +711,18 @@ class Provider(StorageQueue):
             print(fold_list)
             trl = '#' * 90
             Console.cprint("BLUE", "", trl)
-        return dict_obj
+        specification['status'] = 'completed'
+        return specification
         #return obj_list
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelazureblob")
-    #p.create_dir(directory='newcontainer5') #works
-    #p.put(source="'c:/users/hp/.cloudmesh/storage/test/hello.txt'", destination="containerone")
-    #p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
-    #p.delete(source=" newcontainer5")
+    #p.create_dir(directory='-newcontainer') #works
+    #p.copy(sourcefile="./Provider.py", destinationfile="-myProvider1")#works
+    #p.delete(source="/ewcontainer4/dummy.txt")#works-deleting directory
+    #p.delete(source="a3.txt")  # works deleting files
+    #p.list(source='/a', dir_only=False, recursive=False)#works
+    #p.search(directory="/", filename="a.txt")#works
+    #p.search(directory="/a", filename="a.txt",recursive=True)#works
+    #p.get(source='a.txt', destination="seema.txt", recursive=False)#works
     p.run()
