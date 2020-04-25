@@ -20,7 +20,7 @@ from cloudmesh.common.DateTime import DateTime
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.storage.provider.StorageQueue import StorageQueue
-from cloudmesh.storage.provider.parallelawss3.path_manager import massage_path
+
 
 class Provider(StorageQueue):
     kind = "parallelazureblob"
@@ -717,7 +717,7 @@ class Provider(StorageQueue):
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelazureblob")
-    p.create_dir(directory='newcontainer2') #works
+    p.create_dir(directory='newcontainer3') #works
     p.copy(sourcefile="./Provider.py", destinationfile="myProvider1")#works
     #p.delete(source="/ewcontainer4/dummy.txt")#works-deleting directory
     p.delete(source="a2.txt")  # works deleting files
