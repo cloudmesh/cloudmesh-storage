@@ -15,7 +15,6 @@ from cloudmesh.storage.provider.awss3.path_manager import \
 from cloudmesh.storage.provider.awss3.path_manager import massage_path
 
 
-
 class Provider(StorageQueue):
     kind = "awss3"
 
@@ -396,7 +395,7 @@ class Provider(StorageQueue):
         source = specification['source']
         destination = specification['destination']
         recursive = specification['recursive']
-        trimmed_source = massage_path(source)
+        trimmed_src = massage_path(source)
         trimed_dest = massage_path(destination)
 
         self.s3_resource, self.s3_client = self.get_s3_resource_client()
@@ -405,7 +404,7 @@ class Provider(StorageQueue):
 
         try:
             file_obj = self.s3_client.get_object(Bucket=self.container_name,
-                                                 Key=trimmed_source)
+                                                 Key=trimmed_src)
         except botocore.exceptions.ClientError as e:
             # object not found
             Console.error(e)
@@ -429,23 +428,23 @@ class Provider(StorageQueue):
                     print('trimmed_destination : '+ trimmed_destination)
                     print(trimmed_source)
                     '''
-                    os_path_trim_source = os.path.basename(trimmed_source)
+                    os_path_trim_source = os.path.basename(trimmed_src)
                     blob = self.s3_resource.Bucket(
                         self.container_name).download_file(
-                        trimmed_source,
+                        trimmed_src,
                         f"{trimed_dest}/{os_path_trim_source}"
                     )
                 else:
                     blob = self.s3_resource.Bucket(
                         self.container_name).download_file(
-                        trimmed_source, trimed_dest)
+                        trimmed_src, trimed_dest)
 
                 # make head call since file download does not return
                 # obj dict to extract meta data
                 metadata = self.s3_client.head_object(
-                    Bucket=self.container_name, Key=trimmed_source)
+                    Bucket=self.container_name, Key=trimmed_src)
                 files_downloaded.append(
-                    extract_file_dict(trimmed_source, metadata))
+                    extract_file_dict(trimmed_src, metadata))
 
                 self.storage_dict['message'] = 'Source downloaded'
             except FileNotFoundError as e:
@@ -456,7 +455,7 @@ class Provider(StorageQueue):
             # Search for a directory
             all_objs = list(
                 self.s3_resource.Bucket(self.container_name).objects.filter(
-                    Prefix=trimmed_source))
+                    Prefix=trimmed_src))
 
             total_all_objs = len(all_objs)
 
@@ -466,9 +465,8 @@ class Provider(StorageQueue):
             elif total_all_objs > 0 and recursive is False:
                 for obj in all_objs:
                     if os.path.basename(obj.key) != self.dir_marker_file_name:
-                        if massage_path(
-                            obj.key.replace(trimmed_source, '')).count('/') \
-                            == 0:
+                        replaced_trimmed_src = obj.key.replace(trimmed_src, '')
+                        if massage_path(replaced_trimmed_src).count('/') == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
                                     self.container_name).download_file(
@@ -494,11 +492,11 @@ class Provider(StorageQueue):
             elif total_all_objs > 0 and recursive is True:
                 files_downloaded = []
                 for obj in all_objs:
-                    if os.path.basename(obj.key) != \
-                        self.dir_marker_file_name \
-                        and obj.key[-1] != '/':
-                        if massage_path(obj.key.replace(trimmed_source, '')) \
-                            .count('/') == 0:
+                    base_name = os.path.basename(obj.key)
+                    name_equal_marker = base_name == self.dir_marker_file_name
+                    if not name_equal_marker and obj.key[-1] != '/':
+                        replaced_trimmed_src = obj.key.replace(trimmed_src, '')
+                        if massage_path(replaced_trimmed_src).count('/') == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
                                     self.container_name).download_file(
@@ -518,7 +516,7 @@ class Provider(StorageQueue):
                         else:
 
                             folder_path = massage_path(
-                                obj.key.replace(trimmed_source, '').replace(
+                                obj.key.replace(trimmed_src, '').replace(
                                     os.path.basename(obj.key), '')
                             )
                             dest_path = f"{trimed_dest}/{folder_path}"
