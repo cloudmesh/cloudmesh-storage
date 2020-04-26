@@ -401,7 +401,6 @@ class StorageQueue(StorageABC):
         try:
             while True:
                 entries = cm.find(cloud=self.name, kind='storage')
-                print(entries)
                 if status != "all":
                     entries = list(filter(lambda entry: entry['status'] ==
                                                         status, entries))

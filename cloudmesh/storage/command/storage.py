@@ -140,8 +140,7 @@ class StorageCommand(PluginCommand):
                        "storage",
                        "source",
                        "target",
-                       "parallel",
-                       "status")
+                       "parallel")
 
         source = arguments.source
         target = arguments.target
@@ -154,7 +153,7 @@ class StorageCommand(PluginCommand):
 
         if arguments.monitor:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
-            status = arguments.status or "all"
+            status = arguments['--status'] or "all"
             output = arguments['--output'] or "table"
             result = provider.monitor(status=status, output=output)
         elif arguments.run:

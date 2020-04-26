@@ -836,15 +836,13 @@ class Provider(StorageQueue):
 
 if __name__ == "__main__":
     print()
-    p = Provider(service="awss3")
+    p = Provider(service="aws")
     # p.create_dir(directory="testdir3")
     # p.create_dir(directory="testdir")
     # p.list(source="/", recursive=True)
     # p.delete(source="testdir3")
-    #
     # p.copy(sourcefile="./Provider.py", destinationfile="myProvider.py")
     # p.get(source="myProvider.py", destination="shihui.py", recursive=False)
-    #
+    # p.get(source="/", destination="/Users/shihuijiang/test/", recursive=True)
     # p.search(directory="/", filename="myProvider.py")
-    #
     # p.run()
