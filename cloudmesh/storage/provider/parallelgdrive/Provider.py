@@ -207,16 +207,19 @@ class Provider(StorageQueue):
                     fields="nextPageToken, files(id, name, mimeType)").execute()
                 file_parent_id = None
                 print(sourceid)
+                print("len = ", len(sourceid['files']))
                 if len(sourceid['files']) == 0:
-                    parent_file = self.create_dir_helper(directory=destination)
-                    # file_parent_id = parent_file['id']
+                    #parent_file = self.create_dir_helper(directory=destination)
+                    #file_parent_id = parent_file['id']
+                    res = self.upload_file(source=None, filename=source,
+                                           parent_it=None)
                 else:
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
 
-                # res = self.upload_file(source=None, filename=source,
-                #                        parent_it=file_parent_id)
-                # return self.update_dict(res)
+                    res = self.upload_file(source=None, filename=source,
+                                        parent_it=file_parent_id)
+
         specification['status'] = 'completed'
         return specification
 
@@ -360,7 +363,8 @@ class Provider(StorageQueue):
             files.append(file)
             print('Folder ID: %s' % file.get('id'))
             id = file.get('id')
-        return files
+        specification['status'] = 'completed'
+        return specification
 
     def create_dir_helper(self, service=None, directory=None):
         folders, filename = self.cloud_path(directory)
