@@ -520,7 +520,7 @@ class Provider(StorageQueue):
         srch_gen = self.storage_service.list_blobs(self.container)
         obj_list = []
         if not recursive:
-            srch_file = os.path.join(directory[1:], filename)
+            srch_file = os.path.join(directory[0:], filename)
             print(srch_file)
             file_found = False
             for blob in srch_gen:
@@ -539,9 +539,9 @@ class Provider(StorageQueue):
                     if os.path.basename(blob.name) == os.path.basename(
                         filename):
                         if os.path.commonpath(
-                            [blob.name, directory[1:]]) == directory[1:]:
+                            [blob.name, directory[0:]]) == directory[0:]:
                             if filename.startswith('/'):
-                                if filename[1:] in blob.name:
+                                if filename[0:] in blob.name:
                                     obj_list.append(blob)
                                     file_found = True
                             else:
@@ -550,7 +550,7 @@ class Provider(StorageQueue):
                                     file_found = True
                                     Console.msg("File does exist: {file}".format(file=filename))
                 else:
-                    if blob.name == os.path.join(directory[1:], filename):
+                    if blob.name == os.path.join(directory[0:], filename):
                         obj_list.append(blob)
                         file_found = True
                         Console.msg("File does exist: {file}".format(file=filename))
@@ -717,12 +717,11 @@ class Provider(StorageQueue):
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelazureblob")
-    p.create_dir(directory='newcontainer3') #works
-    p.copy(sourcefile="./Provider.py", destinationfile="myProvider1")#works
-    #p.delete(source="/ewcontainer4/dummy.txt")#works-deleting directory
-    p.delete(source="a2.txt")  # works deleting files
-    p.list(source='/a', dir_only=False, recursive=False)#works
-    #p.search(directory="/", filename="a.txt")#works
-    p.search(directory="/a", filename="a.txt",recursive=True)#works
-    p.get(source='a.txt', destination="seema.txt", recursive=False)#works
+    #p.create_dir(directory='newcontainer5') #works
+    #p.copy(sourcefile="./Provider.py", destinationfile="myProvider2")#works
+    #p.delete(source="/newcontainer4/dummy.txt")#works-deleting directory
+    #p.delete(source="/a1.txt")  # works deleting files
+    #p.list(source='/a', dir_only=False, recursive=False)#works
+    #p.search(directory="/a", filename="a3.txt",recursive=True)#works
+    #p.get(source='a.txt', destination="seema.txt", recursive=False)#works
     p.run()
