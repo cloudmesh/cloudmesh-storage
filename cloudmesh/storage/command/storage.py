@@ -268,10 +268,6 @@ class StorageCommand(PluginCommand):
             if scloud == "aws" or scloud == "google":
                 provider = Provider(service=scloud, parallelism=parallelism)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
-            elif (scloud == "local" and tcloud == "aws") or (
-                scloud == "local" and tcloud == "google"):
-                provider = Provider(service=tcloud, parallelism=parallelism)
-                provider.copy(scloud, tcloud, sbucket, tbucket)
             else:
                 provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(arguments['--source'], arguments['--target'],
