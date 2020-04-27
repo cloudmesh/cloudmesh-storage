@@ -1,8 +1,8 @@
 ###############################################################
-# pytest -v --capture=no tests/parallelawss3/test_storage_parallelawss3.py
-# pytest -v  tests/parallelawss3/test_storage_parallelaws3.py
-# pytest -v --capture=no tests/parallelawss3/test_storage_parallelaws3.py
-# ::TestStorageParallelawss3::<METHIDNAME>
+# pytest -v --capture=no tests/awss3/test_storage_awss3.py
+# pytest -v  tests/awss3/test_storage_awss3.py
+# pytest -v --capture=no tests/awss3/test_storage_awss3.py
+# ::TestStorageAwss3::<METHIDNAME>
 ###############################################################
 import os
 from pprint import pprint
@@ -27,7 +27,7 @@ from cloudmesh.common.util import writefile
 # cms set storage=parallelaws3
 from cloudmesh.common.variables import Variables
 from cloudmesh.configuration.Config import Config
-from cloudmesh.storage.provider.parallelawss3.Provider import Provider
+from cloudmesh.storage.provider.awss3.Provider import Provider
 
 
 # cms set storage=parallelawss3
@@ -50,7 +50,7 @@ print('provider:', provider, provider.kind)
 
 
 @pytest.mark.incremental
-class TestStorageParallelawss3(object):
+class TestStorageAwss3(object):
 
     @staticmethod
     def create_file(location, content):

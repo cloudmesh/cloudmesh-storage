@@ -48,13 +48,13 @@ class StorageCommand(PluginCommand):
              commands used to upload, download, list files on different
              cloud storage services.
 
-             >  storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE]
-             >                                 [--parallel=N]
+            >storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE]
+            >                               [--parallel=N]
                Uploads the file specified in the filename to specified
                cloud from the SOURCEDIR.
 
-             >  storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE]
-             >                                 [--parallel=N]
+            >storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE]
+            >                               [--parallel=N]
                Downloads the file specified in the filename from the
                specified cloud to the DESTDIR.
 
@@ -62,8 +62,8 @@ class StorageCommand(PluginCommand):
                 Deletes the file specified in the filename from the
                 specified cloud.
 
-             storage list [SOURCE] [--recursive] [--parallel=N] [
-             --output=OUTPUT] [--dryrun]
+             >storage list [SOURCE] [--recursive] [--parallel=N]
+             >             [--output=OUTPUT] [--dryrun]
                lists all the files from the container name specified on
                the specified cloud.
 
@@ -71,8 +71,10 @@ class StorageCommand(PluginCommand):
                creates a folder with the directory name specified on the
                specified cloud.
 
-             storage search DIRECTORY FILENAME [--recursive] [
-             --storage=SERVICE] [--parallel=N] [--output=OUTPUT]
+             >storage search DIRECTORY FILENAME [--recursive]
+             >                                  [--storage=SERVICE]
+             >                                  [--parallel=N]
+             >                                  [--output=OUTPUT]
                searches for the source in all the folders on the specified
                cloud.
 
