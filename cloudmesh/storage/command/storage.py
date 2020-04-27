@@ -213,7 +213,7 @@ class StorageCommand(PluginCommand):
                     print(f"Dryrun: list {service}:{entry}")
                 else:
                     provider = Provider(service=service, parallelism=parallelism)
-                    provider.list(name=entry)
+                    provider.list(name=entry, recursive=arguments.recursive)
 
             return ""
 

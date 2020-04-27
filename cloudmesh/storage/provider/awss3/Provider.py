@@ -407,7 +407,7 @@ class Provider(StorageQueue):
                                                  Key=trimmed_src)
         except botocore.exceptions.ClientError as e:
             # object not found
-            Console.error(e)
+            x=1
         files_downloaded = []
 
         is_target_file = os.path.isfile(trimed_dest)
@@ -533,7 +533,8 @@ class Provider(StorageQueue):
                                     # obj.key, trimmedDestination + '/'
                                     # + os.path.basename(obj.key))
                                     obj.key,
-                                    f"{trimed_dest}/folder_path{os.path.basename(obj.key)}")
+                                    f"{trimed_dest}/{folder_path}"
+                                    f"/{os.path.basename(obj.key)}")
 
                                 # make head call since file download
                                 # does not return obj dict to extract meta data
