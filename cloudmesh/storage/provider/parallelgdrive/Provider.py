@@ -477,11 +477,11 @@ if __name__ == "__main__":
     p = Provider(service="parallelgdrive")
     # p.create_dir(directory="gdrive_cloud4") # works
     p.list(source='gdrive_kids', dir_only=False, recursive=False) # works
-    p.search(directory="/", filename="gift_on_sub_dir.docx") # works
-    p.delete(source='gdrive_cloud4', recursive=True) # works.  The other day gave errors, but now works w/o chgs
-    p.search(filename='gifts_at_1st_level.docx', recursive=False) # works
-    p.get(source='C:/Users/sara/new_emp', destination='gift_on_sub_dir.docx', recursive=False) # works
-    # p.get(source='C:/Users/sara/new_emp', destination='sub_gdrive_cloud', recursive=False) # works
-    # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # recursive=True not working
-    p.put(source='C:/Users/sara/gdrive_dir', destination='gdrive_cloud2', recursive=False)  # works for either step, but not both
+    # p.search(directory="/", filename="gift_on_sub_dir.docx") # works
+    # p.delete(source='gdrive_cloud4', recursive=True) # works.  The other day gave errors, but now works w/o chgs
+    # p.search(filename='gifts_at_1st_level.docx', recursive=False) # works
+    # p.get(source='C:/Users/sara/new_emp', destination='gift_on_sub_dir.docx', recursive=False) # works
+    # # p.get(source='C:/Users/sara/new_emp', destination='sub_gdrive_cloud', recursive=False) # works
+    # # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # recursive=True not working
+    # p.put(source='C:/Users/sara/gdrive_dir', destination='gdrive_cloud2', recursive=False)  # works
     p.run()
