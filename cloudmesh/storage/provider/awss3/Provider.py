@@ -675,6 +675,7 @@ class Provider(StorageQueue):
 
         else:
             Console.error("Source not found")
+            return specification
             # self.storage_dict['message'] = 'Source not found'
 
         # self.storage_dict['objlist'] = files_uploaded
@@ -835,6 +836,7 @@ class Provider(StorageQueue):
 if __name__ == "__main__":
     print()
     p = Provider(service="aws")
+    # p.put(source="./Provider.py", destination="myProvider.py")
     # p.create_dir(directory="testdir3")
     # p.create_dir(directory="testdir")
     # p.list(source="/", recursive=True)

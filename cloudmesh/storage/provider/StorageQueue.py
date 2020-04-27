@@ -1,6 +1,7 @@
 import textwrap
 import time
 import uuid
+import os
 from multiprocessing import Pool
 
 import oyaml as yaml
@@ -404,7 +405,7 @@ class StorageQueue(StorageABC):
                 if status != "all":
                     entries = list(filter(lambda entry: entry['status'] ==
                                                         status, entries))
-                # os.system("clear")
+                os.system("clear")
                 self.pretty_print(data=entries, data_type="monitor",
                                   output=output)
                 print("--------------Press Ctrl+C to quit.--------------")
