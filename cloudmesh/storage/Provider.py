@@ -15,7 +15,6 @@ class Provider(StorageABC):
                 "gdrive",
                 "azureblob",
                 "awss3",
-                "parallelawss3",
                 'parallelgdrive',
                 'parallelazureblob',
                 "google",

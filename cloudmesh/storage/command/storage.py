@@ -37,8 +37,8 @@ class StorageCommand(PluginCommand):
              SOURCE        SOURCE can be a directory or file
              DESTINATION   DESTINATION can be a directory or file
              DIRECTORY     DIRECTORY refers to a folder on the cloud service
-             SOURCE:SOURCE_FILE_DIR   source provider name: file or directory name
-             TARGET:SOURCE_FILE_DIR   destination provider name
+             SOURCE:SOURCE_FILE_DIR source provider name: file or directory name
+             TARGET:SOURCE_FILE_DIR destination provider name
 
            Options:
              --storage=SERVICE  specify the cloud service name like aws or
@@ -48,27 +48,33 @@ class StorageCommand(PluginCommand):
              commands used to upload, download, list files on different
              cloud storage services.
 
-             storage put [options..]
+            >storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE]
+            >                               [--parallel=N]
                Uploads the file specified in the filename to specified
                cloud from the SOURCEDIR.
 
-             storage get [options..]
+            >storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE]
+            >                               [--parallel=N]
                Downloads the file specified in the filename from the
                specified cloud to the DESTDIR.
 
-             storage delete [options..]
+             storage delete SOURCE [--parallel=N] [--dryrun]
                 Deletes the file specified in the filename from the
                 specified cloud.
 
-             storage list [options..]
+             >storage list [SOURCE] [--recursive] [--parallel=N]
+             >             [--output=OUTPUT] [--dryrun]
                lists all the files from the container name specified on
                the specified cloud.
 
-             storage create dir [options..]
+             storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N]
                creates a folder with the directory name specified on the
                specified cloud.
 
-             storage search [options..]
+             >storage search DIRECTORY FILENAME [--recursive]
+             >                                  [--storage=SERVICE]
+             >                                  [--parallel=N]
+             >                                  [--output=OUTPUT]
                searches for the source in all the folders on the specified
                cloud.
 
@@ -140,8 +146,7 @@ class StorageCommand(PluginCommand):
                        "storage",
                        "source",
                        "target",
-                       "parallel",
-                       "status")
+                       "parallel")
 
         source = arguments.source
         target = arguments.target
@@ -154,7 +159,7 @@ class StorageCommand(PluginCommand):
 
         if arguments.monitor:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
-            status = arguments.status or "all"
+            status = arguments['--status'] or "all"
             output = arguments['--output'] or "table"
             result = provider.monitor(status=status, output=output)
         elif arguments.run:
@@ -208,7 +213,7 @@ class StorageCommand(PluginCommand):
                     print(f"Dryrun: list {service}:{entry}")
                 else:
                     provider = Provider(service=service, parallelism=parallelism)
-                    provider.list(name=entry)
+                    provider.list(name=entry, recursive=arguments.recursive)
 
             return ""
 
@@ -268,10 +273,6 @@ class StorageCommand(PluginCommand):
             tcloud, tbucket = arguments['--target'].split(":", 1) or None
             if scloud == "aws" or scloud == "google":
                 provider = Provider(service=scloud, parallelism=parallelism)
-                provider.copy(scloud, tcloud, sbucket, tbucket)
-            elif (scloud == "local" and tcloud == "aws") or (
-                scloud == "local" and tcloud == "google"):
-                provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(scloud, tcloud, sbucket, tbucket)
             else:
                 provider = Provider(service=tcloud, parallelism=parallelism)

@@ -207,16 +207,19 @@ class Provider(StorageQueue):
                     fields="nextPageToken, files(id, name, mimeType)").execute()
                 file_parent_id = None
                 print(sourceid)
+                print("len = ", len(sourceid['files']))
                 if len(sourceid['files']) == 0:
-                    parent_file = self.create_dir_helper(directory=destination)
-                    # file_parent_id = parent_file['id']
+                    #parent_file = self.create_dir_helper(directory=destination)
+                    #file_parent_id = parent_file['id']
+                    res = self.upload_file(source=None, filename=source,
+                                           parent_it=None)
                 else:
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
 
-                # res = self.upload_file(source=None, filename=source,
-                #                        parent_it=file_parent_id)
-                # return self.update_dict(res)
+                    res = self.upload_file(source=None, filename=source,
+                                        parent_it=file_parent_id)
+
         specification['status'] = 'completed'
         return specification
 
@@ -360,7 +363,8 @@ class Provider(StorageQueue):
             files.append(file)
             print('Folder ID: %s' % file.get('id'))
             id = file.get('id')
-        return files
+        specification['status'] = 'completed'
+        return specification
 
     def create_dir_helper(self, service=None, directory=None):
         folders, filename = self.cloud_path(directory)
@@ -472,12 +476,12 @@ if __name__ == "__main__":
     print()
     p = Provider(service="parallelgdrive")
     # p.create_dir(directory="gdrive_cloud4") # works
-    # p.list(source='gdrive_kids', dir_only=False, recursive=False) # works
+    p.list(source='gdrive_kids', dir_only=False, recursive=False) # works
     # p.search(directory="/", filename="gift_on_sub_dir.docx") # works
     # p.delete(source='gdrive_cloud4', recursive=True) # works.  The other day gave errors, but now works w/o chgs
     # p.search(filename='gifts_at_1st_level.docx', recursive=False) # works
     # p.get(source='C:/Users/sara/new_emp', destination='gift_on_sub_dir.docx', recursive=False) # works
-    # p.get(source='C:/Users/sara/new_emp', destination='sub_gdrive_cloud', recursive=False) # works
-    # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # recursive=True not working
-    p.put(source='C:/Users/sara/gdrive_dir', destination='gdrive_cloud2', recursive=False)  # works for either step, but not both
+    # # p.get(source='C:/Users/sara/new_emp', destination='sub_gdrive_cloud', recursive=False) # works
+    # # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # recursive=True not working
+    # p.put(source='C:/Users/sara/gdrive_dir', destination='gdrive_cloud2', recursive=False)  # works
     p.run()
