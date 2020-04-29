@@ -28,7 +28,6 @@ class StorageCommand(PluginCommand):
              storage sync SOURCE DESTINATION [--name=NAME] [--async] [--storage=SERVICE]
              storage sync status [--name=NAME] [--storage=SERVICE]
              storage config list [--output=OUTPUT]
-             storage [--parallel=N] copy SOURCE DESTINATION [--recursive]
              storage copy --source=SOURCE:SOURCE_FILE_DIR --target=TARGET:TARGET_FILE_DIR
 
            This command does some useful things.
@@ -120,9 +119,8 @@ class StorageCommand(PluginCommand):
                     Command deletes the file or directory from the SOURCE
                     provider's SOURCE_FILE_DIR location
 
-           Examples:
-           >     cms storage_service copy --source=local:test1.txt
-           >                              --target=aws:uploadtest1.txt
+            Examples:
+                cms storage_service copy --source=local:test1.txt --target=aws:uploadtest1.txt
                 cms storage_service list --source=google:test
                 cms storage_service delete --source=aws:uploadtest1.txt
 
@@ -213,7 +211,7 @@ class StorageCommand(PluginCommand):
                     print(f"Dryrun: list {service}:{entry}")
                 else:
                     provider = Provider(service=service, parallelism=parallelism)
-                    provider.list(name=entry, recursive=arguments.recursive)
+                    provider.list(source=entry, recursive=arguments.recursive)
 
             return ""
 
@@ -248,7 +246,7 @@ class StorageCommand(PluginCommand):
                         print(f"Dryrun: delete {service}:{entry}")
                     else:
                         provider = Provider(service=service, parallelism=parallelism)
-                        provider.delete(name=entry)
+                        provider.delete(source=entry)
 
             else:
                 Console.error("Deletion canceled")
@@ -269,14 +267,15 @@ class StorageCommand(PluginCommand):
             raise NotImplementedError
 
         elif arguments.copy:
-            scloud, sbucket = arguments['--source'].split(":", 1) or None
-            tcloud, tbucket = arguments['--target'].split(":", 1) or None
-            if scloud == "aws" or scloud == "google":
-                provider = Provider(service=scloud, parallelism=parallelism)
-                provider.copy(scloud, tcloud, sbucket, tbucket)
+            scloud, sfileDir = source.split(":", 1) or None
+            tcloud, tfileDir = target.split(":", 1) or None
+            print(f" Copying from Source {scloud} : {sfileDir} to Target  {tcloud} : {tfileDir}")
+
+            cloudName = ["aws","google"]
+            if scloud in cloudName:
+                provider = Provider(service=scloud,parallelism=parallelism)
+                provider.copyFiles(scloud, sfileDir, tcloud, tfileDir)
             else:
-                provider = Provider(service=tcloud, parallelism=parallelism)
-                provider.copy(arguments['--source'], arguments['--target'],
-                              arguments.recursive)
+                print("Not Implemented")
 
         return ""

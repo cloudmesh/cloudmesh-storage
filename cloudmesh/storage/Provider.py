@@ -4,7 +4,7 @@ from pprint import pprint
 from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.console import Console
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-
+from cloudmesh.configuration.Config import Config
 
 class Provider(StorageABC):
 
@@ -15,6 +15,7 @@ class Provider(StorageABC):
                 "gdrive",
                 "azureblob",
                 "awss3",
+                "parallelawss3",
                 'parallelgdrive',
                 'parallelazureblob',
                 "google",
@@ -57,6 +58,7 @@ class Provider(StorageABC):
     def __init__(self, service=None, parallelism=4):
 
         super(Provider, self).__init__(service=service)
+        self.config = Config()
         P = Provider.get_provider(self.kind)
         self.provider = P(service=service, parallelism=parallelism)
         if self.provider is None:
@@ -134,9 +136,9 @@ class Provider(StorageABC):
         return d
 
     @DatabaseUpdate()
-    def list(self, name=None, dir_only=False, recursive=False):
+    def list(self, source=None, dir_only=False, recursive=False):
 
-        d = self.provider.list(source=name, dir_only=dir_only,
+        d = self.provider.list(source=source, dir_only=dir_only,
                                recursive=recursive)
         return d
 
@@ -291,3 +293,8 @@ class Provider(StorageABC):
                     except Exception as e:
                         Console.error(f"{source_obj} could not be deleted from "
                                       f"local storage.")
+
+    def copyFiles(self, source_cloud ,source_file, target_cloud, target_file):
+        from cloudmesh.storage.copy.Provider import Provider as CopyProvider
+        result = CopyProvider.copy(self, source_cloud , source_file, target_cloud, target_file)
+        return result
