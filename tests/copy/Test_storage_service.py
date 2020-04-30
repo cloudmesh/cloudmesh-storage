@@ -20,7 +20,7 @@ class TestStorageService():
         sourcecloud = "aws"
         targetcloud = "google"
         sourceFile = "uploadtest1.txt"
-        targetFile = "testAwsToGoogle4.txt"
+        targetFile = "uploadtest_awsgoogle.txt"
 
         Benchmark.Start("AWS_TO_GOOGLE")
         awsProvider = Provider(service=sourcecloud)
@@ -34,8 +34,8 @@ class TestStorageService():
         HEADING()
         sourcecloud = "google"
         targetcloud = "aws"
-        sourceFile = "uploadtogoogle1.txt"
-        targetFile = "testGoogleToAws_1.txt"
+        sourceFile = "uploadtest_awsgoogle.txt"
+        targetFile = "uploadtest_googeaws.txt"
 
         Benchmark.Start("GOOGLE_TO_AWS1")
         awsProvider = Provider(service=sourcecloud)
@@ -64,7 +64,7 @@ class TestStorageService():
         sourcecloud = "google"
         targetcloud = "aws"
         sourceFile = "a1/testfolder/"
-        targetFile = "a1/testfolder3/"
+        targetFile = "a1/testfolder_1/"
 
         Benchmark.Start("GOOGLE_TO_AWS3")
         awsProvider = Provider(service=sourcecloud)
