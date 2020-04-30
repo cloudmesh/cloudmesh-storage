@@ -44,8 +44,12 @@ class Provider(object):
             #
 
             try:
-                _local = f"{self.local_dir}/{source}"
+                _local = f'{self.local_dir}/{source}'
+                _local = _local.replace("\\","/")
+
                 self.provider_source.get(source=source, destination=_local)
+                if (source_cloud in "aws"):
+                    status = self.provider_source.run()
                 status = "Download Successful"
 
             except Exception as e:
@@ -57,7 +61,10 @@ class Provider(object):
             #
             if status is not None:
                 try:
+
                     result = self.provider_target.put(source=_local, destination=target)
+                    if (target_cloud in "aws"):
+                        status = self.provider_target.run()
                     status = "Success"
 
                 except Exception as e:

@@ -1,230 +1,1296 @@
-#
-# Results are outdated
-#
-
-
 ============================= test session starts =============================
-platform win32 -- Python 3.7.4, pytest-5.3.1, py-1.8.0, pluggy-0.13.1 -- c:\users\pratibha\documents\e516\env3\scripts\python.exe
+platform win32 -- Python 3.8.2, pytest-5.4.1, py-1.8.1, pluggy-0.13.1 -- c:\users\pratibha\env3\scripts\python.exe
 cachedir: .pytest_cache
-rootdir: C:\Users\Pratibha\documents\e516\cm\cloudmesh-storage_service
-collecting ... collected 13 items
+rootdir: C:\Users\Pratibha\cm\cloudmesh-storage, inifile: pytest.ini
+plugins: cov-2.8.1
+collecting ... collected 5 items
 
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_listaws [s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='test1.txt'),
- s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='test1/'),
- s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='test1/testAwsToLocal.txt'),
- s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testFol/testAwsToLocal.txt'),
- s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testFol/testAwsToLocal1.txt'),
- s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testFol/testUpload.txt'),
- s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testFol/testUpload1.txt'),
- s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testLocalToAws.txt'),
- s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='testfoltestLocalToAws1.txt'),
- s3.ObjectSummary(bucket_name='awss3-pratibha-1', key='uploadtest1.txt')]
-'test1'
-{'action': 'list',
- 'objlist': [{'contentLength': '16',
-              'fileName': 'test1.txt',
-              'lastModificationDate': 'Wed, 20 Nov 2019 04:13:05 GMT'},
-             {'contentLength': '16',
-              'fileName': 'test1/testAwsToLocal.txt',
-              'lastModificationDate': 'Fri, 13 Dec 2019 04:38:04 GMT'}],
- 'recursive': True,
- 'source': 'test1'}
-[{'cm': {'cloud': 'aws', 'kind': 'storage', 'name': 'test1.txt'},
-  'contentLength': '16',
-  'fileName': 'test1.txt',
-  'lastModificationDate': 'Wed, 20 Nov 2019 04:13:05 GMT'},
- {'cm': {'cloud': 'aws', 'kind': 'storage', 'name': 'test1/testAwsToLocal.txt'},
-  'contentLength': '16',
-  'fileName': 'test1/testAwsToLocal.txt',
-  'lastModificationDate': 'Fri, 13 Dec 2019 04:38:04 GMT'}]
+tests/copy/Test_storage_service.py::TestStorageService::test_awstogoogle
+[35m
+# ######################################################################
+# test_awstogoogle \tests\copy\Test_storage_service.py 17
+# ######################################################################
+[0m
+source : uploadtest1.txt, destination= C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 14:55:30.892508',
+#         'id': 'a286a348-8af2-11ea-9219-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 14:55:43.757354',
+#         'name': 'upload1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/73ba2f2e-9a20-4e77-aedd-acb2493e300c/upload1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/73ba2f2e-9a20-4e77-aedd-acb2493e300c/upload1.txt',
+#  'recursive': False,
+#  'source': 'upload1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'list',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 14:59:06.057225',
+#         'id': '22c5a807-8af3-11ea-8279-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:01:27.942369',
+#         'name': 'test',
+#         'number': 0},
+#  'dir_only': False,
+#  'path': 'test',
+#  'recursive': False,
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:01:07.454850',
+#         'id': '6b089a8b-8af3-11ea-86a3-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:01:20.050940',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/81736fd9-8f14-4515-93cf-7d91b0258340/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/81736fd9-8f14-4515-93cf-7d91b0258340/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:12:37.122028',
+#         'id': '06305555-8af5-11ea-a4ca-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:12:49.538260',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/f4edb0fc-aeac-4768-a413-6b8d8d9ddad6/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/f4edb0fc-aeac-4768-a413-6b8d8d9ddad6/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:14:19.000378',
+#         'id': '42e900e0-8af5-11ea-82f9-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:14:31.868874',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/14d5822c-6910-4cb2-a4ee-e1f98797367a/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/14d5822c-6910-4cb2-a4ee-e1f98797367a/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:17:57.707215',
+#         'id': 'c541cc3e-8af5-11ea-9f2b-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:18:11.082361',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/c7199177-62c2-484b-8084-fb0f951e6590/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/c7199177-62c2-484b-8084-fb0f951e6590/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:19:54.250090',
+#         'id': '0ab18497-8af6-11ea-871b-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:20:07.261543',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/f6ec5864-aa3d-44ac-b617-8b1d7ee1de0c/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/f6ec5864-aa3d-44ac-b617-8b1d7ee1de0c/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:24:03.335175',
+#         'id': '9f362866-8af6-11ea-92f2-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:24:16.514320',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/fbd9250c-9724-4184-82cf-1e19660f0b24/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/fbd9250c-9724-4184-82cf-1e19660f0b24/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:26:05.301609',
+#         'id': 'e7e5cdb1-8af6-11ea-9f91-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:26:24.322492',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/dc563135-cf77-40bf-8657-0af75ce0b5c3/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/dc563135-cf77-40bf-8657-0af75ce0b5c3/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:32:34.440334',
+#         'id': 'cfd7cfd0-8af7-11ea-a649-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:32:44.125940',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/de3fae35-bdcb-46ca-8c87-8986f07fe1d0/uploadtogoogle1.txt:testGoogleToAws_1.txt',
+#         'number': 0},
+#  'destination': 'testGoogleToAws_1.txt',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/de3fae35-bdcb-46ca-8c87-8986f07fe1d0/uploadtogoogle1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:36:19.880674',
+#         'id': '5637274d-8af8-11ea-b88d-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:36:29.142742',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/45d62fca-8990-4e87-a420-6f02318c47c1/a1/:a2/',
+#         'number': 0},
+#  'destination': 'a2/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/45d62fca-8990-4e87-a420-6f02318c47c1/a1/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:39:31.101170',
+#         'id': 'c8373548-8af8-11ea-97aa-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:39:40.392367',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/a74f778a-131f-4b9f-a047-977b58f2a18f/a1/testfolder/:a1/testfolder3/',
+#         'number': 0},
+#  'destination': 'a1/testfolder3/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/a74f778a-131f-4b9f-a047-977b58f2a18f/a1/testfolder/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:45:35.773605',
+#         'id': 'a1870486-8af9-11ea-b235-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:45:36.460130',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
+Bucket:  <Bucket: gcp_516>
+Source:  C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt
+Destination:  testAwsToGoogle4.txt
+File C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt uploaded to testAwsToGoogle4.txt.
 PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_listgoogle 'Listing from source - a1'
-['Name: a1/ , Created: 18-Dec-2019 01:29:11',
- 'Name: a1/test1.txt , Created: 18-Dec-2019 01:29:43']
-'Listing contents from bucket - gcp_516'
-['Name: a1/ , Created: 18-Dec-2019 01:29:11',
- 'Name: a1/test1.txt , Created: 18-Dec-2019 01:29:43',
- 'Name: test1.txt , Created: 11-Dec-2019 04:37:43',
- 'Name: test1Copy.txt , Created: 18-Dec-2019 21:55:44',
- 'Name: testAwsToGoogle.txt , Created: 18-Dec-2019 21:55:41',
- 'Name: text1copy.txt , Created: 18-Dec-2019 21:55:42',
- 'Name: uploadtest1.txt , Created: 16-Dec-2019 01:34:06']
-PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_localtoaws_dir localawsuploadtesttestFol1/
-uploadtest
-uploadtest
-not absolute
-C:\Users\Pratibha\.cloudmesh\download
-'C:/Users/Pratibha/.cloudmesh/download/uploadtest'
-{'action': 'put',
- 'destination': 'testFol1/',
- 'recursive': True,
- 'source': 'C:/Users/Pratibha/.cloudmesh/download/uploadtest'}
-{'action': 'put',
- 'destination': 'testFol1/',
- 'message': 'Source uploaded',
- 'objlist': [{'contentLength': '16',
-              'fileName': 'testFol1/testAwsToLocal.txt',
-              'lastModificationDate': 'Thu, 19 Dec 2019 04:59:10 GMT'},
-             {'contentLength': '16',
-              'fileName': 'testFol1/testAwsToLocal1.txt',
-              'lastModificationDate': 'Thu, 19 Dec 2019 04:59:10 GMT'},
-             {'contentLength': '16',
-              'fileName': 'testFol1/testUpload.txt',
-              'lastModificationDate': 'Thu, 19 Dec 2019 04:59:10 GMT'},
-             {'contentLength': '16',
-              'fileName': 'testFol1/testUpload1.txt',
-              'lastModificationDate': 'Thu, 19 Dec 2019 04:59:10 GMT'}],
- 'recursive': True,
- 'source': 'C:/Users/Pratibha/.cloudmesh/download/uploadtest'}
-[32mFile copied from local to aws[0m
-PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_awstolocal_dir localawstestFol1/uploadtest
-testFol1/
-testFol1
-not absolute
-C:\Users\Pratibha\.cloudmesh\download
-'C:/Users/Pratibha/.cloudmesh/download/testFol1'
-{'action': 'put',
- 'destination': 'uploadtest',
- 'recursive': True,
- 'source': 'C:/Users/Pratibha/.cloudmesh/download/testFol1'}
-{'action': 'put',
- 'destination': 'uploadtest',
- 'message': 'Source not found',
- 'objlist': [],
- 'recursive': True,
- 'source': 'C:/Users/Pratibha/.cloudmesh/download/testFol1'}
-[32mFile copied from local to aws[0m
-PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_AwsToLocal awslocaltest1.txttestAwsToLocal.txt
-testAwsToLocal.txt
-not absolute
-C:\Users\Pratibha\.cloudmesh\download
-'C:/Users/Pratibha/.cloudmesh/download/testAwsToLocal.txt'
+tests/copy/Test_storage_service.py::TestStorageService::test_googletoaws
+[35m
+# ######################################################################
+# test_googletoaws \tests\copy\Test_storage_service.py 33
+# ######################################################################
+[0m
+source : uploadtogoogle1.txt, destination= C:/Users/Pratibha/.cloudmesh/storage/tmp/6cbff3fe-818a-43d6-84b0-75aeefd7f8ec/uploadtogoogle1.txt
 {'action': 'get',
- 'destination': 'C:/Users/Pratibha/.cloudmesh/download/testAwsToLocal.txt',
- 'message': 'Source downloaded',
- 'objlist': [{'contentLength': '16',
-              'fileName': 'test1.txt',
-              'lastModificationDate': 'Wed, 20 Nov 2019 04:13:05 GMT'}],
- 'recursive': True,
- 'source': 'test1.txt'}
-[32mFile copied from aws to local[0m
+ 'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/6cbff3fe-818a-43d6-84b0-75aeefd7f8ec/uploadtogoogle1.txt',
+ 'message': 'Source Downloaded',
+ 'objectlist': ['uploadtogoogle1.txt'],
+ 'source': 'uploadtogoogle1.txt'}
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 14:55:30.892508',
+#         'id': 'a286a348-8af2-11ea-9219-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 14:55:43.757354',
+#         'name': 'upload1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/73ba2f2e-9a20-4e77-aedd-acb2493e300c/upload1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/73ba2f2e-9a20-4e77-aedd-acb2493e300c/upload1.txt',
+#  'recursive': False,
+#  'source': 'upload1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'list',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 14:59:06.057225',
+#         'id': '22c5a807-8af3-11ea-8279-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:01:27.942369',
+#         'name': 'test',
+#         'number': 0},
+#  'dir_only': False,
+#  'path': 'test',
+#  'recursive': False,
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:01:07.454850',
+#         'id': '6b089a8b-8af3-11ea-86a3-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:01:20.050940',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/81736fd9-8f14-4515-93cf-7d91b0258340/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/81736fd9-8f14-4515-93cf-7d91b0258340/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:12:37.122028',
+#         'id': '06305555-8af5-11ea-a4ca-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:12:49.538260',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/f4edb0fc-aeac-4768-a413-6b8d8d9ddad6/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/f4edb0fc-aeac-4768-a413-6b8d8d9ddad6/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:14:19.000378',
+#         'id': '42e900e0-8af5-11ea-82f9-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:14:31.868874',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/14d5822c-6910-4cb2-a4ee-e1f98797367a/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/14d5822c-6910-4cb2-a4ee-e1f98797367a/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:17:57.707215',
+#         'id': 'c541cc3e-8af5-11ea-9f2b-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:18:11.082361',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/c7199177-62c2-484b-8084-fb0f951e6590/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/c7199177-62c2-484b-8084-fb0f951e6590/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:19:54.250090',
+#         'id': '0ab18497-8af6-11ea-871b-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:20:07.261543',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/f6ec5864-aa3d-44ac-b617-8b1d7ee1de0c/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/f6ec5864-aa3d-44ac-b617-8b1d7ee1de0c/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:24:03.335175',
+#         'id': '9f362866-8af6-11ea-92f2-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:24:16.514320',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/fbd9250c-9724-4184-82cf-1e19660f0b24/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/fbd9250c-9724-4184-82cf-1e19660f0b24/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:26:05.301609',
+#         'id': 'e7e5cdb1-8af6-11ea-9f91-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:26:24.322492',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/dc563135-cf77-40bf-8657-0af75ce0b5c3/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/dc563135-cf77-40bf-8657-0af75ce0b5c3/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:32:34.440334',
+#         'id': 'cfd7cfd0-8af7-11ea-a649-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:32:44.125940',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/de3fae35-bdcb-46ca-8c87-8986f07fe1d0/uploadtogoogle1.txt:testGoogleToAws_1.txt',
+#         'number': 0},
+#  'destination': 'testGoogleToAws_1.txt',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/de3fae35-bdcb-46ca-8c87-8986f07fe1d0/uploadtogoogle1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:36:19.880674',
+#         'id': '5637274d-8af8-11ea-b88d-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:36:29.142742',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/45d62fca-8990-4e87-a420-6f02318c47c1/a1/:a2/',
+#         'number': 0},
+#  'destination': 'a2/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/45d62fca-8990-4e87-a420-6f02318c47c1/a1/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:39:31.101170',
+#         'id': 'c8373548-8af8-11ea-97aa-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:39:40.392367',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/a74f778a-131f-4b9f-a047-977b58f2a18f/a1/testfolder/:a1/testfolder3/',
+#         'number': 0},
+#  'destination': 'a1/testfolder3/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/a74f778a-131f-4b9f-a047-977b58f2a18f/a1/testfolder/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:45:35.773605',
+#         'id': 'a1870486-8af9-11ea-b235-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:45:49.816791',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:45:53.759121',
+#         'id': 'ac5597c5-8af9-11ea-82e9-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:45:54.405020',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/6cbff3fe-818a-43d6-84b0-75aeefd7f8ec/uploadtogoogle1.txt:testGoogleToAws_1.txt',
+#         'number': 0},
+#  'destination': 'testGoogleToAws_1.txt',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/6cbff3fe-818a-43d6-84b0-75aeefd7f8ec/uploadtogoogle1.txt',
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
 PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_localtoaws localawstest1.txttestLocalToAws.txt
-test1.txt
-test1.txt
-not absolute
-C:\Users\Pratibha\.cloudmesh\download
-'C:/Users/Pratibha/.cloudmesh/download/test1.txt'
-{'action': 'put',
- 'destination': 'testLocalToAws.txt',
- 'recursive': True,
- 'source': 'C:/Users/Pratibha/.cloudmesh/download/test1.txt'}
-{'action': 'put',
- 'destination': 'testLocalToAws.txt',
- 'message': 'Source uploaded',
- 'objlist': [{'contentLength': '16',
-              'fileName': 'testLocalToAws.txt',
-              'lastModificationDate': 'Thu, 19 Dec 2019 04:59:13 GMT'}],
- 'recursive': True,
- 'source': 'C:/Users/Pratibha/.cloudmesh/download/test1.txt'}
-[32mFile copied from local to aws[0m
-PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_awstogoogle awsgoogletest1.txttestAwsToGoogle.txt
-C:\Users\Pratibha\.cloudmesh\download
-absolute
-WindowsPath('C:/Users/Pratibha/.cloudmesh/download')
-source_file=test1.txt Target= C:\Users\Pratibha\.cloudmesh\download/test1.txt
+tests/copy/Test_storage_service.py::TestStorageService::test_googletoawsDir
+[35m
+# ######################################################################
+# test_googletoawsDir \tests\copy\Test_storage_service.py 47
+# ######################################################################
+[0m
+source : a1/, destination= C:/Users/Pratibha/.cloudmesh/storage/tmp/b34434e7-bcb5-4fd4-b722-ac732f84dc9e/a1/
 {'action': 'get',
- 'destination': 'C:\\Users\\Pratibha\\.cloudmesh\\download/test1.txt',
- 'message': 'Source downloaded',
- 'objlist': [{'contentLength': '16',
-              'fileName': 'test1.txt',
-              'lastModificationDate': 'Wed, 20 Nov 2019 04:13:05 GMT'}],
- 'recursive': True,
- 'source': 'test1.txt'}
-[32mFile copied from aws to google[0m
+ 'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/b34434e7-bcb5-4fd4-b722-ac732f84dc9e/a1/',
+ 'message': 'Source Downloaded',
+ 'objectlist': ['a1/', 'a1/test1.txt'],
+ 'source': 'a1/'}
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 14:55:30.892508',
+#         'id': 'a286a348-8af2-11ea-9219-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 14:55:43.757354',
+#         'name': 'upload1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/73ba2f2e-9a20-4e77-aedd-acb2493e300c/upload1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/73ba2f2e-9a20-4e77-aedd-acb2493e300c/upload1.txt',
+#  'recursive': False,
+#  'source': 'upload1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'list',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 14:59:06.057225',
+#         'id': '22c5a807-8af3-11ea-8279-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:01:27.942369',
+#         'name': 'test',
+#         'number': 0},
+#  'dir_only': False,
+#  'path': 'test',
+#  'recursive': False,
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:01:07.454850',
+#         'id': '6b089a8b-8af3-11ea-86a3-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:01:20.050940',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/81736fd9-8f14-4515-93cf-7d91b0258340/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/81736fd9-8f14-4515-93cf-7d91b0258340/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:12:37.122028',
+#         'id': '06305555-8af5-11ea-a4ca-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:12:49.538260',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/f4edb0fc-aeac-4768-a413-6b8d8d9ddad6/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/f4edb0fc-aeac-4768-a413-6b8d8d9ddad6/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:14:19.000378',
+#         'id': '42e900e0-8af5-11ea-82f9-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:14:31.868874',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/14d5822c-6910-4cb2-a4ee-e1f98797367a/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/14d5822c-6910-4cb2-a4ee-e1f98797367a/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:17:57.707215',
+#         'id': 'c541cc3e-8af5-11ea-9f2b-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:18:11.082361',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/c7199177-62c2-484b-8084-fb0f951e6590/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/c7199177-62c2-484b-8084-fb0f951e6590/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:19:54.250090',
+#         'id': '0ab18497-8af6-11ea-871b-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:20:07.261543',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/f6ec5864-aa3d-44ac-b617-8b1d7ee1de0c/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/f6ec5864-aa3d-44ac-b617-8b1d7ee1de0c/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:24:03.335175',
+#         'id': '9f362866-8af6-11ea-92f2-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:24:16.514320',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/fbd9250c-9724-4184-82cf-1e19660f0b24/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/fbd9250c-9724-4184-82cf-1e19660f0b24/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:26:05.301609',
+#         'id': 'e7e5cdb1-8af6-11ea-9f91-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:26:24.322492',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/dc563135-cf77-40bf-8657-0af75ce0b5c3/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/dc563135-cf77-40bf-8657-0af75ce0b5c3/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:32:34.440334',
+#         'id': 'cfd7cfd0-8af7-11ea-a649-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:32:44.125940',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/de3fae35-bdcb-46ca-8c87-8986f07fe1d0/uploadtogoogle1.txt:testGoogleToAws_1.txt',
+#         'number': 0},
+#  'destination': 'testGoogleToAws_1.txt',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/de3fae35-bdcb-46ca-8c87-8986f07fe1d0/uploadtogoogle1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:36:19.880674',
+#         'id': '5637274d-8af8-11ea-b88d-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:36:29.142742',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/45d62fca-8990-4e87-a420-6f02318c47c1/a1/:a2/',
+#         'number': 0},
+#  'destination': 'a2/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/45d62fca-8990-4e87-a420-6f02318c47c1/a1/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:39:31.101170',
+#         'id': 'c8373548-8af8-11ea-97aa-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:39:40.392367',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/a74f778a-131f-4b9f-a047-977b58f2a18f/a1/testfolder/:a1/testfolder3/',
+#         'number': 0},
+#  'destination': 'a1/testfolder3/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/a74f778a-131f-4b9f-a047-977b58f2a18f/a1/testfolder/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:45:35.773605',
+#         'id': 'a1870486-8af9-11ea-b235-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:45:49.816791',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:45:53.759121',
+#         'id': 'ac5597c5-8af9-11ea-82e9-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:46:06.768405',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/6cbff3fe-818a-43d6-84b0-75aeefd7f8ec/uploadtogoogle1.txt:testGoogleToAws_1.txt',
+#         'number': 0},
+#  'destination': 'testGoogleToAws_1.txt',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/6cbff3fe-818a-43d6-84b0-75aeefd7f8ec/uploadtogoogle1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:46:10.336929',
+#         'id': 'b636c1b6-8af9-11ea-a785-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:46:10.987606',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/b34434e7-bcb5-4fd4-b722-ac732f84dc9e/a1/:a2/',
+#         'number': 0},
+#  'destination': 'a2/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/b34434e7-bcb5-4fd4-b722-ac732f84dc9e/a1/',
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
 PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_googletolocal ('test1.txt', 'testGoogleToLocal.txt')
-[32mFile copied from test1.txt to C:/Users/Pratibha/.cloudmesh/download/testGoogleToLocal.txt[0m
-PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_localtogoogle ('test1.txt', 'text1copy.txt')
-Copying file from Local to Google
-[32mFile copied from test1.txt to text1copy.txt[0m
-PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_googletoaws awsgoogletest1.txttest1Copy.txt
-C:\Users\Pratibha\.cloudmesh\download
-absolute
-WindowsPath('C:/Users/Pratibha/.cloudmesh/download')
-source_file=test1.txt Target= C:\Users\Pratibha\.cloudmesh\download/test1.txt
+tests/copy/Test_storage_service.py::TestStorageService::test_googletoawsDir2
+[35m
+# ######################################################################
+# test_googletoawsDir2 \tests\copy\Test_storage_service.py 61
+# ######################################################################
+[0m
+source : a1/testfolder/, destination= C:/Users/Pratibha/.cloudmesh/storage/tmp/7130e747-7cbe-454f-bd56-d4f86f38829d/a1/testfolder/
 {'action': 'get',
- 'destination': 'C:\\Users\\Pratibha\\.cloudmesh\\download/test1.txt',
- 'message': 'Source downloaded',
- 'objlist': [{'contentLength': '16',
-              'fileName': 'test1.txt',
-              'lastModificationDate': 'Wed, 20 Nov 2019 04:13:05 GMT'}],
- 'recursive': True,
- 'source': 'test1.txt'}
-[32mFile copied from aws to google[0m
+ 'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/7130e747-7cbe-454f-bd56-d4f86f38829d/a1/testfolder/',
+ 'message': 'Source Downloaded',
+ 'objectlist': ['a1/testfolder/', 'a1/testfolder/testAwsToLocal.txt'],
+ 'source': 'a1/testfolder/'}
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 14:55:30.892508',
+#         'id': 'a286a348-8af2-11ea-9219-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 14:55:43.757354',
+#         'name': 'upload1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/73ba2f2e-9a20-4e77-aedd-acb2493e300c/upload1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/73ba2f2e-9a20-4e77-aedd-acb2493e300c/upload1.txt',
+#  'recursive': False,
+#  'source': 'upload1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'list',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 14:59:06.057225',
+#         'id': '22c5a807-8af3-11ea-8279-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:01:27.942369',
+#         'name': 'test',
+#         'number': 0},
+#  'dir_only': False,
+#  'path': 'test',
+#  'recursive': False,
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:01:07.454850',
+#         'id': '6b089a8b-8af3-11ea-86a3-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:01:20.050940',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/81736fd9-8f14-4515-93cf-7d91b0258340/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/81736fd9-8f14-4515-93cf-7d91b0258340/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:12:37.122028',
+#         'id': '06305555-8af5-11ea-a4ca-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:12:49.538260',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/f4edb0fc-aeac-4768-a413-6b8d8d9ddad6/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/f4edb0fc-aeac-4768-a413-6b8d8d9ddad6/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:14:19.000378',
+#         'id': '42e900e0-8af5-11ea-82f9-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:14:31.868874',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/14d5822c-6910-4cb2-a4ee-e1f98797367a/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/14d5822c-6910-4cb2-a4ee-e1f98797367a/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:17:57.707215',
+#         'id': 'c541cc3e-8af5-11ea-9f2b-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:18:11.082361',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/c7199177-62c2-484b-8084-fb0f951e6590/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/c7199177-62c2-484b-8084-fb0f951e6590/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:19:54.250090',
+#         'id': '0ab18497-8af6-11ea-871b-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:20:07.261543',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/f6ec5864-aa3d-44ac-b617-8b1d7ee1de0c/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/f6ec5864-aa3d-44ac-b617-8b1d7ee1de0c/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:24:03.335175',
+#         'id': '9f362866-8af6-11ea-92f2-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:24:16.514320',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/fbd9250c-9724-4184-82cf-1e19660f0b24/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/fbd9250c-9724-4184-82cf-1e19660f0b24/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:26:05.301609',
+#         'id': 'e7e5cdb1-8af6-11ea-9f91-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:26:24.322492',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/dc563135-cf77-40bf-8657-0af75ce0b5c3/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/dc563135-cf77-40bf-8657-0af75ce0b5c3/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:32:34.440334',
+#         'id': 'cfd7cfd0-8af7-11ea-a649-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:32:44.125940',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/de3fae35-bdcb-46ca-8c87-8986f07fe1d0/uploadtogoogle1.txt:testGoogleToAws_1.txt',
+#         'number': 0},
+#  'destination': 'testGoogleToAws_1.txt',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/de3fae35-bdcb-46ca-8c87-8986f07fe1d0/uploadtogoogle1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:36:19.880674',
+#         'id': '5637274d-8af8-11ea-b88d-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:36:29.142742',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/45d62fca-8990-4e87-a420-6f02318c47c1/a1/:a2/',
+#         'number': 0},
+#  'destination': 'a2/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/45d62fca-8990-4e87-a420-6f02318c47c1/a1/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:39:31.101170',
+#         'id': 'c8373548-8af8-11ea-97aa-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:39:40.392367',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/a74f778a-131f-4b9f-a047-977b58f2a18f/a1/testfolder/:a1/testfolder3/',
+#         'number': 0},
+#  'destination': 'a1/testfolder3/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/a74f778a-131f-4b9f-a047-977b58f2a18f/a1/testfolder/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:45:35.773605',
+#         'id': 'a1870486-8af9-11ea-b235-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:45:49.816791',
+#         'name': 'uploadtest1.txt:C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt',
+#         'number': 0},
+#  'destination': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/e62b53c7-5443-4a4c-99b8-12ed4141fbf3/uploadtest1.txt',
+#  'recursive': False,
+#  'source': 'uploadtest1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:45:53.759121',
+#         'id': 'ac5597c5-8af9-11ea-82e9-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:46:06.768405',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/6cbff3fe-818a-43d6-84b0-75aeefd7f8ec/uploadtogoogle1.txt:testGoogleToAws_1.txt',
+#         'number': 0},
+#  'destination': 'testGoogleToAws_1.txt',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/6cbff3fe-818a-43d6-84b0-75aeefd7f8ec/uploadtogoogle1.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:46:10.336929',
+#         'id': 'b636c1b6-8af9-11ea-a785-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:46:22.644895',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/b34434e7-bcb5-4fd4-b722-ac732f84dc9e/a1/:a2/',
+#         'number': 0},
+#  'destination': 'a2/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/b34434e7-bcb5-4fd4-b722-ac732f84dc9e/a1/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 333:get_actions .\cloudmesh\storage\provider\StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-04-30 15:46:25.241592',
+#         'id': 'bf194117-8af9-11ea-a90f-68f728d306f4',
+#         'kind': 'storage',
+#         'modified': '2020-04-30 15:46:25.873288',
+#         'name': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/7130e747-7cbe-454f-bd56-d4f86f38829d/a1/testfolder/:a1/testfolder3/',
+#         'number': 0},
+#  'destination': 'a1/testfolder3/',
+#  'recursive': False,
+#  'source': 'C:/Users/Pratibha/.cloudmesh/storage/tmp/7130e747-7cbe-454f-bd56-d4f86f38829d/a1/testfolder/',
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
 PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_deletegoogle [32mtext1copy.txt has been deleted from Google - gcp_516[0m
-'a1/'
-'a1/test1.txt'
-'test1.txt'
-'test1Copy.txt'
-'testAwsToGoogle.txt'
-'uploadtest1.txt'
-PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_deleteaws {'action': 'delete',
- 'message': 'Source Not Found',
- 'objlist': [],
- 'recursive': True,
- 'source': 'testLocalToAws.txt.txt'}
-[]
-PASSED
-cloudmesh/storage_service/test/Test_storage_service.py::TestStorageService::test_results 
-+-------------------+-----------------------------------------------------------------------------------+
-| Machine Attribute | Value                                                                             |
-+-------------------+-----------------------------------------------------------------------------------+
-| cpu_count         | 4                                                                                 |
-| mac_version       |                                                                                   |
-| machine           | ('AMD64',)                                                                        |
-| mem_available     | 3.4 GiB                                                                           |
-| mem_free          | 3.4 GiB                                                                           |
-| mem_percent       | 56.8%                                                                             |
-| mem_total         | 7.9 GiB                                                                           |
-| mem_used          | 4.5 GiB                                                                           |
-| node              | ('PratiSree',)                                                                    |
-| platform          | Windows-10-10.0.18362-SP0                                                         |
-| processor         | ('Intel64 Family 6 Model 69 Stepping 1, GenuineIntel',)                           |
-| processors        | Windows                                                                           |
-| python            | 3.7.4 (tags/v3.7.4:e09359112e, Jul  8 2019, 20:34:20) [MSC v.1916 64 bit (AMD64)] |
-| release           | ('10',)                                                                           |
-| sys               | win32                                                                             |
-| system            | Windows                                                                           |
-| user              |                                                                                   |
-| version           | 10.0.18362                                                                        |
-| win_version       | ('10', '10.0.18362', 'SP0', '')                                                   |
-+-------------------+-----------------------------------------------------------------------------------+
-+------------------+-------+---------------------+-----+----------------+------+---------+-------------+---------------------------------+
-| timer            | time  | start               | tag | node           | user | system  | mac_version | win_version                     |
-+------------------+-------+---------------------+-----+----------------+------+---------+-------------+---------------------------------+
-| LIST AWS         | 2.735 | 2019-12-19 04:59:05 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| LIST GOOGLE      | 0.475 | 2019-12-19 04:59:08 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| LOCAL_TO_AWS_DIR | 1.238 | 2019-12-19 04:59:08 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| AWS_TO_LOCAL_DIR | 0.694 | 2019-12-19 04:59:10 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| AWS_TO_LOCAL     | 1.582 | 2019-12-19 04:59:10 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| LOCAL_TO_AWS     | 0.819 | 2019-12-19 04:59:12 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| AWS_TO_GOOGLE    | 3.069 | 2019-12-19 04:59:13 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| GOOGLE_TO_LOCAL  | 0.667 | 2019-12-19 04:59:16 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| LOCAL_TO_GOOGLE  | 0.588 | 2019-12-19 04:59:16 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| GOOGLE_TO_AWS    | 2.16  | 2019-12-19 04:59:17 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| DELETE GOOGLE    | 0.544 | 2019-12-19 04:59:19 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-| DELETE AWS       | 1.338 | 2019-12-19 04:59:20 |     | ('PratiSree',) |      | Windows |             | ('10', '10.0.18362', 'SP0', '') |
-+------------------+-------+---------------------+-----+----------------+------+---------+-------------+---------------------------------+
+tests/copy/Test_storage_service.py::TestStorageService::test_benchmark
+
++-------------------------------------------+----------+--------+---------------------+-------+-----------+----------+---------+---------------------------------+
+| Name                                      | Status   |   Time | Start               | tag   | Node      | User     | OS      | Version                         |
+|-------------------------------------------+----------+--------+---------------------+-------+-----------+----------+---------+---------------------------------|
+| Test_storage_service/test_awstogoogle     | ok       | 18.656 | 2020-04-30 15:45:32 | copy  | PratiSree | Pratibha | Windows | ('10', '10.0.18362', 'SP0', '') |
+| Test_storage_service/test_googletoaws     | ok       | 15.487 | 2020-04-30 15:45:51 | copy  | PratiSree | Pratibha | Windows | ('10', '10.0.18362', 'SP0', '') |
+| Test_storage_service/test_googletoawsDir  | ok       | 15.99  | 2020-04-30 15:46:07 | copy  | PratiSree | Pratibha | Windows | ('10', '10.0.18362', 'SP0', '') |
+| Test_storage_service/test_googletoawsDir2 | ok       | 15.411 | 2020-04-30 15:46:23 | copy  | PratiSree | Pratibha | Windows | ('10', '10.0.18362', 'SP0', '') |
++-------------------------------------------+----------+--------+---------------------+-------+-----------+----------+---------+---------------------------------+
+
+# csv,timer,status,time,start,tag,uname.node,user,uname.system,platform.version
+# csv,Test_storage_service/test_awstogoogle,ok,18.656,2020-04-30 15:45:32,copy,PratiSree,Pratibha,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,Test_storage_service/test_googletoaws,ok,15.487,2020-04-30 15:45:51,copy,PratiSree,Pratibha,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,Test_storage_service/test_googletoawsDir,ok,15.99,2020-04-30 15:46:07,copy,PratiSree,Pratibha,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,Test_storage_service/test_googletoawsDir2,ok,15.411,2020-04-30 15:46:23,copy,PratiSree,Pratibha,Windows,('10', '10.0.18362', 'SP0', '')
 
 PASSED
 
-============================= 13 passed in 20.40s =============================
+======================== 5 passed in 71.12s (0:01:11) =========================

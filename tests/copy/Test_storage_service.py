@@ -3,7 +3,7 @@ from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.Provider import Provider
 from cloudmesh.common.util import HEADING
 
-service = "aws-google"
+service = "copy"
 
 
 class TestStorageService():
@@ -20,7 +20,7 @@ class TestStorageService():
         sourcecloud = "aws"
         targetcloud = "google"
         sourceFile = "uploadtest1.txt"
-        targetFile = "testAwsToGoogle3.txt"
+        targetFile = "testAwsToGoogle4.txt"
 
         Benchmark.Start("AWS_TO_GOOGLE")
         awsProvider = Provider(service=sourcecloud)
@@ -32,16 +32,15 @@ class TestStorageService():
 
     def test_googletoaws(self):
         HEADING()
-
         sourcecloud = "google"
         targetcloud = "aws"
-        sourceFile = "uploadtest1.txt"
-        targetFile = "testGoogleToAws1.txt"
+        sourceFile = "uploadtogoogle1.txt"
+        targetFile = "testGoogleToAws_1.txt"
 
         Benchmark.Start("GOOGLE_TO_AWS1")
         awsProvider = Provider(service=sourcecloud)
         testResult = awsProvider.copyFiles(
-          source_cloud=sourcecloud, source_file=sourceFile, target_cloud=targetcloud, target_file=targetFile )
+            source_cloud=sourcecloud, source_file=sourceFile, target_cloud=targetcloud, target_file=targetFile)
 
         Benchmark.Stop()
 
@@ -56,7 +55,7 @@ class TestStorageService():
         Benchmark.Start("GOOGLE_TO_AWS2")
         awsProvider = Provider(service=sourcecloud)
         testResult = awsProvider.copyFiles(
-            source_cloud=sourcecloud, source_file=sourceFile, target_cloud=targetcloud, target_file=targetFile )
+            source_cloud=sourcecloud, source_file=sourceFile, target_cloud=targetcloud, target_file=targetFile)
         Benchmark.Stop()
 
     def test_googletoawsDir2(self):
@@ -65,12 +64,12 @@ class TestStorageService():
         sourcecloud = "google"
         targetcloud = "aws"
         sourceFile = "a1/testfolder/"
-        targetFile = "a1/testfolder2/"
+        targetFile = "a1/testfolder3/"
 
         Benchmark.Start("GOOGLE_TO_AWS3")
         awsProvider = Provider(service=sourcecloud)
         testResult = awsProvider.copyFiles(
-            source_cloud=sourcecloud, source_file=sourceFile, target_cloud=targetcloud, target_file=targetFile )
+            source_cloud=sourcecloud, source_file=sourceFile, target_cloud=targetcloud, target_file=targetFile)
         Benchmark.Stop()
 
     def test_benchmark(self):
