@@ -154,7 +154,7 @@ class Provider(StorageQueue):
                 f"{file_path}/", metadata)
             )
         else:
-            Console.error('Directory already present')
+            Console.warning('Directory already present')
 
         specification['status'] = 'completed'
         return specification
@@ -297,8 +297,8 @@ class Provider(StorageQueue):
                                                  Key=trimmed_source)
         except botocore.exceptions.ClientError as e:
             # object not found
-            # Console.error(e)
-            # Console.error(e)
+            # Console.warning(e)
+            # Console.warning(e)
             x = 1
 
         if file_obj:
@@ -449,7 +449,7 @@ class Provider(StorageQueue):
                 self.storage_dict['message'] = 'Source downloaded'
             except FileNotFoundError as e:
                 self.storage_dict['message'] = 'Destination not found'
-                Console.error(e)
+                Console.warning(e)
 
         else:
             # Search for a directory
@@ -487,7 +487,7 @@ class Provider(StorageQueue):
                             except FileNotFoundError as e:
                                 self.storage_dict[
                                     'message'] = 'Destination not found'
-                                Console.error(e)
+                                Console.warning(e)
 
             elif total_all_objs > 0 and recursive is True:
                 files_downloaded = []
@@ -512,7 +512,7 @@ class Provider(StorageQueue):
                                     extract_file_dict(obj.key, metadata))
 
                             except FileNotFoundError as e:
-                                Console.error(e)
+                                Console.warning(e)
                         else:
 
                             folder_path = massage_path(
@@ -525,7 +525,7 @@ class Provider(StorageQueue):
                                 Console.msg()
                             except FileExistsError as e:
                                 os.chmod(dest_path, stat.S_IRWXO)
-                                Console.error(e)
+                                Console.warning(e)
 
                             try:
                                 blob = self.s3_resource.Bucket(
@@ -544,7 +544,7 @@ class Provider(StorageQueue):
                                     extract_file_dict(obj.key, metadata))
 
                             except FileNotFoundError as e:
-                                Console.error(e)
+                                Console.warning(e)
 
         specification['status'] = 'completed'
 
@@ -675,7 +675,7 @@ class Provider(StorageQueue):
             # self.storage_dict['message'] = 'Source uploaded'
 
         else:
-            Console.error("Source not found")
+            Console.warning("Source not found")
             return specification
             # self.storage_dict['message'] = 'Source not found'
 
@@ -738,7 +738,7 @@ class Provider(StorageQueue):
                     info_list.append(info)
 
         if len(info_list) == 0:
-            Console.error("File not found")
+            Console.warning("File not found")
         else:
             Console.msg("File found")
 
@@ -827,10 +827,10 @@ class Provider(StorageQueue):
             error_code = int(e.response['Error']['Code'])
 
             if error_code == 403:
-                Console.error(f"Bucket {name} is private. Access forbidden!")
+                Console.warning(f"Bucket {name} is private. Access forbidden!")
                 return True
             elif error_code == 404:
-                Console.error(f"Bucket {name} does not exist")
+                Console.warning(f"Bucket {name} does not exist")
                 return False
 
 

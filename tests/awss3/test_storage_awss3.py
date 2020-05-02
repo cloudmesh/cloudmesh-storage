@@ -4,8 +4,10 @@
 # pytest -v --capture=no tests/awss3/test_storage_awss3.py
 # ::TestStorageAwss3::<METHIDNAME>
 ###############################################################
+# cms set storage=parallelaws3
 import os
 from pprint import pprint
+
 import pytest
 from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.common.Shell import Shell
@@ -14,25 +16,13 @@ from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
-
-# print("this seems to be the same as in test_05_storage")
-#
-# print("I sugget to delete all tests that are covered "
-#       "by 05 and only include tests here that are unique")
-#
-# print("we exist now to makes this gets your attention")
-#
-# sys.exit()
-
-# cms set storage=parallelaws3
 from cloudmesh.common.variables import Variables
-from cloudmesh.configuration.Config import Config
 from cloudmesh.storage.provider.awss3.Provider import Provider
-
-
-# cms set storage=parallelawss3
+from cloudmesh.configuration.Config import Config
 
 Benchmark.debug()
+
+# cms set storage=parallelawss3
 
 user = Config()["cloudmesh.profile.user"]
 variables = Variables()
@@ -59,13 +49,13 @@ class TestStorageAwss3(object):
 
     def test_create_local_source(self):
         HEADING()
-        StopWatch.start("create source")
+        Benchmark.Start()
         self.sourcedir = path_expand("~/.cloudmesh/storage/test/")
         self.create_file("~/.cloudmesh/storage/test/a/a.txt", "content of a")
         self.create_file("~/.cloudmesh/storage/test/a/b/b.txt", "content of b")
         self.create_file(
             "~/.cloudmesh/storage/test/a/b/c/c.txt", "content of c")
-        StopWatch.stop("create source")
+        Benchmark.Stop()
 
         # test if the files are ok
         assert True
@@ -84,9 +74,9 @@ class TestStorageAwss3(object):
 
         src = "~/.cloudmesh/storage/test/"
         dst = '/'
-        StopWatch.start("put")
+        Benchmark.Start()
         test_file = provider.put(src, dst)
-        StopWatch.stop("put")
+        Benchmark.Stop()
 
         pprint(test_file)
 
@@ -106,21 +96,26 @@ class TestStorageAwss3(object):
 
         src = "~/.cloudmesh/storage/test/"
         dst = '/'
-        StopWatch.start("put")
+        Benchmark.Start()
+
         test_file = provider.put(src, dst, True)
-        StopWatch.stop("put")
+        #TODO provider.run() for each test case
+        Benchmark.Stop()
+
 
         pprint(test_file)
 
         assert test_file is not None
 
+    #TODO queue multiple commands and run together test case
+
     def test_get(self):
         HEADING()
         src = "/a.txt"
         dst = "~/.cloudmesh/storage/test"
-        StopWatch.start("get")
+        Benchmark.Start()
         file = provider.get(src, dst)
-        StopWatch.stop("get")
+        Benchmark.Stop()
         pprint(file)
 
         assert file is not None
@@ -128,9 +123,9 @@ class TestStorageAwss3(object):
     def test_list(self):
         HEADING()
         src = '/'
-        StopWatch.start("list")
+        Benchmark.Start()
         contents = provider.list(src)
-        StopWatch.stop("list")
+        Benchmark.Stop()
         for c in contents:
             pprint(c)
 
@@ -140,9 +135,9 @@ class TestStorageAwss3(object):
         HEADING()
         src = '/'
         dir = "a"
-        StopWatch.start("list")
+        Benchmark.Start()
         contents = provider.list(src, dir, True)
-        StopWatch.stop("list")
+        Benchmark.Stop()
         for c in contents:
             pprint(c)
 
@@ -152,9 +147,9 @@ class TestStorageAwss3(object):
         HEADING()
         src = '/'
         filename = "a.txt"
-        StopWatch.start("search")
+        Benchmark.Start()
         search_files = provider.search(src, filename, True)
-        StopWatch.stop("search")
+        Benchmark.Stop()
         pprint(search_files)
         assert len(search_files) > 0
         # assert filename in search_files[0]['cm']["name"]
@@ -162,9 +157,9 @@ class TestStorageAwss3(object):
     def test_create_dir(self):
         HEADING()
         src = 'created_dir'
-        StopWatch.start("create dir")
+        Benchmark.Start()
         directory = provider.create_dir(src)
-        StopWatch.stop("create dir")
+        Benchmark.Stop()
 
         pprint(directory)
 
@@ -173,6 +168,9 @@ class TestStorageAwss3(object):
     def test_delete(self):
         HEADING()
         src = '/created_dir'
-        StopWatch.start("delete")
+        Benchmark.Start()
         provider.delete(src)
-        StopWatch.stop("delete")
+        Benchmark.Stop()
+
+    def test_benchmark(self):
+        Benchmark.print(sysinfo=True, csv=True, tag=service)
