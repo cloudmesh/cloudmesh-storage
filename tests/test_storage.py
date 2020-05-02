@@ -1,8 +1,8 @@
 ###############################################################
-# pytest -v --capture=no tests/awss3/test_storage_awss3.py
-# pytest -v  tests/awss3/test_storage_awss3.py
-# pytest -v --capture=no tests/awss3/test_storage_awss3.py
-# ::TestStorageAwss3::<METHIDNAME>
+# pytest -v --capture=no tests/test_storage.py
+# pytest -v  tests/test_storage.py
+# pytest -v --capture=no tests/test_storage.py
+# ::TestStorage::<METHIDNAME>
 ###############################################################
 import os
 from pprint import pprint
@@ -38,7 +38,7 @@ print('provider:', provider, provider.kind)
 
 
 @pytest.mark.incremental
-class TestStorageAwss3(object):
+class TestStorage(object):
 
     @staticmethod
     def create_file(location, content):
