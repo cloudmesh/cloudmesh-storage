@@ -363,13 +363,10 @@ class StorageQueue(StorageABC):
         delete_action, cancel_action, search_action = self.get_actions()
 
         pool = Pool(self.parallelism)
-        # cancel the actions
+        # CANCEL ACTIONS
         pool.map(self.action, cancel_action)
 
-        # delete files/directories
-        pool.map(self.action, delete_action)
-
-        # create directories
+        # CREATE DIRECTORIES
         pool.map(self.action, mkdir_action)
 
         # COPY FILES
@@ -386,6 +383,9 @@ class StorageQueue(StorageABC):
 
         # SEARCH FILES
         pool.map(self.action, search_action)
+
+        # DELETE FILES/DIRECTORIES
+        pool.map(self.action, delete_action)
 
         # Worker processes within a Pool typically live for the complete \
         # duration of the Pool’s work queue.

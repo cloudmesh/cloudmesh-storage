@@ -11,7 +11,6 @@ from pprint import pprint
 import pytest
 from cloudmesh.common.Benchmark import Benchmark
 from cloudmesh.common.Shell import Shell
-from cloudmesh.common.StopWatch import StopWatch
 from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
@@ -76,6 +75,7 @@ class TestStorageAwss3(object):
         dst = '/'
         Benchmark.Start()
         test_file = provider.put(src, dst)
+        provider.run()
         Benchmark.Stop()
 
         pprint(test_file)
@@ -99,15 +99,11 @@ class TestStorageAwss3(object):
         Benchmark.Start()
 
         test_file = provider.put(src, dst, True)
-        #TODO provider.run() for each test case
+        provider.run()
         Benchmark.Stop()
-
-
         pprint(test_file)
 
         assert test_file is not None
-
-    #TODO queue multiple commands and run together test case
 
     def test_get(self):
         HEADING()
@@ -115,6 +111,19 @@ class TestStorageAwss3(object):
         dst = "~/.cloudmesh/storage/test"
         Benchmark.Start()
         file = provider.get(src, dst)
+        provider.run()
+        Benchmark.Stop()
+        pprint(file)
+
+        assert file is not None
+
+    def test_get_recursive(self):
+        HEADING()
+        src = "/a"
+        dst = "~/.cloudmesh/storage/test"
+        Benchmark.Start()
+        file = provider.get(src, dst, True)
+        provider.run()
         Benchmark.Stop()
         pprint(file)
 
@@ -125,18 +134,20 @@ class TestStorageAwss3(object):
         src = '/'
         Benchmark.Start()
         contents = provider.list(src)
+        provider.run()
         Benchmark.Stop()
         for c in contents:
             pprint(c)
 
         assert len(contents) > 0
 
-    def test_list_dir_only(self):
+    def test_list_recursive(self):
         HEADING()
         src = '/'
         dir = "a"
         Benchmark.Start()
         contents = provider.list(src, dir, True)
+        provider.run()
         Benchmark.Stop()
         for c in contents:
             pprint(c)
@@ -149,16 +160,17 @@ class TestStorageAwss3(object):
         filename = "a.txt"
         Benchmark.Start()
         search_files = provider.search(src, filename, True)
+        provider.run()
         Benchmark.Stop()
         pprint(search_files)
         assert len(search_files) > 0
-        # assert filename in search_files[0]['cm']["name"]
 
     def test_create_dir(self):
         HEADING()
         src = 'created_dir'
         Benchmark.Start()
         directory = provider.create_dir(src)
+        provider.run()
         Benchmark.Stop()
 
         pprint(directory)
@@ -170,6 +182,20 @@ class TestStorageAwss3(object):
         src = '/created_dir'
         Benchmark.Start()
         provider.delete(src)
+        provider.run()
+        Benchmark.Stop()
+
+    # queue multiple commands and run together test case
+    def test_multiple_run(self):
+        HEADING()
+        src = '/created_dir'
+        Benchmark.Start()
+        provider.create_dir(src)
+        src1 = "~/.cloudmesh/storage/test/"
+        dst1 = '/'
+        provider.put(src1, dst1)
+        provider.delete(src)
+        provider.run()
         Benchmark.Stop()
 
     def test_benchmark(self):
