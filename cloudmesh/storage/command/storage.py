@@ -48,6 +48,15 @@ class StorageCommand(PluginCommand):
              commands used to upload, download, list files on different
              cloud storage services.
 
+             storage run
+                Execute the actions in database that are in waiting status.
+
+           > storage monitor [--storage=SERVICE]
+           >                 [--status=all | --status=STATUS]
+           >                 [--output=output]
+           >                 [--clear]
+                Monitor the actions in database and refresh every 5 seconds.
+
            > storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE]
            >                               [--parallel=N]
                Uploads the file specified in the filename to specified
@@ -121,20 +130,35 @@ class StorageCommand(PluginCommand):
                     provider's SOURCE_FILE_DIR location
 
            Examples:
-           >     cms storage_service copy --source=local:test1.txt
+           >     cms storage copy --source=local:test1.txt
            >                              --target=aws:uploadtest1.txt
-                cms storage_service list --source=google:test
-                cms storage_service delete --source=aws:uploadtest1.txt
 
+                cms storage create dir testawsdir
+
+                cms storage put test_file1.txt aws_test_file1.txt
+                cms storage put ./recur_dir recur_dir_aws/ --recursive
+                cms storage put ./recur_dir recur_dir_aws/
+
+                cms storage get aws_test_file1.txt aws_file1.txt
+                cms storage get recur_dir_aws from_aws_dir
+                cms storage get recur_dir_aws from_aws_dir --recursive
+
+                cms storage list
+                cms storage list --recursive
+                cms storage list aws:recur_dir_aws --recursively
+
+                cms storage delete aws:aws_test_file1.txt
+
+                cms storage search recur_dir_aws recur_file1.txt
 
            Example:
-              set storage=azureblob
+              set storage=aws
               storage put SOURCE DESTINATION --recursive
 
               is the same as
-              storage --storage=azureblob put SOURCE DESTINATION --recursive
+              storage --storage=aws put SOURCE DESTINATION --recursive
 
-              storage copy azure:source.txt oracle:target.txt
+              storage copy aws:source.txt oracle:target.txt
 
         """
         # arguments.CONTAINER = arguments["--container"]
