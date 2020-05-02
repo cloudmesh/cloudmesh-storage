@@ -4,7 +4,6 @@
 # pytest -v --capture=no tests/awss3/test_storage_awss3.py
 # ::TestStorageAwss3::<METHIDNAME>
 ###############################################################
-# cms set storage=parallelaws3
 import os
 from pprint import pprint
 
@@ -21,7 +20,7 @@ from cloudmesh.configuration.Config import Config
 
 Benchmark.debug()
 
-# cms set storage=parallelawss3
+# cms set storage=aws
 
 user = Config()["cloudmesh.profile.user"]
 variables = Variables()
@@ -117,17 +116,20 @@ class TestStorageAwss3(object):
 
         assert file is not None
 
-    def test_get_recursive(self):
-        HEADING()
-        src = "/a"
-        dst = "~/.cloudmesh/storage/test"
-        Benchmark.Start()
-        file = provider.get(src, dst, True)
-        provider.run()
-        Benchmark.Stop()
-        pprint(file)
-
-        assert file is not None
+    # Clear everything in database and your cloud
+    # Clear ~/.cloudmesh/storage/test directory
+    # Then uncomment this code to test it
+    # def test_get_recursive(self):
+    #     HEADING()
+    #     src = "/a"
+    #     dst = "~/.cloudmesh/storage/test"
+    #     Benchmark.Start()
+    #     file = provider.get(src, dst, True)
+    #     provider.run()
+    #     Benchmark.Stop()
+    #     pprint(file)
+    #
+    #     assert file is not None
 
     def test_list(self):
         HEADING()
@@ -191,9 +193,8 @@ class TestStorageAwss3(object):
         src = '/created_dir'
         Benchmark.Start()
         provider.create_dir(src)
-        src1 = "~/.cloudmesh/storage/test/"
-        dst1 = '/'
-        provider.put(src1, dst1)
+        src1 = '/'
+        provider.list(src1)
         provider.delete(src)
         provider.run()
         Benchmark.Stop()
