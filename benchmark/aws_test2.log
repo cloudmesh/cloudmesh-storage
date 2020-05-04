@@ -1,0 +1,230 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.8.1, pytest-5.3.5, py-1.8.1, pluggy-0.13.1 -- /Users/shihuijiang/ENV3/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/shihuijiang/Desktop/cm/cloudmesh-storage, inifile: pytest.ini
+plugins: cov-2.8.1
+collecting ... [34m
+# ----------------------------------------------------------------------
+# variables.dict()
+# ----------------------------------------------------------------------
+# 29:<module> ./tests/awss3/test_storage_awss3.py
+# ----------------------------------------------------------------------
+# {'debug': 'True',
+#  'storage': 'aws',
+#  'timer': 'False',
+#  'trace': 'True',
+#  'verbose': '10'}
+# ----------------------------------------------------------------------
+[0m
+Test run for aws
+provider: <cloudmesh.storage.provider.awss3.Provider.Provider object at 0x10a1044c0> awss3
+collected 10 items
+
+tests/awss3/test_storage_awss3.py::TestStorageAwss3::test_create_local_source 
+[35m
+# ######################################################################
+# test_create_local_source /tests/awss3/test_storage_awss3.py 50
+# ######################################################################
+[0m
+PASSED
+tests/awss3/test_storage_awss3.py::TestStorageAwss3::test_put 
+[35m
+# ######################################################################
+# test_put /tests/awss3/test_storage_awss3.py 63
+# ######################################################################
+[0m
+[{'action': 'put',
+  'cm': {'cloud': 'aws',
+         'collection': 'aws-storage',
+         'created': datetime.datetime(2020, 5, 2, 3, 6, 2, 452331),
+         'id': 'db045112-8c21-11ea-b62f-acde48001122',
+         'kind': 'storage',
+         'modified': '2020-05-02 03:06:02.487952',
+         'name': '~/.cloudmesh/storage/test/:/',
+         'number': 0},
+  'destination': '/',
+  'recursive': False,
+  'source': '~/.cloudmesh/storage/test/',
+  'status': 'waiting'}]
+PASSED
+tests/awss3/test_storage_awss3.py::TestStorageAwss3::test_put_recursive 
+[35m
+# ######################################################################
+# test_put_recursive /tests/awss3/test_storage_awss3.py 85
+# ######################################################################
+[0m
+[{'action': 'put',
+  'cm': {'cloud': 'aws',
+         'collection': 'aws-storage',
+         'created': datetime.datetime(2020, 5, 2, 3, 6, 2, 500883),
+         'id': 'db0bb718-8c21-11ea-b62f-acde48001122',
+         'kind': 'storage',
+         'modified': '2020-05-02 03:06:02.845306',
+         'name': '~/.cloudmesh/storage/test/:/',
+         'number': 1},
+  'destination': '/',
+  'recursive': True,
+  'source': '~/.cloudmesh/storage/test/',
+  'status': 'waiting'}]
+PASSED
+tests/awss3/test_storage_awss3.py::TestStorageAwss3::test_get 
+[35m
+# ######################################################################
+# test_get /tests/awss3/test_storage_awss3.py 112
+# ######################################################################
+[0m
+[{'action': 'get',
+  'cm': {'cloud': 'aws',
+         'collection': 'aws-storage',
+         'created': datetime.datetime(2020, 5, 2, 3, 6, 2, 855893),
+         'id': 'db41e2ac-8c21-11ea-b62f-acde48001122',
+         'kind': 'storage',
+         'modified': '2020-05-02 03:06:03.356314',
+         'name': '/a.txt:~/.cloudmesh/storage/test',
+         'number': 2},
+  'destination': '~/.cloudmesh/storage/test',
+  'recursive': False,
+  'source': '/a.txt',
+  'status': 'waiting'}]
+PASSED
+tests/awss3/test_storage_awss3.py::TestStorageAwss3::test_list 
+[35m
+# ######################################################################
+# test_list /tests/awss3/test_storage_awss3.py 123
+# ######################################################################
+[0m
+{'action': 'list',
+ 'cm': {'cloud': 'aws',
+        'collection': 'aws-storage',
+        'created': datetime.datetime(2020, 5, 2, 3, 6, 3, 367989),
+        'id': 'db90066c-8c21-11ea-b62f-acde48001122',
+        'kind': 'storage',
+        'modified': '2020-05-02 03:06:03.868501',
+        'name': '/',
+        'number': 3},
+ 'dir_only': False,
+ 'path': '/',
+ 'recursive': False,
+ 'status': 'waiting'}
+PASSED
+tests/awss3/test_storage_awss3.py::TestStorageAwss3::test_list_dir_only 
+[35m
+# ######################################################################
+# test_list_dir_only /tests/awss3/test_storage_awss3.py 134
+# ######################################################################
+[0m
+{'action': 'list',
+ 'cm': {'cloud': 'aws',
+        'collection': 'aws-storage',
+        'created': datetime.datetime(2020, 5, 2, 3, 6, 3, 880815),
+        'id': 'dbde46ba-8c21-11ea-b62f-acde48001122',
+        'kind': 'storage',
+        'modified': '2020-05-02 03:06:04.375060',
+        'name': '/',
+        'number': 4},
+ 'dir_only': 'a',
+ 'path': '/',
+ 'recursive': True,
+ 'status': 'waiting'}
+PASSED
+tests/awss3/test_storage_awss3.py::TestStorageAwss3::test_search 
+[35m
+# ######################################################################
+# test_search /tests/awss3/test_storage_awss3.py 146
+# ######################################################################
+[0m
+[{'action': 'search',
+  'cm': {'cloud': 'aws',
+         'collection': 'aws-storage',
+         'created': datetime.datetime(2020, 5, 2, 3, 6, 4, 387187),
+         'id': 'dc2b8aec-8c21-11ea-b62f-acde48001122',
+         'kind': 'storage',
+         'modified': '2020-05-02 03:06:04.878963',
+         'name': '/:a.txt',
+         'number': 5},
+  'filename': 'a.txt',
+  'path': '/',
+  'recursive': True,
+  'status': 'waiting'}]
+PASSED
+tests/awss3/test_storage_awss3.py::TestStorageAwss3::test_create_dir 
+[35m
+# ######################################################################
+# test_create_dir /tests/awss3/test_storage_awss3.py 157
+# ######################################################################
+[0m
+[{'action': 'mkdir',
+  'cm': {'cloud': 'aws',
+         'collection': 'aws-storage',
+         'created': datetime.datetime(2020, 5, 2, 3, 6, 4, 889764),
+         'id': 'dc783ab8-8c21-11ea-b62f-acde48001122',
+         'kind': 'storage',
+         'modified': '2020-05-02 03:06:05.389830',
+         'name': 'created_dir',
+         'number': 6},
+  'path': 'created_dir',
+  'status': 'waiting'}]
+PASSED
+tests/awss3/test_storage_awss3.py::TestStorageAwss3::test_delete 
+[35m
+# ######################################################################
+# test_delete /tests/awss3/test_storage_awss3.py 168
+# ######################################################################
+[0m
+PASSED
+tests/awss3/test_storage_awss3.py::TestStorageAwss3::test_benchmark 
++------------------+--------------------------------------------------------------------------------------------------+
+| Attribute        | Value                                                                                            |
+|------------------+--------------------------------------------------------------------------------------------------|
+| cpu_count        | 8                                                                                                |
+| mem.active       | 1.8 GiB                                                                                          |
+| mem.available    | 1.8 GiB                                                                                          |
+| mem.free         | 16.0 MiB                                                                                         |
+| mem.inactive     | 1.8 GiB                                                                                          |
+| mem.percent      | 77.3 %                                                                                           |
+| mem.total        | 8.0 GiB                                                                                          |
+| mem.used         | 4.1 GiB                                                                                          |
+| mem.wired        | 2.3 GiB                                                                                          |
+| platform.version | 10.14.1                                                                                          |
+| python           | 3.8.1 (v3.8.1:1b293b6006, Dec 18 2019, 14:08:53)                                                 |
+|                  | [Clang 6.0 (clang-600.0.57)]                                                                     |
+| python.pip       | 20.0.2                                                                                           |
+| python.version   | 3.8.1                                                                                            |
+| sys.platform     | darwin                                                                                           |
+| uname.machine    | x86_64                                                                                           |
+| uname.node       | Shihuis-MBP.attlocal.net                                                                         |
+| uname.processor  | i386                                                                                             |
+| uname.release    | 18.2.0                                                                                           |
+| uname.system     | Darwin                                                                                           |
+| uname.version    | Darwin Kernel Version 18.2.0: Fri Oct  5 19:41:49 PDT 2018; root:xnu-4903.221.2~2/RELEASE_X86_64 |
+| user             | shihuijiang                                                                                      |
++------------------+--------------------------------------------------------------------------------------------------+
+
++---------------------------------------------+----------+--------+---------------------+-------+--------------------------+-------------+--------+-----------+
+| Name                                        | Status   |   Time | Start               | tag   | Node                     | User        | OS     | Version   |
+|---------------------------------------------+----------+--------+---------------------+-------+--------------------------+-------------+--------+-----------|
+| test_storage_awss3/test_create_local_source | ok       |  0.003 | 2020-05-02 03:06:02 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage_awss3/test_put                 | ok       |  0.04  | 2020-05-02 03:06:02 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage_awss3/test_put_recursive       | ok       |  0.348 | 2020-05-02 03:06:02 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage_awss3/test_get                 | ok       |  0.504 | 2020-05-02 03:06:02 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage_awss3/test_list                | ok       |  0.505 | 2020-05-02 03:06:03 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage_awss3/test_list_dir_only       | ok       |  0.498 | 2020-05-02 03:06:03 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage_awss3/test_search              | ok       |  0.495 | 2020-05-02 03:06:04 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage_awss3/test_create_dir          | ok       |  0.504 | 2020-05-02 03:06:04 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage_awss3/test_delete              | ok       |  0.504 | 2020-05-02 03:06:05 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
++---------------------------------------------+----------+--------+---------------------+-------+--------------------------+-------------+--------+-----------+
+
+# csv,timer,status,time,start,tag,uname.node,user,uname.system,platform.version
+# csv,test_storage_awss3/test_create_local_source,ok,0.003,2020-05-02 03:06:02,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage_awss3/test_put,ok,0.04,2020-05-02 03:06:02,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage_awss3/test_put_recursive,ok,0.348,2020-05-02 03:06:02,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage_awss3/test_get,ok,0.504,2020-05-02 03:06:02,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage_awss3/test_list,ok,0.505,2020-05-02 03:06:03,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage_awss3/test_list_dir_only,ok,0.498,2020-05-02 03:06:03,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage_awss3/test_search,ok,0.495,2020-05-02 03:06:04,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage_awss3/test_create_dir,ok,0.504,2020-05-02 03:06:04,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage_awss3/test_delete,ok,0.504,2020-05-02 03:06:05,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+
+PASSED
+
+============================== 10 passed in 4.31s ==============================
