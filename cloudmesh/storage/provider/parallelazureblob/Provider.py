@@ -677,17 +677,17 @@ class Provider(StorageQueue):
             else:
                 # SOURCE is specified with Directory and file
                 if not recursive:
-                    if self.storage_service.exists(self.container, source[1:]):
+                    if self.storage_service.exists(self.container, source[0:]):
                         blob_prop = self.storage_service.get_blob_properties(
-                            self.container, source[1:])
+                            self.container, source[0:])
                         blob_size = self.storage_service.get_blob_properties(
                             self.container,
-                            source[1:]).properties.content_length
+                            source[0:]).properties.content_length
                         obj_list.append(blob_prop)
                     else:
                          Console.error(
                             "File does not exist: {file}".format(
-                                file=source[1:]))
+                                file=source[0:]))
 
                 #else:
                     #return Console.error(
@@ -717,11 +717,12 @@ class Provider(StorageQueue):
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelazureblob")
-    #p.create_dir(directory='newcontainer5') #works
-    #p.copy(sourcefile="./Provider.py", destinationfile="myProvider2")#works
+    #p.create_dir(directory='newcontainer7') #works
+    #p.copy(sourcefile="./Provider.py", destinationfile="myProvider1")#works
     #p.delete(source="/newcontainer4/dummy.txt")#works-deleting directory
-    #p.delete(source="/a1.txt")  # works deleting files
+    #p.delete(source="/a2.txt")  # works deleting files
     #p.list(source='/a', dir_only=False, recursive=False)#works
-    #p.search(directory="/a", filename="a3.txt",recursive=True)#works
+    #p.search(directory= "/", filename="a.txt")#works
     #p.get(source='a.txt', destination="seema.txt", recursive=False)#works
     p.run()
+
