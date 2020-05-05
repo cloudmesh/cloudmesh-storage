@@ -15,7 +15,7 @@ from cloudmesh.common.util import HEADING
 from cloudmesh.common.util import path_expand
 from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
-from cloudmesh.storage.provider.awss3.Provider import Provider
+from cloudmesh.storage.Provider import Provider
 from cloudmesh.configuration.Config import Config
 
 Benchmark.debug()
