@@ -61,7 +61,7 @@ class Provider(StorageABC):
 
     output = {}  # "TODO: missing"
 
-    def __init__(self, service=None):
+    def __init__(self, service=None, parallelism=None):
         super(Provider, self).__init__(service=service)
 
         self.credentials["directory"] = path_expand(
