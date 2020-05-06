@@ -331,7 +331,6 @@ class StorageQueue(StorageABC):
         search_actions = []
 
         for entry in entries:
-            VERBOSE(entry)
             if entry['action'] == 'get' and entry['status'] == 'waiting':
                 get_actions.append(entry)
             elif entry['action'] == 'put' and entry['status'] == 'waiting':

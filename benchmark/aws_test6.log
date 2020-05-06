@@ -1,0 +1,919 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.8.1, pytest-5.3.5, py-1.8.1, pluggy-0.13.1 -- /Users/shihuijiang/ENV3/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/shihuijiang/Desktop/cm/cloudmesh-storage, inifile: pytest.ini
+plugins: cov-2.8.1
+collecting ... [34m
+# ----------------------------------------------------------------------
+# variables.dict()
+# ----------------------------------------------------------------------
+# 27:<module> ./tests/test_storage.py
+# ----------------------------------------------------------------------
+# {'debug': 'True',
+#  'storage': 'aws',
+#  'timer': 'False',
+#  'trace': 'True',
+#  'verbose': '10'}
+# ----------------------------------------------------------------------
+[0m
+Test run for aws
+provider: <cloudmesh.storage.Provider.Provider object at 0x10d2ab6a0> awss3
+collected 11 items
+
+tests/test_storage.py::TestStorage::test_create_local_source 
+[35m
+# ######################################################################
+# test_create_local_source /tests/test_storage.py 48
+# ######################################################################
+[0m
+PASSED
+tests/test_storage.py::TestStorage::test_put 
+[35m
+# ######################################################################
+# test_put /tests/test_storage.py 61
+# ######################################################################
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:51:58.063361',
+#         'id': '92771a5c-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:51:58.529998',
+#         'name': '~/.cloudmesh/storage/test/:/',
+#         'number': 0},
+#  'destination': '/',
+#  'recursive': False,
+#  'source': '~/.cloudmesh/storage/test/',
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
+[{'_id': ObjectId('5eb34d9e5411da61b22a64c7'),
+  'action': 'put',
+  'cm': {'cloud': 'aws',
+         'collection': 'aws-storage',
+         'created': '2020-05-06 23:51:58.063361',
+         'id': '92771a5c-8ff4-11ea-80a9-acde48001122',
+         'kind': 'storage',
+         'modified': '2020-05-06 23:51:58.529998',
+         'name': '~/.cloudmesh/storage/test/:/',
+         'number': 0},
+  'destination': '/',
+  'recursive': False,
+  'source': '~/.cloudmesh/storage/test/',
+  'status': 'waiting'}]
+PASSED
+tests/test_storage.py::TestStorage::test_put_recursive 
+[35m
+# ######################################################################
+# test_put_recursive /tests/test_storage.py 84
+# ######################################################################
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 0, 922000),
+#         'id': '9430a3b8-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:01.065437',
+#         'name': '~/.cloudmesh/storage/test/:/',
+#         'number': 1},
+#  'destination': '/',
+#  'recursive': True,
+#  'source': '~/.cloudmesh/storage/test/',
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
+[{'action': 'put',
+  'cm': {'cloud': 'aws',
+         'collection': 'aws-storage',
+         'created': datetime.datetime(2020, 5, 6, 23, 52, 0, 922908),
+         'id': '9430a3b8-8ff4-11ea-80a9-acde48001122',
+         'kind': 'storage',
+         'modified': '2020-05-06 23:52:01.065437',
+         'name': '~/.cloudmesh/storage/test/:/',
+         'number': 1},
+  'destination': '/',
+  'recursive': True,
+  'source': '~/.cloudmesh/storage/test/',
+  'status': 'waiting'}]
+PASSED
+tests/test_storage.py::TestStorage::test_get 
+[35m
+# ######################################################################
+# test_get /tests/test_storage.py 107
+# ######################################################################
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 0, 922000),
+#         'id': '9430a3b8-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:03.493661',
+#         'name': '~/.cloudmesh/storage/test/:/',
+#         'number': 1},
+#  'destination': '/',
+#  'recursive': True,
+#  'source': '~/.cloudmesh/storage/test/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:03.989257',
+#         'id': '96010020-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:04.101468',
+#         'name': '/a.txt:~/.cloudmesh/storage/test',
+#         'number': 2},
+#  'destination': '~/.cloudmesh/storage/test',
+#  'recursive': False,
+#  'source': '/a.txt',
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
+[{'_id': ObjectId('5eb34da35411da61b22a64ca'),
+  'action': 'get',
+  'cm': {'cloud': 'aws',
+         'collection': 'aws-storage',
+         'created': '2020-05-06 23:52:03.989257',
+         'id': '96010020-8ff4-11ea-80a9-acde48001122',
+         'kind': 'storage',
+         'modified': '2020-05-06 23:52:04.101468',
+         'name': '/a.txt:~/.cloudmesh/storage/test',
+         'number': 2},
+  'destination': '~/.cloudmesh/storage/test',
+  'recursive': False,
+  'source': '/a.txt',
+  'status': 'waiting'}]
+PASSED
+tests/test_storage.py::TestStorage::test_list 
+[35m
+# ######################################################################
+# test_list /tests/test_storage.py 134
+# ######################################################################
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 0, 922000),
+#         'id': '9430a3b8-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:03.493661',
+#         'name': '~/.cloudmesh/storage/test/:/',
+#         'number': 1},
+#  'destination': '/',
+#  'recursive': True,
+#  'source': '~/.cloudmesh/storage/test/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:03.989257',
+#         'id': '96010020-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:05.547566',
+#         'name': '/a.txt:~/.cloudmesh/storage/test',
+#         'number': 2},
+#  'destination': '~/.cloudmesh/storage/test',
+#  'recursive': False,
+#  'source': '/a.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'list',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:06.027996',
+#         'id': '9737f7b4-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:06.127947',
+#         'name': '/',
+#         'number': 3},
+#  'dir_only': False,
+#  'path': '/',
+#  'recursive': False,
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
++----------+------+-------------------------------+
+| FileName | Size | LastModified                  |
++----------+------+-------------------------------+
+| a.txt    | 12   | Wed, 06 May 2020 23:52:03 GMT |
+| b.txt    | 12   | Wed, 06 May 2020 23:52:01 GMT |
+| c.txt    | 12   | Wed, 06 May 2020 23:52:01 GMT |
++----------+------+-------------------------------+
+{'_id': ObjectId('5eb34da65411da61b22a64cc'),
+ 'action': 'list',
+ 'cm': {'cloud': 'aws',
+        'collection': 'aws-storage',
+        'created': '2020-05-06 23:52:06.027996',
+        'id': '9737f7b4-8ff4-11ea-80a9-acde48001122',
+        'kind': 'storage',
+        'modified': '2020-05-06 23:52:06.127947',
+        'name': '/',
+        'number': 3},
+ 'dir_only': False,
+ 'path': '/',
+ 'recursive': False,
+ 'status': 'waiting'}
+PASSED
+tests/test_storage.py::TestStorage::test_list_recursive 
+[35m
+# ######################################################################
+# test_list_recursive /tests/test_storage.py 146
+# ######################################################################
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 0, 922000),
+#         'id': '9430a3b8-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:03.493661',
+#         'name': '~/.cloudmesh/storage/test/:/',
+#         'number': 1},
+#  'destination': '/',
+#  'recursive': True,
+#  'source': '~/.cloudmesh/storage/test/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:03.989257',
+#         'id': '96010020-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:05.547566',
+#         'name': '/a.txt:~/.cloudmesh/storage/test',
+#         'number': 2},
+#  'destination': '~/.cloudmesh/storage/test',
+#  'recursive': False,
+#  'source': '/a.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'list',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 8, 36000),
+#         'id': '986e1302-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:08.166492',
+#         'name': '/',
+#         'number': 4},
+#  'dir_only': 'a',
+#  'path': '/',
+#  'recursive': True,
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
++-------------+------+-------------------------------+
+| FileName    | Size | LastModified                  |
++-------------+------+-------------------------------+
+| a.txt       | 12   | Wed, 06 May 2020 23:52:03 GMT |
+| a/a.txt     | 12   | Wed, 06 May 2020 23:52:03 GMT |
+| a/b/b.txt   | 12   | Wed, 06 May 2020 23:52:03 GMT |
+| a/b/c/c.txt | 12   | Wed, 06 May 2020 23:52:04 GMT |
+| b.txt       | 12   | Wed, 06 May 2020 23:52:01 GMT |
+| c.txt       | 12   | Wed, 06 May 2020 23:52:01 GMT |
++-------------+------+-------------------------------+
+{'action': 'list',
+ 'cm': {'cloud': 'aws',
+        'collection': 'aws-storage',
+        'created': datetime.datetime(2020, 5, 6, 23, 52, 8, 36410),
+        'id': '986e1302-8ff4-11ea-80a9-acde48001122',
+        'kind': 'storage',
+        'modified': '2020-05-06 23:52:08.166492',
+        'name': '/',
+        'number': 4},
+ 'dir_only': 'a',
+ 'path': '/',
+ 'recursive': True,
+ 'status': 'waiting'}
+PASSED
+tests/test_storage.py::TestStorage::test_search 
+[35m
+# ######################################################################
+# test_search /tests/test_storage.py 159
+# ######################################################################
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 0, 922000),
+#         'id': '9430a3b8-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:03.493661',
+#         'name': '~/.cloudmesh/storage/test/:/',
+#         'number': 1},
+#  'destination': '/',
+#  'recursive': True,
+#  'source': '~/.cloudmesh/storage/test/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:03.989257',
+#         'id': '96010020-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:05.547566',
+#         'name': '/a.txt:~/.cloudmesh/storage/test',
+#         'number': 2},
+#  'destination': '~/.cloudmesh/storage/test',
+#  'recursive': False,
+#  'source': '/a.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'list',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 8, 36000),
+#         'id': '986e1302-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:09.594915',
+#         'name': '/',
+#         'number': 4},
+#  'dir_only': 'a',
+#  'path': '/',
+#  'recursive': True,
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'search',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:10.074026',
+#         'id': '99a171e2-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:10.201725',
+#         'name': '/:a.txt',
+#         'number': 5},
+#  'filename': 'a.txt',
+#  'path': '/',
+#  'recursive': True,
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
+File found
++----------+------+-------------------------------+
+| FileName | Size | LastModified                  |
++----------+------+-------------------------------+
+| a.txt    | 12   | Wed, 06 May 2020 23:52:03 GMT |
+| a/a.txt  | 12   | Wed, 06 May 2020 23:52:03 GMT |
++----------+------+-------------------------------+
+[{'_id': ObjectId('5eb34daa5411da61b22a64cf'),
+  'action': 'search',
+  'cm': {'cloud': 'aws',
+         'collection': 'aws-storage',
+         'created': '2020-05-06 23:52:10.074026',
+         'id': '99a171e2-8ff4-11ea-80a9-acde48001122',
+         'kind': 'storage',
+         'modified': '2020-05-06 23:52:10.201725',
+         'name': '/:a.txt',
+         'number': 5},
+  'filename': 'a.txt',
+  'path': '/',
+  'recursive': True,
+  'status': 'waiting'}]
+PASSED
+tests/test_storage.py::TestStorage::test_create_dir 
+[35m
+# ######################################################################
+# test_create_dir /tests/test_storage.py 170
+# ######################################################################
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 0, 922000),
+#         'id': '9430a3b8-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:03.493661',
+#         'name': '~/.cloudmesh/storage/test/:/',
+#         'number': 1},
+#  'destination': '/',
+#  'recursive': True,
+#  'source': '~/.cloudmesh/storage/test/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:03.989257',
+#         'id': '96010020-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:05.547566',
+#         'name': '/a.txt:~/.cloudmesh/storage/test',
+#         'number': 2},
+#  'destination': '~/.cloudmesh/storage/test',
+#  'recursive': False,
+#  'source': '/a.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'list',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 8, 36000),
+#         'id': '986e1302-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:09.594915',
+#         'name': '/',
+#         'number': 4},
+#  'dir_only': 'a',
+#  'path': '/',
+#  'recursive': True,
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'search',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:10.074026',
+#         'id': '99a171e2-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:11.473507',
+#         'name': '/:a.txt',
+#         'number': 5},
+#  'filename': 'a.txt',
+#  'path': '/',
+#  'recursive': True,
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'mkdir',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:12.098091',
+#         'id': '9ad60802-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:12.230476',
+#         'name': 'created_dir',
+#         'number': 6},
+#  'path': 'created_dir',
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
+[{'_id': ObjectId('5eb34dac5411da61b22a64d1'),
+  'action': 'mkdir',
+  'cm': {'cloud': 'aws',
+         'collection': 'aws-storage',
+         'created': '2020-05-06 23:52:12.098091',
+         'id': '9ad60802-8ff4-11ea-80a9-acde48001122',
+         'kind': 'storage',
+         'modified': '2020-05-06 23:52:12.230476',
+         'name': 'created_dir',
+         'number': 6},
+  'path': 'created_dir',
+  'status': 'waiting'}]
+PASSED
+tests/test_storage.py::TestStorage::test_delete 
+[35m
+# ######################################################################
+# test_delete /tests/test_storage.py 182
+# ######################################################################
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 0, 922000),
+#         'id': '9430a3b8-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:03.493661',
+#         'name': '~/.cloudmesh/storage/test/:/',
+#         'number': 1},
+#  'destination': '/',
+#  'recursive': True,
+#  'source': '~/.cloudmesh/storage/test/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:03.989257',
+#         'id': '96010020-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:05.547566',
+#         'name': '/a.txt:~/.cloudmesh/storage/test',
+#         'number': 2},
+#  'destination': '~/.cloudmesh/storage/test',
+#  'recursive': False,
+#  'source': '/a.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'list',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 8, 36000),
+#         'id': '986e1302-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:09.594915',
+#         'name': '/',
+#         'number': 4},
+#  'dir_only': 'a',
+#  'path': '/',
+#  'recursive': True,
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'search',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:10.074026',
+#         'id': '99a171e2-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:11.473507',
+#         'name': '/:a.txt',
+#         'number': 5},
+#  'filename': 'a.txt',
+#  'path': '/',
+#  'recursive': True,
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'mkdir',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:12.098091',
+#         'id': '9ad60802-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:13.570028',
+#         'name': 'created_dir',
+#         'number': 6},
+#  'path': 'created_dir',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'delete',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:14.160775',
+#         'id': '9c110b40-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:14.272827',
+#         'name': '/created_dir',
+#         'number': 7},
+#  'path': '/created_dir',
+#  'recursive': True,
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
+PASSED
+tests/test_storage.py::TestStorage::test_multiple_run 
+[35m
+# ######################################################################
+# test_multiple_run /tests/test_storage.py 191
+# ######################################################################
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'put',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 0, 922000),
+#         'id': '9430a3b8-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:03.493661',
+#         'name': '~/.cloudmesh/storage/test/:/',
+#         'number': 1},
+#  'destination': '/',
+#  'recursive': True,
+#  'source': '~/.cloudmesh/storage/test/',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'get',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:03.989257',
+#         'id': '96010020-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:05.547566',
+#         'name': '/a.txt:~/.cloudmesh/storage/test',
+#         'number': 2},
+#  'destination': '~/.cloudmesh/storage/test',
+#  'recursive': False,
+#  'source': '/a.txt',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'list',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 16, 303000),
+#         'id': '9d5b8e9e-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:17.319705',
+#         'name': '/',
+#         'number': 9},
+#  'dir_only': False,
+#  'path': '/',
+#  'recursive': False,
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'search',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:10.074026',
+#         'id': '99a171e2-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:11.473507',
+#         'name': '/:a.txt',
+#         'number': 5},
+#  'filename': 'a.txt',
+#  'path': '/',
+#  'recursive': True,
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'mkdir',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': '2020-05-06 23:52:12.098091',
+#         'id': '9ad60802-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:13.570028',
+#         'name': 'created_dir',
+#         'number': 6},
+#  'path': 'created_dir',
+#  'status': 'completed'}
+# ----------------------------------------------------------------------
+[0m
+[34m
+# ----------------------------------------------------------------------
+# entry
+# ----------------------------------------------------------------------
+# 334:get_actions ./cloudmesh/storage/provider/StorageQueue.py
+# ----------------------------------------------------------------------
+# {'action': 'delete',
+#  'cm': {'cloud': 'aws',
+#         'collection': 'aws-storage',
+#         'created': datetime.datetime(2020, 5, 6, 23, 52, 17, 321000),
+#         'id': '9df6d138-8ff4-11ea-80a9-acde48001122',
+#         'kind': 'storage',
+#         'modified': '2020-05-06 23:52:18.336789',
+#         'name': '/created_dir',
+#         'number': 10},
+#  'path': '/created_dir',
+#  'recursive': True,
+#  'status': 'waiting'}
+# ----------------------------------------------------------------------
+[0m
++----------+------+-------------------------------+
+| FileName | Size | LastModified                  |
++----------+------+-------------------------------+
+| a.txt    | 12   | Wed, 06 May 2020 23:52:03 GMT |
+| b.txt    | 12   | Wed, 06 May 2020 23:52:01 GMT |
+| c.txt    | 12   | Wed, 06 May 2020 23:52:01 GMT |
++----------+------+-------------------------------+
+
+PASSED
+tests/test_storage.py::TestStorage::test_benchmark 
++------------------+--------------------------------------------------------------------------------------------------+
+| Attribute        | Value                                                                                            |
+|------------------+--------------------------------------------------------------------------------------------------|
+| cpu_count        | 8                                                                                                |
+| mem.active       | 2.0 GiB                                                                                          |
+| mem.available    | 2.1 GiB                                                                                          |
+| mem.free         | 130.7 MiB                                                                                        |
+| mem.inactive     | 2.0 GiB                                                                                          |
+| mem.percent      | 73.8 %                                                                                           |
+| mem.total        | 8.0 GiB                                                                                          |
+| mem.used         | 4.4 GiB                                                                                          |
+| mem.wired        | 2.5 GiB                                                                                          |
+| platform.version | 10.14.1                                                                                          |
+| python           | 3.8.1 (v3.8.1:1b293b6006, Dec 18 2019, 14:08:53)                                                 |
+|                  | [Clang 6.0 (clang-600.0.57)]                                                                     |
+| python.pip       | 20.0.2                                                                                           |
+| python.version   | 3.8.1                                                                                            |
+| sys.platform     | darwin                                                                                           |
+| uname.machine    | x86_64                                                                                           |
+| uname.node       | Shihuis-MBP.attlocal.net                                                                         |
+| uname.processor  | i386                                                                                             |
+| uname.release    | 18.2.0                                                                                           |
+| uname.system     | Darwin                                                                                           |
+| uname.version    | Darwin Kernel Version 18.2.0: Fri Oct  5 19:41:49 PDT 2018; root:xnu-4903.221.2~2/RELEASE_X86_64 |
+| user             | shihuijiang                                                                                      |
++------------------+--------------------------------------------------------------------------------------------------+
+
++---------------------------------------+----------+--------+---------------------+-------+--------------------------+-------------+--------+-----------+
+| Name                                  | Status   |   Time | Start               | tag   | Node                     | User        | OS     | Version   |
+|---------------------------------------+----------+--------+---------------------+-------+--------------------------+-------------+--------+-----------|
+| test_storage/test_create_local_source | ok       |  0.003 | 2020-05-06 23:51:58 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage/test_put                 | ok       |  2.884 | 2020-05-06 23:51:58 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage/test_put_recursive       | ok       |  3.034 | 2020-05-06 23:52:00 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage/test_get                 | ok       |  2.028 | 2020-05-06 23:52:03 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage/test_list                | ok       |  2.023 | 2020-05-06 23:52:06 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage/test_list_recursive      | ok       |  2.006 | 2020-05-06 23:52:08 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage/test_search              | ok       |  2.007 | 2020-05-06 23:52:10 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage/test_create_dir          | ok       |  2.055 | 2020-05-06 23:52:12 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage/test_delete              | ok       |  2.046 | 2020-05-06 23:52:14 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
+| test_storage/test_multiple_run        | ok       |  4.67  | 2020-05-06 23:52:16 | aws   | Shihuis-MBP.attlocal.net | shihuijiang | Darwin | 10.14.1   |
++---------------------------------------+----------+--------+---------------------+-------+--------------------------+-------------+--------+-----------+
+
+# csv,timer,status,time,start,tag,uname.node,user,uname.system,platform.version
+# csv,test_storage/test_create_local_source,ok,0.003,2020-05-06 23:51:58,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage/test_put,ok,2.884,2020-05-06 23:51:58,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage/test_put_recursive,ok,3.034,2020-05-06 23:52:00,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage/test_get,ok,2.028,2020-05-06 23:52:03,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage/test_list,ok,2.023,2020-05-06 23:52:06,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage/test_list_recursive,ok,2.006,2020-05-06 23:52:08,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage/test_search,ok,2.007,2020-05-06 23:52:10,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage/test_create_dir,ok,2.055,2020-05-06 23:52:12,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage/test_delete,ok,2.046,2020-05-06 23:52:14,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+# csv,test_storage/test_multiple_run,ok,4.67,2020-05-06 23:52:16,aws,Shihuis-MBP.attlocal.net,shihuijiang,Darwin,10.14.1
+
+PASSED
+
+============================= 11 passed in 23.85s ==============================

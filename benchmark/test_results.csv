@@ -24,3 +24,15 @@
 # csv,test_storage/test_create_dir,ok,1.916,aws
 # csv,test_storage/test_delete,ok,1.906,aws
 # csv,test_storage/test_multiple_run,ok,3.644,aws
+,,,,
+# csv,timer,status,time,tag
+# csv,test_storage/test_create_local_source,ok,0.003,aws
+# csv,test_storage/test_put,ok,2.446,aws
+# csv,test_storage/test_put_recursive,ok,1.934,aws
+# csv,test_storage/test_get,ok,2.015,aws
+# csv,test_storage/test_list,ok,2.014,aws
+# csv,test_storage/test_list_recursive,ok,2.014,aws
+# csv,test_storage/test_search,ok,1.536,aws
+# csv,test_storage/test_create_dir,ok,2.029,aws
+# csv,test_storage/test_delete,ok,2.017,aws
+# csv,test_storage/test_multiple_run,ok,4.716,aws
