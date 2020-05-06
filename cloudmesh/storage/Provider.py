@@ -291,3 +291,8 @@ class Provider(StorageABC):
                     except Exception as e:
                         Console.error(f"{source_obj} could not be deleted from "
                                       f"local storage.")
+
+    def copyFiles(self, source_cloud ,source_file, target_cloud, target_file):
+        from cloudmesh.storage.copy.Provider import Provider as CopyProvider
+        result = CopyProvider.copy(self, source_cloud , source_file, target_cloud, target_file)
+        return result
