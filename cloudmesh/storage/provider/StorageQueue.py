@@ -11,6 +11,7 @@ from cloudmesh.common.Printer import Printer
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.abstract.StorageABC import StorageABC
+from cloudmesh.common.util import path_expand
 
 
 class StorageQueue(StorageABC):
@@ -213,7 +214,7 @@ class StorageQueue(StorageABC):
         specification = textwrap.dedent(
             f"""
                 action: put
-                source: {source}
+                source: {path_expand(source)}
                 destination: {destination}
                 recursive: {recursive}
                 status: waiting
@@ -331,7 +332,6 @@ class StorageQueue(StorageABC):
         search_actions = []
 
         for entry in entries:
-            VERBOSE(entry)
             if entry['action'] == 'get' and entry['status'] == 'waiting':
                 get_actions.append(entry)
             elif entry['action'] == 'put' and entry['status'] == 'waiting':

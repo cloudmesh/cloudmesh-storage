@@ -70,7 +70,7 @@ class TestStorage(object):
 
         # src = "storage_a:test/a/a.txt"
 
-        src = "~/.cloudmesh/storage/test/"
+        src = path_expand("~/.cloudmesh/storage/test/")
         dst = '/'
         Benchmark.Start()
         test_file = provider.put(src, dst)
@@ -93,7 +93,7 @@ class TestStorage(object):
 
         # src = "storage_a:test/a/a.txt"
 
-        src = "~/.cloudmesh/storage/test/"
+        src = path_expand("~/.cloudmesh/storage/test/")
         dst = '/'
         Benchmark.Start()
 
@@ -107,7 +107,7 @@ class TestStorage(object):
     def test_get(self):
         HEADING()
         src = "/a.txt"
-        dst = "~/.cloudmesh/storage/test"
+        dst = path_expand("~/.cloudmesh/storage/test")
         Benchmark.Start()
         file = provider.get(src, dst)
         provider.run()
