@@ -49,6 +49,7 @@ azure==4.0.0
 azure-storage-common
 azure-storage-nspkg
 azure-storage-blob
+azure-storage
 """.splitlines()
 
 requiers_cloudmesh = """
