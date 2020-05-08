@@ -19,16 +19,16 @@ class StorageCommand(PluginCommand):
            Usage:
              storage run
              storage monitor [--storage=SERVICES] [--status=all | --status=STATUS] [--output=output] [--clear]
-             storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N]
-             storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
-             storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
-             storage list [SOURCE] [--recursive] [--parallel=N] [--output=OUTPUT] [--dryrun]
-             storage delete SOURCE [--parallel=N] [--dryrun]
-             storage search  DIRECTORY FILENAME [--recursive] [--storage=SERVICE] [--parallel=N] [--output=OUTPUT]
+             storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N] [--run]
+             storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N] [--run]
+             storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N] [--run]
+             storage list [SOURCE] [--recursive] [--parallel=N] [--output=OUTPUT] [--dryrun] [--run]
+             storage delete SOURCE [--parallel=N] [--dryrun] [--run]
+             storage search  DIRECTORY FILENAME [--recursive] [--storage=SERVICE] [--parallel=N] [--output=OUTPUT] [--run]
              storage sync SOURCE DESTINATION [--name=NAME] [--async] [--storage=SERVICE]
              storage sync status [--name=NAME] [--storage=SERVICE]
              storage config list [--output=OUTPUT]
-             storage copy --source=SOURCE:SOURCE_FILE_DIR --target=TARGET:TARGET_FILE_DIR
+             storage copy --source=SOURCE:SOURCE_FILE_DIR --target=TARGET:TARGET_FILE_DIR [--run]
              storage cc --source=SOURCE:SOURCE_FILE_DIR --target=TARGET:TARGET_FILE_DIR
 
            This command does some useful things.
@@ -180,6 +180,7 @@ class StorageCommand(PluginCommand):
 
         arguments.storage = Parameter.expand(arguments.storage or variables[
             'storage'])
+        run_immediately = arguments['--run']
 
         if arguments.monitor:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
@@ -195,8 +196,8 @@ class StorageCommand(PluginCommand):
             result = provider.get(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
-            # result = provider.run()
-
+            if run_immediately:
+                provider.run()
 
         elif arguments.put:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
@@ -204,11 +205,15 @@ class StorageCommand(PluginCommand):
             result = provider.put(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
+            if run_immediately:
+                provider.run()
 
         elif arguments.create and arguments.dir:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
 
             result = provider.create_dir(arguments.DIRECTORY)
+            if run_immediately:
+                provider.run()
 
         elif arguments.list:
 
@@ -239,6 +244,8 @@ class StorageCommand(PluginCommand):
                     provider = Provider(service=service, parallelism=parallelism)
                     provider.list(name=entry, recursive=arguments.recursive)
 
+            if run_immediately:
+                provider.run()
             return ""
 
         elif arguments.delete:
@@ -277,6 +284,8 @@ class StorageCommand(PluginCommand):
             else:
                 Console.error("Deletion canceled")
 
+            if run_immediately:
+                provider.run()
             return ""
 
         elif arguments.search:
@@ -287,6 +296,8 @@ class StorageCommand(PluginCommand):
                 provider.search(arguments.DIRECTORY,
                                 arguments.FILENAME,
                                 arguments.recursive)
+            if run_immediately:
+                provider.run()
 
         elif arguments.rsync:
             # TODO: implement
@@ -316,5 +327,7 @@ class StorageCommand(PluginCommand):
                 provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(arguments['--source'], arguments['--target'],
                               arguments.recursive)
-            return ""
+            if run_immediately:
+                provider.run()
+        return ""
 
