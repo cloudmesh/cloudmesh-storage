@@ -29,14 +29,14 @@ class Provider(StorageQueue):
                 host: aws.com
                 label: home-dir
                 kind: awss3
-                version: TBD
+                version: latest
                 service: storage
               default:
-                directory: TBD
+                directory: /
               credentials:
                 name: {username}
                 bucket: {container_name}
-                container: TBD
+                container: {container_name}
                 access_key_id: {aws_access_key_id}
                 secret_access_key: {aws_secret_access_key}
                 region: {region_name}
