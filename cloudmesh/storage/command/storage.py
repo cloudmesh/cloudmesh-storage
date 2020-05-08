@@ -18,6 +18,7 @@ class StorageCommand(PluginCommand):
 
            Usage:
              storage run
+             storage clean
              storage monitor [--storage=SERVICES] [--status=all | --status=STATUS] [--output=output] [--clear]
              storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N] [--run]
              storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N] [--run]
@@ -187,6 +188,9 @@ class StorageCommand(PluginCommand):
             status = arguments['--status'] or "all"
             output = arguments['--output'] or "table"
             result = provider.monitor(status=status, output=output)
+        elif arguments.clean:
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
+            result = provider.clean()
         elif arguments.run:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
             result = provider.run()

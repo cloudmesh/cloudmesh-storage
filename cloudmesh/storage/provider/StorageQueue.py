@@ -412,3 +412,7 @@ class StorageQueue(StorageABC):
                 time.sleep(rate)
         except KeyboardInterrupt:
             pass
+
+    def clean(self):
+        cm = CmDatabase()
+        cm.delete(collection=f"{self.name}-storage")
