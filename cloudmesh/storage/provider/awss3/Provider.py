@@ -648,18 +648,18 @@ class Provider(StorageQueue):
 
                 for file in files_to_upload:
                     directory, tgtfile = os.path.split(file)
+                    tgt_file = trimmed_destination + tgtfile
+                    # AWS S3 doesn't allow the first character in the path to be /
+                    if len(tgt_file) > 0 and tgt_file[0] == '/':
+                        tgt_file = tgt_file[1:]
                     self.s3_client.upload_file(file,
-                                               self.container_name,
-                                               trimmed_destination + tgtfile)
+                                               self.container_name, tgt_file)
 
                     # make head call since file upload does not return
                     # obj dict to extract meta data
                     metadata = self.s3_client.head_object(
-                        Bucket=self.container_name,
-                        Key=trimmed_destination + tgtfile)
-                    files_uploaded.append(
-                        extract_file_dict(trimmed_destination + tgtfile,
-                                          metadata))
+                        Bucket=self.container_name, Key=tgt_file)
+                    files_uploaded.append(extract_file_dict(tgt_file,metadata))
             else:
                 # get the directories with in the folder as well and upload
                 files_to_upload = []
@@ -672,24 +672,22 @@ class Provider(StorageQueue):
                         files_to_upload.append(massaged_dirpath)
 
                 for file in files_to_upload:
+                    tgt_file = trimmed_destination + massage_path(
+                        file.replace(trimmed_source, ''))
+                    # AWS S3 doesn't allow the first character in the path to be /
+                    if len(tgt_file) > 0 and tgt_file[0] == '/':
+                        tgt_file = tgt_file[1:]
                     self.s3_client.upload_file(
                         file,
-                        self.container_name,
-                        trimmed_destination +
-                        massage_path(file.replace(trimmed_source, '')))
+                        self.container_name, tgt_file)
 
                     # make head call since file upload does not return
                     # obj dict to extract meta data
                     metadata = self.s3_client.head_object(
                         Bucket=self.container_name,
-                        Key=trimmed_destination + massage_path(
-                            file.replace(trimmed_source, '')
-                        )
-                    )
+                        Key=tgt_file)
                     files_uploaded.append(extract_file_dict(
-                        trimmed_destination + massage_path(
-                            file.replace(trimmed_source, '')
-                        ), metadata))
+                        tgt_file, metadata))
 
             # self.storage_dict['filesUploaded'] = files_uploaded
             # self.storage_dict['message'] = 'Source uploaded'
