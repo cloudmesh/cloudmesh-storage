@@ -5,7 +5,7 @@ from cloudmesh.common.util import path_expand
 from os.path import basename, join, dirname
 import os
 from cloudmesh.abstract.StorageABC import StorageABC
-
+import textwrap
 
 def get_id(source, results, source_type):
     if not any((result.name == source and result.type == source_type) for result in
@@ -65,7 +65,23 @@ def update_dict(elements):
 class Provider(StorageABC):
     kind = "box"
 
-    sample = "TODO: missing"
+    sample = textwrap.dedent(
+      """
+      cloudmesh:
+        box:
+          cm:
+            active: false
+            heading: Box
+            host: box.com
+            label: box
+            kind: box
+            version: TBD
+            service: storage
+          default:
+            directory: /
+          credentials:
+            config_path: ~/.cloudmesh/box/{config}
+      """)
 
     output = {}  # "TODO: missing"
 
