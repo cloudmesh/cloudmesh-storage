@@ -1,23 +1,6 @@
 import os
 
 
-def join_file_name_dir(filename, dirname):
-    """
-    Function to join file name dir to get full file path
-
-    :param filename:
-    :param dirname:
-    :return:
-    """
-    if len(massage_path(dirname)) > 0:
-        full_file_path = massage_path(
-            dirname) + '/' + massage_path(
-            filename)
-    else:
-        full_file_path = massage_path(filename)
-    return full_file_path
-
-
 def massage_path(file_name_path):
     """
     function to massage file path and do some transformations
@@ -31,10 +14,6 @@ def massage_path(file_name_path):
 
     # convert possible windows style path to unix path
     massaged_path = massaged_path.replace('\\', '/')
-
-    # remove leading slash symbol in path
-    if len(massaged_path) > 0 and massaged_path[0] == '/':
-        massaged_path = massaged_path[1:]
 
     # expand home directory in path
     massaged_path = massaged_path.replace('~', os.path.expanduser('~'))

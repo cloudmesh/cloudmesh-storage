@@ -125,6 +125,9 @@ class Provider(StorageQueue):
         # path: {path}
         # status: waiting
         directory = specification['path']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(directory) > 0 and directory[0] == '/':
+            directory = directory[1:]
         self.s3_resource, self.s3_client = self.get_s3_resource_client()
 
         file_content = ""
@@ -156,6 +159,8 @@ class Provider(StorageQueue):
         else:
             Console.warning('Directory already present')
 
+        self.pretty_print(data=dir_files_list, data_type="files",
+                          output="table")
         specification['status'] = 'completed'
         return specification
 
@@ -184,6 +189,9 @@ class Provider(StorageQueue):
         # if dir_only:
         #    raise NotImplementedError
         source = specification['path']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(source) > 0 and source[0] == '/':
+            source = source[1:]
         dir_only = specification['dir_only']
         recursive = specification['recursive']
 
@@ -281,6 +289,9 @@ class Provider(StorageQueue):
         :return: dict
         """
         source = specification['path']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(source) > 0 and source[0] == '/':
+            source = source[1:]
         recursive = specification['recursive']
 
         trimmed_source = massage_path(source)
@@ -381,6 +392,9 @@ class Provider(StorageQueue):
         # dict_obj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
         # return dict_obj
+        self.pretty_print(data=dir_files_list, data_type="files",
+                          output="table")
+
         specification['status'] = 'completed'
         return specification
 
@@ -393,6 +407,9 @@ class Provider(StorageQueue):
         """
 
         source = specification['source']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(source) > 0 and source[0] == '/':
+            source = source[1:]
         destination = specification['destination']
         recursive = specification['recursive']
         trimmed_src = massage_path(source)
@@ -560,6 +577,9 @@ class Provider(StorageQueue):
 
         source = specification['source']
         destination = specification['destination']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(destination) > 0 and destination[0] == '/':
+            destination = destination[1:]
         recursive = specification['recursive']
         # src_service, src = source.split(":", 1)
         # dest_service, dest = destination.split(":", 1)
@@ -623,7 +643,7 @@ class Provider(StorageQueue):
                         if platform.system() == "Windows":
                             massaged_dirpath = f"{massage_path(dirpath)}\\{f}"
                         else:
-                            massaged_dirpath = f"/{massage_path(dirpath)}/{f}"
+                            massaged_dirpath = f"{massage_path(dirpath)}/{f}"
                         files_to_upload.append(massaged_dirpath)
 
                 for file in files_to_upload:
@@ -648,7 +668,7 @@ class Provider(StorageQueue):
                         if platform.system() == "Windows":
                             massaged_dirpath = f"{massage_path(dirpath)}\\{f}"
                         else:
-                            massaged_dirpath = f"/{massage_path(dirpath)}/{f}"
+                            massaged_dirpath = f"{massage_path(dirpath)}/{f}"
                         files_to_upload.append(massaged_dirpath)
 
                 for file in files_to_upload:
@@ -676,7 +696,6 @@ class Provider(StorageQueue):
 
         else:
             Console.warning("Source not found")
-            return specification
             # self.storage_dict['message'] = 'Source not found'
 
         # self.storage_dict['objlist'] = files_uploaded
@@ -691,6 +710,9 @@ class Provider(StorageQueue):
     def search_run(self, specification):
 
         directory = specification['path']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(directory) > 0 and directory[0] == '/':
+            directory = directory[1:]
         filename = specification['filename']
         recursive = specification['recursive']
 

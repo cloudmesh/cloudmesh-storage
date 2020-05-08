@@ -24,7 +24,7 @@ class StorageCommand(PluginCommand):
              storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N] [--run]
              storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N] [--run]
              storage list [--storage=SERVICE] [SOURCE] [--recursive] [--parallel=N] [--output=OUTPUT] [--dryrun] [--run]
-             storage delete SOURCE [--parallel=N] [--dryrun] [--run]
+             storage delete SOURCE [--storage=SERVICE] [--parallel=N] [--dryrun] [--run]
              storage search  DIRECTORY FILENAME [--recursive] [--storage=SERVICE] [--parallel=N] [--output=OUTPUT] [--run]
              storage sync SOURCE DESTINATION [--name=NAME] [--async] [--storage=SERVICE]
              storage sync status [--name=NAME] [--storage=SERVICE]
@@ -229,6 +229,8 @@ class StorageCommand(PluginCommand):
             else:
                 default_source = "local:/"
             sources = arguments.SOURCE or default_source
+            if not ":" in sources:
+                sources = f"{variables['storage']}:{sources}"
             sources = Parameter.expand(sources)
 
             deletes = []
@@ -262,6 +264,8 @@ class StorageCommand(PluginCommand):
             else:
                 default_source = "local:/"
             sources = arguments.SOURCE or default_source
+            if not ":" in sources:
+                sources = f"{variables['storage']}:{sources}"
             sources = Parameter.expand(sources)
 
             deletes = []
@@ -331,7 +335,7 @@ class StorageCommand(PluginCommand):
                 provider = Provider(service=tcloud, parallelism=parallelism)
                 provider.copy(arguments['--source'], arguments['--target'],
                               arguments.recursive)
-            if run_immediately:
-                provider.run()
+                if run_immediately:
+                    provider.run()
         return ""
 
