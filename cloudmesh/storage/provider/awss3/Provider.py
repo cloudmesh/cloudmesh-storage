@@ -420,8 +420,11 @@ class Provider(StorageQueue):
         file_obj = ''
 
         try:
+            search_key = trimmed_src
+            if len(trimmed_src) == 0:
+                search_key = "/"
             file_obj = self.s3_client.get_object(Bucket=self.container_name,
-                                                 Key=trimmed_src)
+                                                 Key=search_key)
         except botocore.exceptions.ClientError as e:
             # object not found
             x=1
