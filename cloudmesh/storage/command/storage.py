@@ -18,17 +18,19 @@ class StorageCommand(PluginCommand):
 
            Usage:
              storage run
+             storage clean
              storage monitor [--storage=SERVICES] [--status=all | --status=STATUS] [--output=output] [--clear]
-             storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N]
-             storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
-             storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N]
-             storage list [SOURCE] [--recursive] [--parallel=N] [--output=OUTPUT] [--dryrun]
-             storage delete SOURCE [--parallel=N] [--dryrun]
-             storage search  DIRECTORY FILENAME [--recursive] [--storage=SERVICE] [--parallel=N] [--output=OUTPUT]
+             storage create dir DIRECTORY [--storage=SERVICE] [--parallel=N] [--run]
+             storage get SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N] [--run]
+             storage put SOURCE DESTINATION [--recursive] [--storage=SERVICE] [--parallel=N] [--run]
+             storage list [SOURCE] [--recursive] [--parallel=N] [--output=OUTPUT] [--dryrun] [--run]
+             storage delete SOURCE [--parallel=N] [--dryrun] [--run]
+             storage search  DIRECTORY FILENAME [--recursive] [--storage=SERVICE] [--parallel=N] [--output=OUTPUT] [--run]
              storage sync SOURCE DESTINATION [--name=NAME] [--async] [--storage=SERVICE]
              storage sync status [--name=NAME] [--storage=SERVICE]
              storage config list [--output=OUTPUT]
-             storage copy --source=SOURCE:SOURCE_FILE_DIR --target=TARGET:TARGET_FILE_DIR
+             storage copy --source=SOURCE:SOURCE_FILE_DIR --target=TARGET:TARGET_FILE_DIR [--run]
+             storage cc --source=SOURCE:SOURCE_FILE_DIR --target=TARGET:TARGET_FILE_DIR
 
            This command does some useful things.
 
@@ -129,7 +131,8 @@ class StorageCommand(PluginCommand):
                     provider's SOURCE_FILE_DIR location
 
             Examples:
-                cms storage_service copy --source=local:test1.txt --target=aws:uploadtest1.txt
+            >    cms storage_service copy --source=local:test1.txt
+            >                             --target=aws:uploadtest1.txt
                 cms storage_service list --source=google:test
                 cms storage_service delete --source=aws:uploadtest1.txt
 
@@ -178,12 +181,16 @@ class StorageCommand(PluginCommand):
 
         arguments.storage = Parameter.expand(arguments.storage or variables[
             'storage'])
+        run_immediately = arguments['--run']
 
         if arguments.monitor:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
             status = arguments['--status'] or "all"
             output = arguments['--output'] or "table"
             result = provider.monitor(status=status, output=output)
+        elif arguments.clean:
+            provider = Provider(arguments.storage[0], parallelism=parallelism)
+            result = provider.clean()
         elif arguments.run:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
             result = provider.run()
@@ -193,8 +200,8 @@ class StorageCommand(PluginCommand):
             result = provider.get(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
-            # result = provider.run()
-
+            if run_immediately:
+                provider.run()
 
         elif arguments.put:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
@@ -202,11 +209,15 @@ class StorageCommand(PluginCommand):
             result = provider.put(arguments.SOURCE,
                                   arguments.DESTINATION,
                                   arguments.recursive)
+            if run_immediately:
+                provider.run()
 
         elif arguments.create and arguments.dir:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
 
             result = provider.create_dir(arguments.DIRECTORY)
+            if run_immediately:
+                provider.run()
 
         elif arguments.list:
 
@@ -237,6 +248,8 @@ class StorageCommand(PluginCommand):
                     provider = Provider(service=service, parallelism=parallelism)
                     provider.list(name=entry, recursive=arguments.recursive)
 
+            if run_immediately:
+                provider.run()
             return ""
 
         elif arguments.delete:
@@ -275,6 +288,8 @@ class StorageCommand(PluginCommand):
             else:
                 Console.error("Deletion canceled")
 
+            if run_immediately:
+                provider.run()
             return ""
 
         elif arguments.search:
@@ -285,21 +300,38 @@ class StorageCommand(PluginCommand):
                 provider.search(arguments.DIRECTORY,
                                 arguments.FILENAME,
                                 arguments.recursive)
+            if run_immediately:
+                provider.run()
 
         elif arguments.rsync:
             # TODO: implement
             raise NotImplementedError
 
-        elif arguments.copy:
+        elif arguments['cc']:
             scloud, sfileDir = source.split(":", 1) or None
             tcloud, tfileDir = target.split(":", 1) or None
-            print(f" Copying from Source {scloud} : {sfileDir} to Target  {tcloud} : {tfileDir}")
+            print(f" Copying from Source {scloud} : {sfileDir} to Target  "
+                  f" {tcloud} : {tfileDir}")
 
-            cloudName = ["aws","google"]
+            cloudName = ["aws", "google"]
             if scloud in cloudName:
-                provider = Provider(service=scloud,parallelism=parallelism)
+                provider = Provider(service=scloud, parallelism=parallelism)
                 provider.copyFiles(scloud, sfileDir, tcloud, tfileDir)
             else:
                 print("Not Implemented")
 
+            return ""
+        elif arguments.copy:
+            scloud, sbucket = arguments['--source'].split(":", 1) or None
+            tcloud, tbucket = arguments['--target'].split(":", 1) or None
+            if scloud == "aws" or scloud == "google":
+                provider = Provider(service=scloud, parallelism=parallelism)
+                provider.copy(scloud, tcloud, sbucket, tbucket)
+            else:
+                provider = Provider(service=tcloud, parallelism=parallelism)
+                provider.copy(arguments['--source'], arguments['--target'],
+                              arguments.recursive)
+            if run_immediately:
+                provider.run()
         return ""
+

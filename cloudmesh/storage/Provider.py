@@ -72,6 +72,12 @@ class Provider(StorageABC):
         """
         self.provider.monitor(status=status, output=output)
 
+    def clean(self):
+        """
+        clean all the actions in database
+        """
+        self.provider.clean()
+
     def run(self):
         """
         Execute the actions in the database/queue

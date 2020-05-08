@@ -24,15 +24,28 @@
 # csv,test_storage/test_create_dir,ok,1.916,aws
 # csv,test_storage/test_delete,ok,1.906,aws
 # csv,test_storage/test_multiple_run,ok,3.644,aws
-,,,,
-# csv,timer,status,time,tag
-# csv,test_storage/test_create_local_source,ok,0.003,aws
-# csv,test_storage/test_put,ok,2.446,aws
-# csv,test_storage/test_put_recursive,ok,1.934,aws
-# csv,test_storage/test_get,ok,2.015,aws
-# csv,test_storage/test_list,ok,2.014,aws
-# csv,test_storage/test_list_recursive,ok,2.014,aws
-# csv,test_storage/test_search,ok,1.536,aws
-# csv,test_storage/test_create_dir,ok,2.029,aws
-# csv,test_storage/test_delete,ok,2.017,aws
-# csv,test_storage/test_multiple_run,ok,4.716,aws
+
+#Azure
+
++---------------------------------------------+----------+--------+---------------------+-------------------+-----------------+--------+---------+---------------------------------+
+| Name                                        | Status   |   Time | Start               | tag               | Node            | User   | OS      | Version                         |
+|---------------------------------------------+----------+--------+---------------------+-------------------+-----------------+--------+---------+---------------------------------|
+| test_storage_azure/test_create_local_source | ok       |  0.006 | 2020-05-07 04:19:43 | parallelazureblob | DESKTOP-NOKUTKH | hp     | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage_azure/test_put                 | ok       |  2.511 | 2020-05-07 04:19:43 | parallelazureblob | DESKTOP-NOKUTKH | hp     | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage_azure/test_get                 | ok       |  2.537 | 2020-05-07 04:19:46 | parallelazureblob | DESKTOP-NOKUTKH | hp     | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage_azure/test_list                | ok       |  2.531 | 2020-05-07 04:19:48 | parallelazureblob | DESKTOP-NOKUTKH | hp     | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage_azure/test_search              | ok       |  2.593 | 2020-05-07 04:19:51 | parallelazureblob | DESKTOP-NOKUTKH | hp     | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage_azure/test_create_dir          | ok       |  2.612 | 2020-05-07 04:19:53 | parallelazureblob | DESKTOP-NOKUTKH | hp     | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage_azure/test_delete              | ok       |  2.704 | 2020-05-07 04:19:56 | parallelazureblob | DESKTOP-NOKUTKH | hp     | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage_azure/test_multiple_run        | ok       |  5.247 | 2020-05-07 04:19:59 | parallelazureblob | DESKTOP-NOKUTKH | hp     | Windows | ('10', '10.0.18362', 'SP0', '') |
++---------------------------------------------+----------+--------+---------------------+-------------------+-----------------+--------+---------+---------------------------------+
+
+# csv,timer,status,time,start,tag,uname.node,user,uname.system,platform.version
+# csv,test_storage_azure/test_create_local_source,ok,0.006,2020-05-07 04:19:43,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage_azure/test_put,ok,2.511,2020-05-07 04:19:43,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage_azure/test_get,ok,2.537,2020-05-07 04:19:46,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage_azure/test_list,ok,2.531,2020-05-07 04:19:48,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage_azure/test_search,ok,2.593,2020-05-07 04:19:51,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage_azure/test_create_dir,ok,2.612,2020-05-07 04:19:53,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage_azure/test_delete,ok,2.704,2020-05-07 04:19:56,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage_azure/test_multiple_run,ok,5.247,2020-05-07 04:19:59,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
