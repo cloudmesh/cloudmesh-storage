@@ -4,6 +4,7 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
 from os.path import basename, join, dirname
 import os
+import textwrap
 from cloudmesh.abstract.StorageABC import StorageABC
 
 
@@ -65,7 +66,25 @@ def update_dict(elements):
 class Provider(StorageABC):
     kind = "box"
 
-    sample = "TODO: missing"
+    sample = textwrap.dedent(
+        """
+        cloudmesh:
+          storage:
+            {name}:
+              cm:
+                active: false
+                heading: Box
+                host: box.com
+                label: box
+                kind: box
+                version: TBD
+                service: storage
+              default:
+                directory: /
+              credentials:
+                config_path: TBD
+             """
+    )
 
     output = {}  # "TODO: missing"
 
