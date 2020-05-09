@@ -64,3 +64,34 @@
 # csv,test_storage_azure/test_create_dir,ok,2.612,5/7/20 04:19,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
 # csv,test_storage_azure/test_delete,ok,2.704,5/7/20 04:19,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
 # csv,test_storage_azure/test_multiple_run,ok,5.247,5/7/20 04:19,parallelazureblob,DESKTOP-NOKUTKH,hp,Windows,('10', '10.0.18362', 'SP0', '')
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+#GDrive,,,,,,,,,
+,,,,,,,,,,,,
+-------+--------+---------+---------------------------------+
+| Name                                  | Status   |   Time | Start               | tag            | Node            | User   | OS      | Version                         |
+|---------------------------------------+----------+--------+---------------------+----------------+-----------------+--------+---------+---------------------------------|
+| test_storage/test_create_local_source | ok       |  0.011 | 2020-05-09 03:37:47 | parallelgdrive | DESKTOP-D77PJVN | sara   | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage/test_put                 | failed   |        | 2020-05-09 03:37:47 | parallelgdrive | DESKTOP-D77PJVN | sara   | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage/test_put_recursive       | failed   |        | 2020-05-09 03:37:47 | parallelgdrive | DESKTOP-D77PJVN | sara   | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage/test_get                 | failed   |        | 2020-05-09 03:37:47 | parallelgdrive | DESKTOP-D77PJVN | sara   | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage/test_list                | failed   |        | 2020-05-09 03:37:47 | parallelgdrive | DESKTOP-D77PJVN | sara   | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage/test_list_recursive      | ok       |  3.851 | 2020-05-09 03:37:50 | parallelgdrive | DESKTOP-D77PJVN | sara   | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage/test_search              | ok       |  3.484 | 2020-05-09 03:37:54 | parallelgdrive | DESKTOP-D77PJVN | sara   | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage/test_create_dir          | ok       |  4.175 | 2020-05-09 03:37:58 | parallelgdrive | DESKTOP-D77PJVN | sara   | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage/test_delete              | failed   |        | 2020-05-09 03:38:02 | parallelgdrive | DESKTOP-D77PJVN | sara   | Windows | ('10', '10.0.18362', 'SP0', '') |
+| test_storage/test_multiple_run        | failed   |        | 2020-05-09 03:38:06 | parallelgdrive | DESKTOP-D77PJVN | sara   | Windows | ('10', '10.0.18362', 'SP0', '') |
++---------------------------------------+----------+--------+---------------------+----------------+-----------------+--------+---------+---------------------------------+
+
+# csv,timer,status,time,start,tag,uname.node,user,uname.system,platform.version
+# csv,test_storage/test_create_local_source,ok,0.011,2020-05-09 03:37:47,parallelgdrive,DESKTOP-D77PJVN,sara,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage/test_put,failed,None,2020-05-09 03:37:47,parallelgdrive,DESKTOP-D77PJVN,sara,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage/test_put_recursive,failed,None,2020-05-09 03:37:47,parallelgdrive,DESKTOP-D77PJVN,sara,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage/test_get,failed,None,2020-05-09 03:37:47,parallelgdrive,DESKTOP-D77PJVN,sara,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage/test_list,failed,None,2020-05-09 03:37:47,parallelgdrive,DESKTOP-D77PJVN,sara,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage/test_list_recursive,ok,3.851,2020-05-09 03:37:50,parallelgdrive,DESKTOP-D77PJVN,sara,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage/test_search,ok,3.484,2020-05-09 03:37:54,parallelgdrive,DESKTOP-D77PJVN,sara,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage/test_create_dir,ok,4.175,2020-05-09 03:37:58,parallelgdrive,DESKTOP-D77PJVN,sara,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage/test_delete,failed,None,2020-05-09 03:38:02,parallelgdrive,DESKTOP-D77PJVN,sara,Windows,('10', '10.0.18362', 'SP0', '')
+# csv,test_storage/test_multiple_run,failed,None,2020-05-09 03:38:06,parallelgdrive,DESKTOP-D77PJVN,sara,Windows,('10', '10.0.18362', 'SP0', '')
