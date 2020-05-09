@@ -485,8 +485,7 @@ class Provider(StorageQueue):
             elif total_all_objs > 0 and recursive is False:
                 for obj in all_objs:
                     if os.path.basename(obj.key) != self.dir_marker_file_name:
-                        replaced_trimmed_src = obj.key.replace(f"{trimmed_src}/"
-                        , '')
+                        replaced_trimmed_src = obj.key.replace(trimmed_src, '')
                         if massage_path(replaced_trimmed_src).count('/') == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
@@ -517,7 +516,7 @@ class Provider(StorageQueue):
                     name_equal_marker = base_name == self.dir_marker_file_name
                     if not name_equal_marker and obj.key[-1] != '/':
                         replaced_trimmed_src = obj.key.replace(
-                            trimmed_src+"/", '')
+                            trimmed_src, '')
                         if massage_path(replaced_trimmed_src).count('/') == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
