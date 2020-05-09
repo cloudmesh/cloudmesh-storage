@@ -651,6 +651,8 @@ class Provider(StorageQueue):
 
                 for file in files_to_upload:
                     directory, tgtfile = os.path.split(file)
+                    if not trimmed_destination.endswith("/"):
+                        trimmed_destination = trimmed_destination + "/"
                     tgt_file = trimmed_destination + tgtfile
                     # AWS S3 doesn't allow the first character in the path to be /
                     if len(tgt_file) > 0 and tgt_file[0] == '/':
@@ -675,22 +677,23 @@ class Provider(StorageQueue):
                         files_to_upload.append(massaged_dirpath)
 
                 for file in files_to_upload:
-                    tgt_file = trimmed_destination + massage_path(
-                        file.replace(trimmed_source, ''))
+                    if not trimmed_destination.endswith("/"):
+                        trimmed_destination = trimmed_destination + "/"
+                    tmp_src = massage_path(file.replace(trimmed_source, ''))
+                    if len(tmp_src) > 0 and tmp_src[0] == '/':
+                        tmp_src = tmp_src[1:]
+                    tgt_file = trimmed_destination + tmp_src
                     # AWS S3 doesn't allow the first character in the path to be /
                     if len(tgt_file) > 0 and tgt_file[0] == '/':
                         tgt_file = tgt_file[1:]
                     self.s3_client.upload_file(
-                        file,
-                        self.container_name, tgt_file)
+                        file, self.container_name, tgt_file)
 
                     # make head call since file upload does not return
                     # obj dict to extract meta data
                     metadata = self.s3_client.head_object(
-                        Bucket=self.container_name,
-                        Key=tgt_file)
-                    files_uploaded.append(extract_file_dict(
-                        tgt_file, metadata))
+                        Bucket=self.container_name, Key=tgt_file)
+                    files_uploaded.append(extract_file_dict(tgt_file, metadata))
 
             # self.storage_dict['filesUploaded'] = files_uploaded
             # self.storage_dict['message'] = 'Source uploaded'
