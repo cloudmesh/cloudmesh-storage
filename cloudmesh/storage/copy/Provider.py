@@ -36,7 +36,18 @@ class Provider(object):
         if source_cloud == "local" and target_cloud == "local":
 
             shutil.copy(source, target)
-
+        elif source_cloud == "local":
+            source = source.replace("\\", "/")
+            self.provider_target.put(source=source, destination=target)
+            if (target_cloud in "aws"):
+                status = self.provider_target.run()
+            status = "Success"
+        elif target_cloud == "local":
+            target = target.replace("\\", "/")
+            self.provider_source.get(source=source, destination=target, recursive=True)
+            if (source_cloud in "aws"):
+                status = self.provider_source.run()
+            status = "Download Successful"
         else:
 
             #
@@ -47,7 +58,7 @@ class Provider(object):
                 _local = f'{self.local_dir}/{source}'
                 _local = _local.replace("\\","/")
 
-                self.provider_source.get(source=source, destination=_local)
+                self.provider_source.get(source=source, destination=_local, recursive=True)
                 if (source_cloud in "aws"):
                     status = self.provider_source.run()
                 status = "Download Successful"
