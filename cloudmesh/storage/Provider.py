@@ -4,7 +4,7 @@ from pprint import pprint
 from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.console import Console
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-from cloudmesh.configuration.Config import Config
+
 
 class Provider(StorageABC):
 
@@ -15,7 +15,6 @@ class Provider(StorageABC):
                 "gdrive",
                 "azureblob",
                 "awss3",
-                "parallelawss3",
                 'parallelgdrive',
                 'parallelazureblob',
                 "google",
@@ -58,7 +57,6 @@ class Provider(StorageABC):
     def __init__(self, service=None, parallelism=4):
 
         super(Provider, self).__init__(service=service)
-        self.config = Config()
         P = Provider.get_provider(self.kind)
         self.provider = P(service=service, parallelism=parallelism)
         if self.provider is None:
@@ -73,6 +71,12 @@ class Provider(StorageABC):
         :return
         """
         self.provider.monitor(status=status, output=output)
+
+    def clean(self):
+        """
+        clean all the actions in database
+        """
+        self.provider.clean()
 
     def run(self):
         """
@@ -136,9 +140,9 @@ class Provider(StorageABC):
         return d
 
     @DatabaseUpdate()
-    def list(self, source=None, dir_only=False, recursive=False):
+    def list(self, name=None, dir_only=False, recursive=False):
 
-        d = self.provider.list(source=source, dir_only=dir_only,
+        d = self.provider.list(source=name, dir_only=dir_only,
                                recursive=recursive)
         return d
 

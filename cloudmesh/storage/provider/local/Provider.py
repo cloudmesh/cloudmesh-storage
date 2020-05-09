@@ -7,6 +7,7 @@ from cloudmesh.common.debug import VERBOSE
 import shutil
 from datetime import datetime
 from pprint import pprint
+import textwrap
 
 # import pwd  # does not work in windows
 # from grp import getgrgid # does not work in windows
@@ -57,7 +58,26 @@ class Provider(StorageABC):
 
     kind = "local"
 
-    sample = "TODO: missing"
+    sample = textwrap.dedent(
+        """
+        cloudmesh:
+          storage:
+            {name}:
+              cm:
+                active: false
+                heading: Storage A
+                host: localhost
+                label: local
+                kind: local
+                version: TBD
+                service: storage
+              default:
+                directory: ~/a
+              credentials:
+                name: TBD
+                key: ~/.ssh/id_rsa.pub
+             """
+    )
 
     output = {}  # "TODO: missing"
 

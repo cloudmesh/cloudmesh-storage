@@ -11,6 +11,7 @@ from cloudmesh.common.Printer import Printer
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
 from cloudmesh.abstract.StorageABC import StorageABC
+from cloudmesh.common.util import path_expand
 
 
 class StorageQueue(StorageABC):
@@ -213,7 +214,7 @@ class StorageQueue(StorageABC):
         specification = textwrap.dedent(
             f"""
                 action: put
-                source: {source}
+                source: {path_expand(source)}
                 destination: {destination}
                 recursive: {recursive}
                 status: waiting
@@ -331,7 +332,6 @@ class StorageQueue(StorageABC):
         search_actions = []
 
         for entry in entries:
-            VERBOSE(entry)
             if entry['action'] == 'get' and entry['status'] == 'waiting':
                 get_actions.append(entry)
             elif entry['action'] == 'put' and entry['status'] == 'waiting':
@@ -363,13 +363,10 @@ class StorageQueue(StorageABC):
         delete_action, cancel_action, search_action = self.get_actions()
 
         pool = Pool(self.parallelism)
-        # cancel the actions
+        # CANCEL ACTIONS
         pool.map(self.action, cancel_action)
 
-        # delete files/directories
-        pool.map(self.action, delete_action)
-
-        # create directories
+        # CREATE DIRECTORIES
         pool.map(self.action, mkdir_action)
 
         # COPY FILES
@@ -386,6 +383,9 @@ class StorageQueue(StorageABC):
 
         # SEARCH FILES
         pool.map(self.action, search_action)
+
+        # DELETE FILES/DIRECTORIES
+        pool.map(self.action, delete_action)
 
         # Worker processes within a Pool typically live for the complete \
         # duration of the Pool’s work queue.
@@ -412,3 +412,7 @@ class StorageQueue(StorageABC):
                 time.sleep(rate)
         except KeyboardInterrupt:
             pass
+
+    def clean(self):
+        cm = CmDatabase()
+        cm.delete(collection=f"{self.name}-storage")

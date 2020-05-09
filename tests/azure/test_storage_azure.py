@@ -19,7 +19,6 @@ from cloudmesh.common.util import writefile
 from cloudmesh.common.variables import Variables
 from cloudmesh.storage.Provider import Provider
 
-
 #
 # cms set storage=azure
 #

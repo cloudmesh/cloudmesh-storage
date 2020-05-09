@@ -2,6 +2,7 @@ import os
 import re
 from pathlib import Path
 from pprint import pprint
+import textwrap
 
 from azure.storage.blob import BlockBlobService
 from cloudmesh.abstract.StorageABC import StorageABC
@@ -14,7 +15,33 @@ from cloudmesh.common.util import path_expand
 class Provider(StorageABC):
     kind = "azureblob"
 
-    sample = "TODO: missing"
+    sample = textwrap.dedent(
+        """
+        cloudmesh:
+          storage:
+            {name}:
+              cm:
+                active: false
+                heading: Azure
+                host: azure.microsoft.com
+                label: azure_blob
+                kind: azureblob
+                version: TBD
+                service: storage
+              default:
+                resource_group: cloudmesh
+                location: Central US
+              credentials:
+                account_name: {account_name}
+                account_key: {account_key}
+                container: {container}
+                AZURE_TENANT_ID: {azure_tenant_id}
+                AZURE_SUBSCRIPTION_ID: {azure_subscription_id}
+                AZURE_APPLICATION_ID: {azure_application_id}
+                AZURE_SECRET_KEY: {azure_secret_key}
+                AZURE_REGION: Central US
+             """
+    )
 
     output = {}  # "TODO: missing"
 

@@ -29,14 +29,14 @@ class Provider(StorageQueue):
                 host: aws.com
                 label: home-dir
                 kind: awss3
-                version: TBD
+                version: latest
                 service: storage
               default:
-                directory: TBD
+                directory: /
               credentials:
                 name: {username}
                 bucket: {container_name}
-                container: TBD
+                container: {container_name}
                 access_key_id: {aws_access_key_id}
                 secret_access_key: {aws_secret_access_key}
                 region: {region_name}
@@ -125,6 +125,9 @@ class Provider(StorageQueue):
         # path: {path}
         # status: waiting
         directory = specification['path']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(directory) > 0 and directory[0] == '/':
+            directory = directory[1:]
         self.s3_resource, self.s3_client = self.get_s3_resource_client()
 
         file_content = ""
@@ -154,8 +157,10 @@ class Provider(StorageQueue):
                 f"{file_path}/", metadata)
             )
         else:
-            Console.error('Directory already present')
+            Console.warning('Directory already present')
 
+        self.pretty_print(data=dir_files_list, data_type="files",
+                          output="table")
         specification['status'] = 'completed'
         return specification
 
@@ -184,6 +189,9 @@ class Provider(StorageQueue):
         # if dir_only:
         #    raise NotImplementedError
         source = specification['path']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(source) > 0 and source[0] == '/':
+            source = source[1:]
         dir_only = specification['dir_only']
         recursive = specification['recursive']
 
@@ -281,6 +289,9 @@ class Provider(StorageQueue):
         :return: dict
         """
         source = specification['path']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(source) > 0 and source[0] == '/':
+            source = source[1:]
         recursive = specification['recursive']
 
         trimmed_source = massage_path(source)
@@ -297,8 +308,8 @@ class Provider(StorageQueue):
                                                  Key=trimmed_source)
         except botocore.exceptions.ClientError as e:
             # object not found
-            # Console.error(e)
-            # Console.error(e)
+            # Console.warning(e)
+            # Console.warning(e)
             x = 1
 
         if file_obj:
@@ -381,6 +392,9 @@ class Provider(StorageQueue):
         # dict_obj = self.update_dict(self.storage_dict['objlist'])
         # return self.storage_dict
         # return dict_obj
+        self.pretty_print(data=dir_files_list, data_type="files",
+                          output="table")
+
         specification['status'] = 'completed'
         return specification
 
@@ -393,6 +407,9 @@ class Provider(StorageQueue):
         """
 
         source = specification['source']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(source) > 0 and source[0] == '/':
+            source = source[1:]
         destination = specification['destination']
         recursive = specification['recursive']
         trimmed_src = massage_path(source)
@@ -403,8 +420,11 @@ class Provider(StorageQueue):
         file_obj = ''
 
         try:
+            search_key = trimmed_src
+            if len(trimmed_src) == 0:
+                search_key = "/"
             file_obj = self.s3_client.get_object(Bucket=self.container_name,
-                                                 Key=trimmed_src)
+                                                 Key=search_key)
         except botocore.exceptions.ClientError as e:
             # object not found
             x=1
@@ -449,7 +469,7 @@ class Provider(StorageQueue):
                 self.storage_dict['message'] = 'Source downloaded'
             except FileNotFoundError as e:
                 self.storage_dict['message'] = 'Destination not found'
-                Console.error(e)
+                Console.warning(e)
 
         else:
             # Search for a directory
@@ -487,7 +507,7 @@ class Provider(StorageQueue):
                             except FileNotFoundError as e:
                                 self.storage_dict[
                                     'message'] = 'Destination not found'
-                                Console.error(e)
+                                Console.warning(e)
 
             elif total_all_objs > 0 and recursive is True:
                 files_downloaded = []
@@ -495,7 +515,8 @@ class Provider(StorageQueue):
                     base_name = os.path.basename(obj.key)
                     name_equal_marker = base_name == self.dir_marker_file_name
                     if not name_equal_marker and obj.key[-1] != '/':
-                        replaced_trimmed_src = obj.key.replace(trimmed_src, '')
+                        replaced_trimmed_src = obj.key.replace(
+                            trimmed_src, '')
                         if massage_path(replaced_trimmed_src).count('/') == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
@@ -512,7 +533,7 @@ class Provider(StorageQueue):
                                     extract_file_dict(obj.key, metadata))
 
                             except FileNotFoundError as e:
-                                Console.error(e)
+                                Console.warning(e)
                         else:
 
                             folder_path = massage_path(
@@ -525,7 +546,7 @@ class Provider(StorageQueue):
                                 Console.msg()
                             except FileExistsError as e:
                                 os.chmod(dest_path, stat.S_IRWXO)
-                                Console.error(e)
+                                Console.warning(e)
 
                             try:
                                 blob = self.s3_resource.Bucket(
@@ -544,7 +565,7 @@ class Provider(StorageQueue):
                                     extract_file_dict(obj.key, metadata))
 
                             except FileNotFoundError as e:
-                                Console.error(e)
+                                Console.warning(e)
 
         specification['status'] = 'completed'
 
@@ -560,6 +581,9 @@ class Provider(StorageQueue):
 
         source = specification['source']
         destination = specification['destination']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(destination) > 0 and destination[0] == '/':
+            destination = destination[1:]
         recursive = specification['recursive']
         # src_service, src = source.split(":", 1)
         # dest_service, dest = destination.split(":", 1)
@@ -623,23 +647,25 @@ class Provider(StorageQueue):
                         if platform.system() == "Windows":
                             massaged_dirpath = f"{massage_path(dirpath)}\\{f}"
                         else:
-                            massaged_dirpath = f"/{massage_path(dirpath)}/{f}"
+                            massaged_dirpath = f"{massage_path(dirpath)}/{f}"
                         files_to_upload.append(massaged_dirpath)
 
                 for file in files_to_upload:
                     directory, tgtfile = os.path.split(file)
+                    if not trimmed_destination.endswith("/"):
+                        trimmed_destination = trimmed_destination + "/"
+                    tgt_file = trimmed_destination + tgtfile
+                    # AWS S3 doesn't allow the first character in the path to be /
+                    if len(tgt_file) > 0 and tgt_file[0] == '/':
+                        tgt_file = tgt_file[1:]
                     self.s3_client.upload_file(file,
-                                               self.container_name,
-                                               trimmed_destination + tgtfile)
+                                               self.container_name, tgt_file)
 
                     # make head call since file upload does not return
                     # obj dict to extract meta data
                     metadata = self.s3_client.head_object(
-                        Bucket=self.container_name,
-                        Key=trimmed_destination + tgtfile)
-                    files_uploaded.append(
-                        extract_file_dict(trimmed_destination + tgtfile,
-                                          metadata))
+                        Bucket=self.container_name, Key=tgt_file)
+                    files_uploaded.append(extract_file_dict(tgt_file,metadata))
             else:
                 # get the directories with in the folder as well and upload
                 files_to_upload = []
@@ -648,35 +674,33 @@ class Provider(StorageQueue):
                         if platform.system() == "Windows":
                             massaged_dirpath = f"{massage_path(dirpath)}\\{f}"
                         else:
-                            massaged_dirpath = f"/{massage_path(dirpath)}/{f}"
+                            massaged_dirpath = f"{massage_path(dirpath)}/{f}"
                         files_to_upload.append(massaged_dirpath)
 
                 for file in files_to_upload:
+                    if not trimmed_destination.endswith("/"):
+                        trimmed_destination = trimmed_destination + "/"
+                    tmp_src = massage_path(file.replace(trimmed_source, ''))
+                    if len(tmp_src) > 0 and tmp_src[0] == '/':
+                        tmp_src = tmp_src[1:]
+                    tgt_file = trimmed_destination + tmp_src
+                    # AWS S3 doesn't allow the first character in the path to be /
+                    if len(tgt_file) > 0 and tgt_file[0] == '/':
+                        tgt_file = tgt_file[1:]
                     self.s3_client.upload_file(
-                        file,
-                        self.container_name,
-                        trimmed_destination +
-                        massage_path(file.replace(trimmed_source, '')))
+                        file, self.container_name, tgt_file)
 
                     # make head call since file upload does not return
                     # obj dict to extract meta data
                     metadata = self.s3_client.head_object(
-                        Bucket=self.container_name,
-                        Key=trimmed_destination + massage_path(
-                            file.replace(trimmed_source, '')
-                        )
-                    )
-                    files_uploaded.append(extract_file_dict(
-                        trimmed_destination + massage_path(
-                            file.replace(trimmed_source, '')
-                        ), metadata))
+                        Bucket=self.container_name, Key=tgt_file)
+                    files_uploaded.append(extract_file_dict(tgt_file, metadata))
 
             # self.storage_dict['filesUploaded'] = files_uploaded
             # self.storage_dict['message'] = 'Source uploaded'
 
         else:
-            Console.error("Source not found")
-            return specification
+            Console.warning("Source not found")
             # self.storage_dict['message'] = 'Source not found'
 
         # self.storage_dict['objlist'] = files_uploaded
@@ -691,6 +715,9 @@ class Provider(StorageQueue):
     def search_run(self, specification):
 
         directory = specification['path']
+        # AWS S3 doesn't allow the first character in the path to be /
+        if len(directory) > 0 and directory[0] == '/':
+            directory = directory[1:]
         filename = specification['filename']
         recursive = specification['recursive']
 
@@ -738,7 +765,7 @@ class Provider(StorageQueue):
                     info_list.append(info)
 
         if len(info_list) == 0:
-            Console.error("File not found")
+            Console.warning("File not found")
         else:
             Console.msg("File found")
 
@@ -827,10 +854,10 @@ class Provider(StorageQueue):
             error_code = int(e.response['Error']['Code'])
 
             if error_code == 403:
-                Console.error(f"Bucket {name} is private. Access forbidden!")
+                Console.warning(f"Bucket {name} is private. Access forbidden!")
                 return True
             elif error_code == 404:
-                Console.error(f"Bucket {name} does not exist")
+                Console.warning(f"Bucket {name} does not exist")
                 return False
 
 
