@@ -165,6 +165,11 @@ For running pytest for  Azure(parallelazureblob), use the test_storage_azure.py
 in 'cloudmesh-storage\tests' directory.The file structure in Azure is different 
 from other providers.Therefore, a different pytest was used.
 
+For running pytest for parallelgdrive, use the test_storage_parallelgdrive1.py 
+in 'cloudmesh-storage\tests' directory.The file structure in gdrive is different 
+from other providers. Therefore, a different pytest was used.  The get function 
+is not working with the pytest, even though it works when running in command line.
+
 Recently we are working on several new storage providers that improve
 the performance. This is based on using a parallel queue to organize the
 transfers.
