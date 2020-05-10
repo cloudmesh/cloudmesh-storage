@@ -3,6 +3,11 @@ import stat
 import re
 from pprint import pprint
 
+# For the 'Blockblobservice' to work,after creating 'ENV3' follow these 3 steps
+# 1.ENV3\scripts\activate
+# 2.pip install azure-storage --upgrade
+# 3.pip install azure-storage-blob --upgrade
+
 from azure.storage.blob import BlockBlobService
 from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.console import Console
@@ -370,6 +375,9 @@ class Provider(StorageQueue):
         specification['status'] = 'completed'
         return specification
 
+# Because of Azure file structure we cannot directly delete directory.
+# we have to delete the all files inside the directory first before deleting the directory
+#so the code has to be modified to allow all the files in a directory to be deleted to allow deletind a directory directly
     def delete_run(self, specification):
         """
         Deletes the source from cloud service
