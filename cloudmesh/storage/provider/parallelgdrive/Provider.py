@@ -481,7 +481,7 @@ if __name__ == "__main__":
     # p.delete(source='gdrive_cloud4', recursive=True) # works.  The other day gave errors, but now works w/o chgs
     # p.search(filename='gifts_at_1st_level.docx', recursive=False) # works
     # p.get(source='C:/Users/sara/new_emp', destination='gift_on_sub_dir.docx', recursive=False) # works
-    # # p.get(source='C:/Users/sara/new_emp', destination='sub_gdrive_cloud', recursive=False) # works
-    # # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # recursive=True not working
+    # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=False) # works
+    # p.get(source='C:/Users/sara/new_emp', destination='gdrive_cloud', recursive=True) # recursive=True not working
     # p.put(source='C:/Users/sara/gdrive_dir', destination='gdrive_cloud2', recursive=False)  # works
     p.run()
