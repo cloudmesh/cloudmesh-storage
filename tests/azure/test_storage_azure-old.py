@@ -1,6 +1,6 @@
 ###############################################################
-# pytest -v --capture=no tests/azure/test_storage_azure.py
-# pytest -v  tests/azure/test_storage_azure.py
+# pytest -v --capture=no tests/azure/test_storage_azure-old.py
+# pytest -v  tests/azure/test_storage_azure-old.py
 # pytest -v --capture=no tests/azure/test_storage_azure..py::TestStorageAzure::<METHODNAME>
 ###############################################################
 import os
