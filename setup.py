@@ -45,7 +45,7 @@ google-auth
 google-auth-httplib2
 python-magic
 oauth2client
-azure==4.0.0
+azure
 azure-storage-common
 azure-storage-nspkg
 azure-storage-blob
@@ -87,14 +87,33 @@ setup(
     packages=find_packages(),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
-        "Environment :: Web Environment",
+        "Environment :: Console",
+        "Environment :: Other Environment",
+        "Environment :: Plugins",
+        "Intended Audience :: Information Technology",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: BSD License",
+        "Intended Audience :: Education",
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: System Administrators",
+        "License :: OSI Approved :: Apache Software License",
+        "Natural Language :: English",
         "Operating System :: OS Independent",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: Microsoft :: Windows :: Windows 10",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Topic :: Internet",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Software Development :: Libraries",
+        "Topic :: Software Development :: User Interfaces",
+        "Topic :: System",
+        "Topic :: System :: Distributed Computing",
+        "Topic :: System :: Shells",
+        "Topic :: Utilities",
     ],
     install_requires=requiers,
     tests_require=[

@@ -1,4 +1,4 @@
-# Cloudmesh Storage Module
+# Cloudmesh Storage
 
 ## Changelog
 
