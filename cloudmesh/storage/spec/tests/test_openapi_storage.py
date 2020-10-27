@@ -25,7 +25,7 @@ pytest.openapi = None
 class TestCloudStorageOpenapi(object):
     # """
     #
-    # see: https://github.com/cloudmesh/cloudmesh-common/blob/master/cloudmesh/common/run/background.py
+    # see: https://github.com/cloudmesh/cloudmesh-common/blob/main/cloudmesh/common/run/background.py
     # the code in the link has not bean tested
     # make this s function execute the server in the back ground not in a terminal,
     # get the pid and kill it after the test is done

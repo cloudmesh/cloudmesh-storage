@@ -66,4 +66,4 @@ and not in the form of a dictionary.
 
 Link for additional information:
 
-* <https://github.com/cloudmesh/cloudmesh-manual/blob/master/docs-source/source/accounts/storage-gdrive.md>
+* <https://github.com/cloudmesh/cloudmesh-manual/blob/main/docs-source/source/accounts/storage-gdrive.md>

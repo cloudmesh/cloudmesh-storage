@@ -21,7 +21,7 @@ experiments.
 
 TODO: update the link
 
-Please refer to [here](https://github.com/cloudmesh/cloudmesh-cloud/tree/master/cloudmesh-cloud/vagrant/README.md) to see how to setup 
+Please refer to [here](https://github.com/cloudmesh/cloudmesh-cloud/tree/main/cloudmesh-cloud/vagrant/README.md) to see how to setup 
 Vagrant with cloudmesh.
 
 ## What we have implemented 

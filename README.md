@@ -2,7 +2,7 @@
 
 ## Changelog
 
-see: [Changelog](https://github.com/cloudmesh/cloudmesh-storage/blob/master/CHANGELOG.md)
+see: [Changelog](https://github.com/cloudmesh/cloudmesh-storage/blob/main/CHANGELOG.md)
 
 ## Requirements
 
@@ -18,7 +18,7 @@ in the installation documentation.
 An dynamically extensible CMD based command shell. For en extensive
 documentation please see
 
-* <https://github.com/cloudmesh-community/book/blob/master/vonLaszewski-cloud.epub?raw=true>
+* <https://github.com/cloudmesh-community/book/blob/main/vonLaszewski-cloud.epub?raw=true>
 
 where we also document how to use pyenv.
 
