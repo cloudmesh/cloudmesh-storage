@@ -30,7 +30,7 @@ class StorageQueue:
 
     """
     DB object
-    
+
     cm:
        id: uuid
        collection: storage-queue-{source}-{destination}
@@ -39,23 +39,23 @@ class StorageQueue:
     source: the/source/path
     destination: the/destination/path
     created: date
-    status: 
-    
+    status:
+
     Actions can be for example
-    
+
         copy
         mkdir
         delete
         cancel
 
-    cancel has a specific action allowing all jobs that have not 
+    cancel has a specific action allowing all jobs that have not
     yet been finished to be canceled.
 
     Each file can be in the state: completed, waiting, inprogress, canceled
-    
-    here is an example for the status of the queue. 
+
+    here is an example for the status of the queue.
         {
-           "length": 100, 
+           "length": 100,
            "completed": 10,
            "waiting": 80,
            "inprogress": 10,
@@ -71,7 +71,7 @@ class StorageQueue:
         'canceled'
     ]
 
-    #def register(self):
+    # def register(self):
     #    # find the inheritor of StorageQueue and register the methd from
     #    # self._put = parent._put
 
@@ -150,10 +150,10 @@ class StorageQueue:
            collection: {self.collection}
            created: {date}
         action: copy
-        source: 
+        source:
           service: {self.source}
           path: {sourcefile}
-        destination: 
+        destination:
           service: {self.destination}
           path: {destinationfile}
         status: waiting
@@ -202,7 +202,6 @@ class StorageQueue:
             else:
                 dirs.append((source))
 
-
         # create dirs first
 
         actions = []
@@ -248,7 +247,7 @@ class StorageQueue:
                    collection: {self.collection}
                    created: {date}
                 action: mkdir
-                source: 
+                source:
                   service: {service}
                   path: {path}
                 status: waiting
@@ -257,7 +256,6 @@ class StorageQueue:
         self.number = self.number + 1
 
         return entries
-
 
     def delete(self, service, path):
         """
@@ -279,7 +277,7 @@ class StorageQueue:
                    collection: {self.collection}
                    created: {date}
                 action: delete
-                source: 
+                source:
                   service: {service}
                   path: {path}
                 status: waiting
@@ -308,7 +306,7 @@ class StorageQueue:
                    collection: {self.collection}
                    created: {date}
                 action: delete
-                source: 
+                source:
                   service: {service}
                   path: {path}
                 recursive: {recursive}
@@ -426,7 +424,6 @@ class StorageQueue:
             specification = self._cancel(specification)
             self.update_dict(elements=[specification])
 
-
     def get_actions(self):
         cm = CmDatabase()
         entries = cm.find(cloud=self.name,
@@ -450,7 +447,6 @@ class StorageQueue:
                 cancel.append(entry)
 
         return mkdir, copy, list, delete, cancel
-
 
     def run(self):
         """

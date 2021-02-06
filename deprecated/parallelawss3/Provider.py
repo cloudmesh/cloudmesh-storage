@@ -466,9 +466,7 @@ class Provider(StorageQueue):
             elif total_all_objs > 0 and recursive is False:
                 for obj in all_objs:
                     if os.path.basename(obj.key) != self.dir_marker_file_name:
-                        if massage_path(
-                            obj.key.replace(trimmed_source, '')).count('/') \
-                            == 0:
+                        if massage_path(obj.key.replace(trimmed_source, '')).count('/') == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
                                     self.container_name).download_file(
@@ -494,11 +492,8 @@ class Provider(StorageQueue):
             elif total_all_objs > 0 and recursive is True:
                 files_downloaded = []
                 for obj in all_objs:
-                    if os.path.basename(obj.key) != \
-                        self.dir_marker_file_name \
-                        and obj.key[-1] != '/':
-                        if massage_path(obj.key.replace(trimmed_source, '')) \
-                            .count('/') == 0:
+                    if os.path.basename(obj.key) != self.dir_marker_file_name and obj.key[-1] != '/':
+                        if massage_path(obj.key.replace(trimmed_source, '')).count('/') == 0:
                             try:
                                 blob = self.s3_resource.Bucket(
                                     self.container_name).download_file(

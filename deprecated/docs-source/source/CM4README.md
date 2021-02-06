@@ -294,7 +294,7 @@ method would create a virtual machine in AWS based on the configuration of `clou
 Here are some samples for running these operations by using `cloudmesh-cloud`:
 
 First, user would create the virtual machine in AWS.
-```commandline
+```bash
 $ cms vm create
 Collection(Database(MongoClient(host=['127.0.0.1:27017'], document_class=dict, tz_aware=False, connect=True), 'cloudmesh'), 'cloud')
 Thread: updating the status of node
@@ -320,7 +320,7 @@ If user want to stop the virtual machine, then he has to type below command with
 you the virtual machine from MongoDB record with a thread updating the new information. When the thread is done, you can use
 `status` method to check the status of the virtual machine.
 
-```commandline
+```bash
 $ cms vm stop --vms=base-cloudmesh-yuluo-4
 Thread: updating the status of node
 {'_id': ObjectId('5c09c65f56c5a939942a9911'), 
@@ -335,7 +335,7 @@ stopped
 
 When user wants to start the stopped virtual machine, he has to type the command of below sample.
 
-```commandline
+```bash
 $ cms vm start --vms=base-cloudmesh-yuluo-4
 Thread: updating the status of node
 {'_id': ObjectId('5c09c65f56c5a939942a9911'), 
@@ -355,14 +355,14 @@ running
 
 There is a way for users to get the public ip of a virtual machine.
 
-```commandline
+```bash
 $ cms vm publicip --vms=base-cloudmesh-yuluo-4
 {'base-cloudmesh-yuluo-4': ['54.191.109.54']}
 ```
 
 Also, if user wants to know the information of virtual machines under his AWS account, he could do this.
 
-```commandline
+```bash
 $ cms vm list
 <Node: uuid=9b46e75095f586471e2cfe8ebc6b1021ead0e86b, name=a-b-luoyu-0, state=STOPPED, public_ips=[], 
 private_ips=['172.31.28.147'], provider=Amazon EC2 ...>, 
@@ -374,7 +374,7 @@ public_ips=['54.191.109.54'], private_ips=['172.31.41.197'], provider=Amazon EC2
 
 Finally, if user wants to delete the virtual machine, he could do this.
 
-```commandline
+```bash
 $ cms vm destroy --vms=base-cloudmesh-yuluo-4
 True
 ```
@@ -406,7 +406,7 @@ operations as AWS to users. Notice that before running your command,
 you need to make sure the global default cloud parameter has been set
 to 'Chameleon' by:
 
-```commandline
+```bash
 $ cms vm set cloud chameleon
 Setting env parameter cloud to: chameleon
 Writing updata to cloudmesh.yaml
@@ -517,7 +517,7 @@ describing the job history of each virtual machine.
  
 For example, user wants to run `pwd` command to `base-cloudmesh-yulou-5` machine in AWS.
 
-```commandline
+```bash
 $ cms aws run command pwd --vm=base-cloudmesh-yuluo-5
 Running command pwdin Instance base-cloudmesh-yuluo-5:
 /home/ubuntu
@@ -525,7 +525,7 @@ Running command pwdin Instance base-cloudmesh-yuluo-5:
 
 The `job` collection and `status` collection in MongoDB will have below document:
 
-```commandline
+```bash
 > db.job.find()
 { "_id" : ObjectId("5c09ff9b284fa4515ee9e204"), "name" : "base-cloudmesh-yuluo-5", "status" : "done", 
 "input" : "Null", "output" : "/home/ubuntu\n", "description" : "single job", "commands" : "pwd" }
@@ -536,7 +536,7 @@ The `job` collection and `status` collection in MongoDB will have below document
 
 If user run script file containing '#!/bin/sh\npwd' in `base-cloudmesh-yulou-5` machine:
 
-```commandline
+```bash
 $ cms aws run script /Users/yuluo/Desktop/cm.sh --vm=base-cloudmesh-yuluo-5
 Running command /Users/yuluo/Desktop/cm.shin Instance base-cloudmesh-yuluo-5:
 /home/ubuntu
@@ -544,7 +544,7 @@ Running command /Users/yuluo/Desktop/cm.shin Instance base-cloudmesh-yuluo-5:
 
 The `job` collection and `status` collection in MongoDB will have below document:
 
-```commandline
+```bash
 > db.job.find()
 { "_id" : ObjectId("5c09ff9b284fa4515ee9e204"), "name" : "base-cloudmesh-yuluo-5", "status" : "done", 
 "input" : "Null", "output" : "/home/ubuntu\n", "description" : "single job", "commands" : "pwd" }
@@ -552,7 +552,7 @@ The `job` collection and `status` collection in MongoDB will have below document
 "input" : "#!/bin/sh\npwd", "output" : "/home/ubuntu\n", "description" : "single job", "commands" : "Null" }
 ```
 
-```commandline
+```bash
 > db.status.find()
 { "_id" : ObjectId("5c09ff9b284fa4515ee9e205"), "id" : "base-cloudmesh-yuluo-5", "status" : "No Job", 
 "currentJob" : "Null", "history" : [ "5c09ff9b284fa4515ee9e204", "5c0a00a8284fa451d0ab427d" ] }

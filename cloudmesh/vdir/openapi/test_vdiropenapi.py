@@ -73,15 +73,13 @@ class Test_vdir_openapi:
 
     def test_vdir_openapi_ls(self):
         banner('Print contents')
-        response = requests.get(
-            f"http://localhost:8080/cloudmesh/vdir/ls")
+        response = requests.get("http://localhost:8080/cloudmesh/vdir/ls")
         print(response)
         print()
 
     def test_vdir_openapi_cd(self):
         banner('Navigate to test directory')
-        response = requests.get(
-            f"http://localhost:8080/cloudmesh/vdir/cd?dir=testdir")
+        response = requests.get("http://localhost:8080/cloudmesh/vdir/cd?dir=testdir")
         print(response)
         print()
 
@@ -97,22 +95,18 @@ class Test_vdir_openapi:
 
     def test_vdir_openapi_status(self):
         banner('Get status of link')
-        response = requests.get(
-            f"http://localhost:8080/cloudmesh/vdir/status?dir_or_name=test")
+        response = requests.get("http://localhost:8080/cloudmesh/vdir/status?dir_or_name=test")
         print(response)
         print()
 
     def test_vdir_openapi_get(self):
         banner('Get the file')
-        response = requests.get(
-            f"http://localhost:8080/cloudmesh/vdir/get?name=test'&'destination=~%2F.cloudmesh")
+        response = requests.get("http://localhost:8080/cloudmesh/vdir/get?name=test'&'destination=~%2F.cloudmesh")
         print(response)
         print()
 
     def test_vdir_openapi_delete(self):
         banner('Delete link')
-        response = requests.get(
-            f"http://localhost:8080/cloudmesh/vdir/delete?dir_or_name=test")
+        response = requests.get("http://localhost:8080/cloudmesh/vdir/delete?dir_or_name=test")
         print(response)
         print()
-

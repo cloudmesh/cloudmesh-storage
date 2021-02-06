@@ -82,5 +82,3 @@ class VdirCommand(PluginCommand):
             d.delete(arguments.DIR_OR_NAME)
         elif arguments['status']:
             d.status(arguments.DIR_OR_NAME)
-
-

@@ -21,7 +21,6 @@ class Provider(StorageABC):
                 "oracle"]
         return kind
 
-
     @staticmethod
     def get_provider(kind):
         P = None
@@ -217,8 +216,7 @@ class Provider(StorageABC):
         source_obj.replace(":", "")
 
         # oracle provider expects a target name
-        if target_obj is None or \
-            len(target_obj.strip()) == 0:
+        if target_obj is None or len(target_obj.strip()) == 0:
             # print("DEBUG:", Path(source_obj).parts)
             target_obj = Path(source_obj).parts[-1]
 
@@ -294,11 +292,11 @@ class Provider(StorageABC):
                     local_provider = LocalProvider(service="local")
                     try:
                         local_provider.delete(source_obj, recursive=recursive)
-                    except Exception as e:
+                    except Exception as e:  # noqa: F841
                         Console.error(f"{source_obj} could not be deleted from "
                                       f"local storage.")
 
-    def copyFiles(self, source_cloud ,source_file, target_cloud, target_file):
+    def copyFiles(self, source_cloud, source_file, target_cloud, target_file):
         from cloudmesh.storage.copy.Provider import Provider as CopyProvider
-        result = CopyProvider.copy(self, source_cloud , source_file, target_cloud, target_file)
+        result = CopyProvider.copy(source_cloud , source_file, target_cloud, target_file)
         return result

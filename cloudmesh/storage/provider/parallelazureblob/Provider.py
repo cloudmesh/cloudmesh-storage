@@ -66,15 +66,14 @@ class Provider(StorageQueue):
 
     output = {}  # "TODO: missing"
 
-
     def __init__(self,
-                 service=None,config="~/.cloudmesh/cloudmesh.yaml",
+                 service=None, config="~/.cloudmesh/cloudmesh.yaml",
                  parallelism=4):
 
         #:param service: TBD
         #:param config: TBD
         # pprint(service)
-        super().__init__(service=service,  parallelism=parallelism)
+        super().__init__(service=service, parallelism=parallelism)
         self.parallelism = parallelism
         self.container = self.credentials['container']
         self.number = 0
@@ -109,7 +108,6 @@ class Provider(StorageQueue):
             if src_path[0] not in [".", "/", "~"]:
                 src_path = os.path.join(os.getcwd(), source_path)
         return src_path
-
 
     def get_run(self, specification):
         """
@@ -154,9 +152,7 @@ class Provider(StorageQueue):
                     err_flag = 'Y'
 
         if err_flag == 'Y':
-
-             Console.error(
-                "Local directory not found or file already exists: {""src_path}")
+            Console.error(f"Local directory not found or file already exists: {src_path}")
         else:
             obj_list = []
             if blob_folder is None:
@@ -178,8 +174,7 @@ class Provider(StorageQueue):
                             rename_path = src_path
                             os.rename(download_path, rename_path)
                     else:
-                         Console.error(
-                            f"File does not exist: {blob_file}")
+                        Console.error(f"File does not exist: {blob_file}")
                 else:
                     file_found = False
                     get_gen = self.storage_service.list_blobs(self.container)
@@ -193,9 +188,7 @@ class Provider(StorageQueue):
                                     download_path))
                             file_found = True
                     if not file_found:
-                         Console.error(
-                            "File does not exist: {file}".format(
-                                file=blob_file))
+                        Console.error(f"File does not exist: {blob_file}")
             else:
                 if blob_file is None:
                     # Folder only specified
@@ -214,9 +207,7 @@ class Provider(StorageQueue):
                                         download_path))
                                 file_found = True
                         if not file_found:
-                             Console.error(
-                                "Directory does not exist: {directory}".format(
-                                    directory=blob_folder))
+                            Console.error(f"Directory does not exist: {blob_folder}")
                     else:
                         file_found = False
                         srch_gen = self.storage_service.list_blobs(
@@ -238,9 +229,7 @@ class Provider(StorageQueue):
                                         download_path))
                                 file_found = True
                         if not file_found:
-                             Console.error(
-                                "Directory does not exist: {directory}".format(
-                                    directory=blob_folder))
+                            Console.error(f"Directory does not exist: {blob_folder}")
                 else:
                     # SOURCE is specified with Directory and file
                     if not recursive:
@@ -261,18 +250,15 @@ class Provider(StorageQueue):
                                 rename_path = src_path
                                 os.rename(download_path, rename_path)
                         else:
-                             Console.error(
-                                "File does not exist: {file}".format(
-                                    file=source[1:]))
+                            file = source[1:]
+                            Console.error(f"File does not exist: {file}")
                     else:
-                         Console.error(
-                            "Invalid arguments, recursive not applicable")
-        #dict_obj = self.update_dict(obj_list)
+                        Console.error("Invalid arguments, recursive not applicable")
+        # dict_obj = self.update_dict(obj_list)
         # pprint(dict_obj)
-        #return obj_list
+        # return obj_list
         specification['status'] = 'completed'
         return specification
-
 
     def put_run(self, specification):
         """
@@ -342,8 +328,7 @@ class Provider(StorageQueue):
                                             self.container,
                                             upl_file))
                         else:
-                            if os.path.dirname(old_root) != os.path.dirname(
-                                root):
+                            if os.path.dirname(old_root) != os.path.dirname(root):
                                 blob_folder = new_dir
                             new_dir = os.path.join(blob_folder,
                                                    os.path.basename(root))
@@ -362,22 +347,21 @@ class Provider(StorageQueue):
                             old_root = root
                         ctr += 1
                 else:
-                     Console.error(
-                        "Source is a folder, recursive expected in arguments")
+                    Console.error("Source is a folder, recursive expected in arguments")
         else:
-             Console.error(
-                "Directory or File does not exist: {directory}".format(
-                    directory=src_path))
+            Console.error(f"Directory or File does not exist: {src_path}")
         # dict_obj = self.update_dict(obj_list)
         # pprint(dict_obj)
         # return dict_obj
-        #return obj_list
+        # return obj_list
         specification['status'] = 'completed'
         return specification
 
-# Because of Azure file structure we cannot directly delete directory.
-# we have to delete the all files inside the directory first before deleting the directory
-#so the code has to be modified to allow all the files in a directory to be deleted to allow deletind a directory directly
+    # Because of Azure file structure we cannot directly delete directory.
+    # we have to delete the all files inside the directory first before
+    # deleting the directory so the code has to be modified to allow all
+    # the files in a directory to be deleted to allow deletind a directory
+    # directly
     def delete_run(self, specification):
         """
         Deletes the source from cloud service
@@ -409,22 +393,20 @@ class Provider(StorageQueue):
                 obj_list.append(blob_prop)
                 self.storage_service.delete_blob(self.container, blob_file)
             else:
-                 Console.error(
-                    "File does not exist: {file}".format(file=blob_file))
+                Console.error(f"File does not exist: {blob_file}")
         else:
             if blob_file is None:
                 # SOURCE specified is Folder only
                 del_gen = self.storage_service.list_blobs(self.container)
                 file_del = False
                 for blob in del_gen:
-                    if os.path.commonpath(
-                        [blob.name, blob_folder]) == blob_folder:
+                    if os.path.commonpath([blob.name, blob_folder]) == blob_folder:
                         obj_list.append(blob)
                         self.storage_service.delete_blob(self.container,
                                                          blob.name)
                         file_del = True
                 if not file_del:
-                     Console.error(
+                    Console.error(
                         "File does not exist: {file}".format(file=blob_folder))
             else:
                 # Source specified is both file and directory
@@ -435,15 +417,14 @@ class Provider(StorageQueue):
                     obj_list.append(blob_prop)
                     self.storage_service.delete_blob(self.container, source[1:])
                 else:
-                     Console.error(
+                    Console.error(
                         "File does not exist: {file}".format(file=blob_file))
-        #dict_obj = self.update_dict(obj_list, func='delete')
-        #pprint(dict_obj)
-        #return dict_obj
-        #return obj_list
+        # dict_obj = self.update_dict(obj_list, func='delete')
+        # pprint(dict_obj)
+        # return dict_obj
+        # return obj_list
         specification['status'] = 'completed'
         return specification
-
 
     def mkdir_run(self, specification):
         """
@@ -501,10 +482,9 @@ class Provider(StorageQueue):
         # dict_obj = self.update_dict(blob_cre)
         # pprint(dict_obj[0])
         # return dict_obj[0]
-        #return blob_cre
+        # return blob_cre
         specification['status'] = 'completed'
         return specification
-
 
     def search_run(self, specification):
         '''
@@ -516,7 +496,7 @@ class Provider(StorageQueue):
                           subdirectories in the specified directory
         :return: dict
         '''
-        
+
         directory = specification['path']
         filename = specification['filename']
         recursive = specification['recursive']
@@ -544,10 +524,8 @@ class Provider(StorageQueue):
             file_found = False
             for blob in srch_gen:
                 if re.search('/', blob.name) is not None:
-                    if os.path.basename(blob.name) == os.path.basename(
-                        filename):
-                        if os.path.commonpath(
-                            [blob.name, directory[0:]]) == directory[0:]:
+                    if os.path.basename(blob.name) == os.path.basename(filename):
+                        if os.path.commonpath([blob.name, directory[0:]]) == directory[0:]:
                             if filename.startswith('/'):
                                 if filename[0:] in blob.name:
                                     obj_list.append(blob)
@@ -563,17 +541,15 @@ class Provider(StorageQueue):
                         file_found = True
                         Console.msg("File does exist: {file}".format(file=filename))
             if not file_found:
-                 Console.error(
+                Console.error(
                     "File does not exist: {file}".format(file=filename))
         # dict_obj = self.update_dict(obj_list)
-        #pprint(dict_obj)
-        #return dict_obj
-        #pprint(obj_list)
+        # pprint(dict_obj)
+        # return dict_obj
+        # pprint(obj_list)
 
         specification['status'] = 'completed'
         return specification
-
-
 
     # TODO code change:
 
@@ -617,7 +593,7 @@ class Provider(StorageQueue):
                         blob_file).properties.content_length
                     obj_list.append(blob_prop)
                 else:
-                     Console.error(
+                    Console.error(
                         "File does not exist: {file}".format(file=blob_file))
             else:
                 file_found = False
@@ -627,7 +603,7 @@ class Provider(StorageQueue):
                         obj_list.append(blob)
                         file_found = True
                 if not file_found:
-                     Console.error(
+                    Console.error(
                         "File does not exist: {file}".format(file=blob_file))
         else:
             if blob_file is None:
@@ -649,11 +625,9 @@ class Provider(StorageQueue):
                                     fold_list.append(srch_fold)
                         else:
                             if blob not in obj_list:
-                                if len(os.path.dirname(blob.name).split(
-                                    '/')) == len(blob_folder.split('/')) + 1:
+                                if len(os.path.dirname(blob.name).split('/')) == len(blob_folder.split('/')) + 1:
                                     fold_match = 'Y'
-                                    for e in os.path.dirname(blob.name).split(
-                                        '/')[:-1]:
+                                    for e in os.path.dirname(blob.name).split('/')[:-1]:
                                         if e not in blob_folder.split('/'):
                                             fold_match = 'N'
                                     if fold_match == 'Y':
@@ -665,7 +639,7 @@ class Provider(StorageQueue):
                                         if srch_fold not in fold_list:
                                             fold_list.append(srch_fold)
                     if not file_found:
-                         Console.error(
+                        Console.error(
                             "Directory does not exist: {directory}".format(
                                 directory=blob_folder))
                 else:
@@ -679,7 +653,7 @@ class Provider(StorageQueue):
                             file_list.append(blob.name)
                             file_found = True
                     if not file_found:
-                         Console.error(
+                        Console.error(
                             "Directory does not exist: {directory}".format(
                                 directory=blob_folder))
             else:
@@ -693,17 +667,16 @@ class Provider(StorageQueue):
                             source[0:]).properties.content_length
                         obj_list.append(blob_prop)
                     else:
-                         Console.error(
+                        Console.error(
                             "File does not exist: {file}".format(
                                 file=source[0:]))
 
-                #else:
-                    #return Console.error(
-                        #"Invalid arguments, recursive not applicable")
-        #dict_obj = self.update_dict(obj_list)
-        #pprint(dict_obj)
-        #return obj_list
-
+                # else:
+                # return Console.error(
+                # "Invalid arguments, recursive not applicable")
+        # dict_obj = self.update_dict(obj_list)
+        # pprint(dict_obj)
+        # return obj_list
 
         if len(file_list) > 0:
             hdr = '#' * 90 + '\n' + 'List of files in the folder ' + '/' + blob_folder + ':'
@@ -721,16 +694,17 @@ class Provider(StorageQueue):
             Console.cprint("BLUE", "", trl)
         specification['status'] = 'completed'
         return specification
-        #return obj_list
+        # return obj_list
+
+
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelazureblob")
-    #p.create_dir(directory='newcontainer7') #works
-    #p.copy(sourcefile="./Provider.py", destinationfile="myProvider1")#works
-    #p.delete(source="/newcontainer4/dummy.txt")#works-deleting directory
-    #p.delete(source="/a2.txt")  # works deleting files
-    #p.list(source='/a', dir_only=False, recursive=False)#works
-    #p.search(directory= "/", filename="a.txt")#works
-    #p.get(source='a.txt', destination="seema.txt", recursive=False)#works
+    # p.create_dir(directory='newcontainer7') #works
+    # p.copy(sourcefile="./Provider.py", destinationfile="myProvider1")#works
+    # p.delete(source="/newcontainer4/dummy.txt")#works-deleting directory
+    # p.delete(source="/a2.txt")  # works deleting files
+    # p.list(source='/a', dir_only=False, recursive=False)#works
+    # p.search(directory= "/", filename="a.txt")#works
+    # p.get(source='a.txt', destination="seema.txt", recursive=False)#works
     p.run()
-

@@ -349,6 +349,7 @@ class StorageQueue(StorageABC):
             elif entry['action'] == 'search' and entry['status'] == 'waiting':
                 search_actions.append(entry)
 
+        # noinspection PyPep8
         return get_actions, put_actions, mkdir_actions, copy_actions, \
                list_actions, delete_actions, cancel_actions, search_actions
 
@@ -403,8 +404,7 @@ class StorageQueue(StorageABC):
             while True:
                 entries = cm.find(cloud=self.name, kind='storage')
                 if status != "all":
-                    entries = list(filter(lambda entry: entry['status'] ==
-                                                        status, entries))
+                    entries = list(filter(lambda entry: entry['status'] == status, entries))
                 os.system("clear")
                 self.pretty_print(data=entries, data_type="monitor",
                                   output=output)

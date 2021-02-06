@@ -1,6 +1,5 @@
 import shutil
 import uuid
-import os
 
 from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
@@ -23,7 +22,7 @@ class Provider(object):
 
         self.provider_source = P(service=source_cloud)
         self.provider_target = P(service=target_cloud)
-        self.provider_local =  P(service="local")
+        self.provider_local = P(service="local")
 
         if local_dir is None:
             unique = uuid.uuid4()
@@ -56,14 +55,14 @@ class Provider(object):
 
             try:
                 _local = f'{self.local_dir}/{source}'
-                _local = _local.replace("\\","/")
+                _local = _local.replace("\\", "/")
 
                 self.provider_source.get(source=source, destination=_local, recursive=True)
                 if (source_cloud in "aws"):
                     status = self.provider_source.run()
                 status = "Download Successful"
 
-            except Exception as e:
+            except Exception as e:  # noqa: F841
                 Console.error(f"Error fetching from  {source_cloud}:{source} to local")
                 raise SystemError
 
@@ -73,12 +72,12 @@ class Provider(object):
             if status is not None:
                 try:
 
-                    result = self.provider_target.put(source=_local, destination=target)
+                    result = self.provider_target.put(source=_local, destination=target)  # noqa: F841
                     if (target_cloud in "aws"):
                         status = self.provider_target.run()
                     status = "Success"
 
-                except Exception as e:
+                except Exception as e:  # noqa: F841
                     Console.error(f"Error uploading from local to {target_cloud}:{target}")
                     raise SystemError
 

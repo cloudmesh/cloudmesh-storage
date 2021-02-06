@@ -82,8 +82,8 @@ class TestStorage(object):
         assert test_file is not None
 
 
-   # def test_put_recursive(self): # marker this as failure as azure put directory is not working
-       # HEADING()
+    # def test_put_recursive(self): # marker this as failure as azure put directory is not working
+        # HEADING()
 
         # root="~/.cloudmesh"
         # src = "storage/test/a/a.txt"
@@ -94,16 +94,16 @@ class TestStorage(object):
 
         # src = "storage_a:test/a/a.txt"
 
-       # src = "~/.cloudmesh/storage/test/"
-        #dst = '/'
-        #Benchmark.Start()
+        # src = "~/.cloudmesh/storage/test/"
+        # dst = '/'
+        # Benchmark.Start()
 
-        #test_file = provider.put(src, dst, True)
-       # provider.run()
-       # Benchmark.Stop()
-       # pprint(test_file)
+        # test_file = provider.put(src, dst, True)
+        # provider.run()
+        # Benchmark.Stop()
+        # pprint(test_file)
 
-       # assert test_file is not None
+        # assert test_file is not None
 
     def test_get(self):
         HEADING()
@@ -148,12 +148,12 @@ class TestStorage(object):
         #HEADING()
         #src = '/'
         #dir = "a"
-       # Benchmark.Start()
-        #contents = provider.list(src, dir, True)
-       # provider.run()
-       # Benchmark.Stop()
-       # for c in contents:
-         #   pprint(c)
+        # Benchmark.Start()
+        # contents = provider.list(src, dir, True)
+        # provider.run()
+        # Benchmark.Stop()
+        # for c in contents:
+        #   pprint(c)
 
         #assert len(contents) > 0
 

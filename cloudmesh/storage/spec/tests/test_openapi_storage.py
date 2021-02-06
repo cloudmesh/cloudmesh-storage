@@ -85,9 +85,9 @@ class TestCloudStorageOpenapi(object):
         }
         # data = '{"service": "azureblob", "source": "~/openapi/a.txt", "destination": "/apitest", "recursive": "False"}'
 
-        data = {'service': f"{storage}", 
+        data = {'service': f"{storage}",
                 'source': "~/openapi/a.txt",
-                'destination': "/apitest", 
+                'destination': "/apitest",
                 'recursive': "False"}
 
         data_str = json.dumps(data)
@@ -100,7 +100,8 @@ class TestCloudStorageOpenapi(object):
         banner('get the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/storage/v1/get?service={storage}&source=%2fapitest%2fa%2etxt&destination=%7e%2fopenapi")
+            f"http://localhost:8080/cloudmesh/storage/v1/get?service={storage}"
+            "&source=%2fapitest%2fa%2etxt&destination=%7e%2fopenapi")
         print(response)
         print()
 
@@ -108,7 +109,8 @@ class TestCloudStorageOpenapi(object):
         banner('List the files/blobs')
         storage = pytest.storage
         response = requests.get(
-            f"http://localhost:8080/cloudmesh/storage/v1/list?service={storage}&directory=%2fapitest&recursive=True")
+            f"http://localhost:8080/cloudmesh/storage/v1/list?service={storage}"
+            "&directory=%2fapitest&recursive=True")
         print(response)
         print()
 

@@ -329,8 +329,7 @@ class Provider(StorageABC):
                                             self.container,
                                             upl_file))
                         else:
-                            if os.path.dirname(old_root) != os.path.dirname(
-                                root):
+                            if os.path.dirname(old_root) != os.path.dirname(root):
                                 blob_folder = new_dir
                             new_dir = os.path.join(blob_folder,
                                                    os.path.basename(root))
@@ -391,8 +390,7 @@ class Provider(StorageABC):
                 del_gen = self.storage_service.list_blobs(self.container)
                 file_del = False
                 for blob in del_gen:
-                    if os.path.commonpath(
-                        [blob.name, blob_folder]) == blob_folder:
+                    if os.path.commonpath([blob.name, blob_folder]) == blob_folder:
                         obj_list.append(blob)
                         self.storage_service.delete_blob(self.container,
                                                          blob.name)
@@ -499,10 +497,8 @@ class Provider(StorageABC):
             file_found = False
             for blob in srch_gen:
                 if re.search('/', blob.name) is not None:
-                    if os.path.basename(blob.name) == os.path.basename(
-                        filename):
-                        if os.path.commonpath(
-                            [blob.name, directory[1:]]) == directory[1:]:
+                    if os.path.basename(blob.name) == os.path.basename(filename):
+                        if os.path.commonpath([blob.name, directory[1:]]) == directory[1:]:
                             if filename.startswith('/'):
                                 if filename[1:] in blob.name:
                                     obj_list.append(blob)
@@ -590,11 +586,9 @@ class Provider(StorageABC):
                                     fold_list.append(srch_fold)
                         else:
                             if blob not in obj_list:
-                                if len(os.path.dirname(blob.name).split(
-                                    '/')) == len(blob_folder.split('/')) + 1:
+                                if len(os.path.dirname(blob.name).split('/')) == len(blob_folder.split('/')) + 1:
                                     fold_match = 'Y'
-                                    for e in os.path.dirname(blob.name).split(
-                                        '/')[:-1]:
+                                    for e in os.path.dirname(blob.name).split('/')[:-1]:
                                         if e not in blob_folder.split('/'):
                                             fold_match = 'N'
                                     if fold_match == 'Y':

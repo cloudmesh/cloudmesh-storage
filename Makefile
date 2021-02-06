@@ -14,6 +14,10 @@ all: install
 install:
 	pip install -e .
 
+flake8:
+	flake8 --max-line-length 124 --ignore=E722 cloudmesh
+	flake8 --max-line-length 124 --ignore=E722 tests
+
 source:
 	cd ../cloudmesh.cmd5; make source
 	$(call banner, "Install cloudmesh-{package}")

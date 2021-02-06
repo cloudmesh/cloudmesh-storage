@@ -7,6 +7,7 @@ from cloudmesh.storage.Provider import Provider
 from cloudmesh.common.util import yn_choice
 from cloudmesh.common.console import Console
 
+
 # noinspection PyBroadException
 class StorageCommand(PluginCommand):
 
@@ -215,7 +216,7 @@ class StorageCommand(PluginCommand):
         elif arguments.create and arguments.dir:
             provider = Provider(arguments.storage[0], parallelism=parallelism)
 
-            result = provider.create_dir(arguments.DIRECTORY)
+            result = provider.create_dir(arguments.DIRECTORY)  # noqa: F841
             if run_immediately:
                 provider.run()
 
@@ -229,7 +230,7 @@ class StorageCommand(PluginCommand):
             else:
                 default_source = "local:/"
             sources = arguments.SOURCE or default_source
-            if not ":" in sources:
+            if ":" not in sources:
                 sources = f"{variables['storage']}:{sources}"
             sources = Parameter.expand(sources)
 
@@ -264,7 +265,7 @@ class StorageCommand(PluginCommand):
             else:
                 default_source = "local:/"
             sources = arguments.SOURCE or default_source
-            if not ":" in sources:
+            if ":" not in sources:
                 sources = f"{variables['storage']}:{sources}"
             sources = Parameter.expand(sources)
 
@@ -333,9 +334,10 @@ class StorageCommand(PluginCommand):
                 provider.copy(scloud, tcloud, sbucket, tbucket)
             else:
                 provider = Provider(service=tcloud, parallelism=parallelism)
-                provider.copy(arguments['--source'], arguments['--target'],
-                              arguments.recursive)
+                provider.copy(
+                    arguments['--source'],
+                    arguments['--target'],
+                    arguments.recursive)
                 if run_immediately:
                     provider.run()
         return ""
-

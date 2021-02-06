@@ -85,16 +85,16 @@ class Vdir(object):
             for i in range(0, count):
                 entry = cloudmesh[i]
                 if entry['type'] == 'fileendpoint':
-                    location = entry['provider'] + ":" + \
-                               entry['cloud_directory'] + "/" + \
-                               entry['filename']
+                    location = \
+                        entry['provider'] + ":" + \
+                        entry['cloud_directory'] + "/" + \
+                        entry['filename']
                 else:
                     if self.directory == '':
                         location = 'Vdir'
                     else:
                         location = self.directory
-                locations += "{:<20} {:>}".format(entry['cm']['name'],
-                                                  location) + "\n"
+                locations += "{:<20} {:>}".format(entry['cm']['name'], location) + "\n"
             print(locations)
             return locations
         except Exception as e:

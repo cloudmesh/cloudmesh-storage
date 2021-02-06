@@ -62,9 +62,9 @@ class StorageQueue(metaclass=ABCMeta):
                collection: {self.collection}
                created: {date}
             action: copy
-            source: 
+            source:
               path: {sourcefile}
-            destination: 
+            destination:
               path: {destinationfile}
             recursive: {recursive}
             status: waiting
@@ -133,7 +133,7 @@ class StorageQueue(metaclass=ABCMeta):
                collection: {self.collection}
                created: {date}
             action: delete
-            source: 
+            source:
               path: {path}
             recursive: {recursive}
             status: waiting

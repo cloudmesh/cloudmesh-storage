@@ -35,5 +35,5 @@ aws:
 	$(PYTEST) tests/test_general_storage.py
 
 vdir:
- 	$(PYTEST) tests/test_vdir.py
+	$(PYTEST) tests/test_vdir.py
 

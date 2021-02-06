@@ -1,48 +1,20 @@
-import pickle
-import os.path
 import io
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.http import MediaFileUpload
-from googleapiclient.http import MediaIoBaseDownload
-from googleapiclient import errors
-import argparse
-import io
-import json
 import mimetypes
-import os
-import sys
-from pathlib import Path
-from googleapiclient import errors
-import httplib2
-from googleapiclient import discovery
-from googleapiclient.http import MediaFileUpload
-from googleapiclient.http import MediaIoBaseDownload
-from cloudmesh.common.console import Console
-from cloudmesh.common.util import path_expand
-from cloudmesh.configuration.Config import Config
-from cloudmesh.abstract.StorageABC import StorageABC
-from oauth2client import client
-from oauth2client import tools
-from oauth2client.file import Storage
-
 # Below import statements are from awss3 Provider.py
 import os
-import platform
-import stat
-import textwrap
+import os.path
+import pickle
+import sys
 
-import boto3
-import botocore
-from cloudmesh.storage.provider.StorageQueue import StorageQueue
 from cloudmesh.common.console import Console
-from cloudmesh.common.debug import VERBOSE
-from cloudmesh.mongo.CmDatabase import CmDatabase
-
-from cloudmesh.storage.provider.awss3.path_manager import \
-    extract_file_dict
+from cloudmesh.configuration.Config import Config
+from cloudmesh.storage.provider.StorageQueue import StorageQueue
 from cloudmesh.storage.provider.awss3.path_manager import massage_path
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseDownload
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -216,8 +188,10 @@ class Provider(StorageQueue):
                     print(sourceid['files'][0]['id'])
                     file_parent_id = sourceid['files'][0]['id']
 
-                    res = self.upload_file(source=None, filename=source,
-                                        parent_it=file_parent_id)
+                    res = self.upload_file(
+                        source=None,
+                        filename=source,
+                        parent_it=file_parent_id)
 
         specification['status'] = 'completed'
         return specification
@@ -252,10 +226,10 @@ class Provider(StorageQueue):
                     pageSize=100,
                     fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
                 items = results.get('files', [])
-                print("Items in directory to get: ",items)
+                print("Items in directory to get: ", items)
                 for item in items:
                     print("Type of item", type(item))
-                    print("Item is:",item)
+                    print("Item is:", item)
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         self.download_file(source, item['id'], item['name'],
                                            item['mimeType'])
@@ -284,13 +258,12 @@ class Provider(StorageQueue):
                     pageSize=100,
                     fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime)").execute()
                 items = results.get('files', [])
-                print("Items in directory to get: ",items)
+                print("Items in directory to get: ", items)
                 for item in items:
                     print("Type of item", type(item))
-                    print("Item is:",item)
+                    print("Item is:", item)
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
-                        self.download_file(source, item['id'], item['name'],
-                                           item['mimeType'])
+                        self.download_file(source, item['id'], item['name'], item['mimeType'])
                         tempres.append(item)
             else:
                 self.download_file(source, file_id, file_name, mime_type)

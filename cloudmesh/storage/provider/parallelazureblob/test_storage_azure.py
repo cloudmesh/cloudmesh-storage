@@ -81,29 +81,28 @@ class TestStorage(object):
 
         assert test_file is not None
 
+    # def test_put_recursive(self): # marker this as failure as azure put directory is not working
+    # HEADING()
 
-   # def test_put_recursive(self): # marker this as failure as azure put directory is not working
-       # HEADING()
+    # root="~/.cloudmesh"
+    # src = "storage/test/a/a.txt"
 
-        # root="~/.cloudmesh"
-        # src = "storage/test/a/a.txt"
+    # source = f"local:{src}"
+    # destination = f"aws:{src}"
+    # test_file = self.p.put(src, dst)
 
-        # source = f"local:{src}"
-        # destination = f"aws:{src}"
-        # test_file = self.p.put(src, dst)
+    # src = "storage_a:test/a/a.txt"
 
-        # src = "storage_a:test/a/a.txt"
+    # src = "~/.cloudmesh/storage/test/"
+    # dst = '/'
+    # Benchmark.Start()
 
-       # src = "~/.cloudmesh/storage/test/"
-        #dst = '/'
-        #Benchmark.Start()
+    # test_file = provider.put(src, dst, True)
+    # provider.run()
+    # Benchmark.Stop()
+    # pprint(test_file)
 
-        #test_file = provider.put(src, dst, True)
-       # provider.run()
-       # Benchmark.Stop()
-       # pprint(test_file)
-
-       # assert test_file is not None
+    # assert test_file is not None
 
     def test_get(self):
         HEADING()
@@ -144,18 +143,18 @@ class TestStorage(object):
 
         assert len(contents) > 0
 
-    #def test_list_recursive(self): # mark this as failure as te list recursive is not working
-        #HEADING()
-        #src = '/'
-        #dir = "a"
-       # Benchmark.Start()
-        #contents = provider.list(src, dir, True)
-       # provider.run()
-       # Benchmark.Stop()
-       # for c in contents:
-         #   pprint(c)
+    # def test_list_recursive(self): # mark this as failure as te list recursive is not working
+    # HEADING()
+    # src = '/'
+    # dir = "a"
+    # Benchmark.Start()
+    # contents = provider.list(src, dir, True)
+    # provider.run()
+    # Benchmark.Stop()
+    # for c in contents:
+    #   pprint(c)
 
-        #assert len(contents) > 0
+    # assert len(contents) > 0
 
     def test_search(self):
         HEADING()
@@ -193,8 +192,8 @@ class TestStorage(object):
         Benchmark.Stop()
 
     # queue multiple commands and run together test case
-    # Since we deleted the files inside the directory using above delete function,the below delete function works for deleting directory
-
+    # Since we deleted the files inside the directory using above delete
+    # function,the below delete function works for deleting directory
 
     def test_multiple_run(self):
         HEADING()

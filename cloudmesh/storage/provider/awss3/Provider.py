@@ -425,7 +425,7 @@ class Provider(StorageQueue):
                 search_key = "/"
             file_obj = self.s3_client.get_object(Bucket=self.container_name,
                                                  Key=search_key)
-        except botocore.exceptions.ClientError as e:
+        except botocore.exceptions.ClientError as e:   # noqa: F841
             # object not found
             x=1
         files_downloaded = []
@@ -665,7 +665,7 @@ class Provider(StorageQueue):
                     # obj dict to extract meta data
                     metadata = self.s3_client.head_object(
                         Bucket=self.container_name, Key=tgt_file)
-                    files_uploaded.append(extract_file_dict(tgt_file,metadata))
+                    files_uploaded.append(extract_file_dict(tgt_file, metadata))
             else:
                 # get the directories with in the folder as well and upload
                 files_to_upload = []
