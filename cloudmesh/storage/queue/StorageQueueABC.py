@@ -424,8 +424,8 @@ class StorageQueue(metaclass=ABCMeta):
         # function to list file  or directory
 
 
-if __name__ == "__main__":
-    p = Provider(name="aws")
+# if __name__ == "__main__":
+#    p = Provider(name="aws")
     # p.mkdir("/abcworking2")
     # p.mkdir("/abcworking3")
     # p.mkdir("/abcworking4")
@@ -438,4 +438,4 @@ if __name__ == "__main__":
     # p.delete(path="testABC")
     # p.copy(sourcefile="./Provider.py", destinationfile="testABC.txt")
 
-    p.run()
+#    p.run()

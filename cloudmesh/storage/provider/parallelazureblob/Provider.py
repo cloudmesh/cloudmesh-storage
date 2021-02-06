@@ -1,30 +1,20 @@
 import os
-import stat
 import re
-from pprint import pprint
+import textwrap
+from pathlib import Path
+
+from azure.storage.blob import BlockBlobService
+from cloudmesh.common.console import Console
+from cloudmesh.common.util import HEADING
+from cloudmesh.common.util import banner
+from cloudmesh.common.util import path_expand
+from cloudmesh.storage.provider.StorageQueue import StorageQueue
+
 
 # For the 'Blockblobservice' to work,after creating 'ENV3' follow these 3 steps
 # 1.ENV3\scripts\activate
 # 2.pip install azure-storage --upgrade
 # 3.pip install azure-storage-blob --upgrade
-
-from azure.storage.blob import BlockBlobService
-from cloudmesh.abstract.StorageABC import StorageABC
-from cloudmesh.common.console import Console
-from cloudmesh.common.util import HEADING
-from cloudmesh.common.util import banner
-from cloudmesh.common.util import path_expand
-from pathlib import Path
-import platform
-import textwrap
-import uuid
-import oyaml as yaml
-from multiprocessing import Pool
-
-from cloudmesh.common.DateTime import DateTime
-from cloudmesh.mongo.CmDatabase import CmDatabase
-from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-from cloudmesh.storage.provider.StorageQueue import StorageQueue
 
 
 class Provider(StorageQueue):
@@ -69,9 +59,15 @@ class Provider(StorageQueue):
     def __init__(self,
                  service=None, config="~/.cloudmesh/cloudmesh.yaml",
                  parallelism=4):
+        """
 
-        #:param service: TBD
-        #:param config: TBD
+        :param service:
+        :type service:
+        :param config:
+        :type config:
+        :param parallelism:
+        :type parallelism:
+        """
         # pprint(service)
         super().__init__(service=service, parallelism=parallelism)
         self.parallelism = parallelism

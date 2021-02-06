@@ -230,8 +230,7 @@ class Provider(StorageQueue):
                             dir_files_list.append(
                                 extract_file_dict(file_name, metadata))
 
-                        elif (trimmed_filename[0] == '/'
-                              and 1 == trimmed_filename.count('/')):
+                        elif (trimmed_filename[0] == '/' and 1 == trimmed_filename.count('/')):
                             # dir_files_list.append(file_name)
 
                             # make head call to extract meta data
@@ -241,8 +240,7 @@ class Provider(StorageQueue):
                             dir_files_list.append(
                                 extract_file_dict(file_name, metadata))
 
-                        elif (trimmed_filename[0] != '/'
-                              and 0 == trimmed_filename.count('/')):
+                        elif (trimmed_filename[0] != '/' and 0 == trimmed_filename.count('/')):
                             # dir_files_list.append(file_name)
 
                             # make head call to extract meta data
@@ -427,7 +425,7 @@ class Provider(StorageQueue):
                                                  Key=search_key)
         except botocore.exceptions.ClientError as e:   # noqa: F841
             # object not found
-            x=1
+            x = 1
         files_downloaded = []
 
         is_target_file = os.path.isfile(trimed_dest)

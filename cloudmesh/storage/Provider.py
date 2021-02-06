@@ -298,5 +298,5 @@ class Provider(StorageABC):
 
     def copyFiles(self, source_cloud, source_file, target_cloud, target_file):
         from cloudmesh.storage.copy.Provider import Provider as CopyProvider
-        result = CopyProvider.copy(source_cloud , source_file, target_cloud, target_file)
+        result = CopyProvider.copy(source_cloud, source_file, target_cloud, target_file)
         return result

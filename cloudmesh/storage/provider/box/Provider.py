@@ -1,12 +1,13 @@
-from boxsdk import JWTAuth
-from boxsdk import Client
-from cloudmesh.common.console import Console
-from cloudmesh.common.util import path_expand
-from os.path import basename, join, dirname
 import os
 import textwrap
+from os.path import basename, join, dirname
+
+from boxsdk import Client
+from boxsdk import JWTAuth
 from cloudmesh.abstract.StorageABC import StorageABC
-import textwrap
+from cloudmesh.common.console import Console
+from cloudmesh.common.util import path_expand
+
 
 def get_id(source, results, source_type):
     if not any((result.name == source and result.type == source_type) for result in
@@ -67,8 +68,8 @@ class Provider(StorageABC):
     kind = "box"
 
     sample = textwrap.dedent(
-      """
-      cloudmesh:
+        """
+        cloudmesh:
         box:
           cm:
             active: false
@@ -82,7 +83,7 @@ class Provider(StorageABC):
             directory: /
           credentials:
             config_path: ~/.cloudmesh/box/{config}
-      """)
+        """)
 
     output = {}  # "TODO: missing"
 
@@ -313,19 +314,16 @@ class Provider(StorageABC):
             subfolders = []
             path = basename(source)
             if path == '':
-                contents = [item for item in
-                            self.client.folder('0').get_items()]
+                contents = [item for item in self.client.folder('0').get_items()]
                 for c in contents:
                     if c.type == 'folder':
                         subfolders.append(c)
                     result_list.append(c)
             else:
-                folders = [item for item in
-                           self.client.search().query(path, type='folder')]
+                folders = [item for item in self.client.search().query(path, type='folder')]
                 folder_id = get_id(path, folders, 'folder')
                 if folder_id:
-                    contents = [result for result in
-                                self.client.folder(folder_id).get_items()]
+                    contents = [result for result in self.client.folder(folder_id).get_items()]
                     for c in contents:
                         if c.type == 'folder':
                             subfolders.append(c)
@@ -334,9 +332,7 @@ class Provider(StorageABC):
                     Console.error("Directory " + path + " not found.")
             if recursive:
                 while len(subfolders) > 0:
-                    contents = [item for item in
-                                self.client.folder(
-                                    subfolders[0].id).get_items()]
+                    contents = [item for item in self.client.folder(subfolders[0].id).get_items()]
                     for c in contents:
                         if c.type == 'folder':
                             subfolders.append(c)
@@ -368,7 +364,7 @@ class Provider(StorageABC):
                 Console.error("Source not found.")
             else:
                 item_ind = next((index for (index, result) in
-                                 enumerate(results) if (result.name == name)),
+                                 enumerate(results) if result.name == name),
                                 None)
                 item_id = results[item_ind].id
                 item_type = results[item_ind].type

@@ -19,6 +19,7 @@ from googleapiclient.http import MediaIoBaseDownload
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
+
 class Provider(StorageQueue):
 
     kind = "parallelgdrive"
@@ -67,7 +68,7 @@ class Provider(StorageQueue):
         service = build('drive', 'v3', credentials=creds)
         self.service = service
 
-    def list_run(self, specification): # in mongdb, but can't run
+    def list_run(self, specification):  # in mongdb, but can't run
         source = specification['path']
         dir_only = specification['dir_only']
         recursive = specification['recursive']
@@ -101,7 +102,7 @@ class Provider(StorageQueue):
             if not items:
                 Console.error('No files found')
                 print('No files found.')
-            #else:
+            # else:
                 # return self.update_dict(items)
         specification['status'] = 'completed'
         return specification
@@ -180,8 +181,8 @@ class Provider(StorageQueue):
                 print(sourceid)
                 print("len = ", len(sourceid['files']))
                 if len(sourceid['files']) == 0:
-                    #parent_file = self.create_dir_helper(directory=destination)
-                    #file_parent_id = parent_file['id']
+                    # parent_file = self.create_dir_helper(directory=destination)
+                    # file_parent_id = parent_file['id']
                     res = self.upload_file(source=None, filename=source,
                                            parent_it=None)
                 else:
@@ -272,7 +273,7 @@ class Provider(StorageQueue):
         specification['status'] = 'completed'
         return specification
 
-    def delete_run(self, specification): # works, deleted dir and sub-dirs in gdrive, seen in mongodb too
+    def delete_run(self, specification):  # works, deleted dir and sub-dirs in gdrive, seen in mongodb too
         source = specification['path']
         recursive = specification['recursive']
 
@@ -418,7 +419,7 @@ class Provider(StorageQueue):
         return file
 
     def download_file(self, source, file_id, file_name, mime_type):
-        filepath = source + '/' + file_name # removed mime_type
+        filepath = source + '/' + file_name  # removed mime_type
         request = self.service.files().get_media(fileId=file_id)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -444,11 +445,12 @@ class Provider(StorageQueue):
         else:
             return arr_folders, None
 
+
 if __name__ == "__main__":
     print()
     p = Provider(service="parallelgdrive")
     # p.create_dir(directory="gdrive_cloud4") # works
-    p.list(source='gdrive_kids', dir_only=False, recursive=False) # works
+    p.list(source='gdrive_kids', dir_only=False, recursive=False)  # works
     # p.search(directory="/", filename="gift_on_sub_dir.docx") # works
     # p.delete(source='gdrive_cloud4', recursive=True) # works.  The other day gave errors, but now works w/o chgs
     # p.search(filename='gifts_at_1st_level.docx', recursive=False) # works

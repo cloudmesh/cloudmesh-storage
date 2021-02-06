@@ -1,17 +1,16 @@
+import os
 import textwrap
 import time
 import uuid
-import os
 from multiprocessing import Pool
 
 import oyaml as yaml
+from cloudmesh.abstract.StorageABC import StorageABC
 from cloudmesh.common.DateTime import DateTime
-from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.Printer import Printer
+from cloudmesh.common.util import path_expand
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.mongo.DataBaseDecorator import DatabaseUpdate
-from cloudmesh.abstract.StorageABC import StorageABC
-from cloudmesh.common.util import path_expand
 
 
 class StorageQueue(StorageABC):
@@ -179,10 +178,10 @@ class StorageQueue(StorageABC):
         """
         # if None all are canceled
         specification = textwrap.dedent(
-            f"""
-                action: cancel
-                status: waiting
-                """
+            """
+            action: cancel
+            status: waiting
+            """
         )
         common_cm = self.add_cm(cm_name=f"{name}")
         specification = common_cm + specification.strip() + "\n"
@@ -361,7 +360,7 @@ class StorageQueue(StorageABC):
         :return:
         """
         get_action, put_action, mkdir_action, copy_action, list_action, \
-        delete_action, cancel_action, search_action = self.get_actions()
+            delete_action, cancel_action, search_action = self.get_actions()
 
         pool = Pool(self.parallelism)
         # CANCEL ACTIONS

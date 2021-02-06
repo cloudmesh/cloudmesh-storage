@@ -1,6 +1,7 @@
 from flask import jsonify
 from cloudmesh.common.console import Console
 
+
 def setup(kind):
     config = "~/.cloudmesh/cloudmesh.yaml"
     if kind == "local":

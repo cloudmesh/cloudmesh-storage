@@ -87,7 +87,7 @@ class StorageQueue:
         self._get = get
         self._delete = delete
         self._mkdir = mkdir
-        self._list = list # attention list
+        self._list = list  # attention list
         self._cancel = cancel
 
     def __init__(self,
